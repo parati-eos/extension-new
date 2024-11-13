@@ -1,43 +1,100 @@
-import React, { useState } from 'react'
-import IndustryIcon from '../../../assets/industry-icon.png'
+import React, { useEffect, useState } from 'react'
+import { FaCity } from 'react-icons/fa'
 
 interface IndustryFormProps {
-  onContinue: () => void
+  onContinue: (data: { sector: string; industry: string }) => void
+  onBack: () => void
+  initialData: { sector: string; industry: string }
 }
 
-const IndustryForm: React.FC<IndustryFormProps> = ({ onContinue }) => {
-  const [sector, setSector] = useState('')
-  const [industry, setIndustry] = useState('')
+const IndustryForm: React.FC<IndustryFormProps> = ({
+  onContinue,
+  onBack,
+  initialData,
+}) => {
+  const [sector, setSector] = useState(initialData.sector)
+  const [industry, setIndustry] = useState(initialData.industry)
+  const [otherSector, setOtherSector] = useState<string>('')
+  const [otherIndustry, setOtherIndustry] = useState<string>('')
+
+  useEffect(() => {
+    // Check if the initial sector is a custom value (not in predefined options)
+    if (
+      !['Technology', 'Healthcare', 'Finance', 'Education', ''].includes(
+        initialData.sector
+      )
+    ) {
+      setSector('Other')
+      setOtherSector(initialData.sector)
+    } else {
+      setSector(initialData.sector)
+    }
+
+    // Check if the initial industry is a custom value (not in predefined options)
+    if (
+      !['Software', 'Biotechnology', 'Banking', 'E-Learning', ''].includes(
+        initialData.industry
+      )
+    ) {
+      setIndustry('Other')
+      setOtherIndustry(initialData.industry)
+    } else {
+      setIndustry(initialData.industry)
+    }
+  }, [initialData])
 
   const handleSectorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSector(e.target.value)
+    const selectedValue = e.target.value
+    setSector(selectedValue)
+    if (selectedValue !== 'Other') {
+      setOtherSector('') // Clear otherSector input if not selecting "Other"
+    }
   }
 
   const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setIndustry(e.target.value)
+    const selectedValue = e.target.value
+    setIndustry(selectedValue)
+    if (selectedValue !== 'Other') {
+      setOtherIndustry('') // Clear otherIndustry input if not selecting "Other"
+    }
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const sectorData = sector === 'Other' ? otherSector : sector
+    const industryData = industry === 'Other' ? otherIndustry : industry
+
+    if (sectorData && industryData) {
+      onContinue({
+        sector: sectorData,
+        industry: industryData,
+      })
+    }
+
+    console.log('Sector:', sectorData)
+    console.log('Industry:', industryData)
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-      <div className="bg-white shadow-lg w-[920px] h-[835px] rounded-3xl flex items-center justify-center">
-        <div className="p-8">
-          <div className="flex flex-col items-center mb-8 gap-1">
-            <img
-              src={IndustryIcon}
-              alt="Industry Icon"
-              className="w-16 h-16 mb-4"
-            />
-            <h1 className="text-2xl text-[#091220] font-bold mb-2">
-              Your Industry
-            </h1>
-            <p className="text-[#5D5F61]">
-              Provide details about sector and industry
-            </p>
-          </div>
-          <div className="flex flex-col items-start w-full max-w-lg">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 text-center">
+      <div className="bg-white shadow-lg w-full max-w-4xl h-auto md:w-[600px] md:h-[700px] lg:w-[800px] lg:h-[600px] rounded-3xl flex flex-col justify-between p-4 sm:p-8 mx-auto">
+        <div className="flex flex-col items-center mb-4 gap-1 lg:mb-8">
+          <FaCity className="text-[#3667B2] text-4xl mb-2" />
+          <h1 className="text-2xl text-[#091220] font-bold mb-1">
+            Your Industry
+          </h1>
+          <p className="text-[#5D5F61]">
+            Provide details about sector and industry
+          </p>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center justify-center flex-grow lg:my-8 w-full max-w-sm mx-auto"
+        >
+          <div className="w-full">
             <label
               htmlFor="sector"
-              className="mb-2 font-semibold text-[#4A4B4D]"
+              className="mb-2 font-semibold text-[#4A4B4D] block text-left"
             >
               Sector
             </label>
@@ -54,12 +111,21 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ onContinue }) => {
               <option value="Healthcare">Healthcare</option>
               <option value="Finance">Finance</option>
               <option value="Education">Education</option>
-              {/* Add more options as needed */}
+              <option value="Other">Other</option>
             </select>
+            {sector === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter your sector"
+                className="mb-4 p-2 border w-full rounded-xl"
+                value={otherSector}
+                onChange={(e) => setOtherSector(e.target.value)}
+              />
+            )}
 
             <label
               htmlFor="industry"
-              className="mb-2 font-semibold text-[#4A4B4D]"
+              className="mb-2 font-semibold text-[#4A4B4D] block text-left"
             >
               Industry
             </label>
@@ -76,25 +142,47 @@ const IndustryForm: React.FC<IndustryFormProps> = ({ onContinue }) => {
               <option value="Biotechnology">Biotechnology</option>
               <option value="Banking">Banking</option>
               <option value="E-Learning">E-Learning</option>
-              {/* Add more options as needed */}
+              <option value="Other">Other</option>
             </select>
-
+            {industry === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter your industry"
+                className="p-2 border w-full rounded-xl"
+                value={otherIndustry}
+                onChange={(e) => setOtherIndustry(e.target.value)}
+              />
+            )}
+          </div>
+          <div className="flex flex-col items-center justify-center mt-4 w-full space-y-2">
             <button
-              onClick={onContinue}
-              disabled={!sector || !industry}
-              className={`px-6 py-2 rounded-xl transition w-full ${
-                sector && industry
+              type="submit"
+              disabled={
+                !sector ||
+                !industry ||
+                (sector === 'Other' && !otherSector) ||
+                (industry === 'Other' && !otherIndustry)
+              }
+              className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
+                sector &&
+                industry &&
+                (sector !== 'Other' || otherSector) &&
+                (industry !== 'Other' || otherIndustry)
                   ? 'bg-[#0A8568] text-white hover:bg-blue-600'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}
             >
               Next
             </button>
-            <button className="px-6 py-2 border border-[#8A8B8C] rounded-xl transition w-full text-[#797C81] mt-4">
+            <button
+              type="button"
+              onClick={onBack}
+              className="px-6 py-2 border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-xl transition w-full max-w-sm text-[#797C81]"
+            >
               Back
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )
