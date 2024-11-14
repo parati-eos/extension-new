@@ -5,20 +5,32 @@ import ContactDetailsForm from './onboarding-sections/ContactDetailsForm.tsx'
 import IndustryForm from './onboarding-sections/IndustryForm.tsx'
 import LogoForm from './onboarding-sections/LogoForm.tsx'
 import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
+import axios from 'axios'
+
+interface FormData {
+  companyName: string
+  contactEmail: string
+  phone: string
+  linkedin: string
+  sector: string
+  industry: string
+  websiteLink: string
+  logo: string | null
+}
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
   const [visitedSections, setVisitedSections] = useState<number[]>([1]) // Start with the first section visited
   const [isMediumOrLargerScreen, setIsMediumOrLargerScreen] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     companyName: '',
-    email: '',
+    contactEmail: '',
     phone: '',
     linkedin: '',
     sector: '',
     industry: '',
     websiteLink: '',
-    logo: null as File | null,
+    logo: null,
   })
 
   // Check if screen size is medium or larger to show sidebar
@@ -35,11 +47,48 @@ const OnboardingContainer: React.FC = () => {
     }
   }, [])
 
-  // Function to handle "Continue" button
-  const handleContinue = (data: Partial<typeof formData>) => {
-    // TODO: TODO: ADD API CALL
+  // Function to generate a unique organization ID
+  const generateOrgId = () => {
+    return 'Parati-' + Date.now()
+  }
+  const orgId = generateOrgId()
 
+  // State to store the document ID returned by the API
+  const [documentId, setDocumentId] = useState<string | null>('')
+
+  // Function to handle API calls (POST for first section, PATCH for others)
+  const submitFormData = async (data: Partial<typeof formData>) => {
+    console.log('Submitting form data:', data)
+
+    try {
+      if (currentSection === 1) {
+        const response = await axios.post(
+          `${process.env.REACT_APP_ORG_URL}/organizationcreate-patch`,
+          {
+            ...data,
+            orgId,
+            userId: 'TEst123213',
+          }
+        )
+        setDocumentId(response.data.orgId)
+      } else {
+        await axios.patch(
+          `${process.env.REACT_APP_ORG_URL}/organizationedit/${documentId}`,
+          data
+        )
+      }
+    } catch (error) {
+      console.error('Error submitting form data:', error)
+    }
+  }
+
+  // Function to handle "Continue" button
+  const handleContinue = async (data: Partial<typeof formData>) => {
     setFormData((prevData) => ({ ...prevData, ...data }))
+
+    //ADD API CALL
+    await submitFormData(data)
+
     const nextSection = currentSection + 1
     if (nextSection <= 5) {
       setCurrentSection(nextSection)
@@ -49,6 +98,7 @@ const OnboardingContainer: React.FC = () => {
     }
   }
 
+  // Function to handle "Back" button
   const handleBack = () => {
     const prevSection = currentSection - 1
     if (prevSection >= 1) {
@@ -56,14 +106,6 @@ const OnboardingContainer: React.FC = () => {
       setVisitedSections(
         visitedSections.filter((section) => section <= prevSection)
       )
-    }
-  }
-
-  // Function to handle sidebar section clicks
-  const handleSectionClick = (sectionId: number) => {
-    setCurrentSection(sectionId)
-    if (!visitedSections.includes(sectionId)) {
-      setVisitedSections([...visitedSections, sectionId])
     }
   }
 
@@ -110,7 +152,7 @@ const OnboardingContainer: React.FC = () => {
             onContinue={handleContinue}
             onBack={handleBack}
             initialData={{
-              email: formData.email,
+              contactEmail: formData.contactEmail,
               phone: formData.phone,
               linkedin: formData.linkedin,
             }}
@@ -128,7 +170,6 @@ const OnboardingContainer: React.FC = () => {
         <Sidebar
           lastVisitedSection={currentSection}
           visitedSections={visitedSections}
-          onSectionClick={handleSectionClick}
         />
       )}
 

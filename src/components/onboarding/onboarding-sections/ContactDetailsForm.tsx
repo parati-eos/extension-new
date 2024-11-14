@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { FaPhone } from 'react-icons/fa'
 
 interface ContactDetailsFormProps {
-  onContinue: (data: { email: string; phone: string; linkedin: string }) => void
+  onContinue: (data: {
+    contactEmail: string
+    phone: string
+    linkedin: string
+  }) => void
   onBack: () => void
-  initialData: { email: string; phone: string; linkedin: string }
+  initialData: { contactEmail: string; phone: string; linkedin: string }
 }
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
@@ -12,23 +16,31 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onBack,
   initialData,
 }) => {
-  const [email, setEmail] = useState(initialData.email)
+  const [contactEmail, setContactEmail] = useState(initialData.contactEmail)
   const [phone, setPhone] = useState(initialData.phone)
   const [linkedin, setLinkedin] = useState(initialData.linkedin)
   const [isLinkedinValid, setIsLinkedinValid] = useState(true)
+  const [isEmailValid, setIsEmailValid] = useState(true)
+  const [isPhoneValid, setIsPhoneValid] = useState(true)
 
   useEffect(() => {
-    setEmail(initialData.email)
+    setContactEmail(initialData.contactEmail)
     setPhone(initialData.phone)
     setLinkedin(initialData.linkedin)
   }, [initialData])
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
+    const value = e.target.value
+    setContactEmail(value)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    setIsEmailValid(emailRegex.test(value))
   }
 
-  const handlephoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value)
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPhone(value)
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/
+    setIsPhoneValid(phoneRegex.test(value))
   }
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,8 +52,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (email && phone && linkedin && isLinkedinValid) {
-      onContinue({ email, phone, linkedin })
+    if (contactEmail && phone && linkedin && isLinkedinValid) {
+      onContinue({ contactEmail, phone, linkedin })
     }
   }
 
@@ -70,10 +82,17 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               type="text"
               id="email"
               placeholder="Enter email"
-              className="mb-4 p-2 border w-full rounded-xl"
-              value={email}
+              className={`mb-4 p-2 border w-full rounded-xl ${
+                !isEmailValid ? 'border-red-500' : ''
+              }`}
+              value={contactEmail}
               onChange={handleEmailChange}
             />
+            {!isEmailValid && (
+              <p className="text-red-500 text-sm">
+                Please enter a valid email address.
+              </p>
+            )}
             <label
               htmlFor="phone"
               className="mb-2 font-semibold text-[#4A4B4D] block text-left"
@@ -84,10 +103,17 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               type="text"
               id="phone"
               placeholder="Enter phone number"
-              className="mb-4 p-2 border w-full rounded-xl"
+              className={`mb-4 p-2 border w-full rounded-xl ${
+                !isPhoneValid ? 'border-red-500' : ''
+              }`}
               value={phone}
-              onChange={handlephoneChange}
+              onChange={handlePhoneChange}
             />
+            {!isPhoneValid && (
+              <p className="text-red-500 text-sm">
+                Please enter a valid phone number.
+              </p>
+            )}
             <label
               htmlFor="linkedin"
               className="mb-2 font-semibold text-[#4A4B4D] block text-left"
@@ -111,10 +137,12 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
           <div className="flex flex-col items-center justify-center mt-4 lg:mt-8 w-full space-y-2">
             <button
               type="submit"
-              disabled={!email || !phone || !linkedin || !isLinkedinValid}
+              disabled={
+                !contactEmail || !phone || !linkedin || !isLinkedinValid
+              }
               className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
-                email && phone && linkedin && isLinkedinValid
-                  ? 'bg-[#0A8568] text-white hover:bg-[#3667B2]'
+                contactEmail && phone && linkedin && isLinkedinValid
+                  ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}
             >

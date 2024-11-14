@@ -55,7 +55,6 @@ const sections: Section[] = [
 interface SidebarProps {
   lastVisitedSection: number
   visitedSections: number[]
-  onSectionClick: (id: number) => void
 }
 
 const Sidebar: React.FC<SidebarProps> = ({

@@ -1,28 +1,42 @@
+import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import React, { useEffect, useState } from 'react'
 import { FaImage, FaBullseye } from 'react-icons/fa'
 
-interface CompanyNameFormProps {
-  onContinue: (data: { logo: File }) => void
+interface LogoFormProps {
+  onContinue: (data: { logo: string }) => void
   onBack: () => void
-  initialData: File | null
+  initialData: string | null
 }
 
-const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
+const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,
   onBack,
   initialData,
 }) => {
-  const [logo, setLogo] = useState<File | null>(initialData)
+  const [logo, setLogo] = useState<string | null>(initialData)
+  const [isUploading, setIsUploading] = useState(false)
 
+  // Update URL preview if initialData changes
   useEffect(() => {
     if (initialData) {
       setLogo(initialData)
     }
   }, [initialData])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setLogo(e.target.files[0])
+      const file = e.target.files[0]
+      setIsUploading(true) // Indicate uploading
+
+      try {
+        // Upload file to S3 and get the URL
+        const url = await uploadLogoToS3(file)
+        setLogo(url)
+      } catch (error) {
+        console.error('Error uploading logo:', error)
+      } finally {
+        setIsUploading(false)
+      }
     }
   }
 
@@ -33,7 +47,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (logo) {
-      onContinue({ logo })
+      onContinue({ logo }) // Send URL to parent on form submit
     }
   }
 
@@ -62,7 +76,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
             <div className="flex flex-col items-center">
               {logo ? (
                 <img
-                  src={URL.createObjectURL(logo)}
+                  src={logo}
                   alt="Uploaded Logo"
                   className="w-24 h-24 lg:w-48 lg:h-48 object-contain mb-4"
                 />
@@ -70,7 +84,9 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
                 <>
                   <FaImage className="text-gray-500 text-4xl mb-4" />
                   <p className="text-gray-500 mb-4">
-                    Select or drag to upload your logo
+                    {isUploading
+                      ? 'Uploading...'
+                      : 'Select or drag to upload your logo'}
                   </p>
                 </>
               )}
@@ -89,7 +105,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
               disabled={!logo}
               className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
                 logo
-                  ? 'bg-[#0A8568] text-white hover:bg-[#3667B2]'
+                  ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}
             >
@@ -109,4 +125,4 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   )
 }
 
-export default CompanyNameForm
+export default LogoForm

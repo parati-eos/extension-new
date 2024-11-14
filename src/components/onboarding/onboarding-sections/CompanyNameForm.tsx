@@ -64,7 +64,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
               disabled={!companyName}
               className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
                 companyName
-                  ? 'bg-[#0A8568] text-white hover:bg-[#3667B2]'
+                  ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}
             >

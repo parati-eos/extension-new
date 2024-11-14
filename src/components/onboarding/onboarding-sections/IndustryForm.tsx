@@ -168,7 +168,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
                 industry &&
                 (sector !== 'Other' || otherSector) &&
                 (industry !== 'Other' || otherIndustry)
-                  ? 'bg-[#0A8568] text-white hover:bg-blue-600'
+                  ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}
             >

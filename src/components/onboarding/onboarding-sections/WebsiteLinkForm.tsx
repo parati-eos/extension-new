@@ -72,7 +72,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
               disabled={!websiteLink}
               className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
                 websiteLink
-                  ? 'bg-[#0A8568] text-white hover:bg-[#3667B2]'
+                  ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}
             >
