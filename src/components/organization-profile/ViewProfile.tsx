@@ -1,10 +1,9 @@
-// src/components/ViewOrganizationProfile.tsx
 import React from 'react'
 import { FaEdit, FaLink, FaEnvelope, FaPhone, FaLinkedin } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import { useNavigate } from 'react-router-dom'
 
-const ViewOrganizationProfile: React.FC = () => {
+const ViewProfile: React.FC = () => {
   const navigate = useNavigate()
 
   const handleEditClick = () => {
@@ -97,4 +96,4 @@ const ViewOrganizationProfile: React.FC = () => {
   )
 }
 
-export default ViewOrganizationProfile
+export default ViewProfile
