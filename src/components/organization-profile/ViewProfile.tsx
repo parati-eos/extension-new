@@ -1,3 +1,4 @@
+// src/components/ViewProfile.tsx
 import React from 'react'
 import { FaEdit, FaLink, FaEnvelope, FaPhone, FaLinkedin } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
@@ -11,14 +12,14 @@ const ViewProfile: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen lg:min-h-[90vh] bg-gray-100 flex items-center justify-center p-4">
+    <div className=" bg-gray-100 flex items-center justify-center p-4">
       {/* Main White Box Container */}
-      <div className="relative bg-white rounded-lg shadow-lg w-full max-w-4xl h-auto overflow-hidden flex flex-col">
+      <div className="relative bg-white rounded-lg shadow-xl w-[95%] h-[85vh] flex mt-2 justify-center p-6">
         {/* Color Box */}
-        <div className="absolute rounded-lg m-2 w-[98%] h-1/2 bg-slate-800"></div>
+        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-r from-green-400 to-green-600 rounded-t-lg shadow-md"></div>
 
         {/* Content Box */}
-        <div className="relative bg-white p-6 sm:p-8 m-4 rounded-lg shadow-md z-10 flex flex-col space-y-8 h-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] mx-auto mt-8">
+        <div className="absolute top-[10%] left-1/2 transform -translate-x-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
           {/* Top Section: Logo, Organization Info, Edit Profile */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
             {/* Circular Logo */}
@@ -31,14 +32,14 @@ const ViewProfile: React.FC = () => {
             {/* Organization Info */}
             <div className="text-center sm:text-left">
               <h2 className="text-2xl font-bold text-gray-800">
-                Organization Name
+                AZ Corporation
               </h2>
               <p className="text-sm text-gray-500">
-                Industry: Tech &bull; Sector: Software
+                Transportation • Public Sector
               </p>
               <button
                 onClick={handleEditClick}
-                className="mt-2 bg-white hover:bg-slate-500 hover:text-white border-slate-500 border text-slate-900 px-4 py-2 rounded-md flex items-center justify-center space-x-2 shadow"
+                className="mt-2 bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-2 rounded-md flex items-center justify-center space-x-2 shadow"
               >
                 <FaEdit />
                 <span>Edit Profile</span>
@@ -47,46 +48,48 @@ const ViewProfile: React.FC = () => {
           </div>
 
           {/* Contact Info Section */}
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 w-full">
             {/* Website Link */}
             <div className="flex items-start space-x-4">
-              <FaLink className="text-gray-500 text-xl" />
+              <FaLink className="text-[#3667B2] text-xl" />
               <div>
                 <h4 className="text-lg font-semibold text-gray-700">
                   Website Link
                 </h4>
-                <p className="text-gray-600 break-words">https://example.com</p>
+                <p className="text-gray-600 break-words">
+                  https://azcorporation.com
+                </p>
               </div>
             </div>
 
             {/* Email */}
             <div className="flex items-start space-x-4">
-              <FaEnvelope className="text-gray-500 text-xl" />
+              <FaEnvelope className="text-[#3667B2] text-xl" />
               <div>
                 <h4 className="text-lg font-semibold text-gray-700">Email</h4>
-                <p className="text-gray-600 break-words">info@example.com</p>
+                <p className="text-gray-600 break-words">
+                  contact@azcorporation.com
+                </p>
               </div>
             </div>
 
             {/* Phone */}
             <div className="flex items-start space-x-4">
-              <FaPhone className="text-gray-500 text-xl" />
+              <FaPhone className="text-[#3667B2] text-xl" />
               <div>
                 <h4 className="text-lg font-semibold text-gray-700">Phone</h4>
-                <p className="text-gray-600 break-words">+1 (123) 456-7890</p>
+                <p className="text-gray-600 break-words">+91-804-1457</p>
               </div>
             </div>
 
             {/* LinkedIn Profile */}
             <div className="flex items-start space-x-4">
-              <FaLinkedin className="text-gray-500 text-xl" />
+              <FaLinkedin className="text-[#3667B2] text-xl" />
               <div>
                 <h4 className="text-lg font-semibold text-gray-700">
                   LinkedIn Profile
                 </h4>
-                <p className="text-gray-600 break-words">
-                  https://linkedin.com/company/example
-                </p>
+                <p className="text-gray-600 break-words">azcorporation</p>
               </div>
             </div>
           </div>

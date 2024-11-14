@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-gray-400 p-2">
+    <nav className="bg-white p-2">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo with icon and text */}
         <div className="flex items-center space-x-2">
@@ -28,12 +28,12 @@ const Navbar: React.FC = () => {
             <FaClock className="text-base" />
             <span>History</span>
           </button>
-          <FaUserCircle className="text-white text-2xl" />
+          <FaUserCircle className="text-[#3667B2] text-2xl" />
         </div>
 
         {/* Mobile Menu Icon */}
         <div className="sm:hidden flex items-center">
-          <button onClick={toggleMenu} className="text-white text-2xl">
+          <button onClick={toggleMenu} className="text-[#3667B2] text-2xl">
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
