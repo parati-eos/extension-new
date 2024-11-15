@@ -4,11 +4,15 @@ import { FaPhone } from 'react-icons/fa'
 interface ContactDetailsFormProps {
   onContinue: (data: {
     contactEmail: string
-    phone: string
-    linkedin: string
+    contactPhone: string
+    linkedinLink: string
   }) => void
   onBack: () => void
-  initialData: { contactEmail: string; phone: string; linkedin: string }
+  initialData: {
+    contactEmail: string
+    contactPhone: string
+    linkedinLink: string
+  }
 }
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
@@ -17,16 +21,16 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   initialData,
 }) => {
   const [contactEmail, setContactEmail] = useState(initialData.contactEmail)
-  const [phone, setPhone] = useState(initialData.phone)
-  const [linkedin, setLinkedin] = useState(initialData.linkedin)
+  const [contactPhone, setContactPhone] = useState(initialData.contactPhone)
+  const [linkedinLink, setLinkedinLink] = useState(initialData.linkedinLink)
   const [isLinkedinValid, setIsLinkedinValid] = useState(true)
   const [isEmailValid, setIsEmailValid] = useState(true)
   const [isPhoneValid, setIsPhoneValid] = useState(true)
 
   useEffect(() => {
     setContactEmail(initialData.contactEmail)
-    setPhone(initialData.phone)
-    setLinkedin(initialData.linkedin)
+    setContactPhone(initialData.contactPhone)
+    setLinkedinLink(initialData.linkedinLink)
   }, [initialData])
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,22 +42,22 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setPhone(value)
+    setContactPhone(value)
     const phoneRegex = /^\+?[1-9]\d{1,14}$/
     setIsPhoneValid(phoneRegex.test(value))
   }
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setLinkedin(value)
+    setLinkedinLink(value)
     const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/.*$/
     setIsLinkedinValid(linkedinRegex.test(value))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (contactEmail && phone && linkedin && isLinkedinValid) {
-      onContinue({ contactEmail, phone, linkedin })
+    if (contactEmail && contactPhone && linkedinLink && isLinkedinValid) {
+      onContinue({ contactEmail, contactPhone, linkedinLink })
     }
   }
 
@@ -106,7 +110,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               className={`mb-4 p-2 border w-full rounded-xl ${
                 !isPhoneValid ? 'border-red-500' : ''
               }`}
-              value={phone}
+              value={contactPhone}
               onChange={handlePhoneChange}
             />
             {!isPhoneValid && (
@@ -125,7 +129,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               id="linkedin"
               placeholder="Link of your LinkedIn profile"
               className="mb-4 p-2 border w-full rounded-xl"
-              value={linkedin}
+              value={linkedinLink}
               onChange={handleLinkedinChange}
             />
             {!isLinkedinValid && (
@@ -138,10 +142,13 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             <button
               type="submit"
               disabled={
-                !contactEmail || !phone || !linkedin || !isLinkedinValid
+                !contactEmail ||
+                !contactPhone ||
+                !linkedinLink ||
+                !isLinkedinValid
               }
               className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
-                contactEmail && phone && linkedin && isLinkedinValid
+                contactEmail && contactPhone && linkedinLink && isLinkedinValid
                   ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
                   : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
               }`}

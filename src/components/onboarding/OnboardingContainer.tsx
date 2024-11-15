@@ -10,7 +10,7 @@ import axios from 'axios'
 interface FormData {
   companyName: string
   contactEmail: string
-  phone: string
+  contactPhone: string
   linkedin: string
   sector: string
   industry: string
@@ -25,7 +25,7 @@ const OnboardingContainer: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     companyName: '',
     contactEmail: '',
-    phone: '',
+    contactPhone: '',
     linkedin: '',
     sector: '',
     industry: '',
@@ -51,10 +51,9 @@ const OnboardingContainer: React.FC = () => {
   const generateOrgId = () => {
     return 'Parati-' + Date.now()
   }
-  const orgId = generateOrgId()
+  const generatedOrgId = generateOrgId()
 
-  // State to store the document ID returned by the API
-  const [documentId, setDocumentId] = useState<string | null>('')
+  const [orgId, setOrgId] = useState('')
 
   // Function to handle API calls (POST for first section, PATCH for others)
   const submitFormData = async (data: Partial<typeof formData>) => {
@@ -66,14 +65,17 @@ const OnboardingContainer: React.FC = () => {
           `${process.env.REACT_APP_ORG_URL}/organizationcreate-patch`,
           {
             ...data,
-            orgId,
-            userId: 'TEst123213',
+            orgId: generatedOrgId,
+            userId: '1231',
           }
         )
-        setDocumentId(response.data.orgId)
+        console.log('Response:', response.data.orgId)
+        setOrgId(response.data.orgId)
+        localStorage.setItem('orgId', response.data.orgId)
+        console.log('ORG ID From Local Storage:', localStorage.getItem('orgId'))
       } else {
         await axios.patch(
-          `${process.env.REACT_APP_ORG_URL}/organizationedit/${documentId}`,
+          `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
           data
         )
       }
@@ -153,8 +155,8 @@ const OnboardingContainer: React.FC = () => {
             onBack={handleBack}
             initialData={{
               contactEmail: formData.contactEmail,
-              phone: formData.phone,
-              linkedin: formData.linkedin,
+              contactPhone: formData.contactPhone,
+              linkedinLink: formData.linkedin,
             }}
           />
         )
