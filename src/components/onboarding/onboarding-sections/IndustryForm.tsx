@@ -70,15 +70,12 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         industry: industryData,
       })
     }
-
-    console.log('Sector:', sectorData)
-    console.log('Industry:', industryData)
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 text-center">
-      <div className="bg-white shadow-lg w-full max-w-4xl h-auto md:w-[600px] md:h-[700px] lg:w-[800px] lg:h-[600px] rounded-3xl flex flex-col justify-between p-4 sm:p-8 mx-auto">
-        <div className="flex flex-col items-center mb-4 gap-1 lg:mb-8">
+    <div className="flex flex-col items-center justify-start min-w-full min-h-screen p-4 sm:p-6 text-center">
+      <div className="w-full lg:mt-2 mt-[8rem] lg:bg-white lg:shadow-lg lg:max-w-4xl lg:w-[800px] lg:h-[600px] lg:rounded-3xl lg:flex lg:flex-col lg:justify-between lg:p-4 lg:sm:p-8 lg:mx-auto">
+        <div className="flex flex-col items-center gap-1 lg:mb-8 mt-8 lg:mt-0">
           <FaCity className="text-[#3667B2] text-4xl mb-2" />
           <h1 className="text-2xl text-[#091220] font-bold mb-1">
             Your Industry
@@ -89,9 +86,9 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         </div>
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-center justify-center flex-grow lg:my-8 w-full max-w-sm mx-auto"
+          className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
         >
-          <div className="w-full">
+          <div className="w-full mt-8 lg:mt-0 px-2 sm:px-0">
             <label
               htmlFor="sector"
               className="mb-2 font-semibold text-[#4A4B4D] block text-left"
@@ -154,7 +151,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               />
             )}
           </div>
-          <div className="flex flex-col items-center justify-center mt-4 w-full space-y-2">
+          <div className="flex flex-col items-center justify-center mt-[3rem] w-full space-y-2 px-2 sm:px-0">
             <button
               type="submit"
               disabled={
@@ -163,7 +160,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
                 (sector === 'Other' && !otherSector) ||
                 (industry === 'Other' && !otherIndustry)
               }
-              className={`px-6 py-2 rounded-xl transition w-full max-w-sm ${
+              className={`px-6 py-2 rounded-xl h-12 transition w-full ${
                 sector &&
                 industry &&
                 (sector !== 'Other' || otherSector) &&
@@ -177,7 +174,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="px-6 py-2 border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-xl transition w-full max-w-sm text-[#797C81]"
+              className="px-6 py-2 border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-xl transition w-full text-[#797C81]"
             >
               Back
             </button>

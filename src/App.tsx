@@ -3,11 +3,14 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Onboarding from './pages/Onboarding.tsx'
 import ViewOrganizationProfile from './pages/ViewOrganizationProfile.tsx'
 import EditOrganizationProfile from './pages/EditOrganizationProfile.tsx'
+import PresentationView from './pages/PresentationView.tsx'
+import Auth from './pages/Auth.tsx'
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Auth />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route
           path="/organization-profile"
@@ -17,6 +20,7 @@ const App: React.FC = () => {
           path="/edit-organization-profile"
           element={<EditOrganizationProfile />}
         />
+        <Route path="/presentation-view" element={<PresentationView />} />
       </Routes>
     </Router>
   )

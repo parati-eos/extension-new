@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
-import { FaUserCircle, FaBars, FaTimes, FaClock } from 'react-icons/fa'
+import { FaClock, FaUserCircle, FaPlus } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import ZynthLogoText from '../../assets/zynth-text.png'
 
-const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false)
+const Navbar = () => {
+  // const userProfilePictureUrl = localStorage.getItem('userDP') || '' // Replace with the actual URL of the user's profile picture
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
+  // const handleProfileClick = () => {
+  //   // Redirect to the user's profile page
+  // }
 
   return (
     <nav className="bg-white p-2">
@@ -19,39 +18,35 @@ const Navbar: React.FC = () => {
           <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
         </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden sm:flex items-center space-x-4">
+        {/* Menu */}
+        <div className="flex items-center space-x-4">
           <button className="bg-[#3667B2] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-2 rounded-md">
-            + New Presentation
+            <span className="sm:hidden text-base">
+              <FaPlus />
+            </span>
+            <span className="hidden sm:flex items-center space-x-2">
+              <FaPlus />
+              <span>New Presentation</span>
+            </span>
           </button>
-          <button className="bg-white text-[#3667B2] hover:bg-[#3667B2] hover:text-white border-[#3667B2] border text-base font-medium px-4 py-2 rounded-md flex items-center space-x-2">
-            <FaClock className="text-base" />
-            <span>History</span>
+          <button className="bg-white border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-2 rounded-md">
+            <span className="sm:hidden text-base">
+              <FaClock />
+            </span>
+            <span className="hidden sm:flex items-center space-x-2">
+              <FaClock />
+              <span>History</span>
+            </span>
           </button>
-          <FaUserCircle className="text-[#3667B2] text-2xl" />
-        </div>
-
-        {/* Mobile Menu Icon */}
-        <div className="sm:hidden flex items-center">
-          <button onClick={toggleMenu} className="text-[#3667B2] text-2xl">
-            {isOpen ? <FaTimes /> : <FaBars />}
-          </button>
+          <FaUserCircle className="text-[#3667B2] text-4xl" />
+          {/* <img
+            src={userProfilePictureUrl}
+            alt="User Profile"
+            className="w-8 h-8 rounded-full hover:scale-105 cursor-pointer"
+            onClick={handleProfileClick}
+          /> */}
         </div>
       </div>
-
-      {/* Conditionally Render Mobile Dropdown Menu */}
-      {isOpen && (
-        <div className="sm:hidden mt-4 bg-gray-700 text-white space-y-2 p-4 rounded transition-transform duration-300 ease-in-out transform translate-y-0 opacity-100">
-          <button className="w-full bg-[#3667B2] text-white text-base font-medium px-4 py-2 rounded-md">
-            + New Presentation
-          </button>
-          <button className="w-full bg-white text-[#3667B2] border-[#3667B2] border-[1px] text-base font-medium px-4 py-2 rounded-md flex items-center justify-center space-x-2">
-            <FaClock className="text-[#3667B2] text-base" />
-            <span>History</span>
-          </button>
-          <FaUserCircle className="text-white text-2xl mx-auto" />
-        </div>
-      )}
     </nav>
   )
 }

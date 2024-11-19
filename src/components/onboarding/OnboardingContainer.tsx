@@ -6,6 +6,7 @@ import IndustryForm from './onboarding-sections/IndustryForm.tsx'
 import LogoForm from './onboarding-sections/LogoForm.tsx'
 import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 interface FormData {
   companyName: string
@@ -32,6 +33,9 @@ const OnboardingContainer: React.FC = () => {
     websiteLink: '',
     logo: null,
   })
+  const [orgId, setOrgId] = useState('')
+  const navigate = useNavigate()
+  const userId = localStorage.getItem('userEmail')
 
   // Check if screen size is medium or larger to show sidebar
   useEffect(() => {
@@ -53,12 +57,8 @@ const OnboardingContainer: React.FC = () => {
   }
   const generatedOrgId = generateOrgId()
 
-  const [orgId, setOrgId] = useState('')
-
   // Function to handle API calls (POST for first section, PATCH for others)
   const submitFormData = async (data: Partial<typeof formData>) => {
-    console.log('Submitting form data:', data)
-
     try {
       if (currentSection === 1) {
         const response = await axios.post(
@@ -66,13 +66,11 @@ const OnboardingContainer: React.FC = () => {
           {
             ...data,
             orgId: generatedOrgId,
-            userId: '1231',
+            userId: userId,
           }
         )
-        console.log('Response:', response.data.orgId)
         setOrgId(response.data.orgId)
         localStorage.setItem('orgId', response.data.orgId)
-        console.log('ORG ID From Local Storage:', localStorage.getItem('orgId'))
       } else {
         await axios.patch(
           `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
@@ -97,6 +95,8 @@ const OnboardingContainer: React.FC = () => {
       if (!visitedSections.includes(nextSection)) {
         setVisitedSections([...visitedSections, nextSection])
       }
+    } else {
+      navigate('/organization-profile')
     }
   }
 
@@ -166,20 +166,36 @@ const OnboardingContainer: React.FC = () => {
   }
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      {isMediumOrLargerScreen && (
-        <Sidebar
-          lastVisitedSection={currentSection}
-          visitedSections={visitedSections}
-        />
+    <>
+      {/* Progress Bar for Small and Medium Screens */}
+      {!isMediumOrLargerScreen && (
+        <div className="flex mt-[3rem] lg:mt-0 justify-between p-4">
+          {[1, 2, 3, 4, 5].map((section) => (
+            <div
+              key={section}
+              className={`h-1 flex-1 mx-1 ${
+                currentSection >= section ? 'bg-[#3667B2]' : 'bg-gray-300'
+              }`}
+            ></div>
+          ))}
+        </div>
       )}
 
-      {/* Onboarding Content */}
-      <div className="flex-1 flex items-center justify-center min-h-screen bg-white">
-        {renderSectionContent()}
+      <div className="flex flex-1">
+        {/* Sidebar for Medium and Larger Screens */}
+        {isMediumOrLargerScreen && (
+          <Sidebar
+            lastVisitedSection={currentSection}
+            visitedSections={visitedSections}
+          />
+        )}
+
+        {/* Onboarding Content */}
+        <div className="flex-1 flex items-start justify-center w-full bg-white">
+          {renderSectionContent()}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
