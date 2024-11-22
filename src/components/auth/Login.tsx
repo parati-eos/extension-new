@@ -18,10 +18,17 @@ function Login() {
   const defaultAvatarUrl =
     'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true'
 
+  // Function to generate a unique organization ID
+  const generateOrgId = () => {
+    return 'Parati-' + Date.now()
+  }
+
+  const generatedOrgId = generateOrgId()
+
   const handleGoogleSuccess = (credentialResponse: any) => {
     const decoded: DecodedToken = jwtDecode(credentialResponse.credential)
-    localStorage.setItem('userEmail', decoded.email)
-    localStorage.setItem('userDP', decoded.picture)
+    sessionStorage.setItem('userEmail', decoded.email)
+    sessionStorage.setItem('userDP', decoded.picture)
 
     const userData = {
       name: decoded.name,
@@ -30,9 +37,6 @@ function Login() {
 
     // Send user data to MongoDB via API
     saveUserData(userData)
-
-    // Redirect to /onboarding if new user, else redirect to /organization-profile if existing user
-    navigate('/onboarding')
   }
 
   const handleMicrosoftLogin = async () => {
@@ -48,11 +52,8 @@ function Login() {
 
         saveUserData(userData)
 
-        localStorage.setItem('userEmail', userData.email)
-        localStorage.setItem('userDP', userData.picture)
-
-        // Redirect to success page upon successful login
-        navigate('/applicationLanding')
+        sessionStorage.setItem('userEmail', userData.email)
+        sessionStorage.setItem('userDP', userData.picture)
       } else {
         throw new Error('Microsoft Login Failed: No access token found')
       }
@@ -69,23 +70,35 @@ function Login() {
         'https://ipinfo.io/json?token=f0e9cf876d422e'
       )
       const ipInfoData = await ipInfoResponse.json()
-      const signupLink = localStorage.getItem('sign_up_link') || ''
+      const signupLink = `${window.location.origin}/signup/${generatedOrgId}`
 
       const userIPCountryData = {
-        ...userData,
-        source: '',
-        user_ipcountry: ipInfoData.country || '',
-        user_country_name: ipInfoData.country_name || '',
-        sign_up_link: signupLink,
+        userId: userData.email,
+        name: userData.name,
+        orgId: generatedOrgId,
+        pptCount: 0,
+        userIPCountry: ipInfoData.country!,
+        signupLink: signupLink,
+        signupTime: new Date().toString(),
+        latestLogin: new Date().toString(),
       }
 
-      await fetch(`${serverurl}/users`, {
+      const res = await fetch(`${serverurl}/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user: userIPCountryData }),
+        body: JSON.stringify(userIPCountryData),
       })
+
+      const responseData = await res.json()
+
+      if (responseData.orgId && responseData.orgId !== '') {
+        sessionStorage.setItem('orgId', responseData.orgId)
+        navigate('/organization-profile')
+      } else {
+        navigate('/onboarding')
+      }
     } catch (error) {
       console.error('Error storing user data:', error)
     }
@@ -99,18 +112,18 @@ function Login() {
 
       <div className="relative flex flex-col md:flex-row justify-center items-center h-full w-full">
         {/* Image Section */}
-        <div className="flex justify-center items-center h-[40vh] md:h-full w-full md:w-1/2 px-4 md:px-0">
+        <div className="flex justify-center items-center h-[40vh] md:h-full w-full md:w-1/2 md:px-0">
           <img
             src={ContentImage}
             alt="Auth"
-            className="h-full w-full max-h-[400px] md:max-h-none object-cover rounded-lg"
+            className="h-full w-full max-h-[400px] md:max-h-none object-cover "
             loading="lazy"
           />
         </div>
-        {/* Details Section */}
+        {/* Buttons Section */}
         <div className="flex justify-center items-center h-[60vh] md:h-full w-full md:w-1/2 px-6 md:px-12">
           <div className="p-6 bg-transparent border-2 border-[#004264] shadow-lg text-white rounded-lg flex flex-col items-center w-full max-w-md">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2 md:mb-4">
+            <h1 className="text-2xl md:text-3xl font-bold lg:mb-2 md:mb-4">
               Login
             </h1>
             <div className="flex flex-col justify-center items-center">

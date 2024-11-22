@@ -2,7 +2,7 @@ import React from 'react'
 import ViewPresentation from '../components/presentation-view/ViewPresentation'
 import Navbar from '../components/shared/Navbar'
 
-const PresentationView: React.FC = () => {
+const PresentationViewPage: React.FC = () => {
   return (
     <>
       <Navbar />
@@ -11,4 +11,4 @@ const PresentationView: React.FC = () => {
   )
 }
 
-export default PresentationView
+export default PresentationViewPage

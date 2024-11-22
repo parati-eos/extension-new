@@ -1,16 +1,34 @@
-import { FaClock, FaUserCircle, FaPlus } from 'react-icons/fa'
+import { FaClock, FaPlus } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import ZynthLogoText from '../../assets/zynth-text.png'
+import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 const Navbar = () => {
-  // const userProfilePictureUrl = localStorage.getItem('userDP') || '' // Replace with the actual URL of the user's profile picture
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [userProfileImage, setUserProfileImage] = useState<string | null>(null)
 
-  // const handleProfileClick = () => {
-  //   // Redirect to the user's profile page
-  // }
+  const navigate = useNavigate()
 
+  const handleLogout = () => {
+    sessionStorage.clear()
+    navigate('/')
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setDropdownOpen(false)
+    }, 5000)
+  }, [dropdownOpen])
+
+  useEffect(() => {
+    const userDP = sessionStorage.getItem('userDP')
+    if (userDP) {
+      setUserProfileImage(`${userDP}?timestamp=${Date.now()}`)
+    }
+  }, [])
   return (
-    <nav className="bg-white p-2">
+    <nav className="bg-white p-2 pt-10 lg:pt-2">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo with icon and text */}
         <div className="flex items-center space-x-2">
@@ -20,7 +38,10 @@ const Navbar = () => {
 
         {/* Menu */}
         <div className="flex items-center space-x-4">
-          <button className="bg-[#3667B2] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-2 rounded-md">
+          <button
+            onClick={() => navigate('/new-presentation')}
+            className="bg-[#3667B2] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
+          >
             <span className="sm:hidden text-base">
               <FaPlus />
             </span>
@@ -29,7 +50,10 @@ const Navbar = () => {
               <span>New Presentation</span>
             </span>
           </button>
-          <button className="bg-white border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-2 rounded-md">
+          <button
+            onClick={() => navigate('/history')}
+            className="bg-white border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
+          >
             <span className="sm:hidden text-base">
               <FaClock />
             </span>
@@ -38,13 +62,36 @@ const Navbar = () => {
               <span>History</span>
             </span>
           </button>
-          <FaUserCircle className="text-[#3667B2] text-4xl" />
-          {/* <img
-            src={userProfilePictureUrl}
+          {/* User Profile Icon */}
+          <img
+            src={userProfileImage!}
             alt="User Profile"
-            className="w-8 h-8 rounded-full hover:scale-105 cursor-pointer"
-            onClick={handleProfileClick}
-          /> */}
+            className="w-11 h-11 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          />
+          {/* Dropdown */}
+          {dropdownOpen && (
+            <div className="absolute top-20 lg:top-16 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32">
+              <button
+                onClick={() => navigate('/organization-profile')}
+                className="w-full text-[#5D5F61] text-left text-sm py-1  px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
+              >
+                Organization Profile
+              </button>
+              <button className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap">
+                Subscription Plans
+              </button>
+              <button className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap">
+                Billing and Invoice
+              </button>
+              <button
+                className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

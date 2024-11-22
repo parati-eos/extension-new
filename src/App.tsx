@@ -1,26 +1,28 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Onboarding from './pages/Onboarding.tsx'
-import ViewOrganizationProfile from './pages/ViewOrganizationProfile.tsx'
-import EditOrganizationProfile from './pages/EditOrganizationProfile.tsx'
-import PresentationView from './pages/PresentationView.tsx'
-import Auth from './pages/Auth.tsx'
+import OnboardingPage from './pages/OnboardingPage.tsx'
+import ViewOrganizationProfilePage from './pages/ViewOrganizationProfilePage.tsx'
+import EditOrganizationProfilePage from './pages/EditOrganizationProfilePage.tsx'
+import PresentationViewPage from './pages/PresentationViewPage.tsx'
+import AuthPage from './pages/AuthPage.tsx'
+import HistoryPage from './pages/HistoryPage.tsx'
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Auth />} />
-        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
         <Route
           path="/organization-profile"
-          element={<ViewOrganizationProfile />}
+          element={<ViewOrganizationProfilePage />}
         />
         <Route
           path="/edit-organization-profile"
-          element={<EditOrganizationProfile />}
+          element={<EditOrganizationProfilePage />}
         />
-        <Route path="/presentation-view" element={<PresentationView />} />
+        <Route path="/presentation-view" element={<PresentationViewPage />} />
+        <Route path="/history" element={<HistoryPage />} />
       </Routes>
     </Router>
   )

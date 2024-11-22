@@ -2,7 +2,7 @@ import React from 'react'
 import Navbar from '../components/shared/Navbar'
 import ViewProfile from '../components/organization-profile/ViewProfile'
 
-const ViewOrganizationProfile = () => {
+const ViewOrganizationProfilePage: React.FC = () => {
   return (
     <>
       <Navbar />
@@ -11,4 +11,4 @@ const ViewOrganizationProfile = () => {
   )
 }
 
-export default ViewOrganizationProfile
+export default ViewOrganizationProfilePage

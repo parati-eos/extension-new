@@ -1,7 +1,7 @@
 import React from 'react'
 import Login from '../components/auth/Login'
 
-const Auth = () => {
+const AuthPage: React.FC = () => {
   return (
     <>
       <Login />
@@ -9,4 +9,4 @@ const Auth = () => {
   )
 }
 
-export default Auth
+export default AuthPage

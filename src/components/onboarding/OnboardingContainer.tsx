@@ -33,9 +33,9 @@ const OnboardingContainer: React.FC = () => {
     websiteLink: '',
     logo: null,
   })
-  const [orgId, setOrgId] = useState('')
+  const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
-  const userId = localStorage.getItem('userEmail')
+  const userId = sessionStorage.getItem('userEmail')
 
   // Check if screen size is medium or larger to show sidebar
   useEffect(() => {
@@ -51,26 +51,18 @@ const OnboardingContainer: React.FC = () => {
     }
   }, [])
 
-  // Function to generate a unique organization ID
-  const generateOrgId = () => {
-    return 'Parati-' + Date.now()
-  }
-  const generatedOrgId = generateOrgId()
-
   // Function to handle API calls (POST for first section, PATCH for others)
   const submitFormData = async (data: Partial<typeof formData>) => {
     try {
       if (currentSection === 1) {
-        const response = await axios.post(
+        await axios.post(
           `${process.env.REACT_APP_ORG_URL}/organizationcreate-patch`,
           {
             ...data,
-            orgId: generatedOrgId,
+            orgId: orgId,
             userId: userId,
           }
         )
-        setOrgId(response.data.orgId)
-        localStorage.setItem('orgId', response.data.orgId)
       } else {
         await axios.patch(
           `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
@@ -169,7 +161,7 @@ const OnboardingContainer: React.FC = () => {
     <>
       {/* Progress Bar for Small and Medium Screens */}
       {!isMediumOrLargerScreen && (
-        <div className="flex mt-[3rem] lg:mt-0 justify-between p-4">
+        <div className="flex mt-[4rem] lg:mt-0 justify-between p-4">
           {[1, 2, 3, 4, 5].map((section) => (
             <div
               key={section}

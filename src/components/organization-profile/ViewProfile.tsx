@@ -46,7 +46,7 @@ const ViewProfile: React.FC = () => {
     navigate('/edit-organization-profile')
   }
 
-  const orgId = localStorage.getItem('orgId')
+  const orgId = sessionStorage.getItem('orgId')
 
   // Call a GET API to fetch organization data
   useEffect(() => {
@@ -62,20 +62,212 @@ const ViewProfile: React.FC = () => {
   }, [orgId])
 
   return (
-    <div className="bg-gray-100 flex flex-col items-center justify-start min-h-screen overflow-hidden">
-      {/* Color Box for Mobile */}
-      <div className="w-full h-[30vh] bg-[#3667B2] lg:hidden relative"></div>
+    // <div className="bg-gray-100 flex flex-col items-center min-h-screen overflow-hidden">
+    //   {/* Color Box for Mobile */}
+    //   <div
+    //     className="w-full h-[30vh] lg:hidden"
+    //     style={{
+    //       backgroundColor: bgColor,
+    //     }}
+    //   ></div>
 
-      {/* Main White Box Container */}
-      <div className="relative bg-white rounded-lg shadow-xl w-[95%] h-[85vh] mt-2 justify-center p-6 lg:block hidden">
+    //   {/* Main White Box Container for Larger Screens */}
+    //   <div className="hidden lg:flex relative bg-white rounded-lg shadow-xl w-[95%] h-[88vh] justify-center p-6">
+    //     {/* Color Box */}
+    //     <div
+    //       className="absolute top-0 w-[99%] h-1/2 rounded-lg shadow-md"
+    //       style={{ backgroundColor: bgColor }}
+    //     ></div>
+
+    //     {/* Content Box */}
+    //     <div className="absolute h-[80%] left-1/2 transform -translate-x-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
+    //       {/* Top Section: Logo, Organization Info */}
+    //       <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+    //         {/* Circular Logo */}
+    //         <img
+    //           src={organizationData?.logo}
+    //           alt="Organization Logo"
+    //           className="w-24 h-24 rounded-full shadow-md"
+    //         />
+
+    //         {/* Organization Info */}
+    //         <div className="text-center sm:text-left">
+    //           <h2 className="text-2xl font-bold text-gray-800">
+    //             {organizationData?.companyName}
+    //           </h2>
+    //           <p className="text-sm text-gray-500">
+    //             {organizationData?.industry} • {organizationData?.sector}
+    //           </p>
+    //           {/* Edit Button */}
+    //           <button
+    //             onClick={handleEditClick}
+    //             className="mt-4 bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-2 rounded-md flex items-center space-x-2 shadow"
+    //           >
+    //             <FaEdit />
+    //             <span>Edit Profile</span>
+    //           </button>
+    //         </div>
+    //       </div>
+
+    //       {/* Contact Info Section */}
+    //       <div className="flex flex-col space-y-4 w-full flex-grow">
+    //         {/* Website Link */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaLink className="text-[#3667B2] text-base sm:text-lg" />
+    //           <div>
+    //             <h4 className="text-base font-semibold text-gray-700">
+    //               Website Link
+    //             </h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.websiteLink}
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //         {/* Email */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaEnvelope className="text-[#3667B2] text-base sm:text-lg" />
+    //           <div>
+    //             <h4 className="text-base font-semibold text-gray-700">Email</h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.contactEmail}
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //         {/* Phone */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaPhone className="text-[#3667B2] text-base sm:text-lg" />
+    //           <div>
+    //             <h4 className="text-base font-semibold text-gray-700">Phone</h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.contactPhone}
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //         {/* LinkedIn Profile */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaLinkedin className="text-[#3667B2] text-base sm:text-lg" />
+    //           <div>
+    //             <h4 className="text-base font-semibold text-gray-700">
+    //               LinkedIn Profile
+    //             </h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.linkedinLink}
+    //             </p>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+
+    //   {/* Mobile View */}
+    //   <div className="relative w-full lg:hidden flex items-center justify-center">
+    //     {/* Content Box */}
+    //     <div className="absolute mt-[30%] bg-white p-6 sm:p-8 rounded-lg shadow-lg w-[90%] sm:w-[75%] flex flex-col items-center">
+    //       {/* Top Section: Logo, Organization Info */}
+    //       <div className="flex flex-col mb-6 items-center sm:items-start space-y-4">
+    //         {/* Circular Logo */}
+    //         <img
+    //           src={organizationData?.logo}
+    //           alt="Organization Logo"
+    //           className="w-20 h-20 rounded-full shadow-md"
+    //         />
+
+    //         {/* Organization Info */}
+    //         <div className="text-center sm:text-left">
+    //           <h2 className="text-xl font-semibold text-gray-800">
+    //             {organizationData?.companyName}
+    //           </h2>
+    //           <p className="text-sm text-gray-500">
+    //             {organizationData?.industry} • {organizationData?.sector}
+    //           </p>
+    //         </div>
+    //       </div>
+
+    //       {/* Contact Info Section */}
+    //       <div className="flex flex-col space-y-4 w-full flex-grow">
+    //         {/* Website Link */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaLink className="text-[#3667B2] text-lg" />
+    //           <div>
+    //             <h4 className="text-sm font-semibold text-gray-700">
+    //               Website Link
+    //             </h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.websiteLink}
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //         {/* Email */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaEnvelope className="text-[#3667B2] text-lg" />
+    //           <div>
+    //             <h4 className="text-sm font-semibold text-gray-700">Email</h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.contactEmail}
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //         {/* Phone */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaPhone className="text-[#3667B2] text-lg" />
+    //           <div>
+    //             <h4 className="text-sm font-semibold text-gray-700">Phone</h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.contactPhone}
+    //             </p>
+    //           </div>
+    //         </div>
+
+    //         {/* LinkedIn Profile */}
+    //         <div className="flex items-start space-x-4">
+    //           <FaLinkedin className="text-[#3667B2] text-lg" />
+    //           <div>
+    //             <h4 className="text-sm font-semibold text-gray-700">
+    //               LinkedIn Profile
+    //             </h4>
+    //             <p className="text-gray-600 break-words">
+    //               {organizationData?.linkedinLink}
+    //             </p>
+    //           </div>
+    //         </div>
+    //       </div>
+
+    //       {/* Edit Profile Button */}
+    //       <button
+    //         onClick={handleEditClick}
+    //         className="w-full mt-6 bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-2 rounded-lg flex items-center space-x-2 shadow"
+    //       >
+    //         <FaEdit />
+    //         <span>Edit Profile</span>
+    //       </button>
+    //     </div>
+    //   </div>
+    // </div>
+
+    <div className="bg-gray-100 flex flex-col items-center min-h-screen overflow-hidden">
+      {/* Color Box for Mobile */}
+      <div
+        className="w-full h-[30vh] lg:hidden"
+        style={{
+          backgroundColor: bgColor,
+        }}
+      ></div>
+
+      {/* Main White Box Container for Larger Screens */}
+      <div className="hidden lg:flex relative bg-white rounded-lg shadow-xl w-[95%] h-[88vh] justify-center p-6">
         {/* Color Box */}
         <div
-          className="absolute top-0 left-0 w-full h-1/2 rounded-t-lg shadow-md"
+          className="absolute top-0 w-[99%] h-1/2 rounded-lg shadow-md"
           style={{ backgroundColor: bgColor }}
         ></div>
 
         {/* Content Box */}
-        <div className="absolute h-[80vh] left-1/2 transform -translate-x-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
+        <div className="absolute h-[80%] left-1/2 transform -translate-x-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
           {/* Top Section: Logo, Organization Info */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
             {/* Circular Logo */}
@@ -91,12 +283,12 @@ const ViewProfile: React.FC = () => {
                 {organizationData?.companyName}
               </h2>
               <p className="text-sm text-gray-500">
-                {`${organizationData?.industry} • ${organizationData?.sector}`}
+                {organizationData?.industry} • {organizationData?.sector}
               </p>
-              {/* Edit Button for Desktop */}
+              {/* Edit Button */}
               <button
                 onClick={handleEditClick}
-                className="mt-4 bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-2 rounded-md flex items-center justify-center space-x-2 shadow"
+                className="mt-4 bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-2 rounded-md flex items-center space-x-2 shadow"
               >
                 <FaEdit />
                 <span>Edit Profile</span>
@@ -105,12 +297,12 @@ const ViewProfile: React.FC = () => {
           </div>
 
           {/* Contact Info Section */}
-          <div className="flex flex-col space-y-4 w-full">
+          <div className="flex flex-col space-y-4 w-full flex-grow">
             {/* Website Link */}
             <div className="flex items-start space-x-4">
-              <FaLink className="text-[#3667B2] text-xl" />
+              <FaLink className="text-[#3667B2] text-base sm:text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">
+                <h4 className="text-base font-semibold text-gray-700">
                   Website Link
                 </h4>
                 <p className="text-gray-600 break-words">
@@ -121,9 +313,9 @@ const ViewProfile: React.FC = () => {
 
             {/* Email */}
             <div className="flex items-start space-x-4">
-              <FaEnvelope className="text-[#3667B2] text-xl" />
+              <FaEnvelope className="text-[#3667B2] text-base sm:text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">Email</h4>
+                <h4 className="text-base font-semibold text-gray-700">Email</h4>
                 <p className="text-gray-600 break-words">
                   {organizationData?.contactEmail}
                 </p>
@@ -132,9 +324,9 @@ const ViewProfile: React.FC = () => {
 
             {/* Phone */}
             <div className="flex items-start space-x-4">
-              <FaPhone className="text-[#3667B2] text-xl" />
+              <FaPhone className="text-[#3667B2] text-base sm:text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">Phone</h4>
+                <h4 className="text-base font-semibold text-gray-700">Phone</h4>
                 <p className="text-gray-600 break-words">
                   {organizationData?.contactPhone}
                 </p>
@@ -143,9 +335,9 @@ const ViewProfile: React.FC = () => {
 
             {/* LinkedIn Profile */}
             <div className="flex items-start space-x-4">
-              <FaLinkedin className="text-[#3667B2] text-xl" />
+              <FaLinkedin className="text-[#3667B2] text-base sm:text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">
+                <h4 className="text-base font-semibold text-gray-700">
                   LinkedIn Profile
                 </h4>
                 <p className="text-gray-600 break-words">
@@ -160,37 +352,37 @@ const ViewProfile: React.FC = () => {
       {/* Mobile View */}
       <div className="relative w-full lg:hidden flex items-center justify-center">
         {/* Content Box */}
-        <div className="absolute top-[8rem] h-[80vh] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
+        <div className="absolute mt-[60%] bg-white p-6 sm:p-8 rounded-lg shadow-lg w-[90%] sm:w-[75%] min-h-[65vh] flex flex-col items-center">
           {/* Top Section: Logo, Organization Info */}
-          <div className="flex flex-col gap-y-4 sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="flex flex-col mb-4 items-center sm:items-start space-y-4">
             {/* Circular Logo */}
             <img
               src={organizationData?.logo}
               alt="Organization Logo"
-              className="w-24 h-24 rounded-full shadow-md"
+              className="w-20 h-20 rounded-full shadow-md"
             />
 
             {/* Organization Info */}
             <div className="text-center sm:text-left">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 leading-relaxed">
                 {organizationData?.companyName}
               </h2>
-              <p className="text-sm text-gray-500">
-                {`${organizationData?.industry} • ${organizationData?.sector}`}
+              <p className="text-base text-gray-500 leading-relaxed">
+                {organizationData?.industry} • {organizationData?.sector}
               </p>
             </div>
           </div>
 
           {/* Contact Info Section */}
-          <div className="flex flex-col gap-y-4 space-y-4 w-full">
+          <div className="flex flex-col space-y-4 w-full flex-grow">
             {/* Website Link */}
             <div className="flex items-start space-x-4">
-              <FaLink className="text-[#3667B2] text-xl" />
+              <FaLink className="text-[#3667B2] mt-2 text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">
+                <h4 className="text-lg font-semibold text-gray-700 leading-relaxed">
                   Website Link
                 </h4>
-                <p className="text-gray-600 break-words">
+                <p className="text-gray-600 text-base break-words leading-relaxed">
                   {organizationData?.websiteLink}
                 </p>
               </div>
@@ -198,10 +390,12 @@ const ViewProfile: React.FC = () => {
 
             {/* Email */}
             <div className="flex items-start space-x-4">
-              <FaEnvelope className="text-[#3667B2] text-xl" />
+              <FaEnvelope className="text-[#3667B2] mt-2 text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">Email</h4>
-                <p className="text-gray-600 break-words">
+                <h4 className="text-xl font-semibold text-gray-700 leading-relaxed">
+                  Email
+                </h4>
+                <p className="text-gray-600 text-base break-words leading-relaxed">
                   {organizationData?.contactEmail}
                 </p>
               </div>
@@ -209,10 +403,12 @@ const ViewProfile: React.FC = () => {
 
             {/* Phone */}
             <div className="flex items-start space-x-4">
-              <FaPhone className="text-[#3667B2] text-xl" />
+              <FaPhone className="text-[#3667B2] mt-2 text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">Phone</h4>
-                <p className="text-gray-600 break-words">
+                <h4 className="text-xl font-semibold text-gray-700 leading-relaxed">
+                  Phone
+                </h4>
+                <p className="text-gray-600 text-base break-words leading-relaxed">
                   {organizationData?.contactPhone}
                 </p>
               </div>
@@ -220,22 +416,22 @@ const ViewProfile: React.FC = () => {
 
             {/* LinkedIn Profile */}
             <div className="flex items-start space-x-4">
-              <FaLinkedin className="text-[#3667B2] text-xl" />
+              <FaLinkedin className="text-[#3667B2] mt-2 text-lg" />
               <div>
-                <h4 className="text-lg font-semibold text-gray-700">
+                <h4 className="text-xl font-semibold text-gray-700 leading-relaxed">
                   LinkedIn Profile
                 </h4>
-                <p className="text-gray-600 break-words">
+                <p className="text-gray-600 text-base break-words leading-relaxed">
                   {organizationData?.linkedinLink}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Single Edit Profile Button for Mobile */}
+          {/* Edit Profile Button */}
           <button
             onClick={handleEditClick}
-            className="mt-4 w-full bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-2 rounded-md flex items-center justify-center space-x-2 shadow"
+            className="w-full mt-4 bg-white hover:bg-[#3667B2] hover:text-white border border-gray-300 hover:border-[#3667B2] text-slate-900 px-4 py-3 rounded-lg flex items-center justify-center space-x-2 shadow"
           >
             <FaEdit />
             <span>Edit Profile</span>
