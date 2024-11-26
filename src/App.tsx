@@ -14,7 +14,7 @@ const App: React.FC = () => {
     <TokenProvider>
       <Router>
         <Routes>
-          <Route path="/outh" element={<AuthPage />} />
+          <Route path="/" element={<AuthPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route
             path="/organization-profile"
