@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode'
 import ContentImage from '../../assets/authContentImage.png'
 import MicrosoftIcon from '../../assets/ms-login.svg'
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
+import { useToken } from '../../utils/TokenContext'
 
 type DecodedToken = {
   email: string
@@ -13,8 +14,14 @@ type DecodedToken = {
   name: string
 }
 
+interface IpInfoResponse {
+  country_name: string
+  [key: string]: any
+}
+
 function Login() {
   const navigate = useNavigate()
+  const { setToken } = useToken()
   const defaultAvatarUrl =
     'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true'
 
@@ -22,7 +29,6 @@ function Login() {
   const generateOrgId = () => {
     return 'Parati-' + Date.now()
   }
-
   const generatedOrgId = generateOrgId()
 
   const handleGoogleSuccess = (credentialResponse: any) => {
@@ -66,18 +72,16 @@ function Login() {
 
   const saveUserData = async (userData: Record<string, any>) => {
     try {
-      const ipInfoResponse = await fetch(
-        'https://ipinfo.io/json?token=f0e9cf876d422e'
-      )
-      const ipInfoData = await ipInfoResponse.json()
+      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
       const signupLink = `${window.location.origin}/signup/${generatedOrgId}`
 
-      const userIPCountryData = {
+      const userPayload = {
         userId: userData.email,
         name: userData.name,
         orgId: generatedOrgId,
         pptCount: 0,
-        userIPCountry: ipInfoData.country!,
+        userIPCountry: ipInfoData.country_name!,
         signupLink: signupLink,
         signupTime: new Date().toString(),
         latestLogin: new Date().toString(),
@@ -88,13 +92,16 @@ function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userIPCountryData),
+        credentials: 'include',
+        body: JSON.stringify(userPayload),
       })
 
       const responseData = await res.json()
+      setToken(responseData.token)
+      sessionStorage.setItem('orgId', generatedOrgId)
+      sessionStorage.setItem('id', responseData.userProfile._id)
 
       if (responseData.orgId && responseData.orgId !== '') {
-        sessionStorage.setItem('orgId', responseData.orgId)
         navigate('/organization-profile')
       } else {
         navigate('/onboarding')

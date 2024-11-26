@@ -7,27 +7,35 @@ import {
   FaShare,
   FaTrash,
 } from 'react-icons/fa'
-import * as React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Sidebar from './Sidebar'
 import CustomBuilderIcon from '../../assets/custom-builder.png'
 import SlideNarrativeIcon from '../../assets/slide-narrative.png'
 import QuickGenerateIcon from '../../assets/quick-generate.png'
 import './viewpresentation.css'
+import axios from 'axios'
+import { useToken } from '../../utils/TokenContext'
+
+interface Outline {
+  title: string
+  type: string
+  _id: string
+}
 
 export default function ViewPresentation() {
-  const [currentSlide, setCurrentSlide] = React.useState(1)
-  const [selectedImage, setSelectedImage] = React.useState('/placeholder.svg')
-  const [selectedOutline, setSelectedOutline] = React.useState('cover')
-  const [currentOutline, setCurrentOutline] = React.useState('cover')
-  const totalSlides = 5 // Assume 5 slides for pagination logic
-  const slideRefs = React.useRef<HTMLDivElement[]>([])
-  const [displayMode, setDisplayMode] = React.useState<'slides' | 'newContent'>(
+  const [currentSlide, setCurrentSlide] = useState(1)
+  const [selectedImage, setSelectedImage] = useState('/placeholder.svg')
+  const [selectedOutline, setSelectedOutline] = useState('cover')
+  const [currentOutline, setCurrentOutline] = useState('cover')
+  const totalSlides = 5 // Sample Slide Count
+  const slideRefs = useRef<HTMLDivElement[]>([])
+  const [displayMode, setDisplayMode] = useState<'slides' | 'newContent'>(
     'slides'
   )
-  const [plusClickedSlide, setPlusClickedSlide] = React.useState<number | null>(
-    null
-  )
-  const [finalized, setFinalized] = React.useState(false)
+  const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
+  const [finalized, setFinalized] = useState(false)
+  const [outlines, setOutlines] = useState<Outline[]>([])
+  const { token } = useToken()
 
   // Sample images for different slides
   const slideImages = {
@@ -41,6 +49,7 @@ export default function ViewPresentation() {
       'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-4.jpg',
   }
 
+  // Handle outline select change
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value
     setSelectedImage(
@@ -50,23 +59,28 @@ export default function ViewPresentation() {
     setSelectedOutline(e.target.value)
   }
 
+  // Handle share button click
   const handleShare = () => {
     alert('Share functionality triggered.')
   }
 
+  // Handle download button click
   const handleDownload = () => {
     alert('Download functionality triggered.')
   }
 
+  // Handle delete button click
   const handleDelete = () => {
     alert('Slide deleted.')
   }
 
+  // Handle confirm button click
   const handleConfirm = () => {
     alert('Changes confirmed.')
     setFinalized(true)
   }
 
+  // Handle outline select
   const handleOutlineSelect = (option: string) => {
     setSelectedOutline(option)
     setCurrentOutline(option)
@@ -79,6 +93,7 @@ export default function ViewPresentation() {
     slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  // Handle scroll event
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = e.currentTarget.scrollTop
     const slideHeight = e.currentTarget.clientHeight
@@ -90,6 +105,7 @@ export default function ViewPresentation() {
     }
   }
 
+  // Handle plus button click
   const handlePlusClick = () => {
     if (displayMode === 'newContent') {
       setDisplayMode('slides')
@@ -100,40 +116,67 @@ export default function ViewPresentation() {
     }
   }
 
+  // Fetch Outlines
+  useEffect(() => {
+    // Fetch outlines from API with async await and axios
+    const fetchOutlines = async () => {
+      try {
+        const response = await axios.get(
+          'https://microservice-v1.onrender.com/api/v1/outline/Document-1732515545837/outline',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setOutlines(response.data.outline)
+        console.log('Outlines fetched:', response.data.outline)
+      } catch (error) {
+        console.error('Error fetching outlines:', error)
+      }
+    }
+    fetchOutlines()
+  }, [token])
+
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">
-      {/* Main content container for medium and larger screens */}
-      <div className="hidden lg:flex lg:w-full">
-        {/* Sidebar for medium and larger screens */}
+      {/* Heading section for large screens */}
+      <div className="hidden lg:flex lg:w-full lg:absolute lg:left-0 lg:pl-8 lg:pr-8 lg:pt-4">
+        <div className="flex items-center gap-8 w-full">
+          <h1 className="text-2xl font-semibold break-words">
+            The Evolution of Our Path
+          </h1>
+          <div className="flex gap-2">
+            <button
+              onClick={handleShare}
+              className="text-[#5D5F61] gap-2 hover:text-blue-600 border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center"
+            >
+              <FaShare className="h-3 w-3" />
+              <span>Share</span>
+            </button>
+            <button
+              onClick={handleDownload}
+              className="text-[#5D5F61] gap-2 hover:text-blue-600 border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center"
+            >
+              <FaDownload className="h-3 w-3" />
+              <span>Export</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
+      {/* Main content container for medium and larger screens */}
+      <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16">
+        {/* Sidebar for medium and larger screens */}
         <Sidebar
           onOutlineSelect={handleOutlineSelect}
           selectedOutline={selectedOutline}
         />
 
-        <div className="flex-1 p-2">
-          <div className="flex items-center justify-between mt-2 mb-5">
-            <h1 className="text-2xl font-semibold flex-1 mr-4 break-words">
-              The Evolution of Our Path
-            </h1>
-            <div className="flex gap-2">
-              <button
-                onClick={handleDownload}
-                className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md"
-              >
-                <FaDownload className="h-4 w-4" />
-              </button>
-              <button
-                onClick={handleShare}
-                className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md"
-              >
-                <FaShare className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+        <div className="flex-1">
           {/* Scrollable container for medium and larger screens */}
           <div
-            className="no-scrollbar relative w-[95%] bg-white border border-gray-200 mt-2 mb-2 ml-4 overflow-y-scroll snap-y snap-mandatory"
+            className="no-scrollbar relative w-[90%] bg-white border border-gray-200 mb-2 ml-16 overflow-y-scroll snap-y snap-mandatory"
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
           >
@@ -195,13 +238,13 @@ export default function ViewPresentation() {
             ))}
           </div>
 
-          <div className="flex items-center justify-between ml-4">
+          <div className="flex items-center justify-between ml-16">
             <div className="flex gap-2">
               <button
                 onClick={handleDelete}
                 className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
               >
-                <FaTrash className="h-4 w-4 text-[#5D5F61]" />
+                <FaTrash className="h-4 w-4 text-[#5D5F61] mr-1" />
                 <span className="hidden text-[#5D5F61] lg:block">
                   {' '}
                   Delete Version
@@ -209,9 +252,19 @@ export default function ViewPresentation() {
               </button>
               <button
                 onClick={handleConfirm}
-                className="hover:text-green-600 border border-gray-300 p-2 rounded-md flex items-center"
+                className={`p-2 rounded-md flex items-center border ${
+                  finalized && selectedOutline === currentOutline
+                    ? 'border-[#0A8568] bg-[#36fa810a]'
+                    : 'border-gray-300'
+                }`}
               >
-                <FaCheck className="h-4 w-4 text-[#5D5F61]" />
+                <FaCheck
+                  className={`h-4 w-4 mr-1 ${
+                    finalized && selectedOutline === currentOutline
+                      ? 'text-[#0A8568]'
+                      : 'text-[#5D5F61]'
+                  }`}
+                />
                 <span className="hidden text-[#5D5F61] lg:block">
                   {' '}
                   Finalize Version
@@ -221,7 +274,7 @@ export default function ViewPresentation() {
                 onClick={handlePlusClick}
                 className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center"
               >
-                <FaPlus className="h-4 w-4 text-[#3667B2]" />
+                <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
                 <span className="hidden text-[#3667B2] lg:block">
                   {' '}
                   New Version
@@ -229,11 +282,11 @@ export default function ViewPresentation() {
               </button>
             </div>
 
-            <div className="flex items-center gap-2 mr-[2rem]">
+            <div className="flex items-center gap-2 mr-12">
               <button
                 onClick={() => setCurrentSlide((prev) => Math.max(1, prev - 1))}
                 disabled={currentSlide === 1}
-                className="flex items-center border border-gray-300 p-2 rounded-md"
+                className="flex items-center border border-[#E1E3E5] bg-white p-2 rounded-md"
               >
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
@@ -245,7 +298,7 @@ export default function ViewPresentation() {
                   setCurrentSlide((prev) => Math.min(totalSlides, prev + 1))
                 }
                 disabled={currentSlide === totalSlides}
-                className={`flex items-center border border-gray-300 p-2 rounded-md ${
+                className={`flex items-center border border-[#E1E3E5] bg-white p-2 rounded-md ${
                   currentSlide === totalSlides
                     ? 'text-gray-400'
                     : 'hover:text-blue-600'
@@ -289,10 +342,11 @@ export default function ViewPresentation() {
               className="border rounded-lg h-fit p-2 py-4"
               value={selectedOutline}
             >
-              <option value="cover">Cover</option>
-              <option value="introduction">Introduction</option>
-              <option value="content">Content</option>
-              <option value="conclusion">Conclusion</option>
+              {outlines.map((outline) => (
+                <option key={outline._id} value={outline._id}>
+                  {outline.title.replace(/^\d+\.\s*/, '')}
+                </option>
+              ))}
             </select>
           </div>
         </div>

@@ -7,6 +7,7 @@ import LogoForm from './onboarding-sections/LogoForm.tsx'
 import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useToken } from '../../utils/TokenContext.tsx'
 
 interface FormData {
   companyName: string
@@ -33,9 +34,11 @@ const OnboardingContainer: React.FC = () => {
     websiteLink: '',
     logo: null,
   })
-  const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
+  const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
+  const id = sessionStorage.getItem('id')
+  const { token } = useToken()
 
   // Check if screen size is medium or larger to show sidebar
   useEffect(() => {
@@ -61,12 +64,23 @@ const OnboardingContainer: React.FC = () => {
             ...data,
             orgId: orgId,
             userId: userId,
+            _id: id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         )
       } else {
         await axios.patch(
           `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
-          data
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         )
       }
     } catch (error) {

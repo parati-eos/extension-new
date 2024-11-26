@@ -28,7 +28,7 @@ const Navbar = () => {
     }
   }, [])
   return (
-    <nav className="bg-white p-2 pt-10 lg:pt-2">
+    <nav className="bg-white p-2 pt-12 lg:p-3">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo with icon and text */}
         <div className="flex items-center space-x-2">
@@ -40,7 +40,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/new-presentation')}
-            className="bg-[#3667B2] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
+            className="bg-[#3667B2] lg:h-[2.5rem] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
           >
             <span className="sm:hidden text-base">
               <FaPlus />
@@ -52,7 +52,7 @@ const Navbar = () => {
           </button>
           <button
             onClick={() => navigate('/history')}
-            className="bg-white border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
+            className="bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
           >
             <span className="sm:hidden text-base">
               <FaClock />
@@ -66,12 +66,12 @@ const Navbar = () => {
           <img
             src={userProfileImage!}
             alt="User Profile"
-            className="w-11 h-11 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
+            className="w-11 h-11 lg:w-11 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           />
           {/* Dropdown */}
           {dropdownOpen && (
-            <div className="absolute top-20 lg:top-16 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32">
+            <div className="absolute top-20 lg:top-17 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32">
               <button
                 onClick={() => navigate('/organization-profile')}
                 className="w-full text-[#5D5F61] text-left text-sm py-1  px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"

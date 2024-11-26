@@ -1,5 +1,13 @@
-import React from 'react'
-import { FaPlus } from 'react-icons/fa'
+import React, { useState, useEffect } from 'react'
+import { FaPlus, FaCheck, FaTimes } from 'react-icons/fa'
+import axios from 'axios'
+import { useToken } from '../../utils/TokenContext'
+
+interface Outlines {
+  title: string
+  type: string
+  _id: string
+}
 
 interface SidebarProps {
   onOutlineSelect: (option: string) => void
@@ -10,10 +18,53 @@ const Sidebar: React.FC<SidebarProps> = ({
   onOutlineSelect,
   selectedOutline,
 }) => {
-  const slideOptions = ['cover', 'introduction', 'content', 'conclusion']
+  const [outlines, setOutlines] = useState<Outlines[]>([])
+  const [isInputVisible, setIsInputVisible] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const { token } = useToken()
+  const outlineUrl = process.env.REACT_APP_OUTLINE_URL || ''
+
+  // Fetch Outlines
+  useEffect(() => {
+    const fetchOutlines = async () => {
+      try {
+        const response = await axios.get(`${outlineUrl}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setOutlines(response.data.outline)
+        console.log('Outlines fetched:', response.data.outline)
+      } catch (error) {
+        console.error('Error fetching outlines:', error)
+      }
+    }
+    fetchOutlines()
+  }, [token, outlineUrl])
+
+  const handleAddOutline = async () => {
+    // try {
+    //   const response = await axios.post(
+    //     'https://microservice-v1.onrender.com/api/v1/outline',
+    //     { title: inputValue },
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     }
+    //   )
+    //   setOutlines([...outlines, response.data.outline])
+    //   setInputValue('')
+    //   setIsInputVisible(false)
+    // } catch (error) {
+    //   console.error('Error adding outline:', error)
+    // }
+  }
+
+  const slideOptions = outlines.map((outline) => outline.title)
 
   return (
-    <div className="hidden lg:block w-1/6 p-4 bg-gray-50 ml-4 rounded-lg border border-gray-300">
+    <div className="hidden lg:block w-1/6 h-fit p-4 bg-gray-50 ml-4 rounded-lg border border-gray-300">
       <ul className="space-y-2">
         {slideOptions.map((option, index) => (
           <React.Fragment key={option}>
@@ -32,9 +83,35 @@ const Sidebar: React.FC<SidebarProps> = ({
             {index === 1 && (
               <li className="flex items-center justify-center space-x-2">
                 <hr className="flex-grow border-gray-300" />
-                <div className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-full">
-                  <FaPlus className="text-gray-400" />
-                </div>
+                {isInputVisible ? (
+                  <div className="flex items-center w-full">
+                    <input
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="flex-grow p-2 border border-gray-300 rounded-l-lg"
+                    />
+                    <button
+                      onClick={handleAddOutline}
+                      className="p-2 bg-green-500 text-white rounded-r-lg"
+                    >
+                      <FaCheck />
+                    </button>
+                    <button
+                      onClick={() => setIsInputVisible(false)}
+                      className="p-2 bg-red-500 text-white rounded-r-lg"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsInputVisible(true)}
+                    className="flex items-center justify-center w-8 h-8 border border-gray-300 rounded-full"
+                  >
+                    <FaPlus className="text-gray-400" />
+                  </button>
+                )}
                 <hr className="flex-grow border-gray-300" />
               </li>
             )}

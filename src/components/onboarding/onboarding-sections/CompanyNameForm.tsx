@@ -41,7 +41,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
-        <div className="w-full mt-5 sm:mt-0 px-2 sm:px-0">
+        <div className="w-full mt-6 sm:mt-0 px-2 sm:px-0">
           <label
             htmlFor="companyName"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
