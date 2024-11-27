@@ -37,12 +37,12 @@ export default function ViewPresentation() {
   const [outlines, setOutlines] = useState<Outline[]>([])
   const authToken = sessionStorage.getItem('authToken')
   const navigate = useNavigate()
-  const FormId = 'form789'
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const slideTypeReceived = searchParams.get('slideType')!
   const slideType = slideTypeReceived!.replace(/%20| /g, '')
   const orgId = sessionStorage.getItem('orgId')
+  const documentID = sessionStorage.getItem('documentID')
 
   // Sample images for different slides
   const slideImages = {
@@ -68,7 +68,7 @@ export default function ViewPresentation() {
 
   // Handle share button click
   const handleShare = async () => {
-    navigate(`/share/?formId=${sessionStorage.getItem('documentID')}`)
+    navigate(`/share/?formId=${documentID}`)
   }
 
   // Handle download button click

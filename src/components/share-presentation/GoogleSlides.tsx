@@ -7,7 +7,7 @@ interface SlideData {
   data: string[]
 }
 
-const GoogleslidesShare: React.FC = () => {
+const GoogleSlides: React.FC = () => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const formId: string | null = searchParams.get('formId')
@@ -84,4 +84,4 @@ const GoogleslidesShare: React.FC = () => {
   }
 }
 
-export default GoogleslidesShare
+export default GoogleSlides
