@@ -14,6 +14,7 @@ import {
   FaChevronDown,
   FaCheck,
 } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -60,11 +61,16 @@ const SelectPresentationType: React.FC = () => {
   const [file, setFile] = useState<File | null>(null)
   const [selectedType, setSelectedType] = useState<number | null>(null)
   const [generateDropdownOpen, setGenerateDropdownOpen] = useState(false)
+  const navigate = useNavigate()
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setFile(event.target.files[0])
     }
+  }
+
+  const handleGenerate = () => {
+    navigate('/presentation-view')
   }
 
   return (
@@ -109,11 +115,14 @@ const SelectPresentationType: React.FC = () => {
       {selectedType && (
         <div className="hidden lg:flex flex-col w-max justify-center mt-4 ml-16">
           <button
-            onClick={() => setGenerateDropdownOpen(!generateDropdownOpen)}
+            onClick={handleGenerate}
             className="bg-[#3667B2] h-[3.1rem] text-white px-4 rounded-lg mr-4 flex items-center"
           >
             Generate Presentation
-            <span className="mx-2 w-px h-full bg-[#4883db]"></span>
+            <span
+              onClick={() => setGenerateDropdownOpen(!generateDropdownOpen)}
+              className="mx-2 w-px h-full bg-[#4883db]"
+            ></span>
             {generateDropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
           </button>
           {generateDropdownOpen && (
@@ -150,7 +159,10 @@ const SelectPresentationType: React.FC = () => {
             </div>
             {/* Buttons */}
             <div className="flex flex-col gap-4">
-              <button className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg">
+              <button
+                onClick={handleGenerate}
+                className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg"
+              >
                 Generate Presentation
               </button>
               <button

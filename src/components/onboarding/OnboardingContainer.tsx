@@ -7,7 +7,6 @@ import LogoForm from './onboarding-sections/LogoForm.tsx'
 import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { useToken } from '../../utils/TokenContext.tsx'
 
 interface FormData {
   companyName: string
@@ -38,7 +37,7 @@ const OnboardingContainer: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
   const id = sessionStorage.getItem('id')
-  const { token } = useToken()
+  const authToken = sessionStorage.getItem('authToken')
 
   // Check if screen size is medium or larger to show sidebar
   useEffect(() => {
@@ -59,7 +58,7 @@ const OnboardingContainer: React.FC = () => {
     try {
       if (currentSection === 1) {
         await axios.post(
-          `${process.env.REACT_APP_ORG_URL}/organizationcreate-patch`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationcreate-patch`,
           {
             ...data,
             orgId: orgId,
@@ -68,17 +67,17 @@ const OnboardingContainer: React.FC = () => {
           },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         )
       } else {
         await axios.patch(
-          `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
           data,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         )

@@ -14,7 +14,6 @@ import SlideNarrativeIcon from '../../assets/slide-narrative.png'
 import QuickGenerateIcon from '../../assets/quick-generate.png'
 import './viewpresentation.css'
 import axios from 'axios'
-import { useToken } from '../../utils/TokenContext'
 
 interface Outline {
   title: string
@@ -35,7 +34,7 @@ export default function ViewPresentation() {
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const [outlines, setOutlines] = useState<Outline[]>([])
-  const { token } = useToken()
+  const authToken = sessionStorage.getItem('authToken')
 
   // Sample images for different slides
   const slideImages = {
@@ -116,16 +115,18 @@ export default function ViewPresentation() {
     }
   }
 
+  console.log('TOKEN', authToken)
+
   // Fetch Outlines
   useEffect(() => {
     // Fetch outlines from API with async await and axios
     const fetchOutlines = async () => {
       try {
         const response = await axios.get(
-          'https://microservice-v1.onrender.com/api/v1/outline/Document-1732515545837/outline',
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/Document-1732625632975/outline`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         )
@@ -136,7 +137,7 @@ export default function ViewPresentation() {
       }
     }
     fetchOutlines()
-  }, [token])
+  }, [])
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { FaEdit, FaLink, FaEnvelope, FaPhone, FaLinkedin } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { useToken } from '../../utils/TokenContext'
 
 interface Color {
   P100: string
@@ -42,23 +41,24 @@ const ViewProfile: React.FC = () => {
   const [organizationData, setOrganizationData] =
     useState<OrganizationData | null>(null)
   const [bgColor, setBgColor] = useState<string>('')
+  const orgId = sessionStorage.getItem('orgId')
+  const authToken = sessionStorage.getItem('authToken')
 
   const handleEditClick = () => {
     navigate('/edit-organization-profile')
   }
 
-  const orgId = sessionStorage.getItem('orgId')
-  const { token } = useToken()
-
   // Call a GET API to fetch organization data
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_ORG_URL}/organization/${orgId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      })
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
       .then((response) => {
         setOrganizationData(response.data)
         setBgColor(response.data.color.P100)
@@ -66,7 +66,7 @@ const ViewProfile: React.FC = () => {
       .catch((error) => {
         console.error('Error fetching organization data:', error)
       })
-  }, [orgId, token])
+  }, [orgId, authToken])
 
   return (
     <div className="bg-gray-100 flex flex-col items-center min-h-screen overflow-hidden">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FaPlus, FaCheck, FaTimes } from 'react-icons/fa'
 import axios from 'axios'
-import { useToken } from '../../utils/TokenContext'
 
 interface Outlines {
   title: string
@@ -21,18 +20,21 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [isInputVisible, setIsInputVisible] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const { token } = useToken()
-  const outlineUrl = process.env.REACT_APP_OUTLINE_URL || ''
+  const outlineUrl = process.env.REACT_APP_BACKEND_URL || ''
+  const authToken = sessionStorage.getItem('authToken')
 
   // Fetch Outlines
   useEffect(() => {
     const fetchOutlines = async () => {
       try {
-        const response = await axios.get(`${outlineUrl}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        const response = await axios.get(
+          `${outlineUrl}/api/v1/outline/Document-1732625632975/outline`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
         setOutlines(response.data.outline)
         console.log('Outlines fetched:', response.data.outline)
       } catch (error) {
@@ -40,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       }
     }
     fetchOutlines()
-  }, [token, outlineUrl])
+  }, [authToken, outlineUrl])
 
   const handleAddOutline = async () => {
     // try {
@@ -48,9 +50,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     //     'https://microservice-v1.onrender.com/api/v1/outline',
     //     { title: inputValue },
     //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
     //     }
     //   )
     //   setOutlines([...outlines, response.data.outline])
