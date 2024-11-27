@@ -94,7 +94,6 @@ function Login() {
 
       const responseData = await res.json()
       sessionStorage.setItem('orgId', generatedOrgId)
-      sessionStorage.setItem('id', responseData.userProfile._id)
       sessionStorage.setItem('authToken', responseData.token)
 
       if (responseData.orgId && responseData.orgId !== '') {

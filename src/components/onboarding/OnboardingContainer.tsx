@@ -36,7 +36,6 @@ const OnboardingContainer: React.FC = () => {
   const navigate = useNavigate()
   const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
-  const id = sessionStorage.getItem('id')
   const authToken = sessionStorage.getItem('authToken')
 
   // Check if screen size is medium or larger to show sidebar
@@ -63,7 +62,6 @@ const OnboardingContainer: React.FC = () => {
             ...data,
             orgId: orgId,
             userId: userId,
-            _id: id,
           },
           {
             headers: {
