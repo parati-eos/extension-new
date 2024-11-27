@@ -119,11 +119,15 @@ const SelectPresentationType: React.FC = () => {
             className="bg-[#3667B2] h-[3.1rem] text-white px-4 rounded-lg mr-4 flex items-center"
           >
             Generate Presentation
+            <span className="mx-2 w-px h-full bg-[#4883db]"></span>
             <span
-              onClick={() => setGenerateDropdownOpen(!generateDropdownOpen)}
-              className="mx-2 w-px h-full bg-[#4883db]"
-            ></span>
-            {generateDropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
+              onClick={(e) => {
+                e.stopPropagation() // Prevents triggering the parent button's onClick
+                setGenerateDropdownOpen(!generateDropdownOpen)
+              }}
+            >
+              {generateDropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
+            </span>
           </button>
           {generateDropdownOpen && (
             <button
