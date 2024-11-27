@@ -62,6 +62,7 @@ const SelectPresentationType: React.FC = () => {
   const [selectedType, setSelectedType] = useState<number | null>(null)
   const [generateDropdownOpen, setGenerateDropdownOpen] = useState(false)
   const navigate = useNavigate()
+  const [selectedTypeName, setSelectedTypeName] = useState<string | null>('')
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -70,7 +71,7 @@ const SelectPresentationType: React.FC = () => {
   }
 
   const handleGenerate = () => {
-    navigate('/presentation-view')
+    navigate(`/presentation-view/?slideType=${selectedTypeName}`)
   }
 
   return (
@@ -93,6 +94,7 @@ const SelectPresentationType: React.FC = () => {
             onClick={() => {
               setSelectedType(type.id)
               setIsModalOpen(true)
+              setSelectedTypeName(type.label)
             }}
           >
             {/* Check Icon for Medium and Large Screens */}

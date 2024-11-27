@@ -79,7 +79,7 @@ const ViewProfile: React.FC = () => {
       ></div>
 
       {/* Main White Box Container for Larger Screens */}
-      <div className="hidden lg:flex relative bg-white rounded-lg shadow-xl w-[95%] h-[88vh] justify-center p-6">
+      <div className="hidden lg:flex relative bg-white rounded-lg mt-2 xl:mt-4 shadow-xl w-[95%] h-[88vh] justify-center p-6">
         {/* Color Box */}
         <div
           className="absolute top-0 w-[99%] h-1/2 rounded-lg shadow-md"

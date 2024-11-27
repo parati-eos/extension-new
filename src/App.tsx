@@ -23,7 +23,7 @@ const App: React.FC = () => {
           element={<EditOrganizationProfilePage />}
         />
         <Route path="/new-presentation" element={<PresentationTypePage />} />
-        <Route path="/presentation-view" element={<PresentationViewPage />} />
+        <Route path="/presentation-view/" element={<PresentationViewPage />} />
         <Route path="/history" element={<HistoryPage />} />
       </Routes>
     </Router>

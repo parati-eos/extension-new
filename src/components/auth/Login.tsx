@@ -97,7 +97,7 @@ function Login() {
       sessionStorage.setItem('authToken', responseData.token)
 
       if (responseData.orgId && responseData.orgId !== '') {
-        navigate('/organization-profile')
+        navigate('/new-presentation')
       } else {
         navigate('/onboarding')
       }

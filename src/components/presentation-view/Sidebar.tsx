@@ -26,9 +26,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   // Fetch Outlines
   useEffect(() => {
     const fetchOutlines = async () => {
+      const documentID = sessionStorage.getItem('documentID')
+      if (!documentID) return
+
       try {
         const response = await axios.get(
-          `${outlineUrl}/api/v1/outline/Document-1732625632975/outline`,
+          `${outlineUrl}/api/v1/outline/${documentID}/outline`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -36,7 +39,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           }
         )
         setOutlines(response.data.outline)
-        console.log('Outlines fetched:', response.data.outline)
       } catch (error) {
         console.error('Error fetching outlines:', error)
       }

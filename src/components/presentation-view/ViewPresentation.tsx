@@ -14,6 +14,7 @@ import SlideNarrativeIcon from '../../assets/slide-narrative.png'
 import QuickGenerateIcon from '../../assets/quick-generate.png'
 import './viewpresentation.css'
 import axios from 'axios'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 interface Outline {
   title: string
@@ -35,6 +36,13 @@ export default function ViewPresentation() {
   const [finalized, setFinalized] = useState(false)
   const [outlines, setOutlines] = useState<Outline[]>([])
   const authToken = sessionStorage.getItem('authToken')
+  const navigate = useNavigate()
+  const FormId = 'form789'
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const slideTypeReceived = searchParams.get('slideType')!
+  const slideType = slideTypeReceived!.replace(/%20| /g, '')
+  const orgId = sessionStorage.getItem('orgId')
 
   // Sample images for different slides
   const slideImages = {
@@ -59,8 +67,8 @@ export default function ViewPresentation() {
   }
 
   // Handle share button click
-  const handleShare = () => {
-    alert('Share functionality triggered.')
+  const handleShare = async () => {
+    navigate(`/share/?formId=${sessionStorage.getItem('documentID')}`)
   }
 
   // Handle download button click
@@ -115,15 +123,38 @@ export default function ViewPresentation() {
     }
   }
 
-  console.log('TOKEN', authToken)
-
-  // Fetch Outlines
+  // QUICK GENERATE API CALL
   useEffect(() => {
-    // Fetch outlines from API with async await and axios
+    const quickGenerate = async () => {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data//documentgenerate/generate-document/${orgId}/${slideType}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const result = await response.data
+        sessionStorage.setItem('documentID', result.documentID)
+      } catch (error) {
+        console.error('Error generating document:', error)
+      }
+    }
+    quickGenerate()
+  }, [authToken, orgId, slideType])
+
+  // GET OUTLINES
+  useEffect(() => {
     const fetchOutlines = async () => {
+      const documentID = sessionStorage.getItem('documentID')
+      if (!documentID) return
+
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/Document-1732625632975/outline`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -131,13 +162,12 @@ export default function ViewPresentation() {
           }
         )
         setOutlines(response.data.outline)
-        console.log('Outlines fetched:', response.data.outline)
       } catch (error) {
         console.error('Error fetching outlines:', error)
       }
     }
     fetchOutlines()
-  }, [])
+  }, [authToken])
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">
@@ -181,7 +211,7 @@ export default function ViewPresentation() {
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
           >
-            {Object.values(slideImages).map((image, index) => (
+            {Object.values(slideImages)?.map((image, index) => (
               <div
                 key={index}
                 ref={(el) => (slideRefs.current[index] = el!)}
@@ -343,9 +373,9 @@ export default function ViewPresentation() {
               className="border rounded-lg h-fit p-2 py-4"
               value={selectedOutline}
             >
-              {outlines.map((outline) => (
+              {outlines?.map((outline) => (
                 <option key={outline._id} value={outline._id}>
-                  {outline.title.replace(/^\d+\.\s*/, '')}
+                  {outline.title}
                 </option>
               ))}
             </select>
