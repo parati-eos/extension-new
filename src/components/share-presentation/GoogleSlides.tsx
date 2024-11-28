@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
 import { Grid } from 'react-loader-spinner'
 
-interface SlideData {
-  id: string
-  data: string[]
-}
-
 const GoogleSlides: React.FC = () => {
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
-  const formId: string | null = searchParams.get('formId')
+  const formId = sessionStorage.getItem('documentID')!
 
   const [slidesData, setSlidesData] = useState<string[][]>([])
   const [slidesId, setSlidesId] = useState<string>('')
@@ -19,15 +11,15 @@ const GoogleSlides: React.FC = () => {
   useEffect(() => {
     const fetchSlidesData = async () => {
       try {
-        const serverurl = process.env.REACT_APP_SERVER_URL
-        const url = `${serverurl}/slides?&formId=${formId}`
+        const serverurl = process.env.REACT_APP_BACKEND_URL
+        const url = `${serverurl}/api/v1/data/slidedisplay//genSlideIDs/${formId}`
         const response = await fetch(url)
         if (!response.ok) {
           throw new Error('Failed to fetch slides data')
         }
-        const data: SlideData = await response.json()
-        setSlidesId(data.id)
-        setSlidesData(data.data)
+        const data = await response.json()
+        setSlidesId(data.genSlideIDs)
+        setSlidesData(data.genSlideID)
         if (data.data.length >= 2) {
           setLoading('false')
         }
@@ -61,8 +53,8 @@ const GoogleSlides: React.FC = () => {
             No slides to display
           </div>
         ) : (
-          slidesData.map((slideId, index) => (
-            <div key={slideId}>
+          slidesData?.map((slideId, index) => (
+            <div key={slideId[0]}>
               <iframe
                 key={index}
                 className="h-[80vh] w-[99%] bg-black border-[2px] border-[#1f516b] pointer-events-none"

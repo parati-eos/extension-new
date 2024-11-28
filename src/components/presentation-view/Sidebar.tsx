@@ -65,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const slideOptions = outlines.map((outline) => outline.title)
 
   return (
-    <div className="hidden lg:block w-1/6 h-fit p-4 bg-gray-50 ml-4 rounded-lg border border-gray-300">
+    <div className="hidden lg:block w-1/8 h-fit p-4 bg-gray-50 ml-4 rounded-lg border border-gray-300 max-h-screen overflow-y-auto">
       <ul className="space-y-2">
         {slideOptions.map((option, index) => (
           <React.Fragment key={option}>

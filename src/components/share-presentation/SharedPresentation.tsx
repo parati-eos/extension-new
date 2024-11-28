@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import '../css/presentationshare.css'
 import '../css/HistoryOverlay.css'
@@ -22,42 +22,11 @@ const GooglePresentation: React.FC<GooglePresentationProps> = ({ url }) => {
 }
 
 const SharedPresentation: React.FC = () => {
-  const historyTimeout = useRef<NodeJS.Timeout | null>(null)
   const [currentSlideKey, setCurrentSlideKey] = useState<number>(0)
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
-  const formId = searchParams.get('submissionId')
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!formId) return
-
-      const apiUrl = `https://zynth.ai/api/slides/url?formId=${formId}`
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        const data = await response.json()
-        // Use the fetched data as needed
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-
-    fetchData()
-  }, [formId])
-
   const handleLogoClicked = () => {
     navigate('/')
   }
-
   return (
     <div className="main-container">
       <div className="presentationshare-viewing-container">
