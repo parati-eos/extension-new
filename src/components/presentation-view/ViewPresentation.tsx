@@ -277,7 +277,7 @@ export default function ViewPresentation() {
                 <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
                 <span className="hidden text-[#3667B2] lg:block">
                   {' '}
-                  New Version
+                  New Versions
                 </span>
               </button>
             </div>

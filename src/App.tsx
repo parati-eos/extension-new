@@ -8,6 +8,10 @@ import AuthPage from './pages/AuthPage.tsx'
 import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
 import { TokenProvider } from './utils/TokenContext.tsx'
+import ImagesPage from './pages/ImagesPage.tsx'
+import CustomBuilderTypePage from './pages/CustomBuilderTypePage.tsx'
+import SlideNarrativePage from './pages/SlideNarrativePage.tsx'
+import CustomBuilderCoverPage from './pages/CustomBuilderPage.tsx'
 
 const App: React.FC = () => {
   return (
@@ -26,7 +30,11 @@ const App: React.FC = () => {
           />
           <Route path="/new-presentation" element={<PresentationTypePage />} />
           <Route path="/presentation-view" element={<PresentationViewPage />} />
+          <Route path="/custombuilder-cover" element={<CustomBuilderCoverPage/>} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/slide-narrative" element={<SlideNarrativePage />} />
+          <Route path="/custombuilder-type" element={<CustomBuilderTypePage/>} />
+          <Route path="/Images" element={<ImagesPage/>} />
         </Routes>
       </Router>
     </TokenProvider>
