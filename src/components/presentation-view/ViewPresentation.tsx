@@ -15,7 +15,7 @@ import QuickGenerateIcon from '../../assets/quick-generate.png'
 import './viewpresentation.css'
 import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
-
+import { io } from 'socket.io-client'
 interface Outline {
   title: string
   type: string
@@ -23,39 +23,6 @@ interface Outline {
 }
 
 export default function ViewPresentation() {
-  // const [currentSlide, setCurrentSlide] = useState(1)
-  // const [selectedImage, setSelectedImage] = useState('/placeholder.svg')
-  // const [selectedOutline, setSelectedOutline] = useState('cover')
-  // const [currentOutline, setCurrentOutline] = useState('cover')
-  // const totalSlides = 5 // Sample Slide Count
-  // const slideRefs = useRef<HTMLDivElement[]>([])
-  // const [displayMode, setDisplayMode] = useState<'slides' | 'newContent'>(
-  //   'slides'
-  // )
-  // const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
-  // const [finalized, setFinalized] = useState(false)
-  // const [outlines, setOutlines] = useState<Outline[]>([])
-  // const authToken = sessionStorage.getItem('authToken')
-  // const navigate = useNavigate()
-  // const location = useLocation()
-  // const searchParams = new URLSearchParams(location.search)
-  // const slideTypeReceived = searchParams.get('slideType')!
-  // const slideType = slideTypeReceived!.replace(/%20| /g, '')
-  // const orgId = sessionStorage.getItem('orgId')
-  // const documentID = sessionStorage.getItem('documentID')
-
-  // // Sample images for different slides
-  // const slideImages = {
-  //   cover:
-  //     'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-1.jpg',
-  //   introduction:
-  //     'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-2.jpg',
-  //   content:
-  //     'https://cdn.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-3.jpg',
-  //   conclusion:
-  //     'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-4.jpg',
-  // }
-
   const [currentSlide, setCurrentSlide] = useState(1)
   const [selectedImage, setSelectedImage] = useState('/placeholder.svg')
   const [selectedOutline, setSelectedOutline] = useState('cover')
@@ -77,16 +44,45 @@ export default function ViewPresentation() {
   const documentID = sessionStorage.getItem('documentID')
   const slideRefs = useRef<HTMLDivElement[]>([])
   const totalSlides = outlines.length || 5
+  const [slides, setSlides] = useState([]); // State to store slide IDs
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const socket = io('http://localhost:5002', {
+      transports: ['websocket'],
+    });
 
-  // Handle outline select change
-  // const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedOption = e.target.value
-  //   setSelectedImage(
-  //     slideImages[selectedOption as keyof typeof slideImages] ||
-  //       '/placeholder.svg'
-  //   )
-  //   setSelectedOutline(e.target.value)
-  // }
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+      if (documentID) {
+        socket.emit('joinDocument', { slideType: documentID, formID: selectedOutline });
+      }
+    });
+
+    socket.on('slidesData', (newSlides) => {
+      console.log('Received new slide data:', newSlides);
+      setSlides(newSlides);
+    });
+
+    socket.on('error', (error) => {
+      console.error('Error:', error.message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [documentID, selectedOutline]);
+  console.log(slides);
+  
+
+  // return (
+  //   <ul>
+  //     {slides.map((slideID, index) => (
+  //       <li key={index}>{slideID}</li>
+  //     ))}
+  //   </ul>
+  // );
+
+  
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value
     setSelectedImage(slideImages[selectedOption] || '/placeholder.svg')
@@ -114,18 +110,6 @@ export default function ViewPresentation() {
     setFinalized(true)
   }
 
-  // Handle outline select
-  // const handleOutlineSelect = (option: string) => {
-  //   setSelectedOutline(option)
-  //   setCurrentOutline(option)
-  //   setSelectedImage(
-  //     slideImages[option as keyof typeof slideImages] || '/placeholder.svg'
-  //   )
-  //   setCurrentSlide(Object.keys(slideImages).indexOf(option) + 1)
-  //   // Scroll to the selected slide
-  //   const slideIndex = Object.keys(slideImages).indexOf(option)
-  //   slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
-  // }
   const handleOutlineSelect = (option: string) => {
     setSelectedOutline(option)
     setCurrentOutline(option)
@@ -135,17 +119,6 @@ export default function ViewPresentation() {
     slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  // Handle scroll event
-  // const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-  //   const scrollTop = e.currentTarget.scrollTop
-  //   const slideHeight = e.currentTarget.clientHeight
-  //   const newSlide = Math.round(scrollTop / slideHeight) + 1
-  //   setCurrentSlide(newSlide)
-  //   setSelectedOutline(Object.keys(slideImages)[newSlide - 1])
-  //   if (newSlide !== plusClickedSlide) {
-  //     setDisplayMode('slides')
-  //   }
-  // }
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = e.currentTarget.scrollTop
     const slideHeight = e.currentTarget.clientHeight
@@ -157,17 +130,6 @@ export default function ViewPresentation() {
     }
   }
 
-  // Handle plus button click
-  // const handlePlusClick = () => {
-  //   if (displayMode === 'newContent') {
-  //     setDisplayMode('slides')
-  //     setPlusClickedSlide(null)
-  //   } else {
-  //     setDisplayMode('newContent')
-  //     setPlusClickedSlide(currentSlide)
-  //     console.log(slideRefs)
-  //   }
-  // }
   const handlePlusClick = async () => {
     if (displayMode === 'newContent') {
       setDisplayMode('slides')
@@ -218,7 +180,7 @@ export default function ViewPresentation() {
     quickGenerate()
   }, [authToken, orgId, slideType])
 
-  // GET OUTLINES
+ 
   // useEffect(() => {
   //   const fetchOutlines = async () => {
   //     const documentID = sessionStorage.getItem('documentID')
@@ -321,67 +283,6 @@ export default function ViewPresentation() {
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
           >
-            {/* {Object.values(slideImages)?.map((image, index) => (
-              <div
-                key={index}
-                ref={(el) => (slideRefs.current[index] = el!)}
-                className="snap-start w-full h-screen"
-                style={{ height: '100%' }}
-              >
-                {displayMode === 'newContent' &&
-                plusClickedSlide === index + 1 ? (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <h2 className="text-xl text-[#091220] font-semibold">
-                      Create a new slide
-                    </h2>
-                    <h3 className="text-base text-[#5D5F61]">
-                      How would you like to create a new slide
-                    </h3>
-                    <div className="flex gap-4 mt-4">
-                      <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-                        <button
-                          className="flex flex-col items-center justify-center"
-                          onClick={handleQuickGenerate}
-                        >
-                          <img
-                            src={QuickGenerateIcon}
-                            alt="Quick Generate"
-                            className="h-16 w-16"
-                          />
-                          <span>Quick Generate</span>
-                        </button>
-                      </div>
-                      <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-                        <img
-                          src={CustomBuilderIcon}
-                          alt="Custom Builder"
-                          className="h-16 w-16"
-                        />
-                        <span>Custom Builder</span>
-                      </div>
-                      <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-                        <img
-                          src={SlideNarrativeIcon}
-                          alt="Slide Narrative"
-                          className="h-16 w-16"
-                        />
-                        <span>Slide Narrative</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <iframe
-                    src={image}
-                    title={`Slide ${index + 1}`}
-                    className="w-full h-full"
-                    frameBorder="0"
-                    allowFullScreen
-                    scrolling="no"
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                )}
-              </div>
-            ))} */}
             {Object.entries(slideImages).map(([outline, image], index) => (
               <div
                 key={outline}
@@ -435,7 +336,7 @@ export default function ViewPresentation() {
                     src={image}
                     title={`Slide ${index + 1}`}
                     className="w-full h-full"
-                    frameBorder="0"
+                    style={{ border: 0 }}
                   />
                 )}
               </div>
@@ -598,14 +499,6 @@ export default function ViewPresentation() {
               alt="Slide content"
               className="absolute top-0 left-0 w-full h-full"
             />
-            // <iframe
-            //   src={selectedImage}
-            //   title="Slide content"
-            //   className="absolute top-0 left-0 w-full h-full object-contain"
-            //   frameBorder="0"
-            //   allowFullScreen
-            //   scrolling="no"
-            // />
           )}
         </div>
 
