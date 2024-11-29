@@ -75,8 +75,8 @@ export default function ViewPresentation() {
 
     // Automatically fetch slides on component mount
     socket.emit('fetchSlides', {
-      slideType: 'Key Features',
-      formID: 'Document-1732794823300',
+      slideType: slideTypeData,
+      formID: documentID,
     })
 
     // Cleanup when the component unmounts
