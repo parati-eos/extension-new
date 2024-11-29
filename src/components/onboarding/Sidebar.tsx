@@ -11,13 +11,7 @@ import {
 } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import ZynthLogoText from '../../assets/zynth-text.png'
-
-interface Section {
-  id: number
-  title: string
-  subheading: string
-  icon: React.ReactElement
-}
+import { Section } from '../../types/onboardingTypes'
 
 const sections: Section[] = [
   {

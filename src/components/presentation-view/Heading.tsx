@@ -1,9 +1,5 @@
 import { FaDownload, FaShare } from 'react-icons/fa'
-
-interface ButtonProps {
-  handleShare: () => void
-  handleDownload: () => void
-}
+import { ButtonProps } from '../../types/types'
 
 export const DesktopHeading: React.FC<ButtonProps> = ({
   handleShare,

@@ -1,12 +1,7 @@
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import React, { useEffect, useState } from 'react'
 import { FaImage, FaBullseye } from 'react-icons/fa'
-
-interface LogoFormProps {
-  onContinue: (data: { logo: string }) => void
-  onBack: () => void
-  initialData: string | null
-}
+import { LogoFormProps } from '../../../types/onboardingTypes'
 
 const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,

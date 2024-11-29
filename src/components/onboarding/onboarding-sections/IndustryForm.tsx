@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaCity } from 'react-icons/fa'
-
-interface IndustryFormProps {
-  onContinue: (data: { sector: string; industry: string }) => void
-  onBack: () => void
-  initialData: { sector: string; industry: string }
-}
+import { IndustryFormProps } from '../../../types/onboardingTypes'
 
 const IndustryForm: React.FC<IndustryFormProps> = ({
   onContinue,

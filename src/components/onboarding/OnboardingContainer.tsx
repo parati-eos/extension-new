@@ -7,17 +7,7 @@ import LogoForm from './onboarding-sections/LogoForm.tsx'
 import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-
-interface FormData {
-  companyName: string
-  contactEmail: string
-  contactPhone: string
-  linkedin: string
-  sector: string
-  industry: string
-  websiteLink: string
-  logo: string | null
-}
+import { FormData } from '../../types/onboardingTypes.ts'
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)

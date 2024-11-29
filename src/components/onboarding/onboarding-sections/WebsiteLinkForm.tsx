@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaGlobe } from 'react-icons/fa'
-
-interface WebsiteLinkFormProps {
-  onContinue: (data: { websiteLink: string }) => void
-  onBack: () => void
-  initialData: string
-}
+import { WebsiteLinkFormProps } from '../../../types/onboardingTypes'
 
 const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
   onContinue,

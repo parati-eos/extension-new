@@ -15,13 +15,8 @@ import {
   DesktopNewSlideVersion,
 } from './NewSlideVersion'
 import Sidebar from './Sidebar'
+import { Outline } from '../../types/types'
 import './viewpresentation.css'
-
-interface Outline {
-  title: string
-  type: string
-  _id: string
-}
 
 export default function ViewPresentation() {
   const [currentSlide, setCurrentSlide] = useState(1)

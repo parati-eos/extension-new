@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaStar, FaBuilding } from 'react-icons/fa'
-
-interface CompanyNameFormProps {
-  onContinue: (data: { companyName: string }) => void
-  initialData: string
-}
+import { CompanyNameFormProps } from '../../../types/onboardingTypes'
 
 const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   onContinue,

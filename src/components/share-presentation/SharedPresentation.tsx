@@ -1,15 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-import '../css/presentationshare.css'
-import '../css/HistoryOverlay.css'
 import Googleslides from './GoogleSlides'
-
 import ParatiLogo from '../../Asset/parati-logo.png'
-
-interface GooglePresentationProps {
-  url?: string
-}
+import { GooglePresentationProps } from '../../types/types.ts'
 
 const GooglePresentation: React.FC<GooglePresentationProps> = ({ url }) => {
   return (

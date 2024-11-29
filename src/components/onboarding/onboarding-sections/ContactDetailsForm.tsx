@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaPhone } from 'react-icons/fa'
-
-interface ContactDetailsFormProps {
-  onContinue: (data: {
-    contactEmail: string
-    contactPhone: string
-    linkedinLink: string
-  }) => void
-  onBack: () => void
-  initialData: {
-    contactEmail: string
-    contactPhone: string
-    linkedinLink: string
-  }
-}
+import { ContactDetailsFormProps } from '../../../types/onboardingTypes'
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onContinue,

@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode'
 import ContentImage from '../../assets/authContentImage.png'
 import MicrosoftIcon from '../../assets/ms-login.svg'
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
-import { DecodedToken, IpInfoResponse } from '../../types/types'
+import { DecodedToken, IpInfoResponse } from '../../types/authTypes'
 
 function Login() {
   const navigate = useNavigate()
