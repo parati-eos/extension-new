@@ -7,6 +7,8 @@ import PresentationViewPage from './pages/PresentationViewPage.tsx'
 import AuthPage from './pages/AuthPage.tsx'
 import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
+import Points from './components/presentation-view/custom-builder/Points.tsx'
+import Test from './test/test.tsx'
 
 const App: React.FC = () => {
   return (
@@ -25,6 +27,8 @@ const App: React.FC = () => {
         <Route path="/new-presentation" element={<PresentationTypePage />} />
         <Route path="/presentation-view/" element={<PresentationViewPage />} />
         <Route path="/history" element={<HistoryPage />} />
+        <Route path="/points" element={<Points />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </Router>
   )

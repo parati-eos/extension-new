@@ -115,7 +115,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             />
             {!isPhoneValid && (
               <p className="text-red-500 text-sm">
-                Please enter a valid phone number.
+                Please enter a valid phone number. Remove 0 from the start if
+                present.
               </p>
             )}
             <label

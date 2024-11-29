@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useState } from 'react'
 import {
   FaBox,
@@ -63,6 +64,8 @@ const SelectPresentationType: React.FC = () => {
   const [generateDropdownOpen, setGenerateDropdownOpen] = useState(false)
   const navigate = useNavigate()
   const [selectedTypeName, setSelectedTypeName] = useState<string | null>('')
+  const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -71,7 +74,31 @@ const SelectPresentationType: React.FC = () => {
   }
 
   const handleGenerate = () => {
-    navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+    const quickGenerate = async () => {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const result = await response.data
+        sessionStorage.setItem('documentID', result.documentID)
+        if (
+          sessionStorage.getItem('documentID') !== '' &&
+          sessionStorage.getItem('documentID')
+        ) {
+          navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+        }
+      } catch (error) {
+        console.error('Error generating document:', error)
+      }
+    }
+    quickGenerate()
   }
 
   return (

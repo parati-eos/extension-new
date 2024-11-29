@@ -13,51 +13,7 @@ import {
   FaTrashAlt,
 } from 'react-icons/fa'
 
-interface HistoryItem {
-  imgSrc: string
-  title: string
-  type: string
-  date: string
-}
-
 const HistoryContainer: React.FC = () => {
-  const historyItems: HistoryItem[] = [
-    {
-      imgSrc:
-        'https://next-images.123rf.com/index/_next/image/?url=https://assets-cdn.123rf.com/index/static/assets/top-section-bg.jpeg&w=3840&q=75',
-      title: 'The Evolution of Our Path',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc:
-        'https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630',
-      title: 'Transformations in Our Journey',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc:
-        'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg',
-      title: 'Milestones in Our Adventure',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc:
-        'https://i0.wp.com/picjumbo.com/wp-content/uploads/amazing-stone-path-in-forest-free-image.jpg?w=600&quality=80',
-      title: 'The Shifts in Our Experience',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc: 'https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649',
-      title: 'Progression of Our Story',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-  ]
-
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
@@ -165,11 +121,6 @@ const HistoryContainer: React.FC = () => {
         <div className="block md:hidden">
           {historyData?.map((item, index) => (
             <div key={index} className="flex items-center p-4 py-6 relative">
-              {/* <img
-                src={item.PresentationURL}
-                alt={item.pptName}
-                className="w-16 h-16 object-cover rounded-md mr-4"
-              /> */}
               <iframe
                 src={item.PresentationURL}
                 title={item.pptName}
@@ -246,9 +197,12 @@ const HistoryContainer: React.FC = () => {
               className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
             >
               {/* Image */}
-              <img
+              <iframe
                 src={item.PresentationURL}
-                alt={item.pptName}
+                title={item.pptName}
+                sandbox="allow-same-origin allow-scripts"
+                scrolling="no"
+                style={{ overflow: 'hidden' }}
                 className="w-24 h-16 object-cover rounded-md"
               />
 

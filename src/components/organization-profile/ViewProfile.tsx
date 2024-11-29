@@ -82,12 +82,12 @@ const ViewProfile: React.FC = () => {
       <div className="hidden lg:flex relative bg-white rounded-lg mt-2 xl:mt-4 shadow-xl w-[95%] h-[88vh] justify-center p-6">
         {/* Color Box */}
         <div
-          className="absolute top-0 w-[99%] h-1/2 rounded-lg shadow-md"
+          className="absolute top-0 w-[99%] lg:mt-1 xl:mt-2 h-1/2 rounded-lg shadow-md"
           style={{ backgroundColor: bgColor }}
         ></div>
 
         {/* Content Box */}
-        <div className="absolute h-[90%] left-1/2 transform -translate-x-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
+        <div className="absolute h-[83%] xl:mt-4 left-1/2 transform -translate-x-1/2 bg-white p-8 sm:p-10 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
           {/* Top Section: Logo, Organization Info */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
             {/* Circular Logo */}
@@ -160,7 +160,7 @@ const ViewProfile: React.FC = () => {
                 <h4 className="text-base font-semibold text-gray-700">
                   LinkedIn Profile
                 </h4>
-                <p className="text-gray-600 break-words">
+                <p className="text-gray-600 break-all">
                   {organizationData?.linkedinLink}
                 </p>
               </div>

@@ -2,20 +2,21 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaCheck,
-  FaDownload,
   FaPlus,
-  FaShare,
   FaTrash,
 } from 'react-icons/fa'
 import React, { useEffect, useRef, useState } from 'react'
-import Sidebar from './Sidebar'
-import CustomBuilderIcon from '../../assets/custom-builder.png'
-import SlideNarrativeIcon from '../../assets/slide-narrative.png'
-import QuickGenerateIcon from '../../assets/quick-generate.png'
-import './viewpresentation.css'
-import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { io } from 'socket.io-client'
+import { DesktopHeading, MobileHeading } from './Heading'
+import {
+  MobileNewSlideVersion,
+  DesktopNewSlideVersion,
+} from './NewSlideVersion'
+import Sidebar from './Sidebar'
+import './viewpresentation.css'
+
 interface Outline {
   title: string
   type: string
@@ -24,9 +25,8 @@ interface Outline {
 
 export default function ViewPresentation() {
   const [currentSlide, setCurrentSlide] = useState(1)
-  const [selectedImage, setSelectedImage] = useState('/placeholder.svg')
-  const [selectedOutline, setSelectedOutline] = useState('cover')
-  const [currentOutline, setCurrentOutline] = useState('cover')
+  const [selectedOutline, setSelectedOutline] = useState('')
+  const [currentOutline, setCurrentOutline] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
   const [displayMode, setDisplayMode] = useState<'slides' | 'newContent'>(
@@ -43,49 +43,56 @@ export default function ViewPresentation() {
   const orgId = sessionStorage.getItem('orgId')
   const documentID = sessionStorage.getItem('documentID')
   const slideRefs = useRef<HTMLDivElement[]>([])
-  const totalSlides = outlines.length || 5
-  const [slides, setSlides] = useState([]); // State to store slide IDs
-  const [loading, setLoading] = useState(false);
+  const [totalSlides, setTotalSlides] = useState(Number)
+  const [slidesId, setSlidesId] = useState([]) // State to store slide IDs
+  const [presentationID, setPresentationID] = useState<string>('')
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
+  const [outlineType, setOutlineType] = useState('')
+  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
+
+  // WEB SOCKET
   useEffect(() => {
-    const socket = io('http://localhost:5002', {
+    const socket = io(`${SOCKET_URL}`, {
       transports: ['websocket'],
-    });
+    })
+    console.log('Connecting to WebSocket server...')
 
+    // When connected
     socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-      if (documentID) {
-        socket.emit('joinDocument', { slideType: documentID, formID: selectedOutline });
-      }
-    });
+      console.log('Connected to WebSocket server', socket.id)
+    })
 
+    // Listen for slide data from the backend
     socket.on('slidesData', (newSlides) => {
-      console.log('Received new slide data:', newSlides);
-      setSlides(newSlides);
-    });
+      const result = newSlides
+      setPresentationID(result[0].PresentationID)
+      const ids = result.map((item: any) => item.GenSlideID)
+      setSlidesId(ids)
+      setTotalSlides(ids.length)
+    })
 
+    // Handle any error messages from the backend
     socket.on('error', (error) => {
-      console.error('Error:', error.message);
-    });
+      console.error('Error:', error.message)
+    })
 
+    const slideTypeData = currentOutline.replace(/^\d+\.\s*/, '')
+
+    // Automatically fetch slides on component mount
+    socket.emit('fetchSlides', {
+      slideType: 'Key Features',
+      formID: 'Document-1732794823300',
+    })
+
+    // Cleanup when the component unmounts
     return () => {
-      socket.disconnect();
-    };
-  }, [documentID, selectedOutline]);
-  console.log(slides);
-  
+      console.log('Disconnecting from WebSocket server...')
+      socket.disconnect()
+    }
+  }, [])
 
-  // return (
-  //   <ul>
-  //     {slides.map((slideID, index) => (
-  //       <li key={index}>{slideID}</li>
-  //     ))}
-  //   </ul>
-  // );
-
-  
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value
-    setSelectedImage(slideImages[selectedOption] || '/placeholder.svg')
     setSelectedOutline(selectedOption)
   }
 
@@ -102,21 +109,23 @@ export default function ViewPresentation() {
   // Handle delete button click
   const handleDelete = () => {
     alert('Slide deleted.')
+    console.log(slidesId[currentSlideIndex])
   }
 
   // Handle confirm button click
   const handleConfirm = () => {
     alert('Changes confirmed.')
     setFinalized(true)
+    console.log(slidesId[currentSlideIndex])
   }
 
   const handleOutlineSelect = (option: string) => {
     setSelectedOutline(option)
     setCurrentOutline(option)
-    setSelectedImage(slideImages[option] || '/placeholder.svg')
     setCurrentSlide(outlines.findIndex((o) => o.title === option) + 1)
     const slideIndex = outlines.findIndex((o) => o.title === option)
     slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
+    setCurrentSlideIndex(0)
   }
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -137,73 +146,10 @@ export default function ViewPresentation() {
     } else {
       setDisplayMode('newContent')
       setPlusClickedSlide(currentSlide)
-      console.log(selectedOutline)
-
-      try {
-        await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/new-version/${documentID}`,
-          { outline: selectedOutline },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        console.log('New version created for:', selectedOutline)
-      } catch (error) {
-        console.error('Error creating new version:', error)
-      }
     }
   }
 
-  // QUICK GENERATE API CALL
-  useEffect(() => {
-    const quickGenerate = async () => {
-      try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data//documentgenerate/generate-document/${orgId}/${slideType}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-
-        const result = await response.data
-        sessionStorage.setItem('documentID', result.documentID)
-        setOutlines(result.blockList)
-      } catch (error) {
-        console.error('Error generating document:', error)
-      }
-    }
-    quickGenerate()
-  }, [authToken, orgId, slideType])
-
- 
-  // useEffect(() => {
-  //   const fetchOutlines = async () => {
-  //     const documentID = sessionStorage.getItem('documentID')
-  //     if (!documentID) return
-
-  //     try {
-  //       const response = await axios.get(
-  //         `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${authToken}`,
-  //           },
-  //         }
-  //       )
-  //       setOutlines(response.data.outline)
-  //     } catch (error) {
-  //       console.error('Error fetching outlines:', error)
-  //     }
-  //   }
-  //   fetchOutlines()
-  // }, [authToken])
-
-  // Fetch outlines and update slideImages
+  // FETCH OUTLINES
   useEffect(() => {
     const fetchOutlines = async () => {
       const sampleImageUrl = {
@@ -230,54 +176,86 @@ export default function ViewPresentation() {
           {}
         )
         setSlideImages(dynamicSlideImages)
+        if (fetchedOutlines.length > 0) {
+          setCurrentOutline(fetchedOutlines[0].title)
+          setSelectedOutline(fetchedOutlines[0].title)
+        }
       } catch (error) {
         console.error('Error fetching outlines:', error)
       }
     }
     fetchOutlines()
-  }, [authToken, documentID])
+  }, [])
 
-  const handleQuickGenerate = () => {
-    console.log(slideRefs)
+  // Set Slide Type for Quick Generate
+  useEffect(() => {
+    // Find the object in outlines that matches the currentOutline title
+    const matchingOutline = outlines.find(
+      (outline) => outline.title === currentOutline
+    )
+
+    // Update the outlineType state with the type of the matched object
+    setOutlineType(matchingOutline?.type || '')
+  }, [outlines, currentOutline])
+
+  const handleQuickGenerate = async () => {
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
+          {
+            type: outlineType,
+            title: currentOutline.replace(/^\d+\.\s*/, ''),
+            documentID: documentID,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log('QUICK GENERATE RESPONSE', response)
+        })
+        .catch((error) => {
+          console.log('QUICK GENERATE RESPONSE ERROR', error)
+        })
+    } catch (error) {
+      console.log('QUICK GENERATE TRY CATCH ERROR', error)
+    }
+  }
+
+  const handlePaginatePrev = () => {
+    if (currentSlideIndex > 0) {
+      setCurrentSlideIndex((prevIndex) => prevIndex - 1)
+    }
+  }
+
+  const handlePaginateNext = () => {
+    if (currentSlideIndex < slidesId.length - 1) {
+      setCurrentSlideIndex((prevIndex) => prevIndex + 1)
+    }
   }
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">
-      {/* Heading section for large screens */}
-      <div className="hidden lg:flex lg:w-full lg:absolute lg:left-0 lg:pl-8 lg:pr-8 lg:pt-4">
-        <div className="flex items-center gap-8 w-full">
-          <h1 className="text-2xl font-semibold break-words">
-            The Evolution of Our Path
-          </h1>
-          <div className="flex gap-2">
-            <button
-              onClick={handleShare}
-              className="text-[#5D5F61] gap-2 hover:text-blue-600 border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center"
-            >
-              <FaShare className="h-3 w-3" />
-              <span>Share</span>
-            </button>
-            <button
-              onClick={handleDownload}
-              className="text-[#5D5F61] gap-2 hover:text-blue-600 border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center"
-            >
-              <FaDownload className="h-3 w-3" />
-              <span>Export</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      {/*LARGE SCREEN: HEADING*/}
+      <DesktopHeading
+        handleDownload={handleDownload}
+        handleShare={handleShare}
+      />
 
-      {/* Main content container for medium and larger screens */}
+      {/*LARGE SCREEN: MAIN CONTAINER*/}
       <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16">
-        {/* Sidebar for medium and larger screens */}
+        {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
           onOutlineSelect={handleOutlineSelect}
           selectedOutline={selectedOutline}
+          fetchedOutlines={outlines}
         />
 
+        {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}
         <div className="flex-1">
-          {/* Scrollable container for medium and larger screens */}
           <div
             className="no-scrollbar rounded-sm shadow-lg relative w-[90%] bg-white border border-gray-200 mb-2 ml-16 overflow-y-scroll snap-y snap-mandatory"
             style={{ height: 'calc(100vh - 200px)' }}
@@ -292,49 +270,13 @@ export default function ViewPresentation() {
               >
                 {displayMode === 'newContent' &&
                 plusClickedSlide === index + 1 ? (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <h2 className="text-xl text-[#091220] font-semibold">
-                      Create a new slide
-                    </h2>
-                    <h3 className="text-base text-[#5D5F61]">
-                      How would you like to create a new slide
-                    </h3>
-                    <div className="flex gap-4 mt-4">
-                      <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-                        <button
-                          className="flex flex-col items-center justify-center"
-                          onClick={handleQuickGenerate}
-                        >
-                          <img
-                            src={QuickGenerateIcon}
-                            alt="Quick Generate"
-                            className="h-16 w-16"
-                          />
-                          <span>Quick Generate</span>
-                        </button>
-                      </div>
-                      <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-                        <img
-                          src={CustomBuilderIcon}
-                          alt="Custom Builder"
-                          className="h-16 w-16"
-                        />
-                        <span>Custom Builder</span>
-                      </div>
-                      <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-                        <img
-                          src={SlideNarrativeIcon}
-                          alt="Slide Narrative"
-                          className="h-16 w-16"
-                        />
-                        <span>Slide Narrative</span>
-                      </div>
-                    </div>
-                  </div>
+                  <DesktopNewSlideVersion
+                    handleQuickGenerate={handleQuickGenerate}
+                  />
                 ) : (
                   <iframe
-                    src={image}
-                    title={`Slide ${index + 1}`}
+                    src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
+                    title={`Slide ${currentSlideIndex + 1}`}
                     className="w-full h-full"
                     style={{ border: 0 }}
                   />
@@ -343,6 +285,7 @@ export default function ViewPresentation() {
             ))}
           </div>
 
+          {/* MEDIUM LARGE SCREEN: ACTION BUTTONS */}
           <div className="flex items-center justify-between ml-16">
             <div className="flex gap-2">
               <button
@@ -387,24 +330,23 @@ export default function ViewPresentation() {
               </button>
             </div>
 
+            {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
             <div className="flex items-center gap-2 mr-12">
               <button
-                onClick={() => setCurrentSlide((prev) => Math.max(1, prev - 1))}
-                disabled={currentSlide === 1}
-                className="flex items-center border border-[#E1E3E5] bg-white p-2 rounded-md"
+                onClick={handlePaginatePrev}
+                disabled={currentSlideIndex === 0}
+                className="flex items-center hover:cursor-pointer border border-[#E1E3E5] bg-white p-2 rounded-md"
               >
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
               <span className="text-sm">
-                Slide {currentSlide} of {totalSlides}
+                Slide {currentSlideIndex + 1} of {slidesId.length}
               </span>
               <button
-                onClick={() =>
-                  setCurrentSlide((prev) => Math.min(totalSlides, prev + 1))
-                }
-                disabled={currentSlide === totalSlides}
-                className={`flex items-center border border-[#E1E3E5] bg-white p-2 rounded-md ${
-                  currentSlide === totalSlides
+                onClick={handlePaginateNext}
+                disabled={currentSlideIndex === slidesId.length - 1}
+                className={`flex items-center border hover:cursor-pointer border-[#E1E3E5] bg-white p-2 rounded-md ${
+                  currentSlideIndex === slidesId.length - 1
                     ? 'text-gray-400'
                     : 'hover:text-blue-600'
                 }`}
@@ -416,27 +358,15 @@ export default function ViewPresentation() {
         </div>
       </div>
 
-      {/* Main content container for mobile screens */}
+      {/* MOBILE: MAIN CONTAINER */}
       <div className="block lg:hidden p-4 mx-auto">
-        <div className="flex items-center justify-between gap-2 mt-6 mb-5">
-          <h1 className="text-2xl font-semibold flex-1 mr-4 break-words">
-            The Evolution of Our Path
-          </h1>
-          <div className="flex gap-2">
-            <button
-              onClick={handleDownload}
-              className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md"
-            >
-              <FaDownload className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleShare}
-              className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md"
-            >
-              <FaShare className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+        {/* MOBILE: HEADING */}
+        <MobileHeading
+          handleDownload={handleDownload}
+          handleShare={handleShare}
+        />
+
+        {/* MOBILE: OUTLINE DROPDOWN */}
         <div className="space-y-4 mt-10 mb-7">
           <div className="space-y-2 flex flex-col">
             <label className="text-base text-[#5D5F61] font-medium">
@@ -456,52 +386,23 @@ export default function ViewPresentation() {
           </div>
         </div>
 
-        {/* Static iframe for small screens */}
+        {/* MOBILE: SLIDE DISPLAY CONTAINER */}
         <div className="relative bg-white h-[30vh] border border-gray-200 mt-12 mb-6">
           {displayMode === 'newContent' &&
           plusClickedSlide === currentSlide &&
           selectedOutline === currentOutline ? (
-            <div className="flex flex-col mt-2 items-center justify-center h-full">
-              <h2 className="text-xl font-semibold">Create a new slide</h2>
-              <h3 className="text-base text-[#5D5F61]">
-                How would you like to create a new slide?
-              </h3>
-              <div className="flex gap-2 mt-4">
-                <div className="flex flex-col items-center border border-gray-300 p-2">
-                  <img
-                    src={QuickGenerateIcon}
-                    alt="Quick Generate"
-                    className="h-12 w-12"
-                  />
-                  <span className="text-sm">Quick Generate</span>
-                </div>
-                <div className="flex flex-col items-center border border-gray-300 p-2">
-                  <img
-                    src={CustomBuilderIcon}
-                    alt="Custom Builder"
-                    className="h-12 w-12"
-                  />
-                  <span className="text-sm">Custom Builder</span>
-                </div>
-                <div className="flex flex-col items-center border border-gray-300 p-2">
-                  <img
-                    src={SlideNarrativeIcon}
-                    alt="Slide Narrative"
-                    className="h-12 w-12"
-                  />
-                  <span className="text-sm">Slide Narrative</span>
-                </div>
-              </div>
-            </div>
+            <MobileNewSlideVersion handleQuickGenerate={handleQuickGenerate} />
           ) : (
-            <img
-              src={selectedImage}
-              alt="Slide content"
-              className="absolute top-0 left-0 w-full h-full"
+            <iframe
+              src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
+              title={`Slide ${currentSlideIndex + 1}`}
+              className="w-full h-full"
+              style={{ border: 0 }}
             />
           )}
         </div>
 
+        {/* MOBILE: ACTION BUTTONS */}
         <div className="flex items-center justify-between w-full mt-10">
           <div className="flex gap-4">
             <button
@@ -544,10 +445,11 @@ export default function ViewPresentation() {
             </button>
           </div>
 
+          {/* MOBILE: PAGINATION BUTTONS */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentSlide((prev) => Math.max(1, prev - 1))}
-              disabled={currentSlide === 1}
+              onClick={handlePaginatePrev}
+              disabled={currentSlideIndex === 0}
               className="flex items-center border bg-white border-gray-300 p-2 rounded-md"
             >
               <FaArrowLeft
@@ -557,14 +459,11 @@ export default function ViewPresentation() {
               />
             </button>
             <span className="text-sm text-[#5D5F61]">
-              Slide <span className="text-[#091220]">{currentSlide}</span> of{' '}
-              {totalSlides}
+              Slide {currentSlideIndex + 1} of {slidesId.length}
             </span>
             <button
-              onClick={() =>
-                setCurrentSlide((prev) => Math.min(totalSlides, prev + 1))
-              }
-              disabled={currentSlide === totalSlides}
+              onClick={handlePaginateNext}
+              disabled={currentSlideIndex === slidesId.length - 1}
               className={`flex items-center border border-gray-300 bg-white p-2 rounded-md ${
                 currentSlide === totalSlides
                   ? 'text-[#091220]'
