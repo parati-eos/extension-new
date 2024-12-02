@@ -12,6 +12,7 @@ import ImagesPage from './pages/ImagesPage.tsx'
 import CustomBuilderTypePage from './pages/CustomBuilderTypePage.tsx'
 import SlideNarrativePage from './pages/SlideNarrativePage.tsx'
 import CustomBuilderCoverPage from './pages/CustomBuilderPage.tsx'
+import TimelinePage from './pages/Timeline.tsx'
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
           <Route path="/slide-narrative" element={<SlideNarrativePage />} />
           <Route path="/custombuilder-type" element={<CustomBuilderTypePage/>} />
           <Route path="/Images" element={<ImagesPage/>} />
+          <Route path="/Timeline" element={<TimelinePage/>} />
         </Routes>
       </Router>
     </TokenProvider>
