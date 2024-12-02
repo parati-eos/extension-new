@@ -20,15 +20,26 @@ import { Outline } from '../../types/types'
 import Points from './custom-builder/Points'
 import './viewpresentation.css'
 
+export type DisplayMode =
+  | 'slides'
+  | 'newContent'
+  | 'slideNarrative'
+  | 'customBuilder'
+  | 'Points'
+  | 'Timeline'
+  | 'Images'
+  | 'Table'
+  | 'People'
+  | 'Graphs'
+  | 'Statistics'
+
 export default function ViewPresentation() {
   const [currentSlide, setCurrentSlide] = useState(1)
   const [selectedOutline, setSelectedOutline] = useState('')
   const [currentOutline, setCurrentOutline] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
-  const [displayMode, setDisplayMode] = useState<
-    'slides' | 'newContent' | 'slideNarrative' | 'customBuilder' | 'points'
-  >('slides')
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
@@ -261,6 +272,10 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
 
+  const handleCustomTypeClick = (typeName: DisplayMode) => {
+    setDisplayMode(typeName)
+  }
+
   // Render Slide Content
   const renderContent = ({
     displayMode,
@@ -301,7 +316,7 @@ export default function ViewPresentation() {
       case 'slideNarrative':
         return
       case 'customBuilder':
-        return <CustomBuilder />
+        return <CustomBuilder onTypeClick={handleCustomTypeClick} />
       case 'points':
         return <Points />
       default:

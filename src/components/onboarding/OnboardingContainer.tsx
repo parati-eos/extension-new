@@ -89,7 +89,7 @@ const OnboardingContainer: React.FC = () => {
         setVisitedSections([...visitedSections, nextSection])
       }
     } else {
-      navigate('/organization-profile')
+      navigate('/new-presentation')
     }
   }
 

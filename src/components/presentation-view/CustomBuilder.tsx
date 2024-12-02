@@ -6,9 +6,14 @@ import PointsIcon from '../../assets/points-icon.png'
 import TimelineIcon from '../../assets/timeline-icon.png'
 import TableIcon from '../../assets/table-icon.png'
 import ImagesIcon from '../../assets/images-icon.png'
+import { DisplayMode } from './ViewPresentation'
 
-export default function CustomBuilder() {
-  const slideTypes = [
+interface ClickProps {
+  onTypeClick: (typeName: DisplayMode) => void
+}
+
+const CustomBuilder: React.FC<ClickProps> = ({ onTypeClick }) => {
+  const slideTypes: { name: DisplayMode; icon: string }[] = [
     { name: 'Points', icon: PointsIcon },
     { name: 'Timeline', icon: TimelineIcon },
     { name: 'Images', icon: ImagesIcon },
@@ -50,7 +55,7 @@ export default function CustomBuilder() {
           >
             <button
               className="flex flex-col items-center justify-center"
-              // onClick={type.onClick(type.name)}
+              onClick={() => onTypeClick(type.name)}
             >
               <img
                 src={type.icon}
@@ -65,3 +70,5 @@ export default function CustomBuilder() {
     </div>
   )
 }
+
+export default CustomBuilder
