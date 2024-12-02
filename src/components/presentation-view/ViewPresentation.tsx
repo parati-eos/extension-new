@@ -15,7 +15,9 @@ import {
   DesktopNewSlideVersion,
 } from './NewSlideVersion'
 import Sidebar from './Sidebar'
+import CustomBuilder from './CustomBuilder'
 import { Outline } from '../../types/types'
+import Points from './custom-builder/Points'
 import './viewpresentation.css'
 
 export default function ViewPresentation() {
@@ -24,17 +26,17 @@ export default function ViewPresentation() {
   const [currentOutline, setCurrentOutline] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
-  const [displayMode, setDisplayMode] = useState<'slides' | 'newContent'>(
-    'slides'
-  )
+  const [displayMode, setDisplayMode] = useState<
+    'slides' | 'newContent' | 'slideNarrative' | 'customBuilder' | 'points'
+  >('slides')
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
   const navigate = useNavigate()
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
-  const slideTypeReceived = searchParams.get('slideType')!
-  const slideType = slideTypeReceived!.replace(/%20| /g, '')
+  // const location = useLocation()
+  // const searchParams = new URLSearchParams(location.search)
+  // const presentationTypeReceived = searchParams.get('slideType')!
+  // const slideType = presentationTypeReceived!.replace(/%20| /g, '')
   const orgId = sessionStorage.getItem('orgId')
   const documentID = sessionStorage.getItem('documentID')
   const slideRefs = useRef<HTMLDivElement[]>([])
@@ -45,7 +47,131 @@ export default function ViewPresentation() {
   const [outlineType, setOutlineType] = useState('')
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
 
-  // WEB SOCKET
+  // Handle Share Button Click
+  const handleShare = async () => {
+    navigate(`/share/?formId=${documentID}`)
+  }
+
+  // Handle Download Button Click
+  const handleDownload = () => {
+    alert('Download functionality triggered.')
+  }
+
+  // Handle Delete Button Click
+  const handleDelete = () => {
+    console.log(slidesId[currentSlideIndex])
+
+    axios.patch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/display/${slidesId[currentSlideIndex]}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    )
+  }
+
+  // Handle Finalize Button Click
+  const handleFinalize = () => {
+    setFinalized(true)
+    console.log(slidesId[currentSlideIndex])
+    axios.patch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    )
+  }
+
+  // Handle Add New Slide Version Button
+  const handlePlusClick = async () => {
+    if (displayMode === 'newContent') {
+      setDisplayMode('slides')
+      setPlusClickedSlide(null)
+    } else {
+      setDisplayMode('newContent')
+      setPlusClickedSlide(currentSlide)
+    }
+  }
+
+  // MOBILE SCREENS: Outline Dropdown Select
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOption = e.target.value
+    setSelectedOutline(selectedOption)
+  }
+
+  // MEDIUM LARGE SCREENS: Sidebar Outline Select
+  const handleOutlineSelect = (option: string) => {
+    setSelectedOutline(option)
+    setCurrentOutline(option)
+    setCurrentSlide(outlines.findIndex((o) => o.title === option) + 1)
+    const slideIndex = outlines.findIndex((o) => o.title === option)
+    slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
+    setCurrentSlideIndex(0)
+  }
+
+  // MEDIUM LARGE SCREENS: Slide Scroll
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = e.currentTarget.scrollTop
+    const slideHeight = e.currentTarget.clientHeight
+    const newSlide = Math.round(scrollTop / slideHeight) + 1
+    setCurrentSlide(newSlide)
+    setSelectedOutline(outlines[newSlide - 1]?.title || '')
+    if (newSlide !== plusClickedSlide) {
+      setDisplayMode('slides')
+    }
+  }
+
+  // Quick Generate Slide
+  const handleQuickGenerate = async () => {
+    try {
+      await axios
+        .post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
+          {
+            type: outlineType,
+            title: currentOutline.replace(/^\d+\.\s*/, ''),
+            documentID: documentID,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log('QUICK GENERATE RESPONSE', response)
+        })
+        .catch((error) => {
+          console.log('QUICK GENERATE RESPONSE ERROR', error)
+        })
+    } catch (error) {
+      console.log('QUICK GENERATE TRY CATCH ERROR', error)
+    }
+  }
+
+  // Slide Narative API
+  const handleSlideNarrative = async () => {}
+
+  // Paginate Back
+  const handlePaginatePrev = () => {
+    if (currentSlideIndex > 0) {
+      setCurrentSlideIndex((prevIndex) => prevIndex - 1)
+    }
+  }
+
+  // Paginate Next
+  const handlePaginateNext = () => {
+    if (currentSlideIndex < slidesId.length - 1) {
+      setCurrentSlideIndex((prevIndex) => prevIndex + 1)
+    }
+  }
+
+  // Web Socket To Get Slide Data
   useEffect(() => {
     const socket = io(`${SOCKET_URL}`, {
       transports: ['websocket'],
@@ -71,7 +197,7 @@ export default function ViewPresentation() {
       console.error('Error:', error.message)
     })
 
-    const slideTypeData = currentOutline.replace(/^\d+\.\s*/, '')
+    // const slideTypeData = currentOutline.replace(/^\d+\.\s*/, '')
 
     // Automatically fetch slides on component mount
     socket.emit('fetchSlides', {
@@ -84,67 +210,9 @@ export default function ViewPresentation() {
       console.log('Disconnecting from WebSocket server...')
       socket.disconnect()
     }
-  }, [])
+  }, [currentOutline, SOCKET_URL])
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = e.target.value
-    setSelectedOutline(selectedOption)
-  }
-
-  // Handle share button click
-  const handleShare = async () => {
-    navigate(`/share/?formId=${documentID}`)
-  }
-
-  // Handle download button click
-  const handleDownload = () => {
-    alert('Download functionality triggered.')
-  }
-
-  // Handle delete button click
-  const handleDelete = () => {
-    alert('Slide deleted.')
-    console.log(slidesId[currentSlideIndex])
-  }
-
-  // Handle confirm button click
-  const handleConfirm = () => {
-    alert('Changes confirmed.')
-    setFinalized(true)
-    console.log(slidesId[currentSlideIndex])
-  }
-
-  const handleOutlineSelect = (option: string) => {
-    setSelectedOutline(option)
-    setCurrentOutline(option)
-    setCurrentSlide(outlines.findIndex((o) => o.title === option) + 1)
-    const slideIndex = outlines.findIndex((o) => o.title === option)
-    slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
-    setCurrentSlideIndex(0)
-  }
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = e.currentTarget.scrollTop
-    const slideHeight = e.currentTarget.clientHeight
-    const newSlide = Math.round(scrollTop / slideHeight) + 1
-    setCurrentSlide(newSlide)
-    setSelectedOutline(outlines[newSlide - 1]?.title || '')
-    if (newSlide !== plusClickedSlide) {
-      setDisplayMode('slides')
-    }
-  }
-
-  const handlePlusClick = async () => {
-    if (displayMode === 'newContent') {
-      setDisplayMode('slides')
-      setPlusClickedSlide(null)
-    } else {
-      setDisplayMode('newContent')
-      setPlusClickedSlide(currentSlide)
-    }
-  }
-
-  // FETCH OUTLINES
+  // Fetch Outlines
   useEffect(() => {
     const fetchOutlines = async () => {
       const sampleImageUrl = {
@@ -180,9 +248,9 @@ export default function ViewPresentation() {
       }
     }
     fetchOutlines()
-  }, [])
+  }, [documentID, authToken])
 
-  // Set Slide Type for Quick Generate
+  // Set Slide Type For Quick Generate
   useEffect(() => {
     // Find the object in outlines that matches the currentOutline title
     const matchingOutline = outlines.find(
@@ -193,42 +261,51 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
 
-  const handleQuickGenerate = async () => {
-    try {
-      await axios
-        .post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
-          {
-            type: outlineType,
-            title: currentOutline.replace(/^\d+\.\s*/, ''),
-            documentID: documentID,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
+  // Render Slide Content
+  const renderContent = ({
+    displayMode,
+    isMobile,
+    index,
+  }: {
+    displayMode: string
+    isMobile: boolean
+    index?: number
+  }) => {
+    switch (displayMode) {
+      case 'slides':
+        return (
+          <iframe
+            src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
+            title={`Slide ${currentSlideIndex + 1}`}
+            className="w-full h-full"
+            style={{ border: 0 }}
+          />
         )
-        .then((response) => {
-          console.log('QUICK GENERATE RESPONSE', response)
-        })
-        .catch((error) => {
-          console.log('QUICK GENERATE RESPONSE ERROR', error)
-        })
-    } catch (error) {
-      console.log('QUICK GENERATE TRY CATCH ERROR', error)
-    }
-  }
-
-  const handlePaginatePrev = () => {
-    if (currentSlideIndex > 0) {
-      setCurrentSlideIndex((prevIndex) => prevIndex - 1)
-    }
-  }
-
-  const handlePaginateNext = () => {
-    if (currentSlideIndex < slidesId.length - 1) {
-      setCurrentSlideIndex((prevIndex) => prevIndex + 1)
+      case 'newContent':
+        if (isMobile) {
+          return (
+            <MobileNewSlideVersion
+              handleQuickGenerate={handleQuickGenerate}
+              handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
+            />
+          )
+        } else if (plusClickedSlide === index! + 1) {
+          return (
+            <DesktopNewSlideVersion
+              handleQuickGenerate={handleQuickGenerate}
+              handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
+            />
+          )
+        }
+        break
+      case 'slideNarrative':
+        return
+      case 'customBuilder':
+        return <CustomBuilder />
+      case 'points':
+        return <Points />
+      default:
+        return null
     }
   }
 
@@ -240,7 +317,7 @@ export default function ViewPresentation() {
         handleShare={handleShare}
       />
 
-      {/*LARGE SCREEN: MAIN CONTAINER*/}
+      {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
       <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16">
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
@@ -251,31 +328,24 @@ export default function ViewPresentation() {
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}
         <div className="flex-1">
+          {/* MEDIUM LARGE SCREEN: SLIDE DISPLAY BOX*/}
           <div
             className="no-scrollbar rounded-sm shadow-lg relative w-[90%] bg-white border border-gray-200 mb-2 ml-16 overflow-y-scroll snap-y snap-mandatory"
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
           >
-            {Object.entries(slideImages).map(([outline, image], index) => (
+            {Object.entries(slideImages).map(([outline], index) => (
               <div
                 key={outline}
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-start w-full h-screen"
                 style={{ height: '100%' }}
               >
-                {displayMode === 'newContent' &&
-                plusClickedSlide === index + 1 ? (
-                  <DesktopNewSlideVersion
-                    handleQuickGenerate={handleQuickGenerate}
-                  />
-                ) : (
-                  <iframe
-                    src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
-                    title={`Slide ${currentSlideIndex + 1}`}
-                    className="w-full h-full"
-                    style={{ border: 0 }}
-                  />
-                )}
+                {renderContent({
+                  displayMode,
+                  isMobile: false,
+                  index,
+                })}
               </div>
             ))}
           </div>
@@ -294,7 +364,7 @@ export default function ViewPresentation() {
                 </span>
               </button>
               <button
-                onClick={handleConfirm}
+                onClick={handleFinalize}
                 className={`p-2 rounded-md flex items-center border ${
                   finalized && selectedOutline === currentOutline
                     ? 'border-[#0A8568] bg-[#36fa810a]'
@@ -381,20 +451,12 @@ export default function ViewPresentation() {
           </div>
         </div>
 
-        {/* MOBILE: SLIDE DISPLAY CONTAINER */}
+        {/* MOBILE: SLIDE DISPLAY BOX */}
         <div className="relative bg-white h-[30vh] border border-gray-200 mt-12 mb-6">
-          {displayMode === 'newContent' &&
-          plusClickedSlide === currentSlide &&
-          selectedOutline === currentOutline ? (
-            <MobileNewSlideVersion handleQuickGenerate={handleQuickGenerate} />
-          ) : (
-            <iframe
-              src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
-              title={`Slide ${currentSlideIndex + 1}`}
-              className="w-full h-full"
-              style={{ border: 0 }}
-            />
-          )}
+          {renderContent({
+            displayMode,
+            isMobile: true,
+          })}
         </div>
 
         {/* MOBILE: ACTION BUTTONS */}
@@ -407,7 +469,7 @@ export default function ViewPresentation() {
               <FaTrash className="h-4 w-4 text-[#5D5F61]" />
             </button>
             <button
-              onClick={handleConfirm}
+              onClick={handleFinalize}
               className={`border ${
                 finalized && selectedOutline === currentOutline
                   ? 'border-[#0A8568] bg-[#36fa810a]'

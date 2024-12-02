@@ -4,10 +4,12 @@ import QuickGenerateIcon from '../../assets/quick-generate.png'
 
 interface ButtonProps {
   handleQuickGenerate: () => void
+  handleCustomBuilderClick: () => void
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
+  handleCustomBuilderClick,
 }) => {
   return (
     <div className="flex flex-col mt-2 items-center justify-center h-full">
@@ -30,12 +32,17 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
           </button>
         </div>
         <div className="flex flex-col items-center border border-gray-300 p-2">
-          <img
-            src={CustomBuilderIcon}
-            alt="Custom Builder"
-            className="h-12 w-12"
-          />
-          <span className="text-sm">Custom Builder</span>
+          <button
+            className="flex flex-col items-center justify-center"
+            onClick={handleCustomBuilderClick}
+          >
+            <img
+              src={CustomBuilderIcon}
+              alt="Custom Builder"
+              className="h-12 w-12"
+            />
+            <span className="text-sm">Custom Builder</span>
+          </button>
         </div>
         <div className="flex flex-col items-center border border-gray-300 p-2">
           <img
@@ -52,6 +59,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
 
 export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
+  handleCustomBuilderClick,
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -76,12 +84,17 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
           </button>
         </div>
         <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-          <img
-            src={CustomBuilderIcon}
-            alt="Custom Builder"
-            className="h-16 w-16"
-          />
-          <span>Custom Builder</span>
+          <button
+            className="flex flex-col items-center justify-center"
+            onClick={handleCustomBuilderClick}
+          >
+            <img
+              src={CustomBuilderIcon}
+              alt="Custom Builder"
+              className="h-16 w-16"
+            />
+            <span>Custom Builder</span>
+          </button>
         </div>
         <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
           <img

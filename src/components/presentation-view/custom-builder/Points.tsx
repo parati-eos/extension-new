@@ -18,6 +18,24 @@ export default function Points() {
 
   return (
     <div className="relative flex flex-col bg-gray-300 pt-5 pb-4 h-[30vh] lg:h-[80vh] border border-gray-200 mt-12 mb-6">
+      {/* Top Section: Headings */}
+      <div className="flex lg:mt-2 items-center justify-between w-full px-4">
+        <div>
+          <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+            Custom Builder
+          </h2>
+          <h3 className="text-sm sm:text-base text-[#5D5F61]">
+            Select your slide type
+          </h3>
+        </div>
+        <button
+          className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline"
+          // onClick={handleBackClick}
+        >
+          Back
+        </button>
+      </div>
+
       {points.map((point, index) => (
         <div
           key={index}
