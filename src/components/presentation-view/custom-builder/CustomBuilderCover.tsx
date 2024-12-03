@@ -1,19 +1,8 @@
 import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCheck,
-  FaDownload,
-  FaPlus,
-  FaShare,
-  FaTrash,
   FaPaperclip
 } from "react-icons/fa";
 import React, { useEffect, useState } from 'react'
-import CustomBuilderIcon from "../../assets/custom-builder.png";
-import SlideNarrativeIcon from "../../assets/slide-narrative.png";
-import QuickGenerateIcon from "../../assets/quick-generate.png";
-import "./viewpresentation.css";
-import { FaImage, FaBullseye } from 'react-icons/fa'
+import { FaImage, } from 'react-icons/fa'
 
 export default function CustomBuilderCover() {
   

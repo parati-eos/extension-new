@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaPhone } from 'react-icons/fa'
-
-interface ContactDetailsFormProps {
-  onContinue: (data: {
-    contactEmail: string
-    contactPhone: string
-    linkedinLink: string
-  }) => void
-  onBack: () => void
-  initialData: {
-    contactEmail: string
-    contactPhone: string
-    linkedinLink: string
-  }
-}
+import { ContactDetailsFormProps } from '../../../types/onboardingTypes'
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onContinue,
@@ -115,7 +102,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             />
             {!isPhoneValid && (
               <p className="text-red-500 text-sm">
-                Please enter a valid phone number.
+                Please enter a valid phone number. Remove 0 from the start if
+                present.
               </p>
             )}
             <label

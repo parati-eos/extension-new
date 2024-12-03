@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Imagelogo from "../../assets/imagelogo.png";
-import uploadLogoToS3 from "../../utils/uploadLogoToS3";
+import Imagelogo from "../../../assets/imagelogo.png";
+import uploadLogoToS3 from "../../../utils/uploadLogoToS3";
 
 interface LogoFormProps {
   onContinue: (data: { logos: string[] }) => void;
@@ -54,8 +54,8 @@ const LogoForm: React.FC<LogoFormProps> = ({ onContinue, onBack, initialData }) 
   };
 
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">
-      <div className="w-full mt-[4rem] sm:mt-[4rem] lg:mt-2 bg-white lg:bg-white lg:shadow-lg lg:max-w-4xl lg:w-[800px] lg:h-[600px] lg:rounded-3xl lg:flex lg:flex-col lg:justify-between lg:items-center lg:p-4 lg:sm:p-8 lg:mx-auto">
+    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full w-ful">
+      <div className=" bg-white lg:bg-white lg:shadow-lg lg:max-w-4xl w-full h-full lg:flex lg:flex-col lg:justify-between lg:items-center lg:p-4 lg:sm:p-8 lg:mx-auto">
         <div className="flex  mb-10 w-full justify-around">
           <div className="flex flex-col gap-2 mb-40">
             <p className="hidden font-bold break-words">Images</p>
@@ -189,30 +189,23 @@ const LogoForm: React.FC<LogoFormProps> = ({ onContinue, onBack, initialData }) 
           <button
             onClick={onBack}
             type="button"
-            className="hidden px-3 py-1 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-md transition text-[#797C81] mb-3"
+            className="hidden lg:block px-3 py-1 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-md transition text-[#797C81] mb-3"
           >
             Back
           </button>
         </div>
-
-        <div className="flex gap-3 justify-end lg:justify-start w-full">
+        <div className="flex justify-end lg:justify-start w-full">
           {/* Generate Slide Button */}
           <button
             onClick={handleSubmit}
             type="button"
-            className="px-6 py-2 mb-2 mr-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] bg-[#3667B2] hover:bg-white hover:border-[#797C81] hover:text-[#797C81] rounded-md transition text-white ml-10"
+            className="px-6 py-2 mb-2  h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] bg-[#3667B2] hover:bg-white hover:border-[#797C81] hover:text-[#797C81] rounded-md transition text-white "
           >
             Generate Slide
           </button>
         </div>
+        
       </div>
-      <button
-                type="button"
-               
-                className="px-5 py-2 mt-4 lg:hidden h-[2.7rem] w-[4.625rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white  rounded-md transition  text-[#797C81] ml-2 "
-              >
-                Back
-              </button>
     </div>
   );
 };

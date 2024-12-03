@@ -7,18 +7,7 @@ import LogoForm from './onboarding-sections/LogoForm.tsx'
 import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { useToken } from '../../utils/TokenContext.tsx'
-
-interface FormData {
-  companyName: string
-  contactEmail: string
-  contactPhone: string
-  linkedin: string
-  sector: string
-  industry: string
-  websiteLink: string
-  logo: string | null
-}
+import { FormData } from '../../types/onboardingTypes.ts'
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
@@ -37,8 +26,7 @@ const OnboardingContainer: React.FC = () => {
   const navigate = useNavigate()
   const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
-  const id = sessionStorage.getItem('id')
-  const { token } = useToken()
+  const authToken = sessionStorage.getItem('authToken')
 
   // Check if screen size is medium or larger to show sidebar
   useEffect(() => {
@@ -59,26 +47,25 @@ const OnboardingContainer: React.FC = () => {
     try {
       if (currentSection === 1) {
         await axios.post(
-          `${process.env.REACT_APP_ORG_URL}/organizationcreate-patch`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationcreate-patch`,
           {
             ...data,
             orgId: orgId,
             userId: userId,
-            _id: id,
           },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         )
       } else {
         await axios.patch(
-          `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
           data,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         )
@@ -197,7 +184,7 @@ const OnboardingContainer: React.FC = () => {
         )}
 
         {/* Onboarding Content */}
-        <div className="flex-1 flex items-start justify-center w-full bg-white">
+        <div className="flex-1 flex items-start justify-center w-full lg:mt-2 xl:mt-4 bg-white">
           {renderSectionContent()}
         </div>
       </div>

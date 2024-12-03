@@ -12,60 +12,15 @@ import {
   FaGoogleDrive,
   FaTrashAlt,
 } from 'react-icons/fa'
-import { useToken } from '../../utils/TokenContext'
-
-interface HistoryItem {
-  imgSrc: string
-  title: string
-  type: string
-  date: string
-}
 
 const HistoryContainer: React.FC = () => {
-  const historyItems: HistoryItem[] = [
-    {
-      imgSrc:
-        'https://next-images.123rf.com/index/_next/image/?url=https://assets-cdn.123rf.com/index/static/assets/top-section-bg.jpeg&w=3840&q=75',
-      title: 'The Evolution of Our Path',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc:
-        'https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630',
-      title: 'Transformations in Our Journey',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc:
-        'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg',
-      title: 'Milestones in Our Adventure',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc:
-        'https://i0.wp.com/picjumbo.com/wp-content/uploads/amazing-stone-path-in-forest-free-image.jpg?w=600&quality=80',
-      title: 'The Shifts in Our Experience',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-    {
-      imgSrc: 'https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649',
-      title: 'Progression of Our Story',
-      type: 'Pitch Deck',
-      date: 'Nov 08, 2024',
-    },
-  ]
-
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
   const userId = sessionStorage.getItem('userEmail')
-  const historyUrl = process.env.REACT_APP_HISTORY_URL || ''
-  const { token } = useToken()
+  const historyUrl = process.env.REACT_APP_BACKEND_URL || ''
   const [historyData, setHistoryData] = useState<any[]>([])
+  const authToken = sessionStorage.getItem('authToken')
 
   useEffect(() => {
     if (activeDropdown !== null) {
@@ -95,21 +50,24 @@ const HistoryContainer: React.FC = () => {
   useEffect(() => {
     const fetchHistoryData = async () => {
       try {
-        const response = await fetch(`${historyUrl}/${userId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        const data = await response.json()
-        setHistoryData(data)
+        const response = await fetch(
+          `${historyUrl}/api/v1/data/slidedisplay/history/67890`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const result = await response.json()
+        setHistoryData(result.data)
       } catch (error) {
         console.error('Error fetching history data:', error)
       }
     }
     fetchHistoryData()
-  }, [userId, historyUrl, token])
+  }, [userId, historyUrl])
 
   return (
     <div className="p-4 py-7 bg-[#F5F7FA] min-h-screen relative">
@@ -161,17 +119,20 @@ const HistoryContainer: React.FC = () => {
       <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
         {/* Mobile/Small Screen Layout */}
         <div className="block md:hidden">
-          {historyItems.map((item, index) => (
+          {historyData?.map((item, index) => (
             <div key={index} className="flex items-center p-4 py-6 relative">
-              <img
-                src={item.imgSrc}
-                alt={item.title}
+              <iframe
+                src={item.PresentationURL}
+                title={item.pptName}
                 className="w-16 h-16 object-cover rounded-md mr-4"
+                sandbox="allow-same-origin allow-scripts"
+                scrolling="no"
+                style={{ overflow: 'hidden' }}
               />
               <div className="flex-1">
                 <div className="flex justify-between items-center">
                   <h2 className="text-lg font-medium text-[#091220]">
-                    {item.title}
+                    {item.pptName}
                   </h2>
                   {/* Ellipsis Icon */}
                   <FaEllipsisV
@@ -187,13 +148,15 @@ const HistoryContainer: React.FC = () => {
                     <span className="block mb-1 font-medium text-[#5D5F61]">
                       PPT Type
                     </span>
-                    <span className="text-[#091220]">{item.type}</span>
+                    <span className="text-[#091220]">{item.ppt_type}</span>
                   </div>
                   <div>
                     <span className="block mb-1 font-medium text-[#5D5F61]">
                       Date
                     </span>
-                    <span className="text-[#091220]">{item.date}</span>
+                    <span className="text-[#091220]">
+                      {new Date(item.currentTime).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -228,21 +191,24 @@ const HistoryContainer: React.FC = () => {
 
         {/* Medium/Large Screen Layout */}
         <div className="hidden min-h-full md:block">
-          {historyItems.map((item, index) => (
+          {historyData?.map((item, index) => (
             <div
               key={index}
               className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
             >
               {/* Image */}
-              <img
-                src={item.imgSrc}
-                alt={item.title}
+              <iframe
+                src={item.PresentationURL}
+                title={item.pptName}
+                sandbox="allow-same-origin allow-scripts"
+                scrolling="no"
+                style={{ overflow: 'hidden' }}
                 className="w-24 h-16 object-cover rounded-md"
               />
 
               {/* Title */}
               <div className="text-lg font-medium text-[#091220]">
-                {item.title}
+                {item.pptName}
               </div>
 
               {/* PPT Type */}
@@ -250,13 +216,15 @@ const HistoryContainer: React.FC = () => {
                 <span className="font-medium text-[#5D5F61] mr-2">
                   PPT Type:
                 </span>
-                <span className="text-[#091220]">{item.type}</span>
+                <span className="text-[#091220]">{item.ppt_type}</span>
               </div>
 
               {/* Date */}
               <div className="text-sm flex flex-col">
                 <span className="font-medium text-[#5D5F61] mr-2">Date:</span>
-                <span className="text-[#091220]">{item.date}</span>
+                <span className="text-[#091220]">
+                  {new Date(item.currentTime).toLocaleDateString()}
+                </span>
               </div>
 
               {/* Ellipsis Icon */}

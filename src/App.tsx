@@ -7,41 +7,32 @@ import PresentationViewPage from './pages/PresentationViewPage.tsx'
 import AuthPage from './pages/AuthPage.tsx'
 import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
-import { TokenProvider } from './utils/TokenContext.tsx'
-import ImagesPage from './pages/ImagesPage.tsx'
-import CustomBuilderTypePage from './pages/CustomBuilderTypePage.tsx'
-import SlideNarrativePage from './pages/SlideNarrativePage.tsx'
-import CustomBuilderCoverPage from './pages/CustomBuilderPage.tsx'
-import TimelinePage from './pages/Timeline.tsx'
+import Points from './components/presentation-view/custom-builder/Points.tsx'
+import Test from './test/test.tsx'
 import GraphPage from './pages/GraphPage.tsx'
 
 const App: React.FC = () => {
   return (
-    <TokenProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<AuthPage />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
-          <Route
-            path="/organization-profile"
-            element={<ViewOrganizationProfilePage />}
-          />
-          <Route
-            path="/edit-organization-profile"
-            element={<EditOrganizationProfilePage />}
-          />
-          <Route path="/new-presentation" element={<PresentationTypePage />} />
-          <Route path="/presentation-view" element={<PresentationViewPage />} />
-          <Route path="/custombuilder-cover" element={<CustomBuilderCoverPage/>} />
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/slide-narrative" element={<SlideNarrativePage />} />
-          <Route path="/custombuilder-type" element={<CustomBuilderTypePage/>} />
-          <Route path="/images" element={<ImagesPage/>} />
-          <Route path="/timeline" element={<TimelinePage/>} />
-          <Route path="/graph" element={<GraphPage/>} />
-        </Routes>
-      </Router>
-    </TokenProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route
+          path="/organization-profile"
+          element={<ViewOrganizationProfilePage />}
+        />
+        <Route
+          path="/edit-organization-profile"
+          element={<EditOrganizationProfilePage />}
+        />
+        <Route path="/new-presentation" element={<PresentationTypePage />} />
+        <Route path="/graph" element={<GraphPage />} />
+        <Route path="/presentation-view/" element={<PresentationViewPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/points" element={<Points />} />
+        <Route path="/test" element={<Test />} />
+      </Routes>
+    </Router>
   )
 }
 

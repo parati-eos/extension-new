@@ -30,7 +30,7 @@ export default function Timeline() {
   const isGenerateDisabled = title.some((point, index) => point.trim() === '' || description[index].trim() === '')
 
   return (
-    <div className="relative flex flex-col pt-5 pb-4 h-[30vh] lg:h-[80vh] border border-gray-200 mt-12 mb-6 overflow-y-auto">
+    <div className="flex flex-col p-4 h-full">
          <p className="hidden lg:block font-bold break-words ml-5">Phases</p>
       {/* Content container with flex-grow */}
       <div className="flex-1 overflow-y-auto">

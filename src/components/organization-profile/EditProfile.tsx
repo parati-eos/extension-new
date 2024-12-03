@@ -2,39 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 import { useNavigate } from 'react-router-dom'
-import { useToken } from '../../utils/TokenContext'
-
-interface Color {
-  P100: string
-  P75_S25: string
-  P50_S50: string
-  P25_S75: string
-  S100: string
-  F_P100: string
-  F_P75_S25: string
-  F_P50_S50: string
-  F_P25_S75: string
-  F_S100: string
-  SCL: string
-  SCD: string
-}
-
-interface OrganizationData {
-  _id: string
-  orgId: string
-  userId: string
-  companyDescription: string
-  tagline: string
-  color: Color
-  companyName: string
-  industry: string
-  sector: string
-  logo: string
-  websiteLink: string
-  contactEmail: string
-  contactPhone: string
-  linkedinLink: string
-}
+import { OrganizationData } from '../../types/types'
 
 const EditProfile: React.FC = () => {
   const [formData, setFormData] = useState<OrganizationData>({
@@ -71,11 +39,10 @@ const EditProfile: React.FC = () => {
   const [otherIndustry, setOtherIndustry] = useState('')
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
-  const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
-  const { token } = useToken()
+  const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
-  const id = sessionStorage.getItem('id')
+  const authToken = sessionStorage.getItem('authToken')
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -102,10 +69,10 @@ const EditProfile: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_ORG_URL}/organization/${orgId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${authToken}`,
             },
           }
         )
@@ -136,7 +103,7 @@ const EditProfile: React.FC = () => {
     }
 
     fetchData()
-  }, [orgId, token])
+  }, [orgId, authToken])
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -159,20 +126,18 @@ const EditProfile: React.FC = () => {
         ...formData,
         orgId: orgId,
         userId: userId,
-        _id: id,
         sector: formData.sector === 'Other' ? otherSector : formData.sector,
         industry:
           formData.industry === 'Other' ? otherIndustry : formData.industry,
         logo: logo || formData.logo,
       }
       await axios.patch(
-        `${process.env.REACT_APP_ORG_URL}/organizationedit/${orgId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
         updatedData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${authToken}`,
           },
-          withCredentials: true,
         }
       )
       alert('Profile updated successfully!')

@@ -6,22 +6,10 @@ import { jwtDecode } from 'jwt-decode'
 import ContentImage from '../../assets/authContentImage.png'
 import MicrosoftIcon from '../../assets/ms-login.svg'
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
-import { useToken } from '../../utils/TokenContext'
-
-type DecodedToken = {
-  email: string
-  picture: string
-  name: string
-}
-
-interface IpInfoResponse {
-  country_name: string
-  [key: string]: any
-}
+import { DecodedToken, IpInfoResponse } from '../../types/authTypes'
 
 function Login() {
   const navigate = useNavigate()
-  const { setToken } = useToken()
   const defaultAvatarUrl =
     'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true'
 
@@ -57,7 +45,6 @@ function Login() {
         }
 
         saveUserData(userData)
-
         sessionStorage.setItem('userEmail', userData.email)
         sessionStorage.setItem('userDP', userData.picture)
       } else {
@@ -68,7 +55,7 @@ function Login() {
     }
   }
 
-  const serverurl = process.env.REACT_APP_USER_URL || ''
+  const serverurl = process.env.REACT_APP_BACKEND_URL || ''
 
   const saveUserData = async (userData: Record<string, any>) => {
     try {
@@ -87,22 +74,20 @@ function Login() {
         latestLogin: new Date().toString(),
       }
 
-      const res = await fetch(`${serverurl}/user`, {
+      const res = await fetch(`${serverurl}/api/v1/data/userprofile/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-   
         body: JSON.stringify(userPayload),
       })
 
       const responseData = await res.json()
-      setToken(responseData.token)
       sessionStorage.setItem('orgId', generatedOrgId)
-      sessionStorage.setItem('id', responseData.userProfile._id)
+      sessionStorage.setItem('authToken', responseData.token)
 
       if (responseData.orgId && responseData.orgId !== '') {
-        navigate('/organization-profile')
+        navigate('/new-presentation')
       } else {
         navigate('/onboarding')
       }
