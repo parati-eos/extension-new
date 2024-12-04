@@ -5,19 +5,27 @@ import {
   FaPlus,
   FaTrash,
 } from 'react-icons/fa'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { io } from 'socket.io-client'
+import { Outline } from '../../types/types'
 import { DesktopHeading, MobileHeading } from './Heading'
 import {
   MobileNewSlideVersion,
   DesktopNewSlideVersion,
 } from './NewSlideVersion'
 import Sidebar from './Sidebar'
-import CustomBuilder from './CustomBuilder'
-import { Outline } from '../../types/types'
+import CustomBuilderMenu from './CustomBuilderMenu'
 import Points from './custom-builder/Points'
+import People from './custom-builder/People'
+import Table from './custom-builder/Table'
+import Timeline from './custom-builder/Timeline'
+import Statistics from './custom-builder/Statistics'
+import Images from './custom-builder/Images'
+import Graphs from './custom-builder/Graphs'
+import SlideNarrative from './SlideNarrative'
+import MobileOutlineModal from './MobileOutlineModal'
 import './viewpresentation.css'
 
 export type DisplayMode =
@@ -32,6 +40,7 @@ export type DisplayMode =
   | 'People'
   | 'Graphs'
   | 'Statistics'
+  | 'SlideNarrative'
 
 export default function ViewPresentation() {
   const [currentSlide, setCurrentSlide] = useState(1)
@@ -109,12 +118,6 @@ export default function ViewPresentation() {
     }
   }
 
-  // MOBILE SCREENS: Outline Dropdown Select
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = e.target.value
-    setSelectedOutline(selectedOption)
-  }
-
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (option: string) => {
     setSelectedOutline(option)
@@ -164,9 +167,6 @@ export default function ViewPresentation() {
       console.log('QUICK GENERATE TRY CATCH ERROR', error)
     }
   }
-
-  // Slide Narative API
-  const handleSlideNarrative = async () => {}
 
   // Paginate Back
   const handlePaginatePrev = () => {
@@ -224,42 +224,44 @@ export default function ViewPresentation() {
   }, [currentOutline, SOCKET_URL])
 
   // Fetch Outlines
-  useEffect(() => {
-    const fetchOutlines = async () => {
-      const sampleImageUrl = {
-        default:
-          'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-1.jpg',
-      }
-      if (!documentID) return
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        const fetchedOutlines = response.data.outline
-        setOutlines(fetchedOutlines)
-        const dynamicSlideImages = fetchedOutlines.reduce(
-          (acc: { [key: string]: string }, outline: Outline) => {
-            acc[outline.title] = sampleImageUrl.default
-            return acc
-          },
-          {}
-        )
-        setSlideImages(dynamicSlideImages)
-        if (fetchedOutlines.length > 0) {
-          setCurrentOutline(fetchedOutlines[0].title)
-          setSelectedOutline(fetchedOutlines[0].title)
-        }
-      } catch (error) {
-        console.error('Error fetching outlines:', error)
-      }
+  const fetchOutlines = useCallback(async () => {
+    const sampleImageUrl = {
+      default:
+        'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-1.jpg',
     }
-    fetchOutlines()
+    if (!documentID) return
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      const fetchedOutlines = response.data.outline
+      setOutlines(fetchedOutlines)
+      const dynamicSlideImages = fetchedOutlines.reduce(
+        (acc: { [key: string]: string }, outline: Outline) => {
+          acc[outline.title] = sampleImageUrl.default
+          return acc
+        },
+        {}
+      )
+      setSlideImages(dynamicSlideImages)
+      if (fetchedOutlines.length > 0) {
+        setCurrentOutline(fetchedOutlines[0].title)
+        setSelectedOutline(fetchedOutlines[0].title)
+      }
+    } catch (error) {
+      console.error('Error fetching outlines:', error)
+    }
   }, [documentID, authToken])
+
+  useEffect(() => {
+    fetchOutlines()
+  }, [fetchOutlines])
 
   // Set Slide Type For Quick Generate
   useEffect(() => {
@@ -272,6 +274,7 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
 
+  // Custom Builder Slide Type Select Handler
   const handleCustomTypeClick = (typeName: DisplayMode) => {
     setDisplayMode(typeName)
   }
@@ -302,6 +305,7 @@ export default function ViewPresentation() {
             <MobileNewSlideVersion
               handleQuickGenerate={handleQuickGenerate}
               handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
+              handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
             />
           )
         } else if (plusClickedSlide === index! + 1) {
@@ -309,16 +313,93 @@ export default function ViewPresentation() {
             <DesktopNewSlideVersion
               handleQuickGenerate={handleQuickGenerate}
               handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
+              handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
             />
           )
         }
         break
-      case 'slideNarrative':
-        return
       case 'customBuilder':
-        return <CustomBuilder onTypeClick={handleCustomTypeClick} />
-      case 'points':
-        return <Points />
+        return <CustomBuilderMenu onTypeClick={handleCustomTypeClick} />
+      case 'Points':
+        return (
+          <Points
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'People':
+        return (
+          <People
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'Table':
+        return (
+          <Table
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'Timeline':
+        return (
+          <Timeline
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'SlideNarrative':
+        return (
+          <SlideNarrative
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'Statistics':
+        return (
+          <Statistics
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'Images':
+        return (
+          <Images
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
+      case 'Graphs':
+        return (
+          <Graphs
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+          />
+        )
       default:
         return null
     }
@@ -337,8 +418,11 @@ export default function ViewPresentation() {
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
           onOutlineSelect={handleOutlineSelect}
-          selectedOutline={selectedOutline}
-          fetchedOutlines={outlines}
+          selectedOutline={selectedOutline!}
+          fetchedOutlines={outlines!}
+          documentID={documentID!}
+          authToken={authToken!}
+          fetchOutlines={fetchOutlines}
         />
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}
@@ -447,27 +531,26 @@ export default function ViewPresentation() {
         />
 
         {/* MOBILE: OUTLINE DROPDOWN */}
-        <div className="space-y-4 mt-10 mb-7">
-          <div className="space-y-2 flex flex-col">
-            <label className="text-base text-[#5D5F61] font-medium">
-              Outline
-            </label>
-            <select
-              onChange={handleSelectChange}
-              className="border rounded-lg h-fit p-2 py-4"
-              value={selectedOutline}
-            >
-              {outlines?.map((outline) => (
-                <option key={outline._id} value={outline._id}>
-                  {outline.title}
-                </option>
-              ))}
-            </select>
+        <div className="space-y-4 mt-12 mb-7">
+          <div className="block lg:hidden">
+            {outlines && outlines.length > 0 && (
+              <MobileOutlineModal
+                documentID={documentID!}
+                outlines={outlines}
+                onSelectOutline={(outline) => setSelectedOutline(outline)}
+                selectedOutline={selectedOutline}
+                fetchOutlines={fetchOutlines}
+              />
+            )}
           </div>
         </div>
 
         {/* MOBILE: SLIDE DISPLAY BOX */}
-        <div className="relative bg-white h-[30vh] border border-gray-200 mt-12 mb-6">
+        <div
+          className={`relative bg-white h-[30vh] ${
+            displayMode === 'People' ? 'h-[38vh]' : ''
+          } border border-gray-200 mt-12 mb-6`}
+        >
           {renderContent({
             displayMode,
             isMobile: true,

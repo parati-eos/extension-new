@@ -5,11 +5,13 @@ import QuickGenerateIcon from '../../assets/quick-generate.png'
 interface ButtonProps {
   handleQuickGenerate: () => void
   handleCustomBuilderClick: () => void
+  handleSlideNarrative: () => void
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
+  handleSlideNarrative,
 }) => {
   return (
     <div className="flex flex-col mt-2 items-center justify-center h-full">
@@ -45,12 +47,17 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
           </button>
         </div>
         <div className="flex flex-col items-center border border-gray-300 p-2">
-          <img
-            src={SlideNarrativeIcon}
-            alt="Slide Narrative"
-            className="h-12 w-12"
-          />
-          <span className="text-sm">Slide Narrative</span>
+          <button
+            className="flex flex-col items-center justify-center"
+            onClick={handleSlideNarrative}
+          >
+            <img
+              src={SlideNarrativeIcon}
+              alt="Slide Narrative"
+              className="h-12 w-12"
+            />
+            <span className="text-sm">Slide Narrative</span>
+          </button>
         </div>
       </div>
     </div>
@@ -60,6 +67,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
 export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
+  handleSlideNarrative,
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -97,12 +105,17 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
           </button>
         </div>
         <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-          <img
-            src={SlideNarrativeIcon}
-            alt="Slide Narrative"
-            className="h-16 w-16"
-          />
-          <span>Slide Narrative</span>
+          <button
+            className="flex flex-col items-center justify-center"
+            onClick={handleSlideNarrative}
+          >
+            <img
+              src={SlideNarrativeIcon}
+              alt="Slide Narrative"
+              className="h-16 w-16"
+            />
+            <span>Slide Narrative</span>
+          </button>
         </div>
       </div>
     </div>

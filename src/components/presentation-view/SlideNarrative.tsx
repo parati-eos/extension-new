@@ -1,55 +1,120 @@
+import { useState, useEffect } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
-import React from 'react'
+import axios from 'axios'
 
-export default function SlideNarrative() {
+interface SlideNarrativeProps {
+  heading: string
+  slideType: string
+  documentID: string
+  orgId: string
+  authToken: string
+}
+
+export default function SlideNarrative({
+  heading,
+  slideType,
+  documentID,
+  orgId,
+  authToken,
+}: SlideNarrativeProps) {
+  const [narrative, setNarrative] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [rows, setRows] = useState(4)
+
+  useEffect(() => {
+    const updateRows = () => {
+      setRows(window.innerWidth >= 768 ? 8 : 7)
+    }
+
+    updateRows() // Set initial rows value based on screen width
+    window.addEventListener('resize', updateRows)
+
+    return () => {
+      window.removeEventListener('resize', updateRows)
+    }
+  }, [])
+
+  const handleGenerateSlide = async () => {
+    if (!narrative.trim()) return
+    setIsLoading(true)
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}/${slideType}`,
+        {
+          type: slideType,
+          title: heading,
+          documentID: documentID,
+          input: narrative,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      console.log('Server response:', response.data)
+      if (response.data === 'ok') {
+        setNarrative('')
+        alert('Success')
+      }
+    } catch (error) {
+      console.error('Error sending narrative:', error)
+      alert('Failed to send narrative.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const isGenerateDisabled = narrative.trim() === ''
+
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full">
-      <div className="w-full mt-[4rem] sm:mt-[4rem] lg:mt-2 bg-white lg:shadow-lg lg:max-w-4xl lg:w-[800px] lg:h-[600px] lg:rounded-3xl lg:flex lg:flex-col lg:justify-center lg:items-center lg:p-4 lg:sm:p-8 lg:mx-auto ">
-        <div className="w-[95%] hidden lg:flex justify-between mb-20">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl text-[#091220] w-[17rem] font-bold">
-              Cover
-            </h2>
-          </div>
-          <button
-            type="button"
-            className="px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white  rounded-md transition  text-[#797C81]   "
-          >
-            Back
-          </button>
-        </div>
-        <div className="ml-3 lg:ml-0 w-[95%] mt-[0.5rem] lg:mt-0  border border-gray-300 rounded-xl p-4 h-72 flex flex-col justify-center items-center md:transition-transform md:transform md:hover:scale-105 mb-5 lg:mb-16">
-          <textarea
-            className="w-full h-full outline-none"
-            placeholder="Please provide some context and narrative to generate this slide."
-          ></textarea>
-          {/* Main Content */}
+    <div className="flex flex-col p-4 h-full">
+      {/* Top Section: Headings */}
+      <div className="flex lg:mt-2 items-center justify-between w-full px-4">
+        <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+          {heading}
+        </h2>
+        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
+          Back
+        </button>
+      </div>
 
-          <div className="flex flex-col items-center "></div>
-        </div>
-        <div className="ml-3 lg:ml-0 flex gap-2 justify-center  lg:justify-end w-[95%] mb-5 lg:mb-0  ">
-          <button
-            type="button"
-            className="w-full flex  items-center justify-around lg:justify-center py-2 h-[2.7rem]  lg:w-[30%] lg:py-6 lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white  rounded-md  transition  text-[#797C81]   "
-          >
-            <FaPaperclip className="h-4 w-4" />
-            <span>Attach Image</span>
-          </button>
-          <button
-            type="button"
-            className="w-full px-6 py-2 h-[2.7rem] lg:h-[3.1rem] border border-[#8A8B8C] lg:w-[30%]   bg-[#3667B2] hover:bg-white hover:border-[#797C81] hover:text-[#797C81] rounded-md transition  text-white   "
-          >
-            Generate Slide
-          </button>
+      {/* Input Section */}
+      <div
+        className="flex-1 overflow-y-auto px-1"
+        style={{
+          maxHeight: window.innerWidth >= 768 ? '50vh' : '40vh',
+        }}
+      >
+        <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14">
+          <textarea
+            value={narrative}
+            onChange={(e) => setNarrative(e.target.value)}
+            placeholder="Please provide some context and narrative to generate this slide."
+            className="flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={rows}
+          ></textarea>
         </div>
       </div>
 
-      <button
-        type="button"
-        className="px-5 py-2 mt-4 lg:hidden h-[2.7rem] w-[4.625rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white  rounded-md transition  text-[#797C81]  "
-      >
-        Back
-      </button>
+      {/* Button container adjustments for medium and large screens */}
+      <div className="mt-4 md:mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
+        <button className="flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 border border-gray-300 rounded-md text-gray-700 bg-white">
+          <FaPaperclip />
+          Attach Image
+        </button>
+        <button
+          onClick={handleGenerateSlide}
+          disabled={isGenerateDisabled || isLoading}
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+            isGenerateDisabled || isLoading
+              ? 'bg-gray-200 text-gray-500'
+              : 'bg-[#3667B2] text-white'
+          }`}
+        >
+          {isLoading ? 'Loading...' : 'Generate Slide'}
+        </button>
+      </div>
     </div>
   )
 }

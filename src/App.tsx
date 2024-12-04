@@ -8,6 +8,7 @@ import AuthPage from './pages/AuthPage.tsx'
 import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
 import Points from './components/presentation-view/custom-builder/Points.tsx'
+import People from './components/presentation-view/custom-builder/People.tsx'
 import Test from './test/test.tsx'
 
 const App: React.FC = () => {
@@ -28,6 +29,7 @@ const App: React.FC = () => {
         <Route path="/presentation-view/" element={<PresentationViewPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/points" element={<Points />} />
+        <Route path="/people" element={<People />} />
         <Route path="/test" element={<Test />} />
       </Routes>
     </Router>

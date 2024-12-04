@@ -119,14 +119,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Dotted Progress Bar */}
                     {index < sections.length - 1 &&
                       visitedSections.includes(sections[index + 1].id) && (
-                        <div className="w-0.5 h-4 border-l-2 border-dotted border-gray-300 mt-2"></div>
+                        <div className="w-1 h-8 border-l-2 border-dotted border-gray-300 mt-2"></div>
                       )}
                   </div>
 
                   {/* Heading & Subheading */}
                   <div>
                     <h2
-                      className={`font-semibold text-base lg:text-sm ${
+                      className={`font-semibold text-lg ${
                         isActive || isVisited
                           ? 'text-[#3667B2]'
                           : 'text-gray-700'
@@ -134,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     >
                       {section.title}
                     </h2>
-                    <p className="text-xs lg:text-xs text-gray-500">
+                    <p className="text-sm text-gray-500">
                       {section.subheading}
                     </p>
                   </div>

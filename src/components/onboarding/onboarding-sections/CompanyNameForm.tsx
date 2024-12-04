@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaStar, FaBuilding } from 'react-icons/fa'
 import { CompanyNameFormProps } from '../../../types/onboardingTypes'
+import { layoutStyles } from '../OnboardingContainer'
 
 const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   onContinue,

@@ -101,6 +101,37 @@ const SelectPresentationType: React.FC = () => {
     quickGenerate()
   }
 
+  const handleRefinePPT = () => {
+    const refinePPT = async () => {
+      try {
+        const response = await axios.post(
+          `https://microservice-v1.onrender.com/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
+          {
+            file,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const result = await response.data
+        sessionStorage.setItem('documentID', result.documentID)
+        if (
+          sessionStorage.getItem('documentID') !== '' &&
+          sessionStorage.getItem('documentID')
+        ) {
+          navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+        }
+      } catch (error) {
+        console.error('Error generating document:', error)
+      }
+    }
+
+    refinePPT()
+  }
+
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
       {/* Heading */}
@@ -258,6 +289,7 @@ const SelectPresentationType: React.FC = () => {
             </div>
             {/* Refine Button */}
             <button
+              onClick={handleRefinePPT}
               className={`mt-4 h-[3.1rem] w-full py-2 px-4 rounded-xl ${
                 file
                   ? 'bg-[#3667B2] text-white'

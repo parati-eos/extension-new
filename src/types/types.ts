@@ -51,6 +51,9 @@ export interface SidebarProps {
   onOutlineSelect: (option: string) => void
   selectedOutline: string
   fetchedOutlines: Outlines[]
+  documentID: string
+  authToken: string
+  fetchOutlines: () => Promise<void>
 }
 
 export interface Outline {
