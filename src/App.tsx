@@ -10,6 +10,7 @@ import PresentationTypePage from './pages/PresentationType.tsx'
 import Points from './components/presentation-view/custom-builder/Points.tsx'
 import Test from './test/test.tsx'
 import GraphPage from './pages/GraphPage.tsx'
+import LandingPage from './pages/LandingPage.tsx'
 
 const App: React.FC = () => {
   return (
@@ -31,6 +32,7 @@ const App: React.FC = () => {
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/points" element={<Points />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/landing-page" element={<LandingPage />} />
       </Routes>
     </Router>
   )
