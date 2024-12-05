@@ -1,12 +1,14 @@
-import { FaClock, FaPlus } from 'react-icons/fa'
+import { FaClock, FaPlus,FaUser } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import ZynthLogoText from '../../assets/zynth-text.png'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
+
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [userProfileImage, setUserProfileImage] = useState<string | null>(null)
+  const [imageError, setImageError] = useState(false)
 
   const navigate = useNavigate()
 
@@ -27,13 +29,23 @@ const Navbar = () => {
       setUserProfileImage(`${userDP}?timestamp=${Date.now()}`)
     }
   }, [])
+
+  const handleImageError = () => {
+    setImageError(true)
+  }
+
   return (
     <nav className="bg-white p-2 pt-12 lg:p-3">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo with icon and text */}
         <div className="flex items-center space-x-2">
-          <img src={ZynthLogo} alt="Logo Icon" className="h-8 w-8" />
-          <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
+          <a
+            href="/landing-page"
+            target="_blank" // Opens in a new tab
+            rel="noopener noreferrer" // For security reasons
+          >
+            <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
+          </a>
         </div>
 
         {/* Menu */}
@@ -63,12 +75,21 @@ const Navbar = () => {
             </span>
           </button>
           {/* User Profile Icon */}
-          <img
-            src={userProfileImage!}
-            alt="User Profile"
-            className="w-11 h-11 lg:w-11 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          />
+          {imageError || !userProfileImage ? (
+            <FaUser
+              
+              className="w-8 h-8 lg:w-8 lg:h-8 text-[#3667B2] cursor-pointer"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            />
+          ) : (
+            <img
+              src={userProfileImage!}
+              alt="User Profile"
+              className="w-11 h-11 lg:w-11 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
+              onError={handleImageError} // Trigger fallback on error
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            />
+          )}
           {/* Dropdown */}
           {dropdownOpen && (
             <div className="absolute top-20 lg:top-17 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32">

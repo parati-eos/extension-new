@@ -12,16 +12,56 @@ import {
   FaGoogleDrive,
   FaTrashAlt,
 } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
-  const userId = sessionStorage.getItem('userEmail')
-  const historyUrl = process.env.REACT_APP_BACKEND_URL || ''
   const [historyData, setHistoryData] = useState<any[]>([])
-  const authToken = sessionStorage.getItem('authToken')
 
+  const userId = sessionStorage.getItem('userEmail')
+  const authToken = sessionStorage.getItem('authToken')
+  const historyUrl = process.env.REACT_APP_BACKEND_URL || ''
+
+  const itemsPerPage = 10 // Number of items to display per page
+  const totalPages = Math.ceil(historyData.length / itemsPerPage)
+
+  // Function to fetch history data from the API
+  const fetchHistoryData = async () => {
+    if (!authToken || !userId) {
+      console.error('User is not authenticated or missing credentials.')
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `${historyUrl}/api/v1/data/slidedisplay/history/67890`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`)
+      }
+      const result = await response.json()
+      console.log(result.data)
+      setHistoryData(result.data || [])
+    } catch (error) {
+      console.error('Error fetching history data:', error)
+    }
+  }
+
+  // // Fetch history data on component mount
+  useEffect(() => {
+    fetchHistoryData()
+  }, [userId, historyUrl])
+
+  // Close dropdown after a timeout
   useEffect(() => {
     if (activeDropdown !== null) {
       const timer = setTimeout(() => setActiveDropdown(null), 8000)
@@ -29,13 +69,10 @@ const HistoryContainer: React.FC = () => {
     }
   }, [activeDropdown])
 
-  const closeDropdown = () => setActiveDropdown(null)
-
+  // Handle clicks and scroll to close dropdown
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (activeDropdown !== null) closeDropdown()
-    }
-    const handleScroll = () => closeDropdown()
+    const handleOutsideClick = () => activeDropdown !== null && setActiveDropdown(null)
+    const handleScroll = () => setActiveDropdown(null)
 
     document.addEventListener('click', handleOutsideClick)
     window.addEventListener('scroll', handleScroll)
@@ -46,28 +83,41 @@ const HistoryContainer: React.FC = () => {
     }
   }, [activeDropdown])
 
-  // API CALL TO GET HISTORY DATA
-  useEffect(() => {
-    const fetchHistoryData = async () => {
-      try {
-        const response = await fetch(
-          `${historyUrl}/api/v1/data/slidedisplay/history/67890`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        const result = await response.json()
-        setHistoryData(result.data)
-      } catch (error) {
-        console.error('Error fetching history data:', error)
-      }
-    }
-    fetchHistoryData()
-  }, [userId, historyUrl])
+  // Render dropdown menu
+  const renderDropdown = (index: number) => (
+    <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+      <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+        <FaEdit className="text-[#5D5F61]" />
+        <span>Edit</span>
+      </div>
+      <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+        <FaShareAlt className="text-[#5D5F61]" />
+        <span>Share</span>
+      </div>
+      <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+        <FaFilePdf className="text-[#5D5F61]" />
+        <span>PDF Export</span>
+      </div>
+      <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
+        <FaGoogleDrive className="text-[#5D5F61]" />
+        <span>Google Slides</span>
+      </div>
+      <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
+        <FaTrashAlt />
+        <span>Delete</span>
+      </div>
+    </div>
+  )
+
+  // Get the data for the current page
+  const currentPageData = historyData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  )
+
+  const handleNewPresentation = () => {
+    console.log('Redirect to New Presentation page')
+  }
 
   return (
     <div className="p-4 py-7 bg-[#F5F7FA] min-h-screen relative">
@@ -113,9 +163,30 @@ const HistoryContainer: React.FC = () => {
             </div>
           </div>
         </div>
+      
       </div>
 
-      {/* History Container */}
+      {/* No Presentations */}
+      {historyData.length === 0 ? (
+  <div className="flex flex-col items-center justify-center bg-white shadow-sm rounded-xl py-12 w-full h-full min-h-screen">
+    <h2 className="text-lg font-semibold text-[#091220] mb-4">
+      No presentations to see here.
+    </h2>
+    <p className="text-sm text-gray-600 mb-6">
+      Generate your first presentation using Zynth.
+    </p>
+    <Link to="/new-presentation">
+    <button
+      className="bg-[#3667B2] text-white px-6 py-3 rounded-md hover:bg-[#2e58a0] transition duration-200"
+      onClick={handleNewPresentation}
+    >
+      New Presentation
+    </button>
+    </Link>
+  </div>
+      ) : (
+        <>
+          {/* History Container */}
       <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
         {/* Mobile/Small Screen Layout */}
         <div className="block md:hidden">
@@ -268,60 +339,46 @@ const HistoryContainer: React.FC = () => {
         </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-12 gap-4 text-gray-600">
-        <div className="bg-white border border-[#E1E3E5] p-2 rounded-md shadow cursor-pointer">
-          <FaArrowLeft className="text-base text-[#5D5F61]" />
-        </div>
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5, 6].map((page) => (
-            <span
-              key={page}
-              className={`px-3 py-1 rounded-md cursor-pointer ${
-                page === currentPage
-                  ? 'bg-[#3667B2] text-white'
-                  : ' hover:bg-gray-300 text-gray-800'
-              }`}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </span>
-          ))}
-        </div>
-        <div className="bg-white border border-[#E1E3E5] p-2 rounded-md shadow cursor-pointer">
-          <FaArrowRight className="text-base text-[#091220]" />
-        </div>
-      </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex justify-center items-end lg:hidden">
-          {/* Dimmed Background */}
-          <div
-            className="absolute inset-0 bg-gray-900 bg-opacity-50"
-            onClick={() => setIsModalOpen(false)}
-          ></div>
-
-          {/* Modal Content */}
-          <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh]">
-            {/* Close Icon */}
-            <div
-              className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
-              onClick={() => setIsModalOpen(false)}
-            >
-              <FaTimes className="text-[#888a8f] text-lg" />
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-between items-center mt-12 gap-4 text-gray-600">
+              <button
+                className="bg-white border border-[#E1E3E5] p-2 rounded-md shadow cursor-pointer"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <FaArrowLeft className="text-base text-[#5D5F61]" />
+              </button>
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      className={`px-3 py-1 rounded-md cursor-pointer ${
+                        page === currentPage
+                          ? 'bg-[#3667B2] text-white'
+                          : 'hover:bg-gray-300 text-gray-800'
+                      }`}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+              </div>
+              <button
+                className="bg-white border border-[#E1E3E5] p-2 rounded-md shadow cursor-pointer"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                <FaArrowRight className="text-base text-[#5D5F61]" />
+              </button>
             </div>
-            {/* Links */}
-            <div className="flex flex-col gap-4">
-              <p className="text-[#091220] text-lg">Pitch Deck</p>
-              <p className="text-[#091220] text-lg">Product</p>
-              <p className="text-[#091220] text-lg">Sales Deck</p>
-              <p className="text-[#091220] text-lg">Marketing</p>
-              <p className="text-[#091220] text-lg">Company Overview</p>
-              <p className="text-[#091220] text-lg">Project Proposal</p>
-            </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   )
