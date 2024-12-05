@@ -1,23 +1,22 @@
 import React from 'react'
-import Navbar from '../components/landing-page/LandingPageNavbar'
+import LandingPageNavbar from '../components/landing-page/LandingPageNavbar'
 import Heading from '../components/landing-page/Heading'
-import SecondPage from '../components/landing-page/SecondPage'
-import Footer from '../components/landing-page/FirstFooter'
-import { HeroParallax } from '../components/landing-page/FramerMotion'
-import FirstFooter from '../components/landing-page/FirstFooter'
-import SecondFooter from '../components/landing-page/SecondFooter'
-import FinalPage from '../components/landing-page/FinalPage'
+import HowWorks from '../components/landing-page/HowWorks'
+import { Hero } from '../components/landing-page/Hero'
+import AboutSection from '../components/landing-page/AboutSection'
+import PartnersTestimonials from '../components/landing-page/PartnersTestimonials'
+import Footer from '../components/landing-page/Footer'
 
 const LandingPage: React.FC = () => {
   return (
     <>
-      <Navbar />
+      <LandingPageNavbar />
       <Heading />
-      <SecondPage />
-      <FirstFooter />
-      <HeroParallax />
-      <SecondFooter />
-      <FinalPage />
+      <HowWorks />
+      <AboutSection />
+      <Hero />
+      <PartnersTestimonials />
+      <Footer />
     </>
   )
 }

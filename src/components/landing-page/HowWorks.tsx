@@ -1,9 +1,9 @@
-import React from "react";
-import FooterImage1 from "../../assets/image1.png"; // Replace with actual images
-import FooterImage2 from "../../assets/image2.png"; // Replace with actual images
-import FooterImage3 from "../../assets/image3.png"; // Replace with actual images
+import React from 'react'
+import FooterImage1 from '../../assets/image1.png' // Replace with actual images
+import FooterImage2 from '../../assets/image2.png' // Replace with actual images
+import FooterImage3 from '../../assets/image3.png' // Replace with actual images
 
-const LandingPage: React.FC = () => {
+const HowWorks: React.FC = () => {
   return (
     <div className="bg-gray-50">
       {/* How Zynth Works Section */}
@@ -15,15 +15,23 @@ const LandingPage: React.FC = () => {
           {/* Step 1 */}
           <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">1</div>
+              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">
+                1
+              </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">
                   AI Presentation Maker
                 </h3>
                 <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
-                  <li>Generate a new presentation or refine an existing one.</li>
-                  <li>Access data-driven content sourced from across the web.</li>
-                  <li>Create AI slides built on proven presentation templates.</li>
+                  <li>
+                    Generate a new presentation or refine an existing one.
+                  </li>
+                  <li>
+                    Access data-driven content sourced from across the web.
+                  </li>
+                  <li>
+                    Create AI slides built on proven presentation templates.
+                  </li>
                 </ul>
                 <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                   Generate Presentation
@@ -42,15 +50,23 @@ const LandingPage: React.FC = () => {
           {/* Step 2 */}
           <div className="flex flex-col lg:flex-row-reverse items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">2</div>
+              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">
+                2
+              </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Customizable Slide Designs
                 </h3>
                 <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
-                  <li>Instantly create a new slide with AI in a single click.</li>
-                  <li>Transform your brief input into expertly crafted AI slides.</li>
-                  <li>Tailor your presentation with customizable slide types.</li>
+                  <li>
+                    Instantly create a new slide with AI in a single click.
+                  </li>
+                  <li>
+                    Transform your brief input into expertly crafted AI slides.
+                  </li>
+                  <li>
+                    Tailor your presentation with customizable slide types.
+                  </li>
                 </ul>
                 <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                   Refine Presentation
@@ -69,7 +85,9 @@ const LandingPage: React.FC = () => {
           {/* Step 3 */}
           <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">3</div>
+              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">
+                3
+              </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Seamless Presentation Sharing
@@ -77,7 +95,10 @@ const LandingPage: React.FC = () => {
                 <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
                   <li>Share your AI presentation instantly via weblinks.</li>
                   <li>Download your AI-generated presentation as a PDF.</li>
-                  <li>Sync seamlessly by exporting to Google Slides for final edits.</li>
+                  <li>
+                    Sync seamlessly by exporting to Google Slides for final
+                    edits.
+                  </li>
                 </ul>
                 <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                   Share Presentation
@@ -95,7 +116,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default LandingPage;
+export default HowWorks
