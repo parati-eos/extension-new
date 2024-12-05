@@ -70,6 +70,7 @@ export default function Points({
 
   return (
     <div className="flex flex-col p-4 h-full">
+    <div className="flex flex-col p-4 h-full">
       {/* Top Section: Headings */}
       <div className="flex lg:mt-2 items-center justify-between w-full px-4">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
@@ -120,6 +121,7 @@ export default function Points({
       </div>
 
       {/* Button container adjustments for medium and large screens */}
+      <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
       <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
         <button className="flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 border border-gray-300 rounded-md text-gray-700 bg-white">
           <FaPaperclip />

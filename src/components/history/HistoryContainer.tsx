@@ -35,13 +35,11 @@ const HistoryContainer: React.FC = () => {
     }
   }, [activeDropdown])
 
-  const closeDropdown = () => setActiveDropdown(null)
-
+  // Handle clicks and scroll to close dropdown
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (activeDropdown !== null) closeDropdown()
-    }
-    const handleScroll = () => closeDropdown()
+    const handleOutsideClick = () =>
+      activeDropdown !== null && setActiveDropdown(null)
+    const handleScroll = () => setActiveDropdown(null)
 
     document.addEventListener('click', handleOutsideClick)
     window.addEventListener('scroll', handleScroll)

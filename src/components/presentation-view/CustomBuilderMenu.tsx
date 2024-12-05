@@ -11,6 +11,11 @@ import { DisplayMode } from './ViewPresentation'
 interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void
 }
+import { DisplayMode } from './ViewPresentation'
+
+interface ClickProps {
+  onTypeClick: (typeName: DisplayMode) => void
+}
 
 const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
   const slideTypes: { name: DisplayMode; icon: string }[] = [
@@ -55,6 +60,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
           >
             <button
               className="flex flex-col items-center justify-center"
+              onClick={() => onTypeClick(type.name)}
               onClick={() => onTypeClick(type.name)}
             >
               <img

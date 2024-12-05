@@ -49,6 +49,7 @@ export default function ViewPresentation() {
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
@@ -489,7 +490,7 @@ export default function ViewPresentation() {
                 <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
                 <span className="hidden text-[#3667B2] lg:block">
                   {' '}
-                  New Version
+                  New Versions
                 </span>
               </button>
             </div>

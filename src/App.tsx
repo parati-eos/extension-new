@@ -9,6 +9,8 @@ import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import Test from './test/test.tsx'
+import GraphPage from './pages/GraphPage.tsx'
+import LandingPage from './pages/LandingPage.tsx'
 
 const App: React.FC = () => {
   return (
@@ -26,9 +28,11 @@ const App: React.FC = () => {
           element={<EditOrganizationProfilePage />}
         />
         <Route path="/new-presentation" element={<PresentationTypePage />} />
+        <Route path="/graph" element={<GraphPage />} />
         <Route path="/presentation-view/" element={<PresentationViewPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/landing-page" element={<LandingPage />} />
       </Routes>
     </Router>
   )

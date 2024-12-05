@@ -80,7 +80,7 @@ const SelectPresentationType: React.FC = () => {
     const quickGenerate = async () => {
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/org1234/${selectedTypeName}`,
           {},
           {
             headers: {
