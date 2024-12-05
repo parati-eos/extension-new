@@ -68,18 +68,3 @@ export interface Outline {
 export interface GooglePresentationProps {
   url?: string
 }
-
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Shared Components
-// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export interface SelectDropdownProps {
-  id: string
-  label: string
-  value: string
-  onChange: (value: string) => void
-  options: { value: string; label: string }[]
-  showConditionalInput?: boolean
-  conditionalInputValue?: string
-  onConditionalInputChange?: (value: string) => void
-  conditionalInputPlaceholder?: string
-}

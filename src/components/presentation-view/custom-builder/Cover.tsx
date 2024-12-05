@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 
-export default function CustomBuilderCover() {
+export default function Cover() {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
@@ -11,10 +11,9 @@ export default function CustomBuilderCover() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
-      setIsUploading(true) // Indicate uploading
+      setIsUploading(true)
 
       try {
-        // Upload file to S3 and get the URL
         const url = await uploadLogoToS3(file)
         setLogo(url)
       } catch (error) {

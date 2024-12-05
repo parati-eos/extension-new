@@ -6,8 +6,8 @@ import {
   FaCity,
   FaPhone,
   FaCheckCircle,
-  FaBars,
   FaTimes,
+  FaBars,
 } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import ZynthLogoText from '../../assets/zynth-text.png'
@@ -95,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               >
                 {/* Section Item */}
                 <div
-                  className={`flex items-center py-1 mb-3 space-x-4 pl-4 transition-colors duration-300 h-full ${
+                  className={`flex items-center py-1 mb-3 lg:mb-4 xl:mb-6 space-x-4 pl-4 transition-colors duration-300 h-full ${
                     isActive
                       ? 'border-l-4 border-[#3667B2]'
                       : 'border-l-4 border-transparent'

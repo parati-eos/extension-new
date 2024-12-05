@@ -437,7 +437,7 @@ export default function ViewPresentation() {
               <div
                 key={outline}
                 ref={(el) => (slideRefs.current[index] = el!)}
-                className="snap-start w-full h-screen"
+                className="snap-center w-full h-screen"
                 style={{ height: '100%' }}
               >
                 {renderContent({

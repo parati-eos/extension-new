@@ -12,15 +12,21 @@ import {
   FaGoogleDrive,
   FaTrashAlt,
 } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
+  const [historyData, setHistoryData] = useState<any[]>([])
+  const [filteredData, setFilteredData] = useState<any[]>([]) // Holds filtered data
+  const [selectedFilter, setSelectedFilter] = useState<string>('all') // Filter state
+  const [selectedSort, setSelectedSort] = useState<string>('recent') // Sort state
+
   const userId = sessionStorage.getItem('userEmail')
   const historyUrl = process.env.REACT_APP_BACKEND_URL || ''
-  const [historyData, setHistoryData] = useState<any[]>([])
   const authToken = sessionStorage.getItem('authToken')
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (activeDropdown !== null) {
@@ -62,12 +68,43 @@ const HistoryContainer: React.FC = () => {
         )
         const result = await response.json()
         setHistoryData(result.data)
+        setFilteredData(result.data) // Initialize filtered data
       } catch (error) {
         console.error('Error fetching history data:', error)
       }
     }
     fetchHistoryData()
-  }, [userId, historyUrl])
+  }, [userId, historyUrl, authToken])
+
+  // Apply Filter and Sort Logic
+  useEffect(() => {
+    let updatedData = [...historyData]
+
+    if (selectedFilter !== 'all') {
+      updatedData = updatedData.filter(
+        (item) => item.ppt_type === selectedFilter
+      )
+    }
+
+    if (selectedSort === 'recent') {
+      updatedData.sort(
+        (a, b) =>
+          new Date(b.currentTime).getTime() - new Date(a.currentTime).getTime()
+      )
+    } else if (selectedSort === 'oldest') {
+      updatedData.sort(
+        (a, b) =>
+          new Date(a.currentTime).getTime() - new Date(b.currentTime).getTime()
+      )
+    }
+
+    setFilteredData(updatedData)
+  }, [selectedFilter, selectedSort, historyData])
+
+  const presentationsToShow = filteredData.slice(
+    (currentPage - 1) * 10,
+    currentPage * 10
+  )
 
   return (
     <div className="p-4 py-7 bg-[#F5F7FA] min-h-screen relative">
@@ -92,21 +129,30 @@ const HistoryContainer: React.FC = () => {
           <div className="hidden lg:flex gap-4">
             <div className="flex items-center gap-2">
               <span className="text-[#5D5F61]">View by PPT Type</span>
-              <select className="bg-white text-[#8A8B8C] text-sm p-2 w-fit rounded-md border border-[#E1E3E5]">
+              <select
+                className="bg-white text-[#8A8B8C] text-sm p-2 w-fit rounded-md border border-[#E1E3E5]"
+                value={selectedFilter}
+                onChange={(e) => setSelectedFilter(e.target.value)}
+              >
                 <option value="all">Select Type</option>
-                <option value="product">Product</option>
-                <option value="pitch-deck">Pitch Deck</option>
-                <option value="sales-deck">Sales Deck</option>
-                <option value="marketing">Marketing</option>
-                <option value="company-overview">Company Overview</option>
-                <option value="project-proposal">Project Proposal</option>
-                <option value="project-summary">Project Summary</option>
+                <option value="Product">Product</option>
+                <option value="Pitch Deck">Pitch Deck</option>
+                <option value="Sales Deck">Sales Deck</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Business">Business</option>
+                <option value="Company Overview">Company Overview</option>
+                <option value="Project Proposal">Project Proposal</option>
+                <option value="Project Summary">Project Summary</option>
                 <option value="others">Others</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[#5D5F61]">Sort by</span>
-              <select className="bg-white p-2 w-fit text-[#8A8B8C] text-sm rounded-md border border-[#E1E3E5]">
+              <select
+                className="bg-white p-2 w-fit text-[#8A8B8C] text-sm rounded-md border border-[#E1E3E5]"
+                value={selectedSort}
+                onChange={(e) => setSelectedSort(e.target.value)}
+              >
                 <option value="recent">Recent First</option>
                 <option value="oldest">Oldest First</option>
               </select>
@@ -116,25 +162,135 @@ const HistoryContainer: React.FC = () => {
       </div>
 
       {/* History Container */}
-      <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
-        {/* Mobile/Small Screen Layout */}
-        <div className="block md:hidden">
-          {historyData?.map((item, index) => (
-            <div key={index} className="flex items-center p-4 py-6 relative">
-              <iframe
-                src={item.PresentationURL}
-                title={item.pptName}
-                className="w-16 h-16 object-cover rounded-md mr-4"
-                sandbox="allow-same-origin allow-scripts"
-                scrolling="no"
-                style={{ overflow: 'hidden' }}
-              />
-              <div className="flex-1">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-medium text-[#091220]">
-                    {item.pptName}
-                  </h2>
-                  {/* Ellipsis Icon */}
+      {filteredData.length === 0 ? (
+        <div className="text-center relative top-24 flex flex-col items-center justify-center py-10">
+          <p className="text-lg text-[#091220] font-semibold">
+            No presentations to see here. Generate your first presentation using
+            Zynth.
+          </p>
+          <button
+            className="mt-4 bg-[#3667B2] hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] text-white px-4 py-2 rounded-md"
+            onClick={() => navigate('/new-presentation')}
+          >
+            Generate Presentation
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
+          {/* Mobile/Small Screen Layout */}
+          <div className="block md:hidden">
+            {presentationsToShow?.map((item, index) => (
+              <div key={index} className="flex items-center p-4 py-6 relative">
+                <iframe
+                  src={item.PresentationURL}
+                  title={item.pptName}
+                  className="w-16 h-16 object-cover rounded-md mr-4"
+                  sandbox="allow-same-origin allow-scripts"
+                  scrolling="no"
+                  style={{ overflow: 'hidden' }}
+                />
+                <div className="flex-1">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-lg font-medium text-[#091220]">
+                      {item.pptName}
+                    </h2>
+                    {/* Ellipsis Icon */}
+                    <FaEllipsisV
+                      className="text-[#8A8B8C] cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setActiveDropdown(
+                          activeDropdown === index ? null : index
+                        )
+                      }}
+                    />
+                  </div>
+                  <div className="flex gap-1 text-sm mt-1">
+                    <div className="mr-4">
+                      <span className="block mb-1 font-medium text-[#5D5F61]">
+                        PPT Type
+                      </span>
+                      <span className="text-[#091220]">{item.ppt_type}</span>
+                    </div>
+                    <div>
+                      <span className="block mb-1 font-medium text-[#5D5F61]">
+                        Date
+                      </span>
+                      <span className="text-[#091220]">
+                        {new Date(item.currentTime).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                {/* Dropdown */}
+                {activeDropdown === index && (
+                  <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                      <FaEdit className="text-[#5D5F61]" />
+                      <span>Edit</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                      <FaShareAlt className="text-[#5D5F61]" />
+                      <span>Share</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                      <FaFilePdf className="text-[#5D5F61]" />
+                      <span>PDF Export</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
+                      <FaGoogleDrive className="text-[#5D5F61]" />
+                      <span>Google Slides</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
+                      <FaTrashAlt />
+                      <span>Delete</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Medium/Large Screen Layout */}
+          <div className="hidden min-h-full md:block">
+            {presentationsToShow?.map((item, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
+              >
+                {/* Image */}
+                <iframe
+                  src={item.PresentationURL}
+                  title={item.pptName}
+                  sandbox="allow-same-origin allow-scripts"
+                  scrolling="no"
+                  style={{ overflow: 'hidden' }}
+                  className="w-24 h-16 object-cover rounded-md"
+                />
+
+                {/* Title */}
+                <div className="text-lg font-medium text-[#091220]">
+                  {item.pptName}
+                </div>
+
+                {/* PPT Type */}
+                <div className="text-sm flex flex-col">
+                  <span className="font-medium text-[#5D5F61] mr-2">
+                    PPT Type:
+                  </span>
+                  <span className="text-[#091220]">{item.ppt_type}</span>
+                </div>
+
+                {/* Date */}
+                <div className="text-sm flex flex-col">
+                  <span className="font-medium text-[#5D5F61] mr-2">Date:</span>
+                  <span className="text-[#091220]">
+                    {new Date(item.currentTime).toLocaleDateString()}
+                  </span>
+                </div>
+
+                {/* Ellipsis Icon */}
+                <div className="flex justify-end">
                   <FaEllipsisV
                     className="text-[#8A8B8C] cursor-pointer"
                     onClick={(e) => {
@@ -143,157 +299,64 @@ const HistoryContainer: React.FC = () => {
                     }}
                   />
                 </div>
-                <div className="flex gap-1 text-sm mt-1">
-                  <div className="mr-4">
-                    <span className="block mb-1 font-medium text-[#5D5F61]">
-                      PPT Type
-                    </span>
-                    <span className="text-[#091220]">{item.ppt_type}</span>
+
+                {/* Dropdown */}
+                {activeDropdown === index && (
+                  <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                      <FaEdit className="text-[#5D5F61]" />
+                      <span>Edit</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                      <FaShareAlt className="text-[#5D5F61]" />
+                      <span>Share</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                      <FaFilePdf className="text-[#5D5F61]" />
+                      <span>PDF Export</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
+                      <FaGoogleDrive className="text-[#5D5F61]" />
+                      <span>Google Slides</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
+                      <FaTrashAlt />
+                      <span>Delete</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="block mb-1 font-medium text-[#5D5F61]">
-                      Date
-                    </span>
-                    <span className="text-[#091220]">
-                      {new Date(item.currentTime).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
+                )}
               </div>
-              {/* Dropdown */}
-              {activeDropdown === index && (
-                <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
-                    <FaEdit className="text-[#5D5F61]" />
-                    <span>Edit</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
-                    <FaShareAlt className="text-[#5D5F61]" />
-                    <span>Share</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
-                    <FaFilePdf className="text-[#5D5F61]" />
-                    <span>PDF Export</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
-                    <FaGoogleDrive className="text-[#5D5F61]" />
-                    <span>Google Slides</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
-                    <FaTrashAlt />
-                    <span>Delete</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-
-        {/* Medium/Large Screen Layout */}
-        <div className="hidden min-h-full md:block">
-          {historyData?.map((item, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
-            >
-              {/* Image */}
-              <iframe
-                src={item.PresentationURL}
-                title={item.pptName}
-                sandbox="allow-same-origin allow-scripts"
-                scrolling="no"
-                style={{ overflow: 'hidden' }}
-                className="w-24 h-16 object-cover rounded-md"
-              />
-
-              {/* Title */}
-              <div className="text-lg font-medium text-[#091220]">
-                {item.pptName}
-              </div>
-
-              {/* PPT Type */}
-              <div className="text-sm flex flex-col">
-                <span className="font-medium text-[#5D5F61] mr-2">
-                  PPT Type:
-                </span>
-                <span className="text-[#091220]">{item.ppt_type}</span>
-              </div>
-
-              {/* Date */}
-              <div className="text-sm flex flex-col">
-                <span className="font-medium text-[#5D5F61] mr-2">Date:</span>
-                <span className="text-[#091220]">
-                  {new Date(item.currentTime).toLocaleDateString()}
-                </span>
-              </div>
-
-              {/* Ellipsis Icon */}
-              <div className="flex justify-end">
-                <FaEllipsisV
-                  className="text-[#8A8B8C] cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setActiveDropdown(activeDropdown === index ? null : index)
-                  }}
-                />
-              </div>
-
-              {/* Dropdown */}
-              {activeDropdown === index && (
-                <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
-                    <FaEdit className="text-[#5D5F61]" />
-                    <span>Edit</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
-                    <FaShareAlt className="text-[#5D5F61]" />
-                    <span>Share</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
-                    <FaFilePdf className="text-[#5D5F61]" />
-                    <span>PDF Export</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
-                    <FaGoogleDrive className="text-[#5D5F61]" />
-                    <span>Google Slides</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
-                    <FaTrashAlt />
-                    <span>Delete</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-12 gap-4 text-gray-600">
-        <div className="bg-white border border-[#E1E3E5] p-2 rounded-md shadow cursor-pointer">
-          <FaArrowLeft className="text-base text-[#5D5F61]" />
+      {filteredData.length > 10 && (
+        <div className="flex justify-between items-center mt-6">
+          <button
+            className="flex gap-2 items-center bg-[#F3F4F6] px-4 py-2 rounded-md disabled:bg-[#E4E7EB]"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            <FaArrowLeft />
+            <span>Previous</span>
+          </button>
+          <span>
+            Page {currentPage} of {Math.ceil(filteredData.length / 10)}
+          </span>
+          <button
+            className="flex gap-2 items-center bg-[#F3F4F6] px-4 py-2 rounded-md disabled:bg-[#E4E7EB]"
+            disabled={currentPage === Math.ceil(filteredData.length / 10)}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            <span>Next</span>
+            <FaArrowRight />
+          </button>
         </div>
-        <div className="flex gap-2">
-          {[1, 2, 3, 4, 5, 6].map((page) => (
-            <span
-              key={page}
-              className={`px-3 py-1 rounded-md cursor-pointer ${
-                page === currentPage
-                  ? 'bg-[#3667B2] text-white'
-                  : ' hover:bg-gray-300 text-gray-800'
-              }`}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </span>
-          ))}
-        </div>
-        <div className="bg-white border border-[#E1E3E5] p-2 rounded-md shadow cursor-pointer">
-          <FaArrowRight className="text-base text-[#091220]" />
-        </div>
-      </div>
+      )}
 
-      {/* Modal */}
+      {/* Mobile Filter Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex justify-center items-end lg:hidden">
           {/* Dimmed Background */}
@@ -313,12 +376,69 @@ const HistoryContainer: React.FC = () => {
             </div>
             {/* Links */}
             <div className="flex flex-col gap-4">
-              <p className="text-[#091220] text-lg">Pitch Deck</p>
-              <p className="text-[#091220] text-lg">Product</p>
-              <p className="text-[#091220] text-lg">Sales Deck</p>
-              <p className="text-[#091220] text-lg">Marketing</p>
-              <p className="text-[#091220] text-lg">Company Overview</p>
-              <p className="text-[#091220] text-lg">Project Proposal</p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Pitch Deck')
+                  setIsModalOpen(false)
+                }}
+              >
+                Pitch Deck
+              </p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Product')
+                  setIsModalOpen(false)
+                }}
+              >
+                Product
+              </p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Sales Deck')
+                  setIsModalOpen(false)
+                }}
+              >
+                Sales Deck
+              </p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Marketing')
+                  setIsModalOpen(false)
+                }}
+              >
+                Marketing
+              </p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Business')
+                  setIsModalOpen(false)
+                }}
+              >
+                Business
+              </p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Company Overview')
+                  setIsModalOpen(false)
+                }}
+              >
+                Company Overview
+              </p>
+              <p
+                className="text-[#091220] text-lg"
+                onClick={() => {
+                  setSelectedFilter('Project Proposal')
+                  setIsModalOpen(false)
+                }}
+              >
+                Project Proposal
+              </p>
             </div>
           </div>
         </div>

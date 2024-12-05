@@ -101,7 +101,15 @@ export default function People({
 
   const handleGenerateSlide = async () => {
     try {
-      const response = await axios.patch('/api/people', { people }) // Replace with actual endpoint
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
+        { people },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      ) // Replace with actual endpoint
       alert('Data successfully sent to the server!')
       console.log('Server response:', response.data)
     } catch (error) {

@@ -9,19 +9,6 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { FormData } from '../../types/onboardingTypes.ts'
 
-export const layoutStyles = {
-  headingContainer:
-    'flex flex-col items-center gap-1 mb-8 sm:mt-4 lg:mt-4 lg:mb-8 lg:mt-0',
-  headingIcon: 'text-[#3667B2] lg:text-6xl text-7xl mb-2',
-  headingText: 'text-2xl text-[#091220] font-bold mb-1',
-  subHeadingText: 'text-[#5D5F61]',
-  inputContainer:
-    'flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto',
-  buttonContainer:
-    'flex flex-col items-center justify-center lg:mt-6 mt-10 w-full space-y-2 px-2 sm:px-0',
-  button: 'px-6 py-2 rounded-xl transition w-full',
-}
-
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
   const [visitedSections, setVisitedSections] = useState<number[]>([1]) // Start with the first section visited
@@ -197,7 +184,7 @@ const OnboardingContainer: React.FC = () => {
         )}
 
         {/* Onboarding Content */}
-        <div className="flex-1 flex items-start justify-center w-full lg:mt-2 xl:mt-6 bg-white">
+        <div className="flex-1 flex items-center justify-center w-full lg:mt-2 xl:mt-4 bg-white">
           {renderSectionContent()}
         </div>
       </div>

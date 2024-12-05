@@ -1,12 +1,11 @@
-import { FaClock, FaPlus } from 'react-icons/fa'
-import ZynthLogo from '../../assets/zynth-icon.png'
+import { FaClock, FaPlus, FaUser } from 'react-icons/fa'
 import ZynthLogoText from '../../assets/zynth-text.png'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [userProfileImage, setUserProfileImage] = useState<string | null>(null)
+  const userProfileImage = sessionStorage.getItem('userDP')
 
   const navigate = useNavigate()
 
@@ -20,21 +19,13 @@ const Navbar = () => {
       setDropdownOpen(false)
     }, 5000)
   }, [dropdownOpen])
-
-  useEffect(() => {
-    const userDP = sessionStorage.getItem('userDP')
-    if (userDP) {
-      setUserProfileImage(`${userDP}?timestamp=${Date.now()}`)
-    }
-  }, [])
   return (
     <nav className="bg-white p-2 pt-12 lg:p-3">
       <div className="container mx-auto flex items-center justify-between">
-        {/* Logo with icon and text */}
-        <div className="flex items-center space-x-2">
-          <img src={ZynthLogo} alt="Logo Icon" className="h-8 w-8" />
+        {/* Logo */}
+        <a href="/landing" target="_blank">
           <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
-        </div>
+        </a>
 
         {/* Menu */}
         <div className="flex items-center space-x-4">
@@ -63,12 +54,16 @@ const Navbar = () => {
             </span>
           </button>
           {/* User Profile Icon */}
-          <img
-            src={userProfileImage!}
-            alt="User Profile"
-            className="w-11 h-11 lg:w-11 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-          />
+          {userProfileImage ? (
+            <img
+              src={userProfileImage}
+              alt="User Profile"
+              className="w-11 h-12 lg:w-11 lg:h-11 rounded-full hover:scale-105 cursor-pointer"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            />
+          ) : (
+            <FaUser className="w-9 h-9 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer" />
+          )}
           {/* Dropdown */}
           {dropdownOpen && (
             <div className="absolute top-20 lg:top-17 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32">

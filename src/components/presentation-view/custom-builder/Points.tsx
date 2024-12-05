@@ -35,8 +35,27 @@ export default function Points({
   const handleGenerateSlide = async () => {
     setIsLoading(true)
     try {
-      const response = await axios.patch('/api/points', { points }) // Replace with actual endpoint
-      alert('Data successfully sent to the server!')
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/points`,
+        {
+          type: 'points',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            image: '',
+            pointers: points.filter((point) => point.trim() !== ''),
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        alert('Data successfully sent to the server!')
+      }
       console.log('Server response:', response.data)
     } catch (error) {
       console.error('Error sending data:', error)

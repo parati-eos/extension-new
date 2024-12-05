@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { FaStar, FaBuilding } from 'react-icons/fa'
+import { FaBuilding } from 'react-icons/fa'
 import { CompanyNameFormProps } from '../../../types/onboardingTypes'
-import { layoutStyles } from '../OnboardingContainer'
+import { NextButton } from '../shared/Buttons'
 
 const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   onContinue,
@@ -25,20 +25,22 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   }
 
   return (
-    <div className="w-full mt-[4rem] sm:mt-[4rem] lg:mt-2 lg:bg-white lg:shadow-lg lg:max-w-4xl lg:w-[800px] lg:h-[600px] lg:rounded-3xl lg:flex lg:flex-col lg:justify-between lg:p-4 lg:sm:p-8 lg:mx-auto">
-      <div className="flex flex-col items-center gap-1 mb-8 sm:mt-4 lg:mb-8 lg:mt-0">
-        <FaStar className="text-[#3667B2] text-2xl mb-4" />
-        <FaBuilding className="text-[#3667B2] lg:text-4xl text-6xl mb-2" />
+    <div className="w-full mt-[6rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
+      {/* Heading */}
+      <div className="flex flex-col items-center gap-1 mb-8">
+        <FaBuilding className="text-[#3667B2] text-6xl lg:text-4xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Your Company Name
         </h1>
         <p className="text-[#5D5F61]">Provide your company name</p>
       </div>
+
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
-        <div className="w-full mt-6 sm:mt-0 px-2 sm:px-0">
+        {/* Input */}
+        <div className="w-full mt-6 px-2">
           <label
             htmlFor="companyName"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -54,18 +56,10 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-        <div className="flex flex-col items-center justify-center mt-16 sm:mt-8 w-full space-y-2 px-2 sm:px-0">
-          <button
-            type="submit"
-            disabled={!companyName}
-            className={`px-6 py-2 rounded-xl lg:h-[2.8rem] h-[3.3rem] transition w-full ${
-              companyName
-                ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
-                : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
-            }`}
-          >
-            Continue
-          </button>
+
+        {/* Buttons */}
+        <div className="flex flex-col items-center justify-center mt-[6.5rem] w-full space-y-2 px-2">
+          <NextButton disabled={!companyName} text={'Continue'} />
         </div>
       </form>
     </div>
