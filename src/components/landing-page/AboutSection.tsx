@@ -1,38 +1,39 @@
-import React from 'react';
+import React from 'react'
 import vector from '../../assets/Vector29.png'
 
-const FirstFooter: React.FC = () => {
+const AboutSection: React.FC = () => {
   return (
     <footer className="bg-gray-50 py-16 ">
-      <div className='flex justify-center gap-4 mb-2'>
-      {/* Heading */}
-      <span className="text-4xl font-bold text-center text-gray-900 mb-8">
-        One Platform, Unlimited AI
-       
-      </span>
-      <img src={vector}/>
+      <div className="flex justify-center gap-4 mb-2">
+        {/* Heading */}
+        <span className="text-4xl font-bold text-center text-gray-900 mb-8">
+          One Platform, Unlimited AI
+        </span>
+        <img src={vector} />
       </div>
 
       {/* Tabs */}
       <div className="flex justify-center gap-4 mb-6">
-        {['Presentations', 'Slides', 'Designs', 'Templates', 'Frameworks'].map((item, index) => (
-          <button
-            key={index}
-            className={`px-6 py-2 rounded-full font-medium text-gray-900 ${
-              index === 0
-                ? 'bg-purple-100 text-purple-800'
-                : index === 1
-                ? 'bg-yellow-100 text-yellow-800'
-                : index === 2
-                ? 'bg-green-100 text-green-800'
-                : index === 3
-                ? 'bg-indigo-100 text-indigo-800'
-                : 'bg-blue-100 text-blue-800'
-            }`}
-          >
-            {item}
-          </button>
-        ))}
+        {['Presentations', 'Slides', 'Designs', 'Templates', 'Frameworks'].map(
+          (item, index) => (
+            <button
+              key={index}
+              className={`px-6 py-2 rounded-full font-medium text-gray-900 ${
+                index === 0
+                  ? 'bg-purple-100 text-purple-800'
+                  : index === 1
+                  ? 'bg-yellow-100 text-yellow-800'
+                  : index === 2
+                  ? 'bg-green-100 text-green-800'
+                  : index === 3
+                  ? 'bg-indigo-100 text-indigo-800'
+                  : 'bg-blue-100 text-blue-800'
+              }`}
+            >
+              {item}
+            </button>
+          )
+        )}
       </div>
 
       {/* Description */}
@@ -73,7 +74,7 @@ const FirstFooter: React.FC = () => {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default FirstFooter;
+export default AboutSection

@@ -1,15 +1,15 @@
-import React from 'react';
-import secondfooterimage from '../../assets/secondfooter.png';
+import React from 'react'
+import secondfooterimage from '../../assets/secondfooter.png'
 type Testimonial = {
-  text: string;
-  author: string;
-  avatar?: string; // Optional if avatar is present
-};
+  text: string
+  author: string
+  avatar?: string // Optional if avatar is present
+}
 
-const SecondFooter: React.FC = () => {
+const PartnersTestimonials: React.FC = () => {
   const testimonials: Testimonial[] = [
     {
-      text: "It’s great to have a tool that enables people who aren’t designers to be designers. With minimal effort, our design team can help others do their jobs really well.",
+      text: 'It’s great to have a tool that enables people who aren’t designers to be designers. With minimal effort, our design team can help others do their jobs really well.',
       author: 'Gabriel MacSweeney',
     },
     {
@@ -20,7 +20,7 @@ const SecondFooter: React.FC = () => {
       text: 'When we share a presentation via a link, we can see the stats on who opened it. It’s a great way of collaborating with clients.',
       author: 'Brando Vasquez',
     },
-  ];
+  ]
 
   return (
     <footer className="bg-gray-100 ">
@@ -30,7 +30,7 @@ const SecondFooter: React.FC = () => {
           <h2 className="text-2xl font-bold mb-6">Our Partners</h2>
           <div className="flex justify-center">
             <img
-              src={secondfooterimage} 
+              src={secondfooterimage}
               alt="Our Partners"
               className="h-16 md:h-20"
             />
@@ -72,7 +72,7 @@ const SecondFooter: React.FC = () => {
         </button>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default SecondFooter;
+export default PartnersTestimonials

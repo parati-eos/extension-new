@@ -12,7 +12,11 @@ interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void
 }
 
-const CustomBuilder: React.FC<ClickProps> = ({ onTypeClick }) => {
+interface ClickProps {
+  onTypeClick: (typeName: DisplayMode) => void
+}
+
+const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
   const slideTypes: { name: DisplayMode; icon: string }[] = [
     { name: 'Points', icon: PointsIcon },
     { name: 'Timeline', icon: TimelineIcon },
@@ -39,7 +43,7 @@ const CustomBuilder: React.FC<ClickProps> = ({ onTypeClick }) => {
           </h3>
         </div>
         <button
-          className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline"
+          className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-md text-[#5D5F61] hover:underline"
           //   onClick={handleBackClick}
         >
           Back
@@ -47,11 +51,11 @@ const CustomBuilder: React.FC<ClickProps> = ({ onTypeClick }) => {
       </div>
 
       {/* Slide Type Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4 mt-3 md:mt-5 lg:mt-6">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:ml-6 lg:ml-10 sm:gap-4 mt-3 md:mt-6 lg:mt-7">
         {slideTypes.map((type) => (
           <div
             key={type.name}
-            className="flex flex-col items-center md:border md:border-gray-300 md:p-2 lg:py-3 rounded-lg"
+            className="flex flex-col items-center md:border md:border-gray-300 md:p-2 lg:py-3 lg:w-[80%] rounded-lg"
           >
             <button
               className="flex flex-col items-center justify-center"
@@ -71,4 +75,4 @@ const CustomBuilder: React.FC<ClickProps> = ({ onTypeClick }) => {
   )
 }
 
-export default CustomBuilder
+export default CustomBuilderMenu

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import ThirdPage from "./ThirdPage";
+import PresentationGrid from "./PresentationGrid";
 import productIcon from "../../assets/image1.png";
 // AnimatedButton Component
 const AnimatedButton = ({ onclicked, name }: { onclicked: () => void; name: string }) => {
@@ -29,7 +29,7 @@ const products = [
     { title: "Product 7", link: "#", thumbnail: productIcon },
     { title: "Product 8", link: "#", thumbnail: productIcon },
   ];
-export const HeroParallax = () => {
+export const Hero = () => {
   const firstRow = products.slice(0, 5);
   const secondRow = products.slice(5, 10);
   const ref = React.useRef(null);
@@ -107,7 +107,7 @@ export const Header = () => {
         </div>
       </div> */}
       
-      <ThirdPage/>
+      <PresentationGrid/>
    
       <motion.h2
         className="text-2xl  md:text-4xl font-bold text-white text-center bg-[#3667B2] py-12"

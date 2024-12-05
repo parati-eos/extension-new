@@ -11,8 +11,6 @@ import {
   FaEllipsisH,
   FaTimes,
   FaUpload,
-  FaChevronUp,
-  FaChevronDown,
   FaCheck,
 } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
@@ -61,7 +59,7 @@ const SelectPresentationType: React.FC = () => {
   const [isRefineModalOpen, setIsRefineModalOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [selectedType, setSelectedType] = useState<number | null>(null)
-  const [generateDropdownOpen, setGenerateDropdownOpen] = useState(false)
+  const [customTypeInput, setCustomTypeInput] = useState<string>('')
   const navigate = useNavigate()
   const [selectedTypeName, setSelectedTypeName] = useState<string | null>('')
   const authToken = sessionStorage.getItem('authToken')
@@ -69,7 +67,12 @@ const SelectPresentationType: React.FC = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setFile(event.target.files[0])
+      const uploadedFile = event.target.files[0]
+      if (uploadedFile.type === 'application/pdf') {
+        setFile(uploadedFile)
+      } else {
+        alert('Please upload a valid PDF file.')
+      }
     }
   }
 
@@ -100,6 +103,47 @@ const SelectPresentationType: React.FC = () => {
     }
     quickGenerate()
   }
+
+  const handleRefinePPT = () => {
+    const refinePPT = async () => {
+      if (!file) {
+        alert('Please upload a PDF file to refine the presentation.')
+        return
+      }
+
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('type', selectedTypeName || '')
+      formData.append('orgId', orgId || '')
+
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        )
+
+        const result = await response.data
+        sessionStorage.setItem('documentID', result.documentID)
+        if (result.documentID) {
+          navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+        }
+      } catch (error) {
+        console.error('Error refining presentation:', error)
+        alert('Failed to refine the presentation. Please try again.')
+      }
+    }
+
+    refinePPT()
+  }
+
+  const isButtonDisabled =
+    selectedType === 8 ? !customTypeInput.trim() : !selectedType
 
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
@@ -136,39 +180,47 @@ const SelectPresentationType: React.FC = () => {
             <p className="text-gray-800 text-center font-medium">
               {type.label}
             </p>
+            {type.id === 8 && selectedType === 8 && (
+              <input
+                type="text"
+                value={customTypeInput}
+                onChange={(e) => {
+                  setCustomTypeInput(e.target.value)
+                  setSelectedTypeName(e.target.value)
+                }}
+                placeholder="Enter Custom type"
+                className="mt-2 p-2 border rounded w-full"
+              />
+            )}
           </div>
         ))}
       </div>
 
       {/* Generate Buttons for medium and large screens */}
       {selectedType && (
-        <div className="hidden lg:flex flex-col w-max justify-center mt-4 ml-16">
+        <div className="hidden lg:flex w-max justify-center mt-4 ml-16">
           <button
             onClick={handleGenerate}
-            className="bg-[#3667B2] h-[3.1rem] text-white px-4 rounded-lg mr-4 flex items-center"
+            disabled={isButtonDisabled}
+            className={`h-[3.1rem] text-white px-4 rounded-lg mr-4 flex items-center ${
+              isButtonDisabled
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-[#3667B2] hover:bg-green-700'
+            }`}
           >
             Generate Presentation
-            <span className="mx-2 w-px h-full bg-[#4883db]"></span>
-            <span
-              onClick={(e) => {
-                e.stopPropagation() // Prevents triggering the parent button's onClick
-                setGenerateDropdownOpen(!generateDropdownOpen)
-              }}
-            >
-              {generateDropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
-            </span>
           </button>
-          {generateDropdownOpen && (
-            <button
-              onClick={() => {
-                setIsRefineModalOpen(true)
-                setGenerateDropdownOpen(false)
-              }}
-              className="bg-white text-[#091220] h-[3.1rem] border border-[#bcbdbe] py-2 px-4 rounded-lg mr-4 mt-2"
-            >
-              Refine Presentation
-            </button>
-          )}
+          <button
+            onClick={() => setIsRefineModalOpen(true)}
+            disabled={isButtonDisabled}
+            className={`h-[3.1rem] border px-4 rounded-lg ${
+              isButtonDisabled
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
+            }`}
+          >
+            Refine Presentation
+          </button>
         </div>
       )}
 
@@ -227,10 +279,10 @@ const SelectPresentationType: React.FC = () => {
           ></div>
 
           {/* Modal Content */}
-          <div className="relative bg-white w-11/12 md:w-1/2 lg:w-1/3 rounded-lg shadow-lg p-6">
+          <div className="relative bg-white w-11/12 md:w-1/2 lg:w-1/3 rounded-lg md:rounded-3xl shadow-lg p-6">
             {/* Close Icon */}
             <div
-              className="absolute top-4 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
+              className="absolute top-4 right-4 md:top-5 bg-gray-200 rounded-full p-2 cursor-pointer"
               onClick={() => setIsRefineModalOpen(false)}
             >
               <FaTimes className="text-[#888a8f] text-lg" />
@@ -244,21 +296,34 @@ const SelectPresentationType: React.FC = () => {
               Upload your presentation to refine it
             </p>
             {/* Upload Button */}
-            <div className="mt-4">
-              <label className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl cursor-pointer">
-                <FaUpload className="mr-2 text-[#5D5F61]" />
-                <span>Upload Presentation</span>
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </label>
+            <div className="mt-4 md:mt-8">
+              {file ? (
+                <div className="flex items-center justify-between h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
+                  <span className="text-[#5D5F61] truncate">{file.name}</span>
+                  <button
+                    className="text-[#8A8B8C] ml-2"
+                    onClick={() => setFile(null)}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl cursor-pointer">
+                  <FaUpload className="mr-2 text-[#5D5F61]" />
+                  <span>Upload Presentation</span>
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              )}
             </div>
             {/* Refine Button */}
             <button
-              className={`mt-4 h-[3.1rem] w-full py-2 px-4 rounded-xl ${
+              onClick={handleRefinePPT}
+              className={`mt-4 md:mt-8 h-[3.1rem] w-full py-2 px-4 rounded-xl ${
                 file
                   ? 'bg-[#3667B2] text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaCity } from 'react-icons/fa'
 import { IndustryFormProps } from '../../../types/onboardingTypes'
+import { BackButton, NextButton } from '../shared/Buttons'
 
 const IndustryForm: React.FC<IndustryFormProps> = ({
   onContinue,
@@ -68,25 +69,33 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   }
 
   return (
-    <div className="flex flex-col mt-[2rem] sm:mt-[4rem] lg:mt-2 items-center justify-start min-w-full min-h-screen p-4 sm:p-6 text-center">
-      <div className="w-full mt-8 sm:mt-[4rem] lg:mt-2 lg:bg-white lg:shadow-lg lg:max-w-4xl lg:w-[800px] lg:h-[600px] lg:rounded-3xl lg:flex lg:flex-col lg:justify-between lg:p-4 lg:sm:p-8 lg:mx-auto">
-        <div className="flex flex-col items-center gap-1 mb-8 sm:mt-4 lg:mb-8 lg:mt-0">
-          <FaCity className="text-[#3667B2] lg:text-6xl text-7xl mb-2" />
-          <h1 className="text-2xl text-[#091220] font-bold mb-1">
-            Your Industry
-          </h1>
-          <p className="text-[#5D5F61]">
-            Provide details about sector and industry
-          </p>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
+    <div className="w-full mt-[6rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
+      {/* Heading */}
+      <div className="flex flex-col items-center gap-1 mb-8">
+        <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
+        <h1 className="text-2xl text-[#091220] font-bold mb-1">
+          Your Industry
+        </h1>
+        <p className="text-[#5D5F61]">
+          Provide details about sector and industry
+        </p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
+      >
+        {/* Input */}
+        <div
+          className={`w-full lg:flex lg:justify-center lg:gap-4 mt-4 px-2 ${
+            (sector === 'Other' || industry === 'Other') &&
+            'md:overflow-y-auto md:max-h-40 lg:max-h-48'
+          }`}
         >
-          <div className="w-full mt-[2rem] lg:mt-0 px-2 sm:px-0">
+          <div className="flex flex-col w-full">
             <label
               htmlFor="sector"
-              className="mb-2 font-semibold text-[#4A4B4D] block text-left"
+              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
             >
               Sector
             </label>
@@ -109,15 +118,17 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               <input
                 type="text"
                 placeholder="Enter your sector"
-                className="mb-4 p-2 border w-full rounded-xl"
+                className="lg:p-2 p-4 border w-full rounded-xl"
                 value={otherSector}
                 onChange={(e) => setOtherSector(e.target.value)}
               />
             )}
+          </div>
 
+          <div className="flex flex-col w-full">
             <label
               htmlFor="industry"
-              className="mb-2 font-semibold text-[#4A4B4D] block text-left"
+              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
             >
               Industry
             </label>
@@ -140,42 +151,32 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               <input
                 type="text"
                 placeholder="Enter your industry"
-                className="p-2 border w-full rounded-xl"
+                className="lg:p-2 p-4 border w-full rounded-xl"
                 value={otherIndustry}
                 onChange={(e) => setOtherIndustry(e.target.value)}
               />
             )}
           </div>
-          <div className="flex flex-col items-center justify-center lg:mt-[2rem] mt-[6rem] w-full space-y-2 px-2 sm:px-0">
-            <button
-              type="submit"
-              disabled={
-                !sector ||
-                !industry ||
-                (sector === 'Other' && !otherSector) ||
-                (industry === 'Other' && !otherIndustry)
-              }
-              className={`px-6 py-2 mb-3 rounded-xl lg:h-[2.7rem] h-[3.3rem] transition w-full ${
-                sector &&
-                industry &&
-                (sector !== 'Other' || otherSector) &&
-                (industry !== 'Other' || otherIndustry)
-                  ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
-                  : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
-              }`}
-            >
-              Next
-            </button>
-            <button
-              type="button"
-              onClick={onBack}
-              className="px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-xl transition w-full text-[#797C81]"
-            >
-              Back
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Buttons */}
+        <div
+          className={`flex flex-col items-center justify-center mt-16 lg:mt-36 ${
+            sector === 'Other' || industry === 'Other' ? 'lg:mt-32' : ''
+          } w-full space-y-2 px-2`}
+        >
+          <NextButton
+            disabled={
+              !sector ||
+              !industry ||
+              (sector === 'Other' && !otherSector) ||
+              (industry === 'Other' && !otherIndustry)
+            }
+            text={'Next'}
+          />
+          <BackButton onClick={onBack} />
+        </div>
+      </form>
     </div>
   )
 }

@@ -6,8 +6,8 @@ import {
   FaCity,
   FaPhone,
   FaCheckCircle,
-  FaBars,
   FaTimes,
+  FaBars,
 } from 'react-icons/fa'
 import ZynthLogo from '../../assets/zynth-icon.png'
 import ZynthLogoText from '../../assets/zynth-text.png'
@@ -95,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               >
                 {/* Section Item */}
                 <div
-                  className={`flex items-center py-1 mb-3 space-x-4 pl-4 transition-colors duration-300 h-full ${
+                  className={`flex items-center py-1 mb-3 lg:mb-4 xl:mb-6 space-x-4 pl-4 transition-colors duration-300 h-full ${
                     isActive
                       ? 'border-l-4 border-[#3667B2]'
                       : 'border-l-4 border-transparent'
@@ -119,14 +119,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Dotted Progress Bar */}
                     {index < sections.length - 1 &&
                       visitedSections.includes(sections[index + 1].id) && (
-                        <div className="w-0.5 h-4 border-l-2 border-dotted border-gray-300 mt-2"></div>
+                        <div className="w-1 h-8 border-l-2 border-dotted border-gray-300 mt-2"></div>
                       )}
                   </div>
 
                   {/* Heading & Subheading */}
                   <div>
                     <h2
-                      className={`font-semibold text-base lg:text-sm ${
+                      className={`font-semibold text-lg ${
                         isActive || isVisited
                           ? 'text-[#3667B2]'
                           : 'text-gray-700'
@@ -134,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     >
                       {section.title}
                     </h2>
-                    <p className="text-xs lg:text-xs text-gray-500">
+                    <p className="text-sm text-gray-500">
                       {section.subheading}
                     </p>
                   </div>

@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .heading-container {
+    @apply flex flex-col items-center gap-1 mb-8 sm:mt-4 lg:mb-8 lg:mt-0;
+  }
+  .icon-style {
+    @apply text-[#3667B2] lg:text-6xl text-7xl mb-3;
+  }
+  .heading-text {
+    @apply text-2xl text-[#091220] font-bold mb-1;
+  }
+  .subheading-text {
+    @apply text-[#5D5F61];
+  }
+  .button-container {
+    @apply flex flex-col items-center justify-center w-full space-y-2 px-2 sm:px-0;
+  }
+  .primary-button {
+    @apply px-6 py-2 rounded-xl transition w-full lg:h-[2.7rem] h-[3.3rem] text-white;
+  }
+  .primary-enabled {
+    @apply bg-[#3667B2] hover:bg-[#0A8568];
+  }
+  .primary-disabled {
+    @apply bg-[#E6EAF0] text-[#797C81] cursor-not-allowed;
+  }
+  .secondary-button {
+    @apply px-6 py-2 border rounded-xl transition w-full text-[#797C81] lg:h-[2.7rem] h-[3.3rem];
+  }
+  .secondary-hover {
+    @apply hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white;
+  }
+  .input-container {
+    @apply w-full mt-6 sm:mt-0 px-2 sm:px-0;
+  }
+  .input-label {
+    @apply mb-2 font-semibold text-[#4A4B4D] block text-left;
+  }
+  .input-field {
+    @apply mb-4 p-4 lg:p-2 border w-full rounded-xl;
+  }
+  .error-text {
+    @apply text-red-500 text-sm;
+  }
+}

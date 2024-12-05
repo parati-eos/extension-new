@@ -2,6 +2,7 @@ import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import React, { useEffect, useState } from 'react'
 import { FaImage, FaBullseye } from 'react-icons/fa'
 import { LogoFormProps } from '../../../types/onboardingTypes'
+import { BackButton, NextButton } from '../shared/Buttons'
 
 const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,
@@ -47,17 +48,20 @@ const LogoForm: React.FC<LogoFormProps> = ({
   }
 
   return (
-    <div className="w-full mt-[4rem] sm:mt-[4rem] lg:mt-2 lg:bg-white lg:shadow-lg lg:max-w-4xl lg:w-[800px] lg:h-[600px] lg:rounded-3xl lg:flex lg:flex-col lg:justify-between lg:p-4 lg:sm:p-8 lg:mx-auto">
-      <div className="flex flex-col items-center gap-1 mb-8 sm:mt-4 lg:mb-8 lg:mt-0">
-        <FaBullseye className="text-[#3667B2] lg:text-4xl text-6xl mb-3" />
+    <div className="w-full mt-[6rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
+      {/* Heading */}
+      <div className="flex flex-col items-center gap-1 mb-8">
+        <FaBullseye className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">Company Logo</h1>
         <p className="text-[#5D5F61]">Upload your company logo</p>
       </div>
+
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
-        <div className="w-[90vw] mt-[0.5rem] lg:mt-0 max-w-sm border border-gray-300 rounded-xl p-4 h-72 flex flex-col justify-center items-center md:transition-transform md:transform md:hover:scale-105">
+        {/* Input */}
+        <div className="w-full border border-gray-200 mt-6 p-10 rounded-lg hover:scale-105">
           <input
             type="file"
             id="companyLogo"
@@ -70,15 +74,13 @@ const LogoForm: React.FC<LogoFormProps> = ({
               <img
                 src={logo}
                 alt="Uploaded Logo"
-                className="w-24 h-24 lg:w-48 lg:h-48 object-contain mb-4"
+                className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
               />
             ) : (
               <>
                 <FaImage className="text-gray-500 text-4xl mb-4" />
                 <p className="text-gray-500 mb-4">
-                  {isUploading
-                    ? 'Uploading...'
-                    : 'Select or drag to upload your logo'}
+                  {isUploading ? 'Uploading...' : 'Upload Your Logo'}
                 </p>
               </>
             )}
@@ -91,25 +93,11 @@ const LogoForm: React.FC<LogoFormProps> = ({
             </button>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center lg:mt-6 mt-14 w-[92vw] space-y-2 px-2 sm:px-0">
-          <button
-            type="submit"
-            disabled={!logo}
-            className={`px-6 py-2 lg:mb-2 mb-3 rounded-xl lg:h-12 h-[3.3rem] transition lg:w-[31%] w-full ${
-              logo
-                ? 'bg-[#3667B2] text-white hover:bg-[#0A8568]'
-                : 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'
-            }`}
-          >
-            Next
-          </button>
-          <button
-            type="button"
-            onClick={onBack}
-            className="px-6 py-2 h-[3.3rem] lg:h-12 border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-xl transition w-full lg:w-[31%] text-[#797C81]"
-          >
-            Back
-          </button>
+
+        {/* Button */}
+        <div className="flex flex-col items-center justify-center mt-7 w-full space-y-2 px-2">
+          <NextButton disabled={!logo} text={'Next'} />
+          <BackButton onClick={onBack} />
         </div>
       </form>
     </div>
