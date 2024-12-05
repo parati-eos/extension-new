@@ -11,6 +11,14 @@ interface PeopleProps {
   authToken: string
 }
 
+interface IPerson {
+  name: string
+  image: string
+  designation: string
+  company: string
+  description: string
+}
+
 export default function People({
   heading,
   slideType,
@@ -18,15 +26,7 @@ export default function People({
   orgId,
   authToken,
 }: PeopleProps) {
-  const [people, setPeople] = useState([
-    {
-      name: '',
-      designation: '',
-      company: '',
-      description: '',
-      profilePicture: '',
-    },
-  ])
+  const [people, setPeople] = useState<IPerson[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (value: string, index: number, field: string) => {
@@ -42,7 +42,7 @@ export default function People({
         const url = await uploadLogoToS3(file)
         setPeople((prevPeople) => {
           const updatedPeople = [...prevPeople]
-          updatedPeople[index].profilePicture = url
+          updatedPeople[index].image = url
           return updatedPeople
         })
       } catch (error) {
@@ -61,7 +61,7 @@ export default function People({
       currentPerson.designation &&
       currentPerson.company &&
       currentPerson.description &&
-      currentPerson.profilePicture
+      currentPerson.image
     ) {
       if (people.length < 6) {
         setPeople([
@@ -71,7 +71,7 @@ export default function People({
             designation: '',
             company: '',
             description: '',
-            profilePicture: '',
+            image: '',
           },
         ])
       }
@@ -85,7 +85,7 @@ export default function People({
       !currentPerson.designation.trim() ||
       !currentPerson.company.trim() ||
       !currentPerson.description.trim() ||
-      !currentPerson.profilePicture ||
+      !currentPerson.image ||
       people.length >= 6
     )
   })()
@@ -96,20 +96,28 @@ export default function People({
       !person.designation.trim() ||
       !person.company.trim() ||
       !person.description.trim() ||
-      !person.profilePicture
+      !person.image
   )
 
   const handleGenerateSlide = async () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
-        { people },
+        {
+          type: 'people',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            people: people,
+          },
+        },
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
         }
-      ) // Replace with actual endpoint
+      )
       alert('Data successfully sent to the server!')
       console.log('Server response:', response.data)
     } catch (error) {
@@ -184,10 +192,10 @@ export default function People({
             />
 
             <div className="flex items-center gap-2">
-              {!person.profilePicture && !isLoading && (
+              {!person.image && !isLoading && (
                 <label className="flex items-center gap-6 md:gap-2 border border-gray-300 px-4 py-2 rounded-md w-[100%] lg:w-[32%] cursor-pointer text-blue-500">
                   <FaImage />
-                  <span className="hidden md:block">Select or Drag Image</span>
+                  <span className="hidden md:block">Select Image</span>
                   <span className="md:hidden">Upload Image</span>
                   <input
                     type="file"
@@ -200,9 +208,9 @@ export default function People({
                 </label>
               )}
               {isLoading && <span className="text-gray-500">Uploading...</span>}
-              {person.profilePicture && (
+              {person.image && (
                 <img
-                  src={person.profilePicture}
+                  src={person.image}
                   alt="Uploaded"
                   className="w-8 h-8 object-cover border border-gray-300"
                 />

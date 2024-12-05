@@ -52,15 +52,22 @@ export default function Timeline({
   const handleGenerateSlide = async () => {
     setLoading(true)
     try {
-      const payload = title.map((t, index) => ({
-        title: t,
-        description: description[index],
-      }))
-
-      // Dummy PATCH request
-      const response = await axios.patch(
-        'https://jsonplaceholder.typicode.com/posts/1', // Dummy URL
-        { timelineData: payload }
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/phases`,
+        {
+          type: 'phases',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            image: '',
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       )
 
       console.log('PATCH Response:', response.data)

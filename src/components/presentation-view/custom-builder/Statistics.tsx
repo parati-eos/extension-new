@@ -52,15 +52,25 @@ export default function Statistics({
   const handleGenerateSlide = async () => {
     setLoading(true)
     try {
-      const payload = title.map((t, index) => ({
-        title: title,
-        description: description,
-      }))
-
-      // Dummy PATCH request
-      const response = await axios.patch(
-        'https://jsonplaceholder.typicode.com/posts/1', // Dummy URL
-        { timelineData: payload }
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/statistics`,
+        {
+          type: 'statistics',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            stats: title.slice(1).map((label, index) => ({
+              label,
+              value: Number(description[index + 1] || 0),
+            })),
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       )
 
       console.log('PATCH Response:', response.data)

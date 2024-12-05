@@ -80,9 +80,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
               <>
                 <FaImage className="text-gray-500 text-4xl mb-4" />
                 <p className="text-gray-500 mb-4">
-                  {isUploading
-                    ? 'Uploading...'
-                    : 'Select or drag to upload your logo'}
+                  {isUploading ? 'Uploading...' : 'Upload Your Logo'}
                 </p>
               </>
             )}

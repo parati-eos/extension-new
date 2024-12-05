@@ -87,76 +87,84 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
       >
         {/* Input */}
         <div
-          className={`w-full mt-4 px-2 ${
+          className={`w-full lg:flex lg:justify-center lg:gap-4 mt-4 px-2 ${
             (sector === 'Other' || industry === 'Other') &&
             'md:overflow-y-auto md:max-h-40 lg:max-h-48'
           }`}
         >
-          <label
-            htmlFor="sector"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
-            Sector
-          </label>
-          <select
-            id="sector"
-            value={sector}
-            onChange={handleSectorChange}
-            className="mb-4 lg:p-2 p-3 border w-full rounded-xl"
-          >
-            <option value="" disabled>
-              Select sector
-            </option>
-            <option value="Technology">Technology</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Finance">Finance</option>
-            <option value="Education">Education</option>
-            <option value="Other">Other</option>
-          </select>
-          {sector === 'Other' && (
-            <input
-              type="text"
-              placeholder="Enter your sector"
-              className="mb-2 lg:p-2 p-4 border w-full rounded-xl"
-              value={otherSector}
-              onChange={(e) => setOtherSector(e.target.value)}
-            />
-          )}
+          <div className="flex flex-col w-full">
+            <label
+              htmlFor="sector"
+              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
+            >
+              Sector
+            </label>
+            <select
+              id="sector"
+              value={sector}
+              onChange={handleSectorChange}
+              className="mb-4 lg:p-2 p-3 border w-full rounded-xl"
+            >
+              <option value="" disabled>
+                Select sector
+              </option>
+              <option value="Technology">Technology</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Finance">Finance</option>
+              <option value="Education">Education</option>
+              <option value="Other">Other</option>
+            </select>
+            {sector === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter your sector"
+                className="lg:p-2 p-4 border w-full rounded-xl"
+                value={otherSector}
+                onChange={(e) => setOtherSector(e.target.value)}
+              />
+            )}
+          </div>
 
-          <label
-            htmlFor="industry"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
-            Industry
-          </label>
-          <select
-            id="industry"
-            value={industry}
-            onChange={handleIndustryChange}
-            className="mb-4 lg:p-2 p-3 border w-full rounded-xl"
-          >
-            <option value="" disabled>
-              Select industry
-            </option>
-            <option value="Software">Software</option>
-            <option value="Biotechnology">Biotechnology</option>
-            <option value="Banking">Banking</option>
-            <option value="E-Learning">E-Learning</option>
-            <option value="Other">Other</option>
-          </select>
-          {industry === 'Other' && (
-            <input
-              type="text"
-              placeholder="Enter your industry"
-              className="mb-2 lg:p-2 p-4 border w-full rounded-xl"
-              value={otherIndustry}
-              onChange={(e) => setOtherIndustry(e.target.value)}
-            />
-          )}
+          <div className="flex flex-col w-full">
+            <label
+              htmlFor="industry"
+              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
+            >
+              Industry
+            </label>
+            <select
+              id="industry"
+              value={industry}
+              onChange={handleIndustryChange}
+              className="mb-4 lg:p-2 p-3 border w-full rounded-xl"
+            >
+              <option value="" disabled>
+                Select industry
+              </option>
+              <option value="Software">Software</option>
+              <option value="Biotechnology">Biotechnology</option>
+              <option value="Banking">Banking</option>
+              <option value="E-Learning">E-Learning</option>
+              <option value="Other">Other</option>
+            </select>
+            {industry === 'Other' && (
+              <input
+                type="text"
+                placeholder="Enter your industry"
+                className="lg:p-2 p-4 border w-full rounded-xl"
+                value={otherIndustry}
+                onChange={(e) => setOtherIndustry(e.target.value)}
+              />
+            )}
+          </div>
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-16 w-full space-y-2 px-2">
+        <div
+          className={`flex flex-col items-center justify-center mt-16 lg:mt-36 ${
+            sector === 'Other' || industry === 'Other' ? 'lg:mt-32' : ''
+          } w-full space-y-2 px-2`}
+        >
           <NextButton
             disabled={
               !sector ||

@@ -7,13 +7,15 @@ import PresentationViewPage from './pages/PresentationViewPage.tsx'
 import AuthPage from './pages/AuthPage.tsx'
 import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
+import LandingPage from './pages/LandingPage.tsx'
 import Test from './test/test.tsx'
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route
           path="/organization-profile"
