@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import zynthlogo from '../../assets/zynth-icon.png'
 import zynthtext from '../../assets/zynth-text.png'
 
 const Navbar: React.FC = () => {
@@ -26,10 +25,9 @@ const Navbar: React.FC = () => {
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800">
           <span className="flex items-center">
-            <span className="rounded-full bg-gray-200 w-8 h-8 flex items-center justify-center text-blue-600 font-bold mr-2">
-              <img src={zynthlogo} alt="logo"/>
-            </span>
-            <img src={zynthtext} alt="Zynth"/>
+          <a href="http://localhost:3000/landing-page" target="_blank" rel="noopener noreferrer">
+              <img className="h-8" src={zynthtext} alt="Zynth" />
+            </a>
           </span>
         </div>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import vector from '../../assets/Vector29.png'
 
-const Footer: React.FC = () => {
+const FirstFooter: React.FC = () => {
   return (
     <footer className="bg-gray-50 py-16 ">
       <div className='flex justify-center gap-4 mb-2'>
@@ -76,4 +76,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+export default FirstFooter;
