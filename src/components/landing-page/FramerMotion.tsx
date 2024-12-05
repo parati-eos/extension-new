@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ThirdPage from "./ThirdPage";
-
+import productIcon from "../../assets/image1.png";
 // AnimatedButton Component
 const AnimatedButton = ({ onclicked, name }: { onclicked: () => void; name: string }) => {
   return (
@@ -20,14 +20,14 @@ const AnimatedButton = ({ onclicked, name }: { onclicked: () => void; name: stri
 
 // HeroParallax Component
 const products = [
-    { title: 'Product 1', link: '#', thumbnail: '/path_to_image_1.jpg' },
-    { title: 'Product 2', link: '#', thumbnail: '/path_to_image_2.jpg' },
-    { title: 'Product 3', link: '#', thumbnail: '/path_to_image_3.jpg' },
-    { title: 'Product 4', link: '#', thumbnail: '/path_to_image_4.jpg' },
-    { title: 'Product 5', link: '#', thumbnail: '/path_to_image_5.jpg' },
-    { title: 'Product 6', link: '#', thumbnail: '/path_to_image_6.jpg' },
-    { title: 'Product 7', link: '#', thumbnail: '/path_to_image_7.jpg' },
-    { title: 'Product 8', link: '#', thumbnail: '/path_to_image_8.jpg' },
+  { title: "Product 1", link: "#", thumbnail: productIcon },
+  { title: "Product 2", link: "#", thumbnail: productIcon },
+  { title: "Product 3", link: "#", thumbnail: productIcon },
+  { title: "Product 4", link: "#", thumbnail: productIcon },
+    { title: "Product 5", link: "#", thumbnail: productIcon },
+    { title: "Product 6", link: "#", thumbnail: productIcon },
+    { title: "Product 7", link: "#", thumbnail: productIcon },
+    { title: "Product 8", link: "#", thumbnail: productIcon },
   ];
 export const HeroParallax = () => {
   const firstRow = products.slice(0, 5);
@@ -79,8 +79,7 @@ export const Header = () => {
   };
 
   return (
-    <div className="max-w-7xl relative mx-auto px-4 w-full left-0 top-0 bg-[#3667B2];
-]">
+    <div>
       {/* <div className="flex flex-col md:h-[80vh] h-[70vh]">
         <div className="h-[100%]">
           <h1 className="text-5xl md:text-7xl font-bold text-white opacity-100">

@@ -23,7 +23,7 @@ const SecondFooter: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-gray-100 py-6">
+    <footer className="bg-gray-100 ">
       {/* Partners Section */}
       <div className="bg-white py-12">
         <div className="container mx-auto px-4 text-center">
@@ -67,7 +67,7 @@ const SecondFooter: React.FC = () => {
 
       {/* Call-to-Action */}
       <div className="text-center mt-12">
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700">
+        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 mb-4">
           See How Zynth Can Help You
         </button>
       </div>
