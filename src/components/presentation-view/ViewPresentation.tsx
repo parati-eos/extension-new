@@ -49,7 +49,6 @@ export default function ViewPresentation() {
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
