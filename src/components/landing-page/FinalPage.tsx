@@ -11,29 +11,33 @@ const FinalPage: React.FC = () => {
         className="bg-cover bg-center py-16 text-center text-white"
         style={{ backgroundImage: `url(${freepikbg})` }} 
       >
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Get Started with Zynth</h1>
-          <p className="text-lg mb-8">
-            More than a simple PowerPoint maker, Zynth is your personal AI presentation creator.
-          </p>
-          <button className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600">
-            Get Started for Free
-          </button>
-        </div>
+       <div className="container mx-auto px-4">
+  <h1 className="text-4xl font-bold mb-4">Get Started with Zynth</h1>
+  <p className="text-lg mb-8">
+    <span>More than a simple PowerPoint maker, Zynth is your personal</span>
+    <br />
+    <span>AI presentation creator.</span>
+  </p>
+  <button className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600">
+    Get Started for Free
+  </button>
+</div>
+
      
 
       {/* Image Section */}
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <img
+          
             src={createimage}
             alt="Create or Refine Presentation"
-            className="w-full md:w-1/2"
+            className="w-full md:w-1/2 bg-white rounded-3xl"
           />
           <img
             src={evolutionimage}
             alt="Evolution of Our Path"
-            className="w-full md:w-1/2"
+           className="w-full md:w-1/2 bg-white rounded-3xl"
           />
         </div>
       </div>

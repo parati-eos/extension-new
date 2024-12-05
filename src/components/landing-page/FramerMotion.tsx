@@ -47,6 +47,7 @@ export const HeroParallax = () => {
   return (
     <div ref={ref} className="h-max pt-20 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]">
       <Header />
+      <div className="bg-[#3667B2]">
       <motion.div
         style={{
           rotateX,
@@ -56,18 +57,22 @@ export const HeroParallax = () => {
         }}
         className="div"
       >
+     
         <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
           {firstRow.map((product) => (
             <ProductCard product={product} translate={translateX} key={product.title} />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row mb-20 space-x-20">
+        <motion.div className="flex flex-row mb-20 space-x-20 ">
           {secondRow.map((product) => (
             <ProductCard product={product} translate={translateXReverse} key={product.title} />
           ))}
         </motion.div>
+       
       </motion.div>
+      </div>
     </div>
+   
   );
 };
 
@@ -105,12 +110,12 @@ export const Header = () => {
       <ThirdPage/>
    
       <motion.h2
-        className="text-2xl mt-20 md:text-4xl font-bold text-white text-center"
+        className="text-2xl  md:text-4xl font-bold text-white text-center bg-[#3667B2] py-12"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0, transition: { duration: 1 } }}
       >
        
-        <span className="text-[#e6a500]">Built On Zynth</span>
+        <span className="text-white ">Built On Zynth</span>
       </motion.h2>
       
     </div>
@@ -135,7 +140,7 @@ export const ProductCard = ({
         y: -20,
       }}
       key={product.title}
-      className="group/product h-80 w-[35rem] relative flex-shrink-0 "
+      className="group/product h-80 w-[35rem] relative flex-shrink-0  "
     >
       <a href={product.link} className="block group-hover/product:shadow-2xl">
         <img
