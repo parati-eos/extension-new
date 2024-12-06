@@ -2,8 +2,13 @@ import { FaPaperclip, FaImage } from 'react-icons/fa'
 import React, { useState } from 'react'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
+import { DisplayMode } from '../ViewPresentation'
+import { BackButton } from './shared/BackButton'
 
-export default function Cover() {
+export default function Cover(
+  heading: string,
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
@@ -48,6 +53,10 @@ export default function Cover() {
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col h-full w-full">
       <div className="hidden lg:flex lg:w-full lg:absolute lg:left-0 lg:pl-8 lg:pr-8 lg:pt-4">
@@ -57,20 +66,12 @@ export default function Cover() {
       </div>
 
       <div className="w-full lg:flex lg:flex-col lg:justify-center lg:items-center lg:p-4 lg:sm:p-8">
-        <div className="flex gap-x-80 mb-10">
-          <div className="flex flex-col gap-2">
-            <input className="font-semibold break-words" placeholder="Cover" />
-            <input
-              className="text-2xl w-[17rem]"
-              placeholder="Enter Presentation Name"
-            />
-          </div>
-          <button
-            type="button"
-            className="px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-md transition text-[#797C81]"
-          >
-            Back
-          </button>
+        {/* Top Section: Headings */}
+        <div className="flex lg:mt-2 items-center justify-between w-full px-4">
+          <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+            {heading}
+          </h2>
+          <BackButton onClick={onBack} />
         </div>
 
         <div className="w-[95%] mt-[0.5rem] lg:mt-0 border border-gray-300 rounded-xl p-4 h-72 flex flex-col justify-center items-center md:transition-transform md:transform md:hover:scale-105 mb-16">

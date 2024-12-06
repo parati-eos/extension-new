@@ -25,7 +25,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   }
 
   return (
-    <div className="w-full mt-[6rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
+    <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
       {/* Heading */}
       <div className="flex flex-col items-center gap-1 mb-8">
         <FaBuilding className="text-[#3667B2] text-6xl lg:text-4xl xl:text-6xl mb-2" />
@@ -40,7 +40,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-6 px-2">
+        <div className="w-full mt-[7rem] md:mt-6 px-2">
           <label
             htmlFor="companyName"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -58,7 +58,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-[6.5rem] w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center mt-[7.5rem] md:mt-[6.5rem] w-full space-y-2 px-2">
           <NextButton disabled={!companyName} text={'Continue'} />
         </div>
       </form>

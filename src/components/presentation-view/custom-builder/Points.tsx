@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { FaPlus, FaPaperclip } from 'react-icons/fa'
 import axios from 'axios'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface PointsProps {
   heading: string
@@ -8,6 +10,7 @@ interface PointsProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Points({
@@ -16,6 +19,7 @@ export default function Points({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: PointsProps) {
   const [points, setPoints] = useState([''])
   const [isLoading, setIsLoading] = useState(false)
@@ -65,6 +69,10 @@ export default function Points({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   const isGenerateDisabled = points.every((point) => point.trim() === '')
   const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
 
@@ -75,9 +83,7 @@ export default function Points({
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Input Section with Scrolling */}

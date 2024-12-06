@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { FaPlus, FaChartPie, FaChartLine, FaChartBar } from 'react-icons/fa'
 import axios from 'axios'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface GraphProps {
   heading: string
@@ -8,6 +10,7 @@ interface GraphProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Graphs({
@@ -16,73 +19,92 @@ export default function Graphs({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: GraphProps) {
   const [currentScreen, setCurrentScreen] = useState<
     'chartSelection' | 'inputScreen'
   >('chartSelection')
   const [selectedChart, setSelectedChart] = useState<string | null>(null)
-  const [rows, setRows] = useState([{ label: '', services: '' }])
-  const [series, setSeries] = useState(1)
+  const [rows, setRows] = useState(Array.from({ length: 5 }, () => ['']))
+  const [columns, setColumns] = useState(['Series 1', 'Series 2'])
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   useEffect(() => {
-    const initRows = window.innerWidth < 768 ? 2 : 3
-    setRows(
-      Array.from({ length: initRows }, () => ({ label: '', services: '' }))
-    )
-  }, [])
+    validateData()
+  }, [rows, columns])
 
   const handleChartClick = (chartType: string) => {
     setSelectedChart(chartType)
     setCurrentScreen('inputScreen')
-    const initRows = window.innerWidth < 768 ? 2 : 3
-    setRows(
-      Array.from({ length: initRows }, () => ({ label: '', services: '' }))
-    )
-    setSeries(1)
+    setRows(Array.from({ length: 5 }, () => ['']))
+    setColumns(['Series 1', 'Series 2'])
   }
 
   const addRow = () => {
     if (rows.length < 10) {
-      setRows([...rows, { label: '', services: '' }])
+      setRows([...rows, Array(columns.length).fill('')])
     } else {
       alert('Maximum of 10 rows can be added.')
     }
   }
 
   const addSeries = () => {
-    if (series < 4) {
-      setSeries(series + 1)
+    if (columns.length < 4) {
+      setColumns([...columns, ''])
+      setRows(rows.map((row) => [...row, '']))
     } else {
       alert('Maximum of 4 columns allowed.')
     }
   }
 
+  const handleColumnNameChange = (index: number, value: string) => {
+    const updatedColumns = [...columns]
+    updatedColumns[index] = value
+    setColumns(updatedColumns)
+  }
+
   const handleInputChange = (
     rowIndex: number,
-    column: string,
+    colIndex: number,
     value: string
   ) => {
-    const updatedRows = rows.map((row, index) =>
-      index === rowIndex ? { ...row, [column]: value } : row
+    const updatedRows = rows.map((row, rIndex) =>
+      rIndex === rowIndex
+        ? row.map((cell, cIndex) => (cIndex === colIndex ? value : cell))
+        : row
     )
     setRows(updatedRows)
   }
 
   const validateData = () => {
-    const filledCells = rows.filter((row) => row.label && row.services)
+    const filledCells = rows.filter((row) => row.some((cell) => cell))
     setIsButtonDisabled(filledCells.length < 2)
   }
 
-  useEffect(() => {
-    validateData()
-  }, [rows, series])
+  const formatPayload = () => {
+    const series = columns.map((colName, colIndex) => ({
+      key: colName,
+      value: rows.map((row) => Number(row[colIndex] || 0)),
+    }))
+
+    return {
+      type: 'graphs',
+      title: heading,
+      documentID: documentID,
+      data: {
+        slideName: heading,
+        chartType: selectedChart,
+        chart: { series },
+      },
+    }
+  }
 
   const handleSubmit = async () => {
     try {
+      const payload = formatPayload()
       await axios.post(
-        '/api/upload-images',
-        { rows, series, selectedChart },
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -96,12 +118,18 @@ export default function Graphs({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col h-full w-full">
+      {/* Top Section: Headings */}
       <div className="flex lg:mt-2 items-center justify-between w-full px-4">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
+        <BackButton onClick={onBack} />
       </div>
 
       {currentScreen === 'chartSelection' ? (
@@ -136,25 +164,15 @@ export default function Graphs({
             <table className="table-auto border-collapse w-full">
               <thead>
                 <tr className="bg-[#F5F7FA]">
-                  <th className="px-4 py-2 text-left">
-                    <input
-                      type="text"
-                      placeholder=" Series 1"
-                      className="px-2 py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
-                    />
-                  </th>
-                  <th className="px-4 py-2 text-left">
-                    <input
-                      type="text"
-                      placeholder="Series 2"
-                      className="px-2 py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
-                    />
-                  </th>
-                  {Array.from({ length: series - 1 }).map((_, index) => (
-                    <th key={index} className="px-4 py-2 text-left">
+                  {columns.map((col, colIndex) => (
+                    <th key={colIndex} className="px-4 py-2 text-left">
                       <input
                         type="text"
-                        placeholder="Enter Series Name"
+                        value={col}
+                        onChange={(e) =>
+                          handleColumnNameChange(colIndex, e.target.value)
+                        }
+                        placeholder={`Enter Series Name`}
                         className="px-2 py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
                       />
                     </th>
@@ -172,37 +190,19 @@ export default function Graphs({
               <tbody>
                 {rows.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    <td className="px-4 py-2">
-                      <input
-                        type="text"
-                        value={row.label}
-                        placeholder={`Enter data ${rowIndex + 1}`}
-                        onChange={(e) =>
-                          handleInputChange(rowIndex, 'label', e.target.value)
-                        }
-                        className="px-2 py-1 rounded w-[90%] outline-none"
-                      />
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="text"
-                        value={row.services}
-                        placeholder={`Enter data ${rowIndex + 1}`}
-                        onChange={(e) =>
-                          handleInputChange(
-                            rowIndex,
-                            'services',
-                            e.target.value
-                          )
-                        }
-                        className="px-2 py-1 rounded w-[90%] outline-none"
-                      />
-                    </td>
-                    {Array.from({ length: series - 1 }).map((_, index) => (
-                      <td key={index} className="px-4 py-2">
+                    {row.map((cell, colIndex) => (
+                      <td key={colIndex} className="px-4 py-2">
                         <input
                           type="text"
+                          value={cell}
                           placeholder={`Enter data ${rowIndex + 1}`}
+                          onChange={(e) =>
+                            handleInputChange(
+                              rowIndex,
+                              colIndex,
+                              e.target.value
+                            )
+                          }
                           className="px-2 py-1 rounded w-[90%] outline-none"
                         />
                       </td>

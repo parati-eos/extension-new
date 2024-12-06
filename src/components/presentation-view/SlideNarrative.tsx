@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
 import axios from 'axios'
+import { BackButton } from './custom-builder/shared/BackButton'
+import { DisplayMode } from './ViewPresentation'
 
 interface SlideNarrativeProps {
   heading: string
@@ -8,6 +10,7 @@ interface SlideNarrativeProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function SlideNarrative({
@@ -16,6 +19,7 @@ export default function SlideNarrative({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -67,6 +71,10 @@ export default function SlideNarrative({
 
   const isGenerateDisabled = narrative.trim() === ''
 
+  const onBack = () => {
+    setDisplayMode('newContent')
+  }
+
   return (
     <div className="flex flex-col p-4 h-full">
       {/* Top Section: Headings */}
@@ -74,9 +82,7 @@ export default function SlideNarrative({
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Input Section */}

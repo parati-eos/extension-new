@@ -7,16 +7,17 @@ import TimelineIcon from '../../assets/timeline-icon.png'
 import TableIcon from '../../assets/table-icon.png'
 import ImagesIcon from '../../assets/images-icon.png'
 import { DisplayMode } from './ViewPresentation'
+import { BackButton } from './custom-builder/shared/BackButton'
 
 interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
-interface ClickProps {
-  onTypeClick: (typeName: DisplayMode) => void
-}
-
-const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
+const CustomBuilderMenu: React.FC<ClickProps> = ({
+  onTypeClick,
+  setDisplayMode,
+}) => {
   const slideTypes: { name: DisplayMode; icon: string }[] = [
     { name: 'Points', icon: PointsIcon },
     { name: 'Timeline', icon: TimelineIcon },
@@ -30,6 +31,10 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
     { name: 'Graphs', icon: GraphIcon },
   ]
 
+  const onBack = () => {
+    setDisplayMode('newContent')
+  }
+
   return (
     <div className="flex flex-col h-full p-4">
       {/* Top Section: Headings and Back Button */}
@@ -42,12 +47,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
             Select your slide type
           </h3>
         </div>
-        <button
-          className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-md text-[#5D5F61] hover:underline"
-          //   onClick={handleBackClick}
-        >
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Slide Type Grid */}

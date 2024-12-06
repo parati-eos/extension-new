@@ -1,16 +1,15 @@
 import { FaDownload, FaShare } from 'react-icons/fa'
-import { ButtonProps } from '../../types/types'
+import { HeadingProps } from '../../types/types'
 
-export const DesktopHeading: React.FC<ButtonProps> = ({
+export const DesktopHeading: React.FC<HeadingProps> = ({
   handleShare,
   handleDownload,
+  pptName,
 }) => {
   return (
     <div className="hidden lg:flex lg:w-full lg:absolute lg:left-0 lg:pl-8 lg:pr-8 lg:pt-4">
       <div className="flex items-center gap-8 w-full">
-        <h1 className="text-2xl font-semibold break-words">
-          The Evolution of Our Path
-        </h1>
+        <h1 className="text-2xl font-semibold break-words">{pptName}</h1>
         <div className="flex gap-2">
           <button
             onClick={handleShare}
@@ -32,14 +31,15 @@ export const DesktopHeading: React.FC<ButtonProps> = ({
   )
 }
 
-export const MobileHeading: React.FC<ButtonProps> = ({
+export const MobileHeading: React.FC<HeadingProps> = ({
   handleDownload,
   handleShare,
+  pptName,
 }) => {
   return (
     <div className="flex items-center justify-between gap-2 mt-6 mb-5">
       <h1 className="text-2xl font-semibold flex-1 mr-4 break-words">
-        The Evolution of Our Path
+        {pptName}
       </h1>
       <div className="flex gap-2">
         <button

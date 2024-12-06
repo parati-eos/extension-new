@@ -20,10 +20,10 @@ const Navbar = () => {
     }, 5000)
   }, [dropdownOpen])
   return (
-    <nav className="bg-white p-2 pt-12 lg:p-3">
+    <nav className="bg-white p-2 pt-8 lg:p-3">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
-        <a href="/landing" target="_blank">
+        <a href="/" target="_blank">
           <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
         </a>
 

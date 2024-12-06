@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { FaPlus } from 'react-icons/fa'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface TableData {
   rows: string[][]
@@ -14,6 +16,7 @@ interface TableProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Table({
@@ -22,6 +25,7 @@ export default function Table({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(3)
@@ -161,6 +165,10 @@ export default function Table({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col w-full h-full">
       {/* Top Section: Headings */}
@@ -168,9 +176,7 @@ export default function Table({
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Table Section */}

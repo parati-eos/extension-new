@@ -45,6 +45,7 @@ export type DisplayMode =
 export default function ViewPresentation() {
   const [currentSlide, setCurrentSlide] = useState(1)
   const [selectedOutline, setSelectedOutline] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [currentOutline, setCurrentOutline] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
@@ -53,10 +54,10 @@ export default function ViewPresentation() {
   const [finalized, setFinalized] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
   const navigate = useNavigate()
-  // const location = useLocation()
-  // const searchParams = new URLSearchParams(location.search)
-  // const presentationTypeReceived = searchParams.get('slideType')!
-  // const slideType = presentationTypeReceived!.replace(/%20| /g, '')
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const pptNameRaw = searchParams.get('presentationName')!
+  const pptName = pptNameRaw.split('/')[0]
   const orgId = sessionStorage.getItem('orgId')
   const documentID = sessionStorage.getItem('documentID')
   const slideRefs = useRef<HTMLDivElement[]>([])
@@ -95,7 +96,6 @@ export default function ViewPresentation() {
   // Handle Finalize Button Click
   const handleFinalize = () => {
     setFinalized(true)
-    console.log(slidesId[currentSlideIndex])
     axios.patch(
       `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
       {},
@@ -319,7 +319,12 @@ export default function ViewPresentation() {
         }
         break
       case 'customBuilder':
-        return <CustomBuilderMenu onTypeClick={handleCustomTypeClick} />
+        return (
+          <CustomBuilderMenu
+            onTypeClick={handleCustomTypeClick}
+            setDisplayMode={setDisplayMode}
+          />
+        )
       case 'Points':
         return (
           <Points
@@ -328,6 +333,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'People':
@@ -338,6 +344,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'Table':
@@ -348,6 +355,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'Timeline':
@@ -358,6 +366,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'SlideNarrative':
@@ -368,6 +377,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'Statistics':
@@ -378,6 +388,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'Images':
@@ -388,6 +399,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'Graphs':
@@ -398,10 +410,19 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       default:
         return null
+    }
+  }
+
+  const onBack = () => {
+    if (displayMode === 'slideNarrative' || displayMode === 'customBuilder') {
+      setDisplayMode('newContent')
+    } else {
+      setDisplayMode('customBuilder')
     }
   }
 
@@ -411,6 +432,7 @@ export default function ViewPresentation() {
       <DesktopHeading
         handleDownload={handleDownload}
         handleShare={handleShare}
+        pptName={pptName}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -437,8 +459,7 @@ export default function ViewPresentation() {
               <div
                 key={outline}
                 ref={(el) => (slideRefs.current[index] = el!)}
-                className="snap-center w-full h-screen"
-                style={{ height: '100%' }}
+                className="snap-center w-full h-full"
               >
                 {renderContent({
                   displayMode,
@@ -465,7 +486,9 @@ export default function ViewPresentation() {
               <button
                 onClick={handleFinalize}
                 className={`p-2 rounded-md flex items-center border ${
-                  finalized && selectedOutline === currentOutline
+                  slidesId[currentSlideIndex] &&
+                  finalized &&
+                  selectedOutline === currentOutline
                     ? 'border-[#0A8568] bg-[#36fa810a]'
                     : 'border-gray-300'
                 }`}
@@ -499,7 +522,11 @@ export default function ViewPresentation() {
               <button
                 onClick={handlePaginatePrev}
                 disabled={currentSlideIndex === 0}
-                className="flex items-center hover:cursor-pointer border border-[#E1E3E5] bg-white p-2 rounded-md"
+                className={`flex items-center hover:cursor-pointer border border-[#E1E3E5]  ${
+                  currentSlideIndex === 0
+                    ? 'bg-gray-200 hover:cursor-default'
+                    : 'bg-white'
+                } p-2 rounded-md`}
               >
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
@@ -528,6 +555,7 @@ export default function ViewPresentation() {
         <MobileHeading
           handleDownload={handleDownload}
           handleShare={handleShare}
+          pptName={pptName}
         />
 
         {/* MOBILE: OUTLINE DROPDOWN */}
@@ -559,46 +587,55 @@ export default function ViewPresentation() {
 
         {/* MOBILE: ACTION BUTTONS */}
         <div className="flex items-center justify-between w-full mt-10">
-          <div className="flex gap-4">
-            <button
-              onClick={handleDelete}
-              className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
-            >
-              <FaTrash className="h-4 w-4 text-[#5D5F61]" />
-            </button>
-            <button
-              onClick={handleFinalize}
-              className={`border ${
-                finalized && selectedOutline === currentOutline
-                  ? 'border-[#0A8568] bg-[#36fa810a]'
-                  : 'border-gray-300'
-              } p-2 rounded-md flex items-center`}
-            >
-              <FaCheck
-                className={`h-4 w-4 ${
+          {displayMode === 'slides' || displayMode === 'newContent' ? (
+            <div className="flex gap-4">
+              <button
+                onClick={handleDelete}
+                className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
+              >
+                <FaTrash className="h-4 w-4 text-[#5D5F61]" />
+              </button>
+              <button
+                onClick={handleFinalize}
+                className={`border ${
                   finalized && selectedOutline === currentOutline
-                    ? 'text-[#0A8568]'
-                    : 'text-[#5D5F61]'
-                }`}
-              />
-            </button>
-            <button
-              onClick={handlePlusClick}
-              className={`hover:text-blue-600 border ${
-                displayMode === 'newContent'
-                  ? 'border-gray-300'
-                  : 'border-[#3667B2]'
-              } p-2 rounded-md flex items-center`}
-            >
-              <FaPlus
-                className={`h-4 w-4 ${
+                    ? 'border-[#0A8568] bg-[#36fa810a]'
+                    : 'border-gray-300'
+                } p-2 rounded-md flex items-center`}
+              >
+                <FaCheck
+                  className={`h-4 w-4 ${
+                    finalized && selectedOutline === currentOutline
+                      ? 'text-[#0A8568]'
+                      : 'text-[#5D5F61]'
+                  }`}
+                />
+              </button>
+              <button
+                onClick={handlePlusClick}
+                className={`hover:text-blue-600 border ${
                   displayMode === 'newContent'
-                    ? 'text-[#5D5F61]'
-                    : 'text-[#3667B2]'
-                }`}
-              />
+                    ? 'border-gray-300'
+                    : 'border-[#3667B2]'
+                } p-2 rounded-md flex items-center`}
+              >
+                <FaPlus
+                  className={`h-4 w-4 ${
+                    displayMode === 'newContent'
+                      ? 'text-[#5D5F61]'
+                      : 'text-[#3667B2]'
+                  }`}
+                />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onBack}
+              className="border border-gray-300 p-2 rounded-md flex items-center"
+            >
+              Back
             </button>
-          </div>
+          )}
 
           {/* MOBILE: PAGINATION BUTTONS */}
           <div className="flex items-center gap-2">

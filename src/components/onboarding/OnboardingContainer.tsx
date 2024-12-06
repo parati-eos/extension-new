@@ -162,7 +162,7 @@ const OnboardingContainer: React.FC = () => {
     <>
       {/* Progress Bar for Small and Medium Screens */}
       {!isMediumOrLargerScreen && (
-        <div className="flex mt-[4rem] lg:mt-0 justify-between p-4">
+        <div className="flex mt-[3rem] lg:mt-0 justify-between p-4">
           {[1, 2, 3, 4, 5].map((section) => (
             <div
               key={section}

@@ -26,12 +26,13 @@ export default function MobileOutlineModal({
 
   const handleAddSlide = async () => {
     if (newSlideTitle && newSlidePosition) {
+      const outlineIndex = Number(newSlidePosition) - 1
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/blocklist/insert`,
         {
           documentId: documentID,
           title: newSlideTitle,
-          position: Number(newSlidePosition),
+          position: Number(outlineIndex),
         },
         {
           headers: {
@@ -41,6 +42,7 @@ export default function MobileOutlineModal({
       )
       const result = response.data
       if (result.type && result.title) {
+        setIsAddSlideModalOpen(false)
         alert('Success')
         fetchOutlines()
       }

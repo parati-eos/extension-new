@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
 import axios from 'axios'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface TimelineProps {
   heading: string
@@ -8,6 +10,7 @@ interface TimelineProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Timeline({
@@ -16,15 +19,16 @@ export default function Timeline({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: TimelineProps) {
-  const [title, setTitle] = useState([''])
+  const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
   const [loading, setLoading] = useState(false)
 
   const handleInputTitle = (value: string, index: number) => {
-    const updatedPoints = [...title]
+    const updatedPoints = [...timeline]
     updatedPoints[index] = value
-    setTitle(updatedPoints)
+    setTimeline(updatedPoints)
   }
 
   const handleInputDescription = (value: string, index: number) => {
@@ -34,24 +38,29 @@ export default function Timeline({
   }
 
   const addNewPoint = () => {
-    if (title.length < 6) {
-      setTitle([...title, ''])
+    if (timeline.length < 6) {
+      setTimeline([...timeline, ''])
       setDescription([...description, ''])
     }
   }
 
   // Disable "Add New Timeline" button if the last title or description is empty
   const isAddDisabled =
-    title[title.length - 1].trim() === '' ||
+    timeline[timeline.length - 1].trim() === '' ||
     description[description.length - 1].trim() === ''
 
-  const isGenerateDisabled = title.some(
+  const isGenerateDisabled = timeline.some(
     (point, index) => point.trim() === '' || description[index].trim() === ''
   )
 
   const handleGenerateSlide = async () => {
     setLoading(true)
     try {
+      const phases = timeline.map((point, index) => ({
+        timeline: point,
+        description: description[index],
+      }))
+
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/phases`,
         {
@@ -60,7 +69,7 @@ export default function Timeline({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: '',
+            phases: phases,
           },
         },
         {
@@ -80,12 +89,22 @@ export default function Timeline({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col p-4 h-full">
-      <p className="hidden lg:block font-bold break-words ml-5">{heading}</p>
+      {/* Top Section: Headings */}
+      <div className="flex lg:mt-2 items-center justify-between w-full px-4">
+        <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+          {heading}
+        </h2>
+        <BackButton onClick={onBack} />
+      </div>
       {/* Content container with flex-grow */}
       <div className="flex-1 overflow-y-auto">
-        {title.map((point, index) => (
+        {timeline.map((point, index) => (
           <div
             key={index}
             className={`flex flex-col gap-2 px-4 mb-2 lg:mb-0 ${
@@ -94,7 +113,7 @@ export default function Timeline({
           >
             <input
               type="text"
-              value={title[index]}
+              value={timeline[index]}
               onChange={(e) => handleInputTitle(e.target.value, index)}
               placeholder={'Enter timeline name'}
               className="lg:ml-2 flex-1 lg:w-[65%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -112,9 +131,9 @@ export default function Timeline({
         <button
           onClick={addNewPoint}
           type="button"
-          disabled={title.length >= 6 || isAddDisabled}
+          disabled={timeline.length >= 6 || isAddDisabled}
           className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
-            title.length >= 6 || isAddDisabled
+            timeline.length >= 6 || isAddDisabled
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2]'
           }`}

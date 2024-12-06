@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Outlines, SidebarProps } from '../../types/types'
+import { toast } from 'react-toastify'
 
 const Sidebar: React.FC<SidebarProps> = ({
   onOutlineSelect,
@@ -39,7 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       )
       const result = response.data
       if (result.title && result.type) {
-        alert('Success')
+        toast.success('Outline Successfully Added')
         fetchOutlines()
       }
       setInputIndex(null)

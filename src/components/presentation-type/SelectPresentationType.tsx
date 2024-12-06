@@ -95,7 +95,9 @@ const SelectPresentationType: React.FC = () => {
           sessionStorage.getItem('documentID') !== '' &&
           sessionStorage.getItem('documentID')
         ) {
-          navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+          navigate(
+            `/presentation-view/?presentationName=${result.presentationName}/?slideType=${selectedTypeName}`
+          )
         }
       } catch (error) {
         console.error('Error generating document:', error)
@@ -129,9 +131,11 @@ const SelectPresentationType: React.FC = () => {
         )
 
         const result = await response.data
+
         sessionStorage.setItem('documentID', result.documentID)
         if (result.documentID) {
           navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+          console.log(result)
         }
       } catch (error) {
         console.error('Error refining presentation:', error)
@@ -164,7 +168,7 @@ const SelectPresentationType: React.FC = () => {
             className="relative flex flex-col items-center justify-center p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg cursor-pointer lg:h-40 lg:w-52"
             onClick={() => {
               setSelectedType(type.id)
-              setIsModalOpen(true)
+              if (type.id !== 8) setIsModalOpen(true)
               setSelectedTypeName(type.label)
             }}
           >
@@ -181,16 +185,29 @@ const SelectPresentationType: React.FC = () => {
               {type.label}
             </p>
             {type.id === 8 && selectedType === 8 && (
-              <input
-                type="text"
-                value={customTypeInput}
-                onChange={(e) => {
-                  setCustomTypeInput(e.target.value)
-                  setSelectedTypeName(e.target.value)
-                }}
-                placeholder="Enter Custom type"
-                className="mt-2 p-2 border rounded w-full"
-              />
+              <div>
+                <input
+                  type="text"
+                  value={customTypeInput}
+                  onChange={(e) => {
+                    setCustomTypeInput(e.target.value)
+                    setSelectedTypeName(e.target.value)
+                  }}
+                  placeholder="Enter Custom type"
+                  className="mt-2 p-2 border rounded w-full"
+                />
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={!customTypeInput.trim()}
+                  className={`absolute bottom-9 right-1 text-[#091220] md:hidden ${
+                    customTypeInput.trim()
+                      ? 'cursor-pointer'
+                      : 'text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <FaCheck />
+                </button>
+              </div>
             )}
           </div>
         ))}

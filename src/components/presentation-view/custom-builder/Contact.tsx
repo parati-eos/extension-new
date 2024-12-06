@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface ContactProps {
   heading: string
@@ -7,6 +9,7 @@ interface ContactProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Contact({
@@ -15,6 +18,7 @@ export default function Contact({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: ContactProps) {
   const [websiteLink, setWebsiteLink] = useState('')
   const [email, setEmail] = useState('')
@@ -51,6 +55,10 @@ export default function Contact({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col p-4 h-full w-full">
       {/* Heading */}
@@ -58,9 +66,7 @@ export default function Contact({
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Content Section */}

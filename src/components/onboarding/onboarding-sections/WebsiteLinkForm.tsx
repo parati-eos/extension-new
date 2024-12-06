@@ -33,7 +33,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
   }
 
   return (
-    <div className="w-full mt-[6rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
+    <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
       {/* Heading */}
       <div className="flex flex-col items-center gap-1 mb-8">
         <FaGlobe className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
@@ -46,7 +46,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow mt-2 w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-6 px-2 mb-24">
+        <div className="w-full mt-[7rem] md:mt-6 px-2 mb-24">
           <label
             htmlFor="websiteLink"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -64,7 +64,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-10 w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center mt-4 md:mt-10 w-full space-y-2 px-2">
           <NextButton disabled={!websiteLink} text={'Next'} />
           <BackButton onClick={onBack} />
         </div>

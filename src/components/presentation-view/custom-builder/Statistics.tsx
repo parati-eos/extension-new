@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { FaPaperclip, FaPlus } from 'react-icons/fa'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface StatisticProps {
   heading: string
@@ -8,6 +10,7 @@ interface StatisticProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Statistics({
@@ -16,6 +19,7 @@ export default function Statistics({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: StatisticProps) {
   const [title, setTitle] = useState([''])
   const [description, setDescription] = useState([''])
@@ -83,19 +87,20 @@ export default function Statistics({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col p-4 h-full">
+      {/* Top Section: Headings */}
       <div className="flex lg:mt-2 items-center justify-between w-full px-4">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button
-          className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline"
-          // onClick={handleBackClick}
-        >
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
+
       {/* Content container with flex-grow */}
       <div className="flex-1 overflow-y-auto lg:w-[65%]">
         {title.map((point, index) => (

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import { BackButton } from './shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface ImagesProps {
   heading: string
@@ -9,6 +11,7 @@ interface ImagesProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export default function Images({
@@ -17,6 +20,7 @@ export default function Images({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
@@ -45,12 +49,27 @@ export default function Images({
 
   const handleSubmit = async () => {
     try {
-      await axios.post('/api/upload-images', { images })
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
+        {
+          type: 'images',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            imageurl: images,
+          },
+        }
+      )
       alert('Images submitted successfully!')
     } catch (error) {
       console.error('Submit failed:', error)
       alert('Failed to submit images.')
     }
+  }
+
+  const onBack = () => {
+    setDisplayMode('customBuilder')
   }
 
   return (
@@ -60,9 +79,7 @@ export default function Images({
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Image Input Section */}

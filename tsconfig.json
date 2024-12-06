@@ -27,7 +27,8 @@
     "declaration.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/utils/industrySector.js"
   ],
   "exclude": ["node_modules"]
 }
