@@ -12,8 +12,9 @@ const LandingPage: React.FC = () => {
     <>
       <LandingPageNavbar />
       <Heading />
-      <HowWorks />
       <AboutSection />
+      <HowWorks />
+      
       <Hero />
       <PartnersTestimonials />
       <Footer />

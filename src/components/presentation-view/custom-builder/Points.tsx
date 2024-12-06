@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { FaPlus, FaPaperclip } from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa'
 import axios from 'axios'
+import AttachImage from '../../presentation-view/custom-builder/shared/attachimage'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../ViewPresentation'
 
@@ -23,6 +24,7 @@ export default function Points({
 }: PointsProps) {
   const [points, setPoints] = useState([''])
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
 
   const handleInputChange = (value: string, index: number) => {
     const updatedPoints = [...points]
@@ -36,6 +38,10 @@ export default function Points({
     }
   }
 
+  const handleFileSelect = (file: File | null) => {
+    setSelectedImage(file)
+  }
+
   const handleGenerateSlide = async () => {
     setIsLoading(true)
     try {
@@ -47,7 +53,7 @@ export default function Points({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: '',
+            image: selectedImage ? selectedImage.name : '',
             pointers: points.filter((point) => point.trim() !== ''),
           },
         },
@@ -125,25 +131,23 @@ export default function Points({
         ))}
       </div>
 
-      {/* Button container adjustments for medium and large screens */}
-      <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
-        <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
-          <button className="flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 border border-gray-300 rounded-md text-gray-700 bg-white">
-            <FaPaperclip />
-            Attach Image
-          </button>
-          <button
-            onClick={handleGenerateSlide}
-            disabled={isGenerateDisabled || isLoading}
-            className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
-              isGenerateDisabled || isLoading
-                ? 'bg-gray-200 text-gray-500'
-                : 'bg-[#3667B2] text-white'
-            }`}
-          >
-            {isLoading ? 'Loading...' : 'Generate Slide'}
-          </button>
-        </div>
+      {/* Button container */}
+      <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
+        {/* Use AttachImage component */}
+        <AttachImage onFileSelected={handleFileSelect} />
+
+        {/* Generate Slide Button */}
+        <button
+          onClick={handleGenerateSlide}
+          disabled={isGenerateDisabled || isLoading}
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+            isGenerateDisabled || isLoading
+              ? 'bg-gray-200 text-gray-500'
+              : 'bg-[#3667B2] text-white'
+          }`}
+        >
+          {isLoading ? 'Loading...' : 'Generate Slide'}
+        </button>
       </div>
     </div>
   )

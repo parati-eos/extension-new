@@ -28,7 +28,7 @@ const LandingPageNavbar: React.FC = () => {
         <div className="text-xl font-bold text-gray-800">
           <span className="flex items-center">
             <a
-              href="http://localhost:3000/landing-page"
+              href="http://localhost:3000/"
               target="_blank"
               rel="noopener noreferrer"
             >

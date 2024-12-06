@@ -45,9 +45,9 @@ export const Hero = () => {
  
 
   return (
-    <div ref={ref} className="h-max pt-20 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]">
+    <div ref={ref} className="h-max  overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]">
       <Header />
-      <div className="bg-[#3667B2]">
+      <div className=" bg-gray-50 ">
       <motion.div
         style={{
           rotateX,
@@ -110,12 +110,12 @@ export const Header = () => {
       <PresentationGrid/>
    
       <motion.h2
-        className="text-2xl  md:text-4xl font-bold text-white text-center bg-[#3667B2] py-12"
+        className="text-2xl  md:text-4xl font-bold text-white text-center bg-gray-50 py-12"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0, transition: { duration: 1 } }}
       >
        
-        <span className="text-white ">Built On Zynth</span>
+        <span className="text-gray-800 ">Built On Zynth</span>
       </motion.h2>
       
     </div>
@@ -145,7 +145,7 @@ export const ProductCard = ({
       <a href={product.link} className="block group-hover/product:shadow-2xl">
         <img
           src={product.thumbnail}
-          className="object-fill object-left-top absolute h-full w-full inset-0"
+          className="object-fill object-left-top absolute h-full w-full inset-0 bg-white "
           alt={product.title}
         />
       </a>
