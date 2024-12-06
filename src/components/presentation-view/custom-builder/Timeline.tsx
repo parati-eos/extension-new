@@ -136,13 +136,13 @@ export default function Timeline({
         ))}
 
         {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
-        {title.length < 6 && title[title.length - 1].trim() !== '' && (
+        {timeline.length < 6 && timeline[timeline.length - 1].trim() !== '' && (
           <button
             onClick={addNewPoint}
             type="button"
             disabled={isAddDisabled}
             className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
-              title.length >= 6 || isAddDisabled
+              timeline.length >= 6 || isAddDisabled
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : 'bg-[#3667B2]'
             }`}

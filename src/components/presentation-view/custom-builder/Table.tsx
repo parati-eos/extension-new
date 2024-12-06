@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { FaPlus, FaMinus } from 'react-icons/fa'
-import { FaPlus } from 'react-icons/fa'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../ViewPresentation'
 

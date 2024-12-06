@@ -3,8 +3,6 @@ import { FaPaperclip } from 'react-icons/fa'
 import axios from 'axios'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from './ViewPresentation'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 
 interface SlideNarrativeProps {
@@ -14,11 +12,6 @@ interface SlideNarrativeProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
-  heading: string
-  slideType: string
-  documentID: string
-  orgId: string
-  authToken: string
 }
 
 export default function SlideNarrative({
@@ -72,7 +65,6 @@ export default function SlideNarrative({
   const onBack = () => {
     setDisplayMode('newContent')
   }
-  const isGenerateDisabled = narrative.trim() === ''
 
   return (
     <div className="flex flex-col p-4 h-full">
