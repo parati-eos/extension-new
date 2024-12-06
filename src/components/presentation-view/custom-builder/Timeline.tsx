@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
 import axios from 'axios'
+import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 
 interface TimelineProps {
   heading: string
@@ -20,6 +21,7 @@ export default function Timeline({
   const [title, setTitle] = useState([''])
   const [description, setDescription] = useState([''])
   const [loading, setLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null) // Add selected image state
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...title]
@@ -60,7 +62,7 @@ export default function Timeline({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: '',
+            image: selectedImage ? selectedImage.name : '', // Pass image name if selected
           },
         },
         {
@@ -80,6 +82,10 @@ export default function Timeline({
     }
   }
 
+  const handleFileSelect = (file: File | null) => {
+    setSelectedImage(file)
+  }
+
   return (
     <div className="flex flex-col p-4 h-full">
       <p className="hidden lg:block font-bold break-words ml-5">{heading}</p>
@@ -88,7 +94,7 @@ export default function Timeline({
         {title.map((point, index) => (
           <div
             key={index}
-            className={`flex flex-col gap-2 px-4 mb-2 lg:mb-0 ${
+            className={`flex flex-row gap-4 px-4 mb-2 lg:mb-0 ${
               index === 0 ? 'lg:mt-14' : 'lg:mt-2'
             }`}
           >
@@ -96,39 +102,42 @@ export default function Timeline({
               type="text"
               value={title[index]}
               onChange={(e) => handleInputTitle(e.target.value, index)}
-              placeholder={'Enter timeline name'}
-              className="lg:ml-2 flex-1 lg:w-[65%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={`Enter Timeline ${index + 1}`}
+              className="lg:ml-2 flex-1 lg:w-[45%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="text"
               value={description[index]}
               onChange={(e) => handleInputDescription(e.target.value, index)}
-              placeholder={'Enter description of timeline'}
-              className="lg:ml-2 flex-1 lg:w-[65%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={`Enter Description ${index + 1}`}
+              className="lg:ml-2 flex-1 lg:w-[45%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         ))}
-        {/* Add New Timeline Button */}
-        <button
-          onClick={addNewPoint}
-          type="button"
-          disabled={title.length >= 6 || isAddDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
-            title.length >= 6 || isAddDisabled
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2]'
-          }`}
-        >
-          Add New Timeline
-        </button>
+
+        {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
+        {title.length < 6 && title[title.length - 1].trim() !== '' && (
+          <button
+            onClick={addNewPoint}
+            type="button"
+            disabled={isAddDisabled}
+            className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
+              title.length >= 6 || isAddDisabled
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2]'
+            }`}
+          >
+            Add New Timeline
+          </button>
+        )}
       </div>
 
-      {/* Button container at the bottom */}
+      {/* Attach Image and Generate Slide Buttons */}
       <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
-        <button className="flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 border border-gray-300 rounded-md text-gray-700 bg-white">
-          <FaPaperclip />
-          Attach Image
-        </button>
+        {/* Attach Image Section */}
+        <AttachImage onFileSelected={handleFileSelect} />
+
+        {/* Generate Slide Button */}
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled || loading}

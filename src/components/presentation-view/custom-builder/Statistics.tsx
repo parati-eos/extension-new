@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { FaPaperclip, FaPlus } from 'react-icons/fa'
+import AttachImage from './shared/attachimage'
 
 interface StatisticProps {
   heading: string
@@ -20,6 +21,7 @@ export default function Statistics({
   const [title, setTitle] = useState([''])
   const [description, setDescription] = useState([''])
   const [loading, setLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...title]
@@ -83,6 +85,10 @@ export default function Statistics({
     }
   }
 
+  const handleFileSelect = (file: File | null) => {
+    setSelectedImage(file)
+  }
+
   return (
     <div className="flex flex-col p-4 h-full">
       <div className="flex lg:mt-2 items-center justify-between w-full px-4">
@@ -109,51 +115,53 @@ export default function Statistics({
               type="text"
               value={title[index]}
               onChange={(e) => handleInputTitle(e.target.value, index)}
-              placeholder={'Enter Data label'}
+              placeholder={`Enter Data label ${index + 1}`}
               className="lg:ml-1 flex-1 lg:w-[65%] lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="text"
               value={description[index]}
               onChange={(e) => handleInputDescription(e.target.value, index)}
-              placeholder={'Enter value'}
+              placeholder={`Enter value ${index + 1}`}
               className="lg:ml-2 flex-1 lg:w-[65%] lg:px-6 lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         ))}
-        {/* Add New Timeline Button */}
 
-        <button
-          onClick={addNewPoint}
-          type="button"
-          disabled={title.length >= 6 || isAddDisabled}
-          className={`flex items-center justify-center py-2 px-4 rounded-md mt-4 ml-4 border border-gray-300 ${
-            title.length >= 6 || isAddDisabled
-              ? 'bg-white cursor-not-allowed'
-              : 'bg-white hover:bg-gray-100'
-          } lg:w-[149px] lg:h-[48px]`}
-        >
-          <FaPlus className="h-4 w-4 mr-2 text-black" />
-          <span className="text-[#5D5F61] font-medium">Add Data</span>
-        </button>
+        {/* Add New Data Button is removed after 6 inputs */}
+        {title.length < 6 && (
+          <button
+            onClick={addNewPoint}
+            type="button"
+            disabled={isAddDisabled}
+            className={`flex items-center justify-center py-2 px-4 rounded-md mt-4 ml-4 border border-gray-300 ${
+              title.length >= 6 || isAddDisabled
+                ? 'bg-white cursor-not-allowed'
+                : 'bg-white hover:bg-gray-100'
+            } lg:w-[149px] lg:h-[48px]`}
+          >
+            <FaPlus className="h-4 w-4 mr-2 text-black" />
+            <span className="text-[#5D5F61] font-medium">Add Data</span>
+          </button>
+        )}
       </div>
 
       {/* Button container at the bottom */}
       <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
-        <button className="flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 border border-gray-300 rounded-md text-gray-700 bg-white">
-          <FaPaperclip />
-          Attach Image
-        </button>
+        {/* Attach Image Section */}
+        <AttachImage onFileSelected={handleFileSelect} />
+
+        {/* Generate Slide Button */}
         <button
-          disabled={isGenerateDisabled}
           onClick={handleGenerateSlide}
+          disabled={isGenerateDisabled || loading}
           className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
-            isGenerateDisabled
-              ? 'bg-gray-200 text-gray-500'
+            isGenerateDisabled || loading
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2] text-white'
           }`}
         >
-          Generate Slide
+          {loading ? 'Generating...' : 'Generate Slide'}
         </button>
       </div>
     </div>

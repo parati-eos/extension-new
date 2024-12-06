@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaMinus } from 'react-icons/fa'
 
 interface TableData {
   rows: string[][]
@@ -24,11 +24,11 @@ export default function Table({
   authToken,
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
-    rows: Array(3)
+    rows: Array(2)
       .fill(null)
-      .map(() => Array(3).fill('')), // Deep copy for rows
-    columnHeaders: ['Column 1', 'Column 2', 'Column 3'],
-    rowHeaders: ['Row 1', 'Row 2', 'Row 3'],
+      .map(() => Array(2).fill('')), // Start with 2 rows and 2 columns
+    columnHeaders: ['Column 1', 'Column 2'],
+    rowHeaders: ['Row 1', 'Row 2'],
   })
   const [canGenerate, setCanGenerate] = useState(false)
 
@@ -54,6 +54,16 @@ export default function Table({
     }
   }
 
+  const handleRemoveRow = () => {
+    if (tableData.rows.length > 2) {
+      setTableData((prev) => ({
+        ...prev,
+        rows: prev.rows.slice(0, -1),
+        rowHeaders: prev.rowHeaders.slice(0, -1),
+      }))
+    }
+  }
+
   const handleAddColumn = () => {
     if (tableData.columnHeaders.length < 5) {
       setTableData((prev) => ({
@@ -63,6 +73,16 @@ export default function Table({
           `Column ${prev.columnHeaders.length + 1}`,
         ],
         rows: prev.rows.map((row) => [...row, '']),
+      }))
+    }
+  }
+
+  const handleRemoveColumn = () => {
+    if (tableData.columnHeaders.length > 2) {
+      setTableData((prev) => ({
+        ...prev,
+        columnHeaders: prev.columnHeaders.slice(0, -1),
+        rows: prev.rows.map((row) => row.slice(0, -1)),
       }))
     }
   }
@@ -193,14 +213,32 @@ export default function Table({
                     />
                   </th>
                 ))}
-                {/* Add Column Button */}
+                {/* Add and Remove Column Buttons */}
                 <th className="bg-gray-50 p-2">
-                  <button
-                    onClick={handleAddColumn}
-                    className="text-[#8A8B8C] bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100"
-                  >
-                    <FaPlus />
-                  </button>
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={handleAddColumn}
+                      disabled={tableData.columnHeaders.length >= 5}
+                      className={`${
+                        tableData.columnHeaders.length >= 5
+                          ? 'text-gray-400 cursor-not-allowed'
+                          : 'text-[#8A8B8C]'
+                      } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
+                    >
+                      <FaPlus />
+                    </button>
+                    <button
+                      onClick={handleRemoveColumn}
+                      disabled={tableData.columnHeaders.length <= 2}
+                      className={`${
+                        tableData.columnHeaders.length <= 2
+                          ? 'text-gray-400 cursor-not-allowed'
+                          : 'text-[#8A8B8C]'
+                      } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
+                    >
+                      <FaMinus />
+                    </button>
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -235,14 +273,32 @@ export default function Table({
             </tbody>
             <tfoot>
               <tr>
-                {/* Add Row Button */}
+                {/* Add and Remove Row Buttons */}
                 <td className="bg-gray-50 w-full p-2 flex items-center justify-center">
-                  <button
-                    onClick={handleAddRow}
-                    className="text-[#8A8B8C] bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center"
-                  >
-                    <FaPlus />
-                  </button>
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={handleAddRow}
+                      disabled={tableData.rows.length >= 8}
+                      className={`${
+                        tableData.rows.length >= 8
+                          ? 'text-gray-400 cursor-not-allowed'
+                          : 'text-[#8A8B8C]'
+                      } bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center`}
+                    >
+                      <FaPlus />
+                    </button>
+                    <button
+                      onClick={handleRemoveRow}
+                      disabled={tableData.rows.length <= 2}
+                      className={`${
+                        tableData.rows.length <= 2
+                          ? 'text-gray-400 cursor-not-allowed'
+                          : 'text-[#8A8B8C]'
+                      } bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center`}
+                    >
+                      <FaMinus />
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tfoot>

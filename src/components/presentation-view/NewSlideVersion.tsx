@@ -19,8 +19,8 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
       <h3 className="text-base text-[#5D5F61]">
         How would you like to create a new slide?
       </h3>
-      <div className="flex gap-2 mt-4">
-        <div className="flex flex-col items-center border border-gray-300 p-2">
+      <div className="flex gap-2 mt-4 px-4 md:px-8 overflow-hidden"> {/* Added overflow-hidden */}
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleQuickGenerate}
@@ -33,7 +33,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Quick Generate</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2">
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleCustomBuilderClick}
@@ -46,7 +46,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Custom Builder</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2">
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleSlideNarrative}
@@ -71,53 +71,65 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <h2 className="text-xl text-[#091220] font-semibold">
+      <h2 className="text-xl text-[#091220] font-semibold mb-3">
         Create a new slide
       </h2>
-      <h3 className="text-base text-[#5D5F61]">
-        How would you like to create a new slide
+      <h3 className="text-base text-[#5D5F61] mb-8">
+        How would you like to create a new slide?
       </h3>
-      <div className="flex gap-4 mt-4">
-        <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
+      <div className="flex gap-8 px-8 md:px-16 overflow-hidden"> {/* Added overflow-hidden */}
+        {/* Quick Generate */}
+        <div
+          className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
+          style={{ width: '303px', height: '208px' }}
+        >
           <button
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center w-full h-full"
             onClick={handleQuickGenerate}
           >
             <img
               src={QuickGenerateIcon}
               alt="Quick Generate"
-              className="h-16 w-16"
+              className=" object-contain mb-4"
             />
-            <span>Quick Generate</span>
+            <span className="text-base font-medium">Quick Generate</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
+        {/* Custom Builder */}
+        <div
+          className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
+          style={{ width: '303px', height: '208px' }}
+        >
           <button
-            className="flex flex-col items-center justify-center"
-            onClick={handleCustomBuilderClick}
-          >
-            <img
-              src={CustomBuilderIcon}
-              alt="Custom Builder"
-              className="h-16 w-16"
-            />
-            <span>Custom Builder</span>
-          </button>
-        </div>
-        <div className="flex flex-col items-center border border-gray-300 p-4 rounded-lg">
-          <button
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center w-full h-full"
             onClick={handleSlideNarrative}
           >
             <img
               src={SlideNarrativeIcon}
               alt="Slide Narrative"
-              className="h-16 w-16"
+              className="object-contain mb-4"
             />
-            <span>Slide Narrative</span>
+            <span className="text-base font-medium">Slide Narrative</span>
+          </button>
+        </div>
+        {/* Slide Narrative */}
+        <div
+          className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
+          style={{ width: '303px', height: '208px' }}
+        >
+          <button
+            className="flex flex-col items-center justify-center w-full h-full"
+            onClick={handleCustomBuilderClick}
+          >
+            <img
+              src={CustomBuilderIcon}
+              alt="Custom Builder"
+              className="object-contain mb-4"
+            />
+            <span className="text-base font-medium">Custom Builder</span>
           </button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -5,7 +5,7 @@ import FooterImage3 from '../../assets/image3.png' // Replace with actual images
 
 const HowWorks: React.FC = () => {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-[#F0F6FF]">
       {/* How Zynth Works Section */}
       <section className="py-16 px-4 lg:px-24">
         <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
