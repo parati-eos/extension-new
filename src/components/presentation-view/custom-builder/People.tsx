@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
+import { BackButton } from '../custom-builder/shared/BackButton'
+import { DisplayMode } from '../ViewPresentation'
 
 interface PeopleProps {
   heading: string
@@ -9,6 +11,7 @@ interface PeopleProps {
   documentID: string
   orgId: string
   authToken: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 interface IPerson {
@@ -25,8 +28,17 @@ export default function People({
   documentID,
   orgId,
   authToken,
+  setDisplayMode,
 }: PeopleProps) {
-  const [people, setPeople] = useState<IPerson[]>([])
+  const [people, setPeople] = useState<IPerson[]>([
+    {
+      name: '',
+      designation: '',
+      company: '',
+      description: '',
+      image: '',
+    },
+  ])
   const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (value: string, index: number, field: string) => {
@@ -90,13 +102,14 @@ export default function People({
     )
   })()
 
-  const isGenerateDisabled = people.some(
-    (person) =>
-      !person.name.trim() ||
-      !person.designation.trim() ||
-      !person.company.trim() ||
-      !person.description.trim() ||
-      !person.image
+  // Enable "Generate Slide" if at least one person is fully filled out
+  const isGenerateDisabled = !(
+    people.length > 0 &&
+    people[0].name.trim() &&
+    people[0].designation.trim() &&
+    people[0].company.trim() &&
+    people[0].description.trim() &&
+    people[0].image
   )
 
   const handleGenerateSlide = async () => {
@@ -126,6 +139,10 @@ export default function People({
     }
   }
 
+  const onBack = () => {
+    setDisplayMode('customBuilder')
+  }
+
   return (
     <div className="flex flex-col w-full h-full">
       {/* Heading Section */}
@@ -133,9 +150,7 @@ export default function People({
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
-        <button className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-lg text-[#5D5F61] hover:underline">
-          Back
-        </button>
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Input Section */}
@@ -256,18 +271,30 @@ export default function People({
           </button>
         )}
 
-        <button
-          onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
-            isGenerateDisabled
-              ? 'bg-gray-200 text-gray-500'
-              : 'bg-[#3667B2] text-white'
-          }`}
-        >
-          Generate Slide
-        </button>
+<button
+  onClick={handleGenerateSlide}
+  disabled={isGenerateDisabled}
+  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+    isGenerateDisabled
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
+  }`}
+>
+  Generate Slide
+</button>
+
       </div>
     </div>
   )
 }
+
+
+
+
+
+
+
+
+
+
+

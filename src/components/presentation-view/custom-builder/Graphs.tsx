@@ -212,15 +212,18 @@ export default function Graphs({
         </div>
       )}
 
-      <button
-        onClick={handleSubmit}
-        disabled={isButtonDisabled}
-        className={`absolute bottom-4 right-4 py-2 px-4 rounded-md ${
-          isButtonDisabled ? 'bg-gray-400 text-gray-200' : 'bg-[#3667B2] text-white'
-        }`}
-      >
-        Generate Slide
-      </button>
+<button
+  onClick={handleSubmit}
+  disabled={isButtonDisabled}
+  className={`absolute bottom-4 right-4 py-2 px-4 rounded-md transition-all duration-200 transform ${
+    isButtonDisabled
+      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
+  }`}
+>
+  Generate Slide
+</button>
+
     </div>
   )
 }

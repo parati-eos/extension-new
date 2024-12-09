@@ -18,13 +18,16 @@ const Heading: React.FC = () => {
           presentation maker helps you craft visually compelling,
           professional-grade slides in minutes—no design skills required.
         </p>
-        <div className="mt-6 flex gap-4 z-10">
-          <button className="px-11 py-3 text-white bg-[#3667B2] rounded-md hover:bg-blue-700 transition">
-            Get Started for Free
-          </button>
-          <button className="px-11 py-3 text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 transition">
-            Watch Demo
-          </button>
+        <div className="mt-6 flex  gap-4 z-10">
+        <button className="px-11 py-3 text-white bg-[#3667B2] rounded-md hover:bg-blue-700 active:scale-95 active:bg-blue-800 transition transform duration-300">
+  Get Started for Free
+</button>
+
+
+<button className="px-11 py-3 text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 active:scale-95 active:bg-blue-100 transition transform duration-300">
+  Watch Demo
+</button>
+
         </div>
       </div>
 

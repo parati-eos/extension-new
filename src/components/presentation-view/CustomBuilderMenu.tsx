@@ -12,10 +12,6 @@ interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void
 }
 
-interface ClickProps {
-  onTypeClick: (typeName: DisplayMode) => void
-}
-
 const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
   const slideTypes: { name: DisplayMode; icon: string }[] = [
     { name: 'Points', icon: PointsIcon },
@@ -44,7 +40,6 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
         </div>
         <button
           className="hidden md:block text-sm border border-[#8A8B8C] px-3 py-1 rounded-md text-[#5D5F61] hover:underline"
-          //   onClick={handleBackClick}
         >
           Back
         </button>
@@ -55,19 +50,17 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({ onTypeClick }) => {
         {slideTypes.map((type) => (
           <div
             key={type.name}
-            className="flex flex-col items-center md:border md:border-gray-300 md:p-2 lg:py-3 lg:w-[80%] rounded-lg shadow-md hover:shadow-lg transition-shadow"
+            className="flex flex-col items-center md:border md:border-gray-300 md:p-2 lg:py-3 lg:w-[80%] rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => onTypeClick(type.name)} // Moved onClick here
           >
-            <button
-              className="flex flex-col items-center justify-center"
-              onClick={() => onTypeClick(type.name)}
-            >
+            <div className="flex flex-col items-center justify-center">
               <img
                 src={type.icon}
                 alt={type.name}
                 className="h-12 w-12 sm:h-16 sm:w-16"
               />
               <span className="text-xs sm:text-sm">{type.name}</span>
-            </button>
+            </div>
           </div>
         ))}
       </div>

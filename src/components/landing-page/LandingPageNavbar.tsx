@@ -1,27 +1,68 @@
-import React, { useState, useEffect } from 'react'
-import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import zynthtext from '../../assets/zynth-text.png';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPageNavbar: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const navigate = useNavigate()
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0)
-    }
+      if (window.scrollY > 0) {
+        setIsScrolled(true); // Navbar hides when scrolled down
+      } else {
+        setIsScrolled(false); // Navbar visible when at the top
+      }
+      resetInactivityTimer(); // Reset inactivity timer on scroll
+    };
 
-    window.addEventListener('scroll', handleScroll)
+    const handleMouseMove = () => {
+      resetInactivityTimer(); // Reset inactivity timer on mouse move
+    };
+
+    // Inactivity timer function
+    let inactivityTimer: NodeJS.Timeout;
+    const startInactivityTimer = () => {
+      inactivityTimer = setTimeout(() => {
+        if (isScrolled) { // Only hide when scrolled down
+          setIsNavbarVisible(false); // Hide navbar after inactivity
+        }
+      }, 1000); // 1 second of inactivity
+    };
+
+    const resetInactivityTimer = () => {
+      setIsNavbarVisible(true); // Show navbar when activity occurs
+      clearTimeout(inactivityTimer); // Clear any existing timers
+      startInactivityTimer(); // Start a new timer
+    };
+
+    // Handle hover at the top of the page
+    const handleMouseEnter = (e: MouseEvent) => {
+      if (e.clientY < 50) { // If mouse is near the top
+        setIsNavbarVisible(true); // Show navbar
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleMouseEnter); // Hover near the top
+
+    startInactivityTimer(); // Start the inactivity timer when the component mounts
+
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleMouseEnter);
+      clearTimeout(inactivityTimer); // Clean up timer when component unmounts
+    };
+  }, [isScrolled]);
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed w-full z-50 transition-all duration-300 ease-in-out ${
         isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-      }`}
+      } ${isNavbarVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} // Hide navbar when inactive
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo */}
@@ -31,6 +72,7 @@ const LandingPageNavbar: React.FC = () => {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
+              className="transition-all duration-300 transform hover:scale-110 active:scale-95 active:opacity-80"
             >
               <img className="h-8" src={zynthtext} alt="Zynth" />
             </a>
@@ -42,6 +84,10 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#how-it-works"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             How it works
           </a>
@@ -63,17 +109,18 @@ const LandingPageNavbar: React.FC = () => {
         <div className="flex space-x-10">
           <button
             onClick={() => navigate('/auth')}
-            className="text-gray-800 hover:text-blue-600 transition-colors duration-200"
+            className="text-gray-800 hover:text-blue-600 active:scale-95 active:text-blue-700 transition-all duration-200"
           >
             Login
           </button>
-          <button className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-all duration-200 px-6 py-1.5 rounded">
+
+          <button className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white active:scale-95 active:bg-gray-700 active:text-white transition-all duration-200 px-6 py-1.5 rounded">
             Try Now
           </button>
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default LandingPageNavbar
+export default LandingPageNavbar;

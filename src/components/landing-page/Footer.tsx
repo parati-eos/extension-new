@@ -18,9 +18,10 @@ const Footer: React.FC = () => {
             More than a simple PowerPoint make Zynth is your personal <br></br> AI
             presentation creator.
           </p>
-          <button className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600">
-            Get Started for Free
-          </button>
+          <button className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600 active:scale-95 active:opacity-80 transition-all duration-300">
+  Get Started for Free
+</button>
+
         </div>
 
         {/* Image Section */}

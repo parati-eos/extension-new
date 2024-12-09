@@ -338,6 +338,7 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            setDisplayMode={setDisplayMode}
           />
         )
       case 'Table':

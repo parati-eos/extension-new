@@ -117,18 +117,19 @@ export default function Timeline({
 
         {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
         {title.length < 6 && title[title.length - 1].trim() !== '' && (
-          <button
-            onClick={addNewPoint}
-            type="button"
-            disabled={isAddDisabled}
-            className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
-              title.length >= 6 || isAddDisabled
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-[#3667B2]'
-            }`}
-          >
-            Add New Timeline
-          </button>
+        <button
+        onClick={addNewPoint}
+        type="button"
+        disabled={isAddDisabled}
+        className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 text-white transition-all duration-200 transform active:scale-95 ${
+          title.length >= 6 || isAddDisabled
+            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            : 'bg-[#3667B2] hover:bg-[#2c56a0]'
+        }`}
+      >
+        Add New Timeline
+      </button>
+      
         )}
       </div>
 
@@ -139,16 +140,18 @@ export default function Timeline({
 
         {/* Generate Slide Button */}
         <button
-          onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled || loading}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
-            isGenerateDisabled || loading
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
-          }`}
-        >
-          {loading ? 'Generating...' : 'Generate Slide'}
-        </button>
+  onClick={handleGenerateSlide}
+  disabled={isGenerateDisabled || loading}
+  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
+    isGenerateDisabled || loading
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
+  }`}
+>
+  {loading ? 'Generating...' : 'Generate Slide'}
+</button>
+
+
       </div>
     </div>
   )

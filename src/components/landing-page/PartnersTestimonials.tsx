@@ -67,9 +67,10 @@ const PartnersTestimonials: React.FC = () => {
 
       {/* Call-to-Action */}
       <div className="text-center mt-12">
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 mb-4">
-          See How Zynth Can Help You
-        </button>
+      <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 active:scale-95 active:opacity-80 transition-all duration-300 mb-4">
+  See How Zynth Can Help You
+</button>
+
       </div>
     </footer>
   )
