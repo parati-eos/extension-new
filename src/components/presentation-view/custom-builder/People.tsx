@@ -274,10 +274,10 @@ export default function People({
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
             isGenerateDisabled
-              ? 'bg-gray-200 text-gray-500'
-              : 'bg-[#3667B2] text-white'
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
           }`}
         >
           Generate Slide

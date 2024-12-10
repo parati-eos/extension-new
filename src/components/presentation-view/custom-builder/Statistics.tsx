@@ -158,16 +158,17 @@ export default function Statistics({
 
         {/* Generate Slide Button */}
         <button
-          onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled || loading}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
-            isGenerateDisabled || loading
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
-          }`}
-        >
-          {loading ? 'Generating...' : 'Generate Slide'}
-        </button>
+  onClick={handleGenerateSlide}
+  disabled={isGenerateDisabled || loading}
+  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+    isGenerateDisabled || loading
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
+  }`}
+>
+  {loading ? 'Generating...' : 'Generate Slide'}
+</button>
+
       </div>
     </div>
   )

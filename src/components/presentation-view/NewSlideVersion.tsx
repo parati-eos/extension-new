@@ -1,11 +1,11 @@
-import CustomBuilderIcon from '../../assets/custom-builder.png'
-import SlideNarrativeIcon from '../../assets/slide-narrative.png'
-import QuickGenerateIcon from '../../assets/quick-generate.png'
+import CustomBuilderIcon from '../../assets/custom-builder.png';
+import SlideNarrativeIcon from '../../assets/slide-narrative.png';
+import QuickGenerateIcon from '../../assets/quick-generate.png';
 
 interface ButtonProps {
-  handleQuickGenerate: () => void
-  handleCustomBuilderClick: () => void
-  handleSlideNarrative: () => void
+  handleQuickGenerate: () => void;
+  handleCustomBuilderClick: () => void;
+  handleSlideNarrative: () => void;
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
@@ -19,8 +19,8 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
       <h3 className="text-base text-[#5D5F61]">
         How would you like to create a new slide?
       </h3>
-      <div className="flex gap-2 mt-4 px-4 md:px-8 overflow-hidden"> {/* Added overflow-hidden */}
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0">
+      <div className="flex gap-2 mt-4 px-4 md:px-8 overflow-hidden">
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleQuickGenerate}
@@ -33,7 +33,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Quick Generate</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0">
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleCustomBuilderClick}
@@ -46,7 +46,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Custom Builder</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0">
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleSlideNarrative}
@@ -61,8 +61,8 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
@@ -77,11 +77,11 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
       <h3 className="text-base text-[#5D5F61] mb-8">
         How would you like to create a new slide?
       </h3>
-      <div className="flex gap-8 px-8 md:px-16 overflow-hidden"> {/* Added overflow-hidden */}
+      <div className="flex gap-8 px-8 md:px-16 w-full overflow-hidden">
         {/* Quick Generate */}
         <div
           className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-          style={{ width: '303px', height: '208px' }}
+          style={{ width: '30%', height: '12rem' }} // Replaced pixels with % and rem
         >
           <button
             className="flex flex-col items-center justify-center w-full h-full"
@@ -90,7 +90,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={QuickGenerateIcon}
               alt="Quick Generate"
-              className=" object-contain mb-4"
+              className="object-contain mb-4 w-2/5"
             />
             <span className="text-base font-medium">Quick Generate</span>
           </button>
@@ -98,7 +98,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         {/* Custom Builder */}
         <div
           className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-          style={{ width: '303px', height: '208px' }}
+          style={{ width: '30%', height: '12rem' }} // Replaced pixels with % and rem
         >
           <button
             className="flex flex-col items-center justify-center w-full h-full"
@@ -107,7 +107,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={SlideNarrativeIcon}
               alt="Slide Narrative"
-              className="object-contain mb-4"
+              className="object-contain mb-4 w-2/5"
             />
             <span className="text-base font-medium">Slide Narrative</span>
           </button>
@@ -115,7 +115,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         {/* Slide Narrative */}
         <div
           className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-          style={{ width: '303px', height: '208px' }}
+          style={{ width: '30%', height: '12rem' }} // Replaced pixels with % and rem
         >
           <button
             className="flex flex-col items-center justify-center w-full h-full"
@@ -124,7 +124,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={CustomBuilderIcon}
               alt="Custom Builder"
-              className="object-contain mb-4"
+              className="object-contain mb-4 w-2/5"
             />
             <span className="text-base font-medium">Custom Builder</span>
           </button>

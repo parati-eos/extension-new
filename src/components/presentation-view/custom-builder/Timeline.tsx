@@ -174,10 +174,10 @@ export default function Timeline({
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled || loading}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
             isGenerateDisabled || loading
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
+              : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
           }`}
         >
           {loading ? 'Generating...' : 'Generate Slide'}

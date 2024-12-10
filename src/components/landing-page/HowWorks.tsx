@@ -1,14 +1,16 @@
-import React from 'react'
-import FooterImage1 from '../../assets/image1.png' // Replace with actual images
-import FooterImage2 from '../../assets/image2.png' // Replace with actual images
-import FooterImage3 from '../../assets/image3.png' // Replace with actual images
+import React from 'react';
+import FooterImage1 from '../../assets/image1.png';
+import FooterImage2 from '../../assets/image2.png';
+import FooterImage3 from '../../assets/image3.png';
 
 const HowWorks: React.FC = () => {
   return (
     <div className="bg-[#F0F6FF]">
       {/* How Zynth Works Section */}
-      <section className="py-16 px-4 lg:px-24">
+      <section id="how-it-works"  className="py-16 px-4 lg:px-24">
         <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
+      <section id="how-it-works" className="py-16 px-4 lg:px-24">
+        <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
           How Zynth Works?
         </h2>
         <div className="space-y-16">
@@ -23,15 +25,9 @@ const HowWorks: React.FC = () => {
                   AI Presentation Maker
                 </h3>
                 <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
-                  <li>
-                    Generate a new presentation or refine an existing one.
-                  </li>
-                  <li>
-                    Access data-driven content sourced from across the web.
-                  </li>
-                  <li>
-                    Create AI slides built on proven presentation templates.
-                  </li>
+                  <li>Generate a new presentation or refine an existing one.</li>
+                  <li>Access data-driven content sourced from across the web.</li>
+                  <li>Create AI slides built on proven presentation templates.</li>
                 </ul>
                 <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
                   Generate Presentation
@@ -58,15 +54,9 @@ const HowWorks: React.FC = () => {
                   Customizable Slide Designs
                 </h3>
                 <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
-                  <li>
-                    Instantly create a new slide with AI in a single click.
-                  </li>
-                  <li>
-                    Transform your brief input into expertly crafted AI slides.
-                  </li>
-                  <li>
-                    Tailor your presentation with customizable slide types.
-                  </li>
+                  <li>Instantly create a new slide with AI in a single click.</li>
+                  <li>Transform your brief input into expertly crafted AI slides.</li>
+                  <li>Tailor your presentation with customizable slide types.</li>
                 </ul>
                 <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
                   Refine Presentation
@@ -95,10 +85,7 @@ const HowWorks: React.FC = () => {
                 <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
                   <li>Share your AI presentation instantly via weblinks.</li>
                   <li>Download your AI-generated presentation as a PDF.</li>
-                  <li>
-                    Sync seamlessly by exporting to Google Slides for final
-                    edits.
-                  </li>
+                  <li>Sync seamlessly by exporting to Google Slides for final edits.</li>
                 </ul>
                 <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
                   Share Presentation
@@ -116,7 +103,7 @@ const HowWorks: React.FC = () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default HowWorks
+export default HowWorks;
