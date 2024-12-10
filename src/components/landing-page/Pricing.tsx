@@ -81,7 +81,7 @@ const Pricing: React.FC = () => {
 
   return (
     <div className="bg-gray-50 w-full h-full" id="pricing">
-      <section className="py-16 min-h-[300px] ml-[250px]">
+      <section className="py-16 lg:min-h-[300px] lg:ml-[250px] ml-2">
         <div>
           <p className="text-indigo-600 text-lg mb-2">Pricing</p>
           <h1 className="text-gray-900 text-3xl font-bold mb-6">
@@ -113,9 +113,9 @@ const Pricing: React.FC = () => {
       </section>
 
       <div className="bg-white w-full py-16 px-8">
-        <div className="max-w-6xl mx-auto grid grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
           {/* Side Component: Categories */}
-          <div className="mt-72">
+          <div className="mt-72 hidden lg:block">
             {categories.map((category, index) => (
               <div key={index} className="mb-10">
                 <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
