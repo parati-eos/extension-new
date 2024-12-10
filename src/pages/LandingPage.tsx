@@ -7,7 +7,6 @@ import AboutSection from '../components/landing-page/AboutSection'
 import PartnersTestimonials from '../components/landing-page/PartnersTestimonials'
 import Footer from '../components/landing-page/Footer'
 import Pricing from '../components/landing-page/Pricing'
-import PricingPlans from '../components/landing-page/PricingPlans'
 
 const LandingPage: React.FC = () => {
   return (
@@ -19,8 +18,8 @@ const LandingPage: React.FC = () => {
       
       <Hero />
       <PartnersTestimonials />
+     
       <Pricing/>
-      <PricingPlans/>
       <Footer />
     </>
   )

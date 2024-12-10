@@ -94,7 +94,12 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#pricing"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
+
             Pricing
           </a>
           <a
