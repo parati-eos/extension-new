@@ -1,11 +1,11 @@
-import CustomBuilderIcon from '../../assets/custom-builder.png';
-import SlideNarrativeIcon from '../../assets/slide-narrative.png';
-import QuickGenerateIcon from '../../assets/quick-generate.png';
+import CustomBuilderIcon from '../../assets/custom-builder.png'
+import SlideNarrativeIcon from '../../assets/slide-narrative.png'
+import QuickGenerateIcon from '../../assets/quick-generate.png'
 
 interface ButtonProps {
-  handleQuickGenerate: () => void;
-  handleCustomBuilderClick: () => void;
-  handleSlideNarrative: () => void;
+  handleQuickGenerate: () => void
+  handleCustomBuilderClick: () => void
+  handleSlideNarrative: () => void
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
@@ -36,19 +36,6 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
         <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
-            onClick={handleCustomBuilderClick}
-          >
-            <img
-              src={CustomBuilderIcon}
-              alt="Custom Builder"
-              className="h-12 w-12"
-            />
-            <span className="text-sm">Custom Builder</span>
-          </button>
-        </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
-          <button
-            className="flex flex-col items-center justify-center"
             onClick={handleSlideNarrative}
           >
             <img
@@ -59,10 +46,23 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Slide Narrative</span>
           </button>
         </div>
+        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+          <button
+            className="flex flex-col items-center justify-center"
+            onClick={handleCustomBuilderClick}
+          >
+            <img
+              src={CustomBuilderIcon}
+              alt="Custom Builder"
+              className="h-12 w-12"
+            />
+            <span className="text-sm">Custom Builder</span>
+          </button>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
@@ -131,5 +131,5 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
