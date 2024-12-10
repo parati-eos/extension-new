@@ -90,13 +90,9 @@ const SelectPresentationType: React.FC = () => {
         )
 
         const result = await response.data
-        sessionStorage.setItem('documentID', result.documentID)
-        if (
-          sessionStorage.getItem('documentID') !== '' &&
-          sessionStorage.getItem('documentID')
-        ) {
+        if (result.documentID && result.documentID !== '') {
           navigate(
-            `/presentation-view/?presentationName=${result.presentationName}/?slideType=${selectedTypeName}`
+            `/presentation-view?documentID=${result.documentID}&presentationName=${result.presentationName}&slideType=${selectedTypeName}`
           )
         }
       } catch (error) {
@@ -131,10 +127,10 @@ const SelectPresentationType: React.FC = () => {
         )
 
         const result = await response.data
-
-        sessionStorage.setItem('documentID', result.documentID)
-        if (result.documentID) {
-          navigate(`/presentation-view/?slideType=${selectedTypeName}`)
+        if (result.documentID && result.documentID !== '') {
+          navigate(
+            `/presentation-view/?documentID=${result.documentID}/?presentationName=${result.presentationName}/?slideType=${selectedTypeName}`
+          )
           console.log(result)
         }
       } catch (error) {
@@ -222,7 +218,7 @@ const SelectPresentationType: React.FC = () => {
             className={`h-[3.1rem] text-white px-4 rounded-lg mr-4 flex items-center ${
               isButtonDisabled
                 ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-[#3667B2] hover:bg-green-700'
+                : 'bg-[#3667B2] hover:bg-[#0A8568]'
             }`}
           >
             Generate Presentation

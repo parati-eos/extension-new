@@ -25,14 +25,14 @@ const PartnersTestimonials: React.FC = () => {
   return (
     <footer className="bg-gray-100 ">
       {/* Partners Section */}
-      <div className="bg-white py-12">
+      <div className="bg-white py-12 pb-14">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold mb-6">Our Partners</h2>
+          <h2 className="text-3xl font-bold mb-8">Our Partners</h2>
           <div className="flex justify-center">
             <img
               src={secondfooterimage}
               alt="Our Partners"
-              className="h-16 md:h-20"
+              className="h-16 md:h-24"
             />
           </div>
         </div>
@@ -41,7 +41,7 @@ const PartnersTestimonials: React.FC = () => {
       {/* Testimonials Section */}
       <div className="bg-gray-100 py-12">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold mb-6">Real Users, Real Results</h2>
+          <h2 className="text-3xl font-bold mb-12">Real Users, Real Results</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <div
@@ -66,7 +66,7 @@ const PartnersTestimonials: React.FC = () => {
       </div>
 
       {/* Call-to-Action */}
-      <div className="text-center mt-12">
+      <div className="text-center mt-6">
         <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 mb-4">
           See How Zynth Can Help You
         </button>

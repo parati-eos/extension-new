@@ -15,8 +15,8 @@ const Footer: React.FC = () => {
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Get Started with Zynth </h1>
           <p className="text-lg mb-8">
-            More than a simple PowerPoint make Zynth is your personal <br></br> AI
-            presentation creator.
+            More than a simple PowerPoint make Zynth is your personal <br></br>{' '}
+            AI presentation creator.
           </p>
           <button className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600">
             Get Started for Free
@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
         <div className="container mx-auto px-4">
           {/* Footer Logo & Text */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-            <div className="text-center md:text-left mb-6 md:mb-0">
+            <div className="text-left mb-6 md:mb-0">
               <img
                 src={zynthtext}
                 alt="Zynth Logo"
@@ -61,7 +61,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Footer Links */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-left">
             <div>
               <h3 className="font-bold text-gray-800 mb-4">Company</h3>
               <ul className="space-y-2">

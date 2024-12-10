@@ -33,12 +33,30 @@ const HistoryContainer: React.FC = () => {
     currentPage * 10
   )
 
-  const handleShare = () => {
-    alert('Share Clicked')
+  const handleShare = (documentID: string) => {
+    const uniqueShareableUrl = `/share?formId=${documentID}`
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: 'Share Presentation',
+          text: 'Check out this presentation',
+          url: uniqueShareableUrl,
+        })
+        .then(() => console.log('Shared successfully'))
+        .catch((error) => console.error('Share failed: ', error))
+    } else if (navigator.clipboard && navigator.platform.includes('Mac')) {
+      navigator.clipboard
+        .writeText(uniqueShareableUrl)
+        .then(() => alert('URL copied to clipboard'))
+        .catch((error) => console.error('Copy failed: ', error))
+    } else {
+      alert('Sharing is not supported on this device/browser.')
+    }
   }
 
-  const handleEdit = (name: string) => {
-    navigate(`/presentation-view/?presentationName=${name}`)
+  const handleEdit = (documentID: string) => {
+    navigate(`/presentation-view?documentID=${documentID}`)
   }
 
   // History Item Dropdown
@@ -247,14 +265,14 @@ const HistoryContainer: React.FC = () => {
                     {activeDropdown === index && (
                       <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
                         <button
-                          onClick={() => handleEdit(item.pptName)}
+                          onClick={() => handleEdit(item.documentID)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaEdit className="text-[#5D5F61]" />
                           <span>Edit</span>
                         </button>
                         <button
-                          onClick={handleShare}
+                          onClick={() => handleShare(item.documentID)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaShareAlt className="text-[#5D5F61]" />
@@ -343,7 +361,7 @@ const HistoryContainer: React.FC = () => {
                           <span>Edit</span>
                         </button>
                         <button
-                          onClick={handleShare}
+                          onClick={() => handleShare(item.documentID)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaShareAlt className="text-[#5D5F61]" />

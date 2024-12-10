@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Grid } from 'react-loader-spinner'
 
-const GoogleSlides: React.FC = () => {
-  const formId = sessionStorage.getItem('documentID')!
+interface GoogleSlidesProps {
+  formId: string
+}
 
+const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
   const [slidesData, setSlidesData] = useState<string[][]>([])
   const [slidesId, setSlidesId] = useState<string>('')
   const [loading, setLoading] = useState<string>('true')
@@ -12,7 +14,7 @@ const GoogleSlides: React.FC = () => {
     const fetchSlidesData = async () => {
       try {
         const serverurl = process.env.REACT_APP_BACKEND_URL
-        const url = `${serverurl}/api/v1/data/slidedisplay//genSlideIDs/${formId}`
+        const url = `${serverurl}/api/v1/data/slidedisplay/genSlideIDs/${formId}`
         const response = await fetch(url)
         if (!response.ok) {
           throw new Error('Failed to fetch slides data')
@@ -32,7 +34,7 @@ const GoogleSlides: React.FC = () => {
 
   if (loading === 'true') {
     return (
-      <div className="relative top-[30vh] left-[50vh]">
+      <div className="relative top-[30vh] left-[56vh]">
         <Grid
           visible={true}
           height="120"

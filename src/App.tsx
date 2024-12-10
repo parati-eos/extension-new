@@ -10,6 +10,7 @@ import AuthPage from './pages/AuthPage.tsx'
 import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
 import LandingPage from './pages/LandingPage.tsx'
+import PresentationShare from './pages/PresentationShare.tsx'
 import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import Test from './test/test.tsx'
 
@@ -43,6 +44,7 @@ const App: React.FC = () => {
                     element={<PresentationViewPage />}
                   />
                   <Route path="history" element={<HistoryPage />} />
+                  <Route path="share" element={<PresentationShare />} />
                 </Routes>
               </ProtectedRoutes>
             }

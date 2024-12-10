@@ -2,7 +2,17 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      scrollbar: {
+        thumb: {
+          background: '#e6a500',
+          borderRadius: '10px',
+        },
+        track: {
+          background: 'transparent',
+        },
+      },
+    },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar')],
 }

@@ -8,7 +8,7 @@ const HowWorks: React.FC = () => {
     <div className="bg-[#F0F6FF]">
       {/* How Zynth Works Section */}
       <section className="py-16 px-4 lg:px-24">
-        <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-12">
+        <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
           How Zynth Works?
         </h2>
         <div className="space-y-16">
@@ -33,7 +33,7 @@ const HowWorks: React.FC = () => {
                     Create AI slides built on proven presentation templates.
                   </li>
                 </ul>
-                <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
                   Generate Presentation
                 </button>
               </div>
@@ -68,7 +68,7 @@ const HowWorks: React.FC = () => {
                     Tailor your presentation with customizable slide types.
                   </li>
                 </ul>
-                <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
                   Refine Presentation
                 </button>
               </div>
@@ -100,7 +100,7 @@ const HowWorks: React.FC = () => {
                     edits.
                   </li>
                 </ul>
-                <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
                   Share Presentation
                 </button>
               </div>

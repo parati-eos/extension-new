@@ -23,6 +23,10 @@ const OnboardingContainer: React.FC = () => {
     websiteLink: '',
     logo: null,
   })
+  const [submittedData, setSubmittedData] = useState<
+    Record<number, Partial<FormData>>
+  >({})
+
   const navigate = useNavigate()
   const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
@@ -70,6 +74,7 @@ const OnboardingContainer: React.FC = () => {
           }
         )
       }
+      setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
     } catch (error) {
       console.error('Error submitting form data:', error)
     }
@@ -78,9 +83,14 @@ const OnboardingContainer: React.FC = () => {
   // Function to handle "Continue" button
   const handleContinue = async (data: Partial<typeof formData>) => {
     setFormData((prevData) => ({ ...prevData, ...data }))
+    const isDataChanged =
+      JSON.stringify(submittedData[currentSection] || {}) !==
+      JSON.stringify(data)
 
-    //ADD API CALL
-    await submitFormData(data)
+    //API CALL
+    if (isDataChanged) {
+      await submitFormData(data)
+    }
 
     const nextSection = currentSection + 1
     if (nextSection <= 5) {

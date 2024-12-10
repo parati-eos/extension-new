@@ -56,10 +56,11 @@ export default function ViewPresentation() {
   const navigate = useNavigate()
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
-  const pptNameRaw = searchParams.get('presentationName')!
-  const pptName = pptNameRaw.split('/')[0]
+  // Extract the values of query parameters
+  const documentID = searchParams.get('documentID')!
+  const pptName = searchParams.get('presentationName')!
+  const slideType = searchParams.get('slideType')!
   const orgId = sessionStorage.getItem('orgId')
-  const documentID = sessionStorage.getItem('documentID')
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
   const [slidesId, setSlidesId] = useState([]) // State to store slide IDs
@@ -70,7 +71,7 @@ export default function ViewPresentation() {
 
   // Handle Share Button Click
   const handleShare = async () => {
-    navigate(`/share/?formId=${documentID}`)
+    navigate(`/share?formId=${documentID}`)
   }
 
   // Handle Download Button Click
@@ -258,7 +259,6 @@ export default function ViewPresentation() {
       console.error('Error fetching outlines:', error)
     }
   }, [documentID, authToken])
-
   useEffect(() => {
     fetchOutlines()
   }, [fetchOutlines])
@@ -512,7 +512,7 @@ export default function ViewPresentation() {
                 <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
                 <span className="hidden text-[#3667B2] lg:block">
                   {' '}
-                  New Versions
+                  New Version
                 </span>
               </button>
             </div>
@@ -670,3 +670,172 @@ export default function ViewPresentation() {
     </div>
   )
 }
+
+// export type DisplayMode =
+//   | 'slides'
+//   | 'newContent'
+//   | 'slideNarrative'
+//   | 'customBuilder'
+//   | 'Points'
+//   | 'Timeline'
+//   | 'Images'
+//   | 'Table'
+//   | 'People'
+//   | 'Graphs'
+//   | 'Statistics'
+
+// export default function ViewPresentation() {
+//   const [outlines, setOutlines] = useState<Outline[]>([])
+//   const [currentOutlineIndex, setCurrentOutlineIndex] = useState(0)
+//   const [slideData, setSlideData] = useState<{ [key: string]: any }>({})
+//   const [selectedOutline, setSelectedOutline] = useState<string>('')
+//   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
+//   const navigate = useNavigate()
+//   const authToken = sessionStorage.getItem('authToken')
+//   const documentID = new URLSearchParams(useLocation().search).get(
+//     'documentID'
+//   )!
+
+//   const slideContainerRef = useRef<HTMLDivElement | null>(null)
+
+//   // Fetch Outlines from API
+//   const fetchOutlines = useCallback(async () => {
+//     try {
+//       const response = await axios.get(
+//         `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
+//         {
+//           headers: { Authorization: `Bearer ${authToken}` },
+//         }
+//       )
+//       const fetchedOutlines = response.data.outline
+//       setOutlines(fetchedOutlines)
+//       if (fetchedOutlines.length > 0) {
+//         setSelectedOutline(fetchedOutlines[0].title)
+//       }
+//     } catch (error) {
+//       console.error('Error fetching outlines:', error)
+//     }
+//   }, [authToken, documentID])
+
+//   // WebSocket for Slide Data
+//   useEffect(() => {
+//     const socket = io(SOCKET_URL, { transports: ['websocket'] })
+
+//     console.log('Connecting to WebSocket server...')
+
+//     // When connected
+//     socket.on('connect', () => {
+//       console.log('Connected to WebSocket server', socket.id)
+//     })
+
+//     // Listen for slide data from the backend
+//     socket.on('slidesData', (data) => {
+//       setSlideData((prev) => ({ ...prev, [selectedOutline]: data }))
+//     })
+
+//     // Handle any error messages from the backend
+//     socket.on('error', (error) => {
+//       console.error('Error:', error.message)
+//     })
+
+//     if (selectedOutline) {
+//       socket.emit('fetchSlides', { outline: 'Key Features' })
+//     }
+
+//     // Cleanup: disconnect the socket on component unmount
+//     return () => {
+//       console.log('Disconnecting from WebSocket server...')
+//       socket.disconnect()
+//     }
+//   }, [selectedOutline, SOCKET_URL])
+
+//   // Handle Sidebar Outline Selection
+//   const handleOutlineSelect = (outlineTitle: string) => {
+//     const index = outlines.findIndex((o) => o.title === outlineTitle)
+//     setCurrentOutlineIndex(index)
+//     setSelectedOutline(outlineTitle)
+//     slideContainerRef.current?.scrollTo({
+//       top: index * window.innerHeight,
+//       behavior: 'smooth',
+//     })
+//   }
+
+//   // Handle Scroll to Update Active Outline
+//   const handleScroll = () => {
+//     if (!slideContainerRef.current) return
+//     const scrollTop = slideContainerRef.current.scrollTop
+//     const newIndex = Math.floor(scrollTop / window.innerHeight)
+//     if (newIndex !== currentOutlineIndex && outlines[newIndex]) {
+//       setCurrentOutlineIndex(newIndex)
+//       setSelectedOutline(outlines[newIndex].title)
+//     }
+//   }
+
+//   useEffect(() => {
+//     fetchOutlines()
+//   }, [fetchOutlines])
+
+//   return (
+//     <div className="flex h-screen bg-gray-100">
+//       {/* Sidebar */}
+//       <Sidebar
+//         onOutlineSelect={handleOutlineSelect}
+//         selectedOutline={selectedOutline}
+//         fetchedOutlines={outlines}
+//         documentID={documentID}
+//         authToken={authToken!}
+//         fetchOutlines={fetchOutlines}
+//       />
+
+//       {/* Slide Display and Buttons */}
+//       <div className="flex-1 flex flex-col">
+//         {/* Slide Display Container */}
+//         <div
+//           className="flex-1 overflow-y-scroll snap-y snap-mandatory"
+//           ref={slideContainerRef}
+//           onScroll={handleScroll}
+//         >
+//           {outlines.map((outline, index) => (
+//             <div
+//               key={outline.title}
+//               className="h-screen flex items-center justify-center snap-center bg-white border-b"
+//             >
+//               {slideData[outline.title] ? (
+//                 <iframe
+//                   src={`https://docs.google.com/presentation/d/${
+//                     slideData[outline.title]?.presentationId
+//                   }/embed`}
+//                   title={`Slide ${index + 1}`}
+//                   className="w-[90%] h-[80%] border"
+//                 />
+//               ) : (
+//                 <p>Loading slide data...</p>
+//               )}
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* Static Action Buttons */}
+//         <div className="p-4 bg-white border-t flex justify-between items-center">
+//           <button
+//             onClick={() => navigate('/share')}
+//             className="bg-blue-500 text-white px-4 py-2 rounded"
+//           >
+//             Share
+//           </button>
+//           <div className="flex gap-2">
+//             <button className="bg-green-500 text-white px-4 py-2 rounded">
+//               Finalize
+//             </button>
+//             <button className="bg-gray-500 text-white px-4 py-2 rounded">
+//               Add New Version
+//             </button>
+//             <button className="bg-red-500 text-white px-4 py-2 rounded">
+//               Delete
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }

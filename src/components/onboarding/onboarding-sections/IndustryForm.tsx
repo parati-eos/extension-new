@@ -4,6 +4,8 @@ import { IndustryFormProps } from '../../../types/onboardingTypes'
 import { BackButton, NextButton } from '../shared/Buttons'
 import { industrySectorMap } from '../../../utils/industrySector'
 
+type SectorType = keyof typeof industrySectorMap
+
 const IndustryForm: React.FC<IndustryFormProps> = ({
   onContinue,
   onBack,
@@ -39,16 +41,13 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   }, [initialData])
 
   useEffect(() => {
-    // Update industry options when sector changes
-    if (sector && sector !== 'Other') {
-      setIndustryOptions([...industrySectorMap[sector], 'Other'])
-      setIndustry('') // Reset industry
-      setOtherIndustry('') // Clear otherIndustry input
+    if (sector && sector !== 'Other' && sector in industrySectorMap) {
+      setIndustryOptions([...industrySectorMap[sector as SectorType], 'Other'])
     }
   }, [sector])
 
   const handleSectorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value
+    const selectedValue = e.target.value as SectorType // Cast to SectorType
     setSector(selectedValue)
     if (selectedValue === 'Other') {
       setOtherSector('')

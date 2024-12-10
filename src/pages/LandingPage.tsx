@@ -14,7 +14,6 @@ const LandingPage: React.FC = () => {
       <Heading />
       <AboutSection />
       <HowWorks />
-      
       <Hero />
       <PartnersTestimonials />
       <Footer />

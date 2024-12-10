@@ -3,22 +3,31 @@ import Landingpageimage from '../../assets/tailwind.config.png'
 
 const Heading: React.FC = () => {
   return (
-    <div className="bg-gradient-to-r from-[#EAF2FF00] to-[#99C1FF1F] min-h-screen text-center">
+    <div className="bg-gradient-to-r from-[#EAF2FF00] to-[#99C1FF1F] w-full h-full text-center">
       {/* Header Section */}
-      <div className="relative flex flex-col items-center justify-start pt-32 mb-20">
-        <h1 className="text-4xl font-bold text-gray-900 z-10">
+      <div className="relative flex flex-col items-center justify-start pt-32 mb-14 md:mb-20">
+        <h1 className="hidden md:block text-4xl font-bold text-gray-900 z-10">
           Effortlessly <span className="text-[#3667B2]">Turn Ideas</span> into
           Slides with Your
         </h1>
-        <h1 className="mt-2 text-4xl font-bold text-[#3667B2] z-10">
+        <h1 className="hidden md:block mt-2 text-4xl font-bold text-[#3667B2] z-10">
           AI Presentation Generator
         </h1>
-        <p className="mt-4 text-gray-700 max-w-lg z-10">
+        <h1 className="md:hidden text-3xl font-bold text-gray-900 z-10">
+          Effortlessly <span className="text-[#3667B2]">Turn Ideas</span> into
+        </h1>
+        <h1 className="md:hidden text-3xl font-bold text-gray-900 z-10">
+          Slides with Your
+        </h1>
+        <h1 className="md:hidden text-3xl font-bold text-[#3667B2] z-10">
+          AI Presentation Generator
+        </h1>
+        <p className="mt-4 text-gray-700 w-[90%] md:max-w-lg z-10">
           From startup pitch decks to corporate proposals, Zynth’s AI
           presentation maker helps you craft visually compelling,
           professional-grade slides in minutes—no design skills required.
         </p>
-        <div className="mt-6 flex gap-4 z-10">
+        <div className="mt-6 flex flex-col md:justify-center w-[90%] md:flex-row gap-4 z-10">
           <button className="px-11 py-3 text-white bg-[#3667B2] rounded-md hover:bg-blue-700 transition">
             Get Started for Free
           </button>
@@ -29,7 +38,7 @@ const Heading: React.FC = () => {
       </div>
 
       {/* Image Section */}
-      <div className="relative  z-20  ">
+      <div className="relative z-20">
         {/* Gradient Overlay */}
         <div
           className="absolute top-0 left-0 w-full"
