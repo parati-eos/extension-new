@@ -3,7 +3,7 @@ import axios from 'axios'
 import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface ImagesProps {
   heading: string
@@ -121,17 +121,16 @@ export default function Images({
 
       {/* Generate Slide Button */}
       <button
-  onClick={handleSubmit}
-  disabled={!images}
-  className={`absolute bottom-4 right-4 py-2 px-4 rounded-md transition-all duration-200 transform ${
-    images
-      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-      : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-  }`}
->
- Generate Slide
-</button>
-
+        onClick={handleSubmit}
+        disabled={!images}
+        className={`absolute bottom-4 right-4 py-2 px-4 rounded-md active:scale-95 duration-300 transition-all transform ${
+          images
+            ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+            : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+        }`}
+      >
+        Generate Slide
+      </button>
     </div>
   )
 }

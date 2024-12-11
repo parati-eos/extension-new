@@ -3,7 +3,7 @@ import { FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage'
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface PointsProps {
   heading: string
@@ -140,7 +140,7 @@ export default function Points({
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled || isLoading}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md active:scale-95 transition transform duration-300${
             isGenerateDisabled || isLoading
               ? 'bg-gray-200 text-gray-500'
               : 'bg-[#3667B2] text-white'

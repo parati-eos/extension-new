@@ -1,79 +1,3 @@
-// import React, { useState, useEffect } from 'react'
-// import zynthtext from '../../assets/zynth-text.png'
-// import { useNavigate } from 'react-router-dom'
-
-// const LandingPageNavbar: React.FC = () => {
-//   const [isScrolled, setIsScrolled] = useState(false)
-//   const navigate = useNavigate()
-
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       setIsScrolled(window.scrollY > 0)
-//     }
-
-//     window.addEventListener('scroll', handleScroll)
-//     return () => {
-//       window.removeEventListener('scroll', handleScroll)
-//     }
-//   }, [])
-
-//   return (
-//     <nav
-//       className={`fixed w-full z-50 transition-all duration-300 ${
-//         isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-//       }`}
-//     >
-//       <div className="container mx-auto flex items-center justify-between py-4 px-6">
-//         {/* Logo */}
-//         <div className="text-xl font-bold text-gray-800">
-//           <span className="flex items-center">
-//             <a href="/" target="_blank" rel="noopener noreferrer">
-//               <img className="h-8" src={zynthtext} alt="Zynth" />
-//             </a>
-//           </span>
-//         </div>
-
-//         {/* Center Links */}
-//         <div className="flex space-x-10 items-center">
-//           <a
-//             href="#how-it-works"
-//             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-//           >
-//             How it works
-//           </a>
-//           <a
-//             href="#pricing"
-//             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-//           >
-//             Pricing
-//           </a>
-//           <a
-//             href="#blog"
-//             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-//           >
-//             Blog
-//           </a>
-//         </div>
-
-//         {/* Right Buttons */}
-//         <div className="flex space-x-10">
-//           <button
-//             onClick={() => navigate('/auth')}
-//             className="text-gray-800 hover:text-blue-600 transition-colors duration-200"
-//           >
-//             Login
-//           </button>
-//           <button className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-all duration-200 px-6 py-1.5 rounded">
-//             Try Now
-//           </button>
-//         </div>
-//       </div>
-//     </nav>
-//   )
-// }
-
-// export default LandingPageNavbar
-
 import React, { useState, useEffect } from 'react'
 import zynthtext from '../../assets/zynth-text.png'
 import { useNavigate } from 'react-router-dom'
@@ -105,14 +29,21 @@ const LandingPageNavbar: React.FC = () => {
         <div className="text-xl font-bold text-gray-800">
           <span className="flex items-center">
             <a href="/" target="_blank" rel="noopener noreferrer">
-              <img className="h-8" src={zynthtext} alt="Zynth" />
+              <img
+                className="h-8 hover:scale-105 active:scale-90 transform transition duration-300"
+                src={zynthtext}
+                alt="Zynth"
+              />
             </a>
           </span>
         </div>
 
         {/* Mobile & Small Screen Navbar */}
         <div className="md:hidden flex items-center space-x-4">
-          <button className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-all duration-200 px-4 py-1 rounded">
+          <button
+            onClick={() => navigate('/auth')}
+            className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white active:scale-95 transition transform duration-300 px-4 py-1 rounded"
+          >
             Try Now
           </button>
           <button
@@ -165,11 +96,14 @@ const LandingPageNavbar: React.FC = () => {
         <div className="hidden md:flex space-x-10">
           <button
             onClick={() => navigate('/auth')}
-            className="text-gray-800 hover:text-blue-600 transition-colors duration-200"
+            className="text-gray-800 hover:text-blue-600 active:scale-95 transition-all transform duration-300"
           >
             Login
           </button>
-          <button className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-all duration-200 px-6 py-1.5 rounded">
+          <button
+            onClick={() => navigate('/auth')}
+            className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-all active:scale-95 active:bg-blue-800 transform duration-300 px-6 py-1.5 rounded"
+          >
             Try Now
           </button>
         </div>
@@ -209,7 +143,7 @@ const LandingPageNavbar: React.FC = () => {
                   navigate('/auth')
                   setIsMenuOpen(false)
                 }}
-                className="text-gray-800 hover:text-blue-600 transition-colors duration-200 block"
+                className="text-gray-800 hover:text-blue-600 active:scale-95 active:bg-blue-800 transition-all transform duration-300 block"
               >
                 Login
               </button>

@@ -1,13 +1,13 @@
 import React from 'react'
-import PeopleIcon from '../../assets/people-icon.png'
-import GraphIcon from '../../assets/graph-icon.png'
-import StatisticsIcon from '../../assets/statistics-icon.png'
-import PointsIcon from '../../assets/points-icon.png'
-import TimelineIcon from '../../assets/timeline-icon.png'
-import TableIcon from '../../assets/table-icon.png'
-import ImagesIcon from '../../assets/images-icon.png'
-import { DisplayMode } from './ViewPresentation'
-import { BackButton } from './custom-builder/shared/BackButton'
+import PeopleIcon from '../../../assets/people-icon.png'
+import GraphIcon from '../../../assets/graph-icon.png'
+import StatisticsIcon from '../../../assets/statistics-icon.png'
+import PointsIcon from '../../../assets/points-icon.png'
+import TimelineIcon from '../../../assets/timeline-icon.png'
+import TableIcon from '../../../assets/table-icon.png'
+import ImagesIcon from '../../../assets/images-icon.png'
+import { DisplayMode } from '../../../types/presentationView'
+import { BackButton } from './shared/BackButton'
 
 interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void

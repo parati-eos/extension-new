@@ -1,7 +1,10 @@
 import React from 'react'
 import Landingpageimage from '../../assets/tailwind.config.png'
+import { useNavigate } from 'react-router-dom'
 
 const Heading: React.FC = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="bg-gradient-to-r from-[#EAF2FF00] to-[#99C1FF1F] w-full h-full text-center">
       {/* Header Section */}
@@ -28,10 +31,13 @@ const Heading: React.FC = () => {
           professional-grade slides in minutes—no design skills required.
         </p>
         <div className="mt-6 flex flex-col md:justify-center w-[90%] md:flex-row gap-4 z-10">
-          <button className="px-11 py-3 text-white bg-[#3667B2] rounded-md hover:bg-blue-700 transition">
+          <button
+            onClick={() => navigate('/auth')}
+            className="px-11 py-3 text-white bg-[#3667B2] rounded-md hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] active:scale-95 transition transform duration-300"
+          >
             Get Started for Free
           </button>
-          <button className="px-11 py-3 text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 transition">
+          <button className="px-11 py-3 text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 active:scale-95 active:bg-blue-100 transition transform duration-300">
             Watch Demo
           </button>
         </div>

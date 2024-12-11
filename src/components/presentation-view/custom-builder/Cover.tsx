@@ -2,7 +2,7 @@ import { FaPaperclip, FaImage } from 'react-icons/fa'
 import React, { useState } from 'react'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 import { BackButton } from './shared/BackButton'
 
 export default function Cover(
@@ -100,7 +100,7 @@ export default function Cover(
             <button
               type="button"
               onClick={handleButtonClick}
-              className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white transition"
+              className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white active:scale-95 transition transform duration-300"
             >
               {logo ? 'Upload Again' : 'Upload Logo'}
             </button>
@@ -110,7 +110,7 @@ export default function Cover(
         <div className="flex gap-3 justify-end lg:justify-end w-full">
           <button
             type="button"
-            className="flex items-center px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-md transition text-[#797C81]"
+            className="flex items-center px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-md active:scale-95 transition transform duration-300 text-[#797C81]"
           >
             <FaPaperclip className="h-4 w-4" />
             <span>Attach Image</span>
@@ -118,7 +118,7 @@ export default function Cover(
           <button
             onClick={handleGenerateSlide}
             type="button"
-            className="px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] bg-[#3667B2] hover:bg-white hover:border-[#797C81] hover:text-[#797C81] rounded-md transition text-white"
+            className="px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] bg-[#3667B2] hover:bg-white hover:border-[#797C81] hover:text-[#797C81] rounded-md active:scale-95 transition transform duration-300 text-white"
           >
             Generate Slide
           </button>

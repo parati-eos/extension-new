@@ -3,7 +3,7 @@ import { FaPaperclip } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface TimelineProps {
   heading: string

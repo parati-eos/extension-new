@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface ContactProps {
   heading: string
@@ -104,7 +104,7 @@ export default function Contact({
         </div>
 
         {/* Attach Image Button */}
-        <button className="p-3 flex items-center lg:w-[49%] border border-gray-300 rounded-lg">
+        <button className="p-3 flex items-center lg:w-[49%] border border-gray-300 rounded-lg active:scale-95 transition transform duration-300">
           <div className="flex items-center ml-1">
             <FaPaperclip className="mr-2" />
             <span>Attach Image</span>
@@ -116,7 +116,7 @@ export default function Contact({
       <button
         onClick={handleSubmit}
         disabled={isButtonDisabled}
-        className={`absolute bottom-4 right-4 py-2 px-4 rounded-md ${
+        className={`absolute bottom-4 right-4 py-2 px-4 rounded-md active:scale-95 transition transform duration-300${
           isButtonDisabled
             ? 'bg-gray-400 text-gray-200'
             : 'bg-[#3667B2] text-white'

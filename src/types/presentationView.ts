@@ -1,0 +1,13 @@
+export type DisplayMode =
+  | 'slides'
+  | 'newContent'
+  | 'slideNarrative'
+  | 'customBuilder'
+  | 'Points'
+  | 'Timeline'
+  | 'Images'
+  | 'Table'
+  | 'People'
+  | 'Graphs'
+  | 'Statistics'
+  | 'SlideNarrative'

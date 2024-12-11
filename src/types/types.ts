@@ -40,6 +40,7 @@ export interface HeadingProps {
   handleShare: () => void
   handleDownload: () => void
   pptName: string
+  isLoading: boolean
 }
 
 export interface Outlines {
@@ -55,6 +56,7 @@ export interface SidebarProps {
   documentID: string
   authToken: string
   fetchOutlines: () => Promise<void>
+  isLoading: boolean
 }
 
 export interface Outline {

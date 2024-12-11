@@ -3,7 +3,7 @@ import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface PeopleProps {
   heading: string
@@ -274,7 +274,7 @@ export default function People({
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all active:scale-95  transform duration-300 ${
             isGenerateDisabled
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'

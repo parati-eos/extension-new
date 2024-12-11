@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import {
   FaFilter,
@@ -13,10 +14,14 @@ import {
   FaTrashAlt,
 } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { PricingModal } from '../shared/PricingModal'
+import { IpInfoResponse } from '../../types/authTypes'
+import { Plan } from '../../types/pricingTypes'
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
   const [historyData, setHistoryData] = useState<any[]>([])
   const [filteredData, setFilteredData] = useState<any[]>([]) // Holds filtered data
@@ -26,9 +31,15 @@ const HistoryContainer: React.FC = () => {
   const userId = sessionStorage.getItem('userEmail')
   const historyUrl = process.env.REACT_APP_BACKEND_URL || ''
   const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
+  const userPlan = 'free'
+  const [pricingModalHeading, setPricingModalHeading] = useState('')
+  const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
+  const [yearlyPlan, setYearlyPlan] = useState<Plan>()
+  const [currency, setCurrency] = useState('')
 
-  const presentationsToShow = filteredData.slice(
+  const presentationsToShow = filteredData?.slice(
     (currentPage - 1) * 10,
     currentPage * 10
   )
@@ -55,8 +66,10 @@ const HistoryContainer: React.FC = () => {
     }
   }
 
-  const handleEdit = (documentID: string) => {
-    navigate(`/presentation-view?documentID=${documentID}`)
+  const handleEdit = (documentID: string, name: string) => {
+    navigate(
+      `/presentation-view?documentID=${documentID}&presentationName=${name}`
+    )
   }
 
   // History Item Dropdown
@@ -88,7 +101,7 @@ const HistoryContainer: React.FC = () => {
     const fetchHistoryData = async () => {
       try {
         const response = await fetch(
-          `${historyUrl}/api/v1/data/slidedisplay/history/67890`,
+          `${historyUrl}/api/v1/data/slidedisplay/history/${orgId}`,
           {
             method: 'GET',
             headers: {
@@ -98,11 +111,20 @@ const HistoryContainer: React.FC = () => {
           }
         )
         const result = await response.json()
-        setHistoryData(result.data)
-        setFilteredData(result.data) // Initialize filtered data
+        console.log('History Result: ', result.data)
+
+        // Handle empty response
+        if (Array.isArray(result.data) && result.data.length === 0) {
+          console.warn('No history data found.')
+        }
+
+        // Set history data or an empty array to ensure consistency
+        setHistoryData(result.data || [])
+        setFilteredData(result.data || []) // Ensure filteredData is also set
         setIsLoading(false)
       } catch (error) {
         console.error('Error fetching history data:', error)
+        setIsLoading(false) // Stop loading in case of an error
       }
     }
     fetchHistoryData()
@@ -132,6 +154,64 @@ const HistoryContainer: React.FC = () => {
 
     setFilteredData(updatedData)
   }, [selectedFilter, selectedSort, historyData])
+
+  // API CALL TO GET USER SUBSCRIPTION PLAN
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        await axios
+          .get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            // setUserPlan(response.data.plan_name)
+          })
+          .catch((error) => {
+            console.error('Error fetching organization data:', error)
+          })
+      } catch (error) {}
+    }
+
+    fetchUserPlan()
+  }, [authToken, orgId])
+
+  // API CALL TO GET PRICING DATA FOR MODAL
+  // useEffect(() => {
+  //   const getPricingData = async () => {
+  //     const ipInfoResponse = await fetch('https://ipapi.co/json/')
+  //     const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+  //     await axios
+  //       .get(
+  //         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${authToken}`,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         if (ipInfoData.country_name === 'IN' || 'India') {
+  //           setMonthlyPlan(response.data.items[3])
+  //           setYearlyPlan(response.data.items[1])
+  //           setCurrency('INR')
+  //         } else {
+  //           setMonthlyPlan(response.data.items[2])
+  //           setYearlyPlan(response.data.items[0])
+  //           setCurrency('USD')
+  //         }
+  //       })
+  //   }
+
+  //   getPricingData()
+  // }, [])
+  // const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  // const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
     <>
@@ -195,14 +275,14 @@ const HistoryContainer: React.FC = () => {
           </div>
 
           {/* History Container */}
-          {filteredData.length === 0 && !isLoading ? (
+          {filteredData?.length === 0 && !isLoading ? (
             <div className="text-center relative top-24 flex flex-col items-center justify-center py-10">
               <p className="text-lg text-[#091220] font-semibold">
                 No presentations to see here. Generate your first presentation
                 using Zynth.
               </p>
               <button
-                className="mt-4 bg-[#3667B2] hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] text-white px-4 py-2 rounded-md"
+                className="mt-4 bg-[#3667B2] hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] active:scale-95 transition transform duration-300 text-white px-4 py-2 rounded-md"
                 onClick={() => navigate('/new-presentation')}
               >
                 Generate Presentation
@@ -220,7 +300,7 @@ const HistoryContainer: React.FC = () => {
                     <iframe
                       src={item.PresentationURL}
                       title={item.pptName}
-                      onClick={() => handleEdit(item.pptName)}
+                      onClick={() => handleEdit(item.FormID, item.pptName)}
                       className="w-16 h-16 object-cover hover:cursor-pointer rounded-md mr-4"
                       sandbox="allow-same-origin allow-scripts"
                       scrolling="no"
@@ -265,27 +345,39 @@ const HistoryContainer: React.FC = () => {
                     {activeDropdown === index && (
                       <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
                         <button
-                          onClick={() => handleEdit(item.documentID)}
+                          onClick={() => handleEdit(item.FormID, item.pptName)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaEdit className="text-[#5D5F61]" />
                           <span>Edit</span>
                         </button>
                         <button
-                          onClick={() => handleShare(item.documentID)}
+                          onClick={() => handleShare(item.FormID)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaShareAlt className="text-[#5D5F61]" />
                           <span>Share</span>
                         </button>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                        <button
+                          onClick={() => {
+                            setIsPricingModalOpen(true)
+                            setPricingModalHeading('PDF Export')
+                          }}
+                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+                        >
                           <FaFilePdf className="text-[#5D5F61]" />
                           <span>PDF Export</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsPricingModalOpen(true)
+                            setPricingModalHeading('Google Slides')
+                          }}
+                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
+                        >
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
-                        </div>
+                        </button>
                         <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
                           <FaTrashAlt />
                           <span>Delete</span>
@@ -307,7 +399,7 @@ const HistoryContainer: React.FC = () => {
                     <iframe
                       src={item.PresentationURL}
                       title={item.pptName}
-                      onClick={() => handleEdit(item.pptName)}
+                      onClick={() => handleEdit(item.FormID, item.pptName)}
                       sandbox="allow-same-origin allow-scripts"
                       scrolling="no"
                       style={{ overflow: 'hidden' }}
@@ -354,27 +446,39 @@ const HistoryContainer: React.FC = () => {
                     {activeDropdown === index && (
                       <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
                         <button
-                          onClick={() => handleEdit(item.pptName)}
+                          onClick={() => handleEdit(item.FormID, item.pptName)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaEdit className="text-[#5D5F61]" />
                           <span>Edit</span>
                         </button>
                         <button
-                          onClick={() => handleShare(item.documentID)}
+                          onClick={() => handleShare(item.FormID)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
                         >
                           <FaShareAlt className="text-[#5D5F61]" />
                           <span>Share</span>
                         </button>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer">
+                        <button
+                          onClick={() => {
+                            setIsPricingModalOpen(true)
+                            setPricingModalHeading('PDF Export')
+                          }}
+                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+                        >
                           <FaFilePdf className="text-[#5D5F61]" />
                           <span>PDF Export</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer">
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsPricingModalOpen(true)
+                            setPricingModalHeading('Google Slides')
+                          }}
+                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
+                        >
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
-                        </div>
+                        </button>
                         <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
                           <FaTrashAlt />
                           <span>Delete</span>
@@ -387,11 +491,26 @@ const HistoryContainer: React.FC = () => {
             </div>
           )}
 
+          {/* {isPricingModalOpen && userPlan === 'free' ? (
+            <PricingModal
+              closeModal={() => {
+                setIsPricingModalOpen(false)
+                setPricingModalHeading('')
+              }}
+              heading={pricingModalHeading}
+              monthlyPlanAmount={monthlyPlanAmount}
+              yearlyPlanAmount={yearlyPlanAmount}
+              currency={currency}
+            />
+          ) : (
+            <></>
+          )} */}
+
           {/* Pagination */}
-          {filteredData.length > 10 && (
+          {filteredData?.length > 10 && (
             <div className="flex justify-between items-center mt-6">
               <button
-                className="flex gap-2 items-center bg-[#F3F4F6] px-4 py-2 rounded-md disabled:bg-[#E4E7EB]"
+                className="flex gap-2 items-center bg-[#F3F4F6] px-4 py-2 active:scale-95 transition transform duration-300 rounded-md disabled:bg-[#E4E7EB]"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => prev - 1)}
               >
@@ -399,11 +518,11 @@ const HistoryContainer: React.FC = () => {
                 <span>Previous</span>
               </button>
               <span>
-                Page {currentPage} of {Math.ceil(filteredData.length / 10)}
+                Page {currentPage} of {Math.ceil(filteredData?.length / 10)}
               </span>
               <button
-                className="flex gap-2 items-center bg-[#F3F4F6] px-4 py-2 rounded-md disabled:bg-[#E4E7EB]"
-                disabled={currentPage === Math.ceil(filteredData.length / 10)}
+                className="flex gap-2 items-center bg-[#F3F4F6] active:scale-95 transition transform duration-300 px-4 py-2 rounded-md disabled:bg-[#E4E7EB]"
+                disabled={currentPage === Math.ceil(filteredData?.length / 10)}
                 onClick={() => setCurrentPage((prev) => prev + 1)}
               >
                 <span>Next</span>

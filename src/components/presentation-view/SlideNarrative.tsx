@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react'
-import { FaPaperclip } from 'react-icons/fa'
+import { useState } from 'react'
 import axios from 'axios'
 import { BackButton } from './custom-builder/shared/BackButton'
-import { DisplayMode } from './ViewPresentation'
+import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 
 interface SlideNarrativeProps {
@@ -103,7 +102,7 @@ export default function SlideNarrative({
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md active:scale-95 transition transform duration-300${
             isGenerateDisabled
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2] text-white'

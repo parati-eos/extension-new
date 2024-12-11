@@ -24,14 +24,18 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" target="_blank">
-          <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
+          <img
+            src={ZynthLogoText}
+            alt="Logo Text"
+            className="h-8 hover:scale-105 active:scale-90 transition transform duration-300"
+          />
         </a>
 
         {/* Menu */}
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/new-presentation')}
-            className="bg-[#3667B2] lg:h-[2.5rem] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
+            className="bg-[#3667B2] border border-[#3667B2] lg:h-[2.5rem] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
           >
             <span className="sm:hidden text-base">
               <FaPlus />
@@ -43,7 +47,7 @@ const Navbar = () => {
           </button>
           <button
             onClick={() => navigate('/history')}
-            className="bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md"
+            className="bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
           >
             <span className="sm:hidden text-base">
               <FaClock />

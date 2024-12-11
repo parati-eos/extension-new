@@ -1,5 +1,6 @@
 import React from 'react'
 import secondfooterimage from '../../assets/secondfooter.png'
+import { useNavigate } from 'react-router-dom'
 type Testimonial = {
   text: string
   author: string
@@ -21,6 +22,8 @@ const PartnersTestimonials: React.FC = () => {
       author: 'Brando Vasquez',
     },
   ]
+
+  const navigate = useNavigate()
 
   return (
     <footer className="bg-gray-100 ">
@@ -67,7 +70,10 @@ const PartnersTestimonials: React.FC = () => {
 
       {/* Call-to-Action */}
       <div className="text-center mt-6">
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 mb-4">
+        <button
+          onClick={() => navigate('/auth')}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 mb-4 active:scale-95 transition transform duration-300"
+        >
           See How Zynth Can Help You
         </button>
       </div>

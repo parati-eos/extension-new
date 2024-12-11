@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FaBox,
   FaDesktop,
@@ -14,6 +14,9 @@ import {
   FaCheck,
 } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { IpInfoResponse } from '../../types/authTypes'
+import { Plan } from '../../types/pricingTypes'
+import { PricingModal } from '../shared/PricingModal'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -64,6 +67,10 @@ const SelectPresentationType: React.FC = () => {
   const [selectedTypeName, setSelectedTypeName] = useState<string | null>('')
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
+  const [userPlan, setUserPlan] = useState('free')
+  const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
+  const [yearlyPlan, setYearlyPlan] = useState<Plan>()
+  const [currency, setCurrency] = useState('')
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -77,10 +84,15 @@ const SelectPresentationType: React.FC = () => {
   }
 
   const handleGenerate = () => {
+    // Navigate immediately with initial placeholders
+    navigate(
+      `/presentation-view?documentID=loading&slideType=${selectedTypeName}`
+    )
+
     const quickGenerate = async () => {
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/org1234/${selectedTypeName}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
           {},
           {
             headers: {
@@ -90,15 +102,19 @@ const SelectPresentationType: React.FC = () => {
         )
 
         const result = await response.data
+
         if (result.documentID && result.documentID !== '') {
+          // Update the URL with actual query parameters
           navigate(
-            `/presentation-view?documentID=${result.documentID}&presentationName=${result.presentationName}&slideType=${selectedTypeName}`
+            `/presentation-view?documentID=${result.documentID}&slideType=${selectedTypeName}`,
+            { replace: true }
           )
         }
       } catch (error) {
         console.error('Error generating document:', error)
       }
     }
+
     quickGenerate()
   }
 
@@ -144,6 +160,71 @@ const SelectPresentationType: React.FC = () => {
 
   const isButtonDisabled =
     selectedType === 8 ? !customTypeInput.trim() : !selectedType
+
+  const refineButtonDisabled =
+    userPlan === 'free'
+      ? true
+      : selectedType === 8
+      ? !customTypeInput.trim()
+      : !selectedType
+
+  // API CALL TO GET USER SUBSCRIPTION PLAN
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        await axios
+          .get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            // setUserPlan(response.data.plan_name)
+          })
+          .catch((error) => {
+            console.error('Error fetching organization data:', error)
+          })
+      } catch (error) {}
+    }
+
+    fetchUserPlan()
+  }, [authToken, orgId])
+
+  // API CALL TO GET PRICING DATA FOR MODAL
+  // useEffect(() => {
+  //   const getPricingData = async () => {
+  //     const ipInfoResponse = await fetch('https://ipapi.co/json/')
+  //     const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+  //     await axios
+  //       .get(
+  //         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${authToken}`,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         if (ipInfoData.country_name === 'IN' || 'India') {
+  //           setMonthlyPlan(response.data.items[3])
+  //           setYearlyPlan(response.data.items[1])
+  //           setCurrency('INR')
+  //         } else {
+  //           setMonthlyPlan(response.data.items[2])
+  //           setYearlyPlan(response.data.items[0])
+  //           setCurrency('USD')
+  //         }
+  //       })
+  //   }
+
+  //   getPricingData()
+  // }, [])
+  // const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  // const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
@@ -215,7 +296,7 @@ const SelectPresentationType: React.FC = () => {
           <button
             onClick={handleGenerate}
             disabled={isButtonDisabled}
-            className={`h-[3.1rem] text-white px-4 rounded-lg mr-4 flex items-center ${
+            className={`h-[3.1rem] text-white px-4 rounded-lg active:scale-95 transition transform duration-300 mr-4 flex items-center ${
               isButtonDisabled
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-[#3667B2] hover:bg-[#0A8568]'
@@ -225,9 +306,9 @@ const SelectPresentationType: React.FC = () => {
           </button>
           <button
             onClick={() => setIsRefineModalOpen(true)}
-            disabled={isButtonDisabled}
-            className={`h-[3.1rem] border px-4 rounded-lg ${
-              isButtonDisabled
+            disabled={refineButtonDisabled}
+            className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
+              refineButtonDisabled
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
             }`}
@@ -259,7 +340,7 @@ const SelectPresentationType: React.FC = () => {
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleGenerate}
-                className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg"
+                className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
               >
                 Generate Presentation
               </button>
@@ -267,7 +348,7 @@ const SelectPresentationType: React.FC = () => {
                 onClick={() => {
                   setIsRefineModalOpen(true)
                 }}
-                className="bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg"
+                className="bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
               >
                 Refine Presentation
               </button>
@@ -336,7 +417,7 @@ const SelectPresentationType: React.FC = () => {
             {/* Refine Button */}
             <button
               onClick={handleRefinePPT}
-              className={`mt-4 md:mt-8 h-[3.1rem] w-full py-2 px-4 rounded-xl ${
+              className={`mt-4 md:mt-8 h-[3.1rem] w-full py-2 px-4 rounded-xl active:scale-95 transition transform duration-300${
                 file
                   ? 'bg-[#3667B2] text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'

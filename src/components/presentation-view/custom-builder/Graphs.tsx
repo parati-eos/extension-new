@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { FaPlus, FaChartPie, FaChartLine, FaChartBar } from 'react-icons/fa'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface GraphProps {
   heading: string
@@ -261,7 +261,7 @@ export default function Graphs({
             <button
               disabled={isButtonDisabled}
               onClick={handleSubmit}
-              className="px-4 py-2 bg-[#5D5F61] text-white rounded hover:bg-[#091220] transition disabled:opacity-50"
+              className="px-4 py-2 bg-[#5D5F61] text-white rounded hover:bg-[#091220]  disabled:opacity-50 active:scale-95 transition transform duration-300"
             >
               Submit
             </button>

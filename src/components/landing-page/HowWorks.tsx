@@ -2,8 +2,11 @@ import React from 'react'
 import FooterImage1 from '../../assets/image1.png' // Replace with actual images
 import FooterImage2 from '../../assets/image2.png' // Replace with actual images
 import FooterImage3 from '../../assets/image3.png' // Replace with actual images
+import { useNavigate } from 'react-router-dom'
 
 const HowWorks: React.FC = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="bg-[#F0F6FF]" id="how-it-works">
       {/* How Zynth Works Section */}
@@ -33,7 +36,10 @@ const HowWorks: React.FC = () => {
                     Create AI slides built on proven presentation templates.
                   </li>
                 </ul>
-                <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
+                <button
+                  onClick={() => navigate('/auth')}
+                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                >
                   Generate Presentation
                 </button>
               </div>
@@ -68,7 +74,10 @@ const HowWorks: React.FC = () => {
                     Tailor your presentation with customizable slide types.
                   </li>
                 </ul>
-                <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
+                <button
+                  onClick={() => navigate('/auth')}
+                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                >
                   Refine Presentation
                 </button>
               </div>
@@ -100,7 +109,10 @@ const HowWorks: React.FC = () => {
                     edits.
                   </li>
                 </ul>
-                <button className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] transition">
+                <button
+                  onClick={() => navigate('/auth')}
+                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                >
                   Share Presentation
                 </button>
               </div>

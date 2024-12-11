@@ -6,7 +6,7 @@ import {
   FaTrash,
 } from 'react-icons/fa'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { io } from 'socket.io-client'
 import { Outline } from '../../types/types'
@@ -16,7 +16,7 @@ import {
   DesktopNewSlideVersion,
 } from './NewSlideVersion'
 import Sidebar from './Sidebar'
-import CustomBuilderMenu from './CustomBuilderMenu'
+import CustomBuilderMenu from './custom-builder/CustomBuilderMenu'
 import Points from './custom-builder/Points'
 import People from './custom-builder/People'
 import Table from './custom-builder/Table'
@@ -26,40 +26,24 @@ import Images from './custom-builder/Images'
 import Graphs from './custom-builder/Graphs'
 import SlideNarrative from './SlideNarrative'
 import MobileOutlineModal from './MobileOutlineModal'
+import { PricingModal } from '../shared/PricingModal'
+import { DisplayMode } from '../../types/presentationView'
 import './viewpresentation.css'
-
-export type DisplayMode =
-  | 'slides'
-  | 'newContent'
-  | 'slideNarrative'
-  | 'customBuilder'
-  | 'Points'
-  | 'Timeline'
-  | 'Images'
-  | 'Table'
-  | 'People'
-  | 'Graphs'
-  | 'Statistics'
-  | 'SlideNarrative'
 
 export default function ViewPresentation() {
   const [currentSlide, setCurrentSlide] = useState(1)
   const [selectedOutline, setSelectedOutline] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSlideLoading, setIsSlideLoading] = useState(true)
   const [currentOutline, setCurrentOutline] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
-  const [slideImages, setSlideImages] = useState<{ [key: string]: string }>({})
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
-  const navigate = useNavigate()
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
-  // Extract the values of query parameters
-  const documentID = searchParams.get('documentID')!
-  const pptName = searchParams.get('presentationName')!
-  const slideType = searchParams.get('slideType')!
+  const [searchParams] = useSearchParams()
+  const [documentID, setDocumentID] = useState<string | null>(null)
+  const [pptName, setPptName] = useState<string | null>(null)
   const orgId = sessionStorage.getItem('orgId')
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
@@ -69,9 +53,95 @@ export default function ViewPresentation() {
   const [outlineType, setOutlineType] = useState('')
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
 
+  // Get DocumentID and Presentation Name
+  useEffect(() => {
+    const getDocumentId = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const result = response.data
+        console.log('RESULT After 20sec', result)
+
+        setPptName(result.documentName)
+        setDocumentID(result.documentID)
+        setIsLoading(false)
+        setIsSlideLoading(false)
+      } catch (error) {
+        console.error('Error fetching document:', error)
+        setIsLoading(false)
+      }
+    }
+
+    const documentID = searchParams.get('documentID')
+
+    if (!documentID || documentID === 'loading') {
+      // Trigger the API call only if documentID is not present or is 'loading'
+      const timer = setTimeout(() => {
+        getDocumentId()
+      }, 20000) // delay
+
+      // Cleanup the timer in case the component unmounts
+      return () => clearTimeout(timer)
+    } else {
+      // Directly set the documentID if it is already present
+      setDocumentID(documentID)
+      const getPptName = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          const result = response.data
+          setPptName(result.documentName)
+        } catch (error) {
+          console.error('Error fetching document:', error)
+        }
+      }
+      getPptName()
+      setIsLoading(false)
+      setIsSlideLoading(false)
+    }
+  }, [])
+
+  // API CALL TO GET USER SUBSCRIPTION PLAN
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        await axios
+          .get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            // setUserPlan(response.data.plan_name)
+          })
+          .catch((error) => {
+            console.error('Error fetching organization data:', error)
+          })
+      } catch (error) {}
+    }
+
+    fetchUserPlan()
+  }, [authToken, orgId])
+
   // Handle Share Button Click
   const handleShare = async () => {
-    navigate(`/share?formId=${documentID}`)
+    const url = `/share?formId=${documentID}`
+    window.open(url, '_blank') // Opens the URL in a new tab
   }
 
   // Handle Download Button Click
@@ -201,6 +271,7 @@ export default function ViewPresentation() {
       setPresentationID(result[0].PresentationID)
       const ids = result.map((item: any) => item.GenSlideID)
       setSlidesId(ids)
+      // setIsSlideLoading(false)
       setTotalSlides(ids.length)
     })
 
@@ -226,10 +297,6 @@ export default function ViewPresentation() {
 
   // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
-    const sampleImageUrl = {
-      default:
-        'https://cdn2.slidemodel.com/wp-content/uploads/60009-01-business-proposal-powerpoint-template-1.jpg',
-    }
     if (!documentID) return
 
     try {
@@ -243,14 +310,6 @@ export default function ViewPresentation() {
       )
       const fetchedOutlines = response.data.outline
       setOutlines(fetchedOutlines)
-      const dynamicSlideImages = fetchedOutlines.reduce(
-        (acc: { [key: string]: string }, outline: Outline) => {
-          acc[outline.title] = sampleImageUrl.default
-          return acc
-        },
-        {}
-      )
-      setSlideImages(dynamicSlideImages)
       if (fetchedOutlines.length > 0) {
         setCurrentOutline(fetchedOutlines[0].title)
         setSelectedOutline(fetchedOutlines[0].title)
@@ -265,11 +324,9 @@ export default function ViewPresentation() {
 
   // Set Slide Type For Quick Generate
   useEffect(() => {
-    // Find the object in outlines that matches the currentOutline title
     const matchingOutline = outlines.find(
       (outline) => outline.title === currentOutline
     )
-
     // Update the outlineType state with the type of the matched object
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
@@ -418,6 +475,7 @@ export default function ViewPresentation() {
     }
   }
 
+  // Mobile Back Button
   const onBack = () => {
     if (displayMode === 'slideNarrative' || displayMode === 'customBuilder') {
       setDisplayMode('newContent')
@@ -432,7 +490,8 @@ export default function ViewPresentation() {
       <DesktopHeading
         handleDownload={handleDownload}
         handleShare={handleShare}
-        pptName={pptName}
+        pptName={pptName!}
+        isLoading={isLoading}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -445,21 +504,27 @@ export default function ViewPresentation() {
           documentID={documentID!}
           authToken={authToken!}
           fetchOutlines={fetchOutlines}
+          isLoading={isLoading}
         />
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}
         <div className="flex-1">
           {/* MEDIUM LARGE SCREEN: SLIDE DISPLAY BOX*/}
           <div
-            className="no-scrollbar rounded-sm shadow-lg relative w-[90%] bg-white border border-gray-200 mb-2 ml-16 overflow-y-scroll snap-y snap-mandatory"
+            className="no-scrollbar rounded-sm shadow-lg relative w-[90%] bg-white border border-gray-200 mb-2 ml-12 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
           >
-            {Object.entries(slideImages).map(([outline], index) => (
+            {isSlideLoading && (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            )}
+            {outlines.map((outline, index) => (
               <div
-                key={outline}
+                key={outline.title}
                 ref={(el) => (slideRefs.current[index] = el!)}
-                className="snap-center w-full h-full"
+                className="snap-center scroll-smooth w-full h-full mb-4"
               >
                 {renderContent({
                   displayMode,
@@ -471,11 +536,11 @@ export default function ViewPresentation() {
           </div>
 
           {/* MEDIUM LARGE SCREEN: ACTION BUTTONS */}
-          <div className="flex items-center justify-between ml-16">
+          <div className="flex items-center justify-between ml-12">
             <div className="flex gap-2">
               <button
                 onClick={handleDelete}
-                className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
+                className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
               >
                 <FaTrash className="h-4 w-4 text-[#5D5F61] mr-1" />
                 <span className="hidden text-[#5D5F61] lg:block">
@@ -485,7 +550,7 @@ export default function ViewPresentation() {
               </button>
               <button
                 onClick={handleFinalize}
-                className={`p-2 rounded-md flex items-center border ${
+                className={`p-2 rounded-md flex items-center border active:scale-95 transition transform duration-300${
                   slidesId[currentSlideIndex] &&
                   finalized &&
                   selectedOutline === currentOutline
@@ -507,7 +572,7 @@ export default function ViewPresentation() {
               </button>
               <button
                 onClick={handlePlusClick}
-                className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center"
+                className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
               >
                 <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
                 <span className="hidden text-[#3667B2] lg:block">
@@ -518,11 +583,11 @@ export default function ViewPresentation() {
             </div>
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
-            <div className="flex items-center gap-2 mr-12">
+            <div className="flex items-center gap-2 mr-14">
               <button
                 onClick={handlePaginatePrev}
                 disabled={currentSlideIndex === 0}
-                className={`flex items-center hover:cursor-pointer border border-[#E1E3E5]  ${
+                className={`flex items-center hover:cursor-pointer border border-[#E1E3E5] active:scale-95 transition transform duration-300 ${
                   currentSlideIndex === 0
                     ? 'bg-gray-200 hover:cursor-default'
                     : 'bg-white'
@@ -536,7 +601,7 @@ export default function ViewPresentation() {
               <button
                 onClick={handlePaginateNext}
                 disabled={currentSlideIndex === slidesId.length - 1}
-                className={`flex items-center border hover:cursor-pointer border-[#E1E3E5] bg-white p-2 rounded-md ${
+                className={`flex items-center border hover:cursor-pointer border-[#E1E3E5] bg-white p-2 rounded-md active:scale-95 transition transform duration-300 ${
                   currentSlideIndex === slidesId.length - 1
                     ? 'text-gray-400'
                     : 'hover:text-blue-600'
@@ -555,19 +620,24 @@ export default function ViewPresentation() {
         <MobileHeading
           handleDownload={handleDownload}
           handleShare={handleShare}
-          pptName={pptName}
+          pptName={pptName!}
+          isLoading={isLoading}
         />
 
-        {/* MOBILE: OUTLINE DROPDOWN */}
+        {/* MOBILE: OUTLINE Modal */}
         <div className="space-y-4 mt-12 mb-7">
           <div className="block lg:hidden">
             {outlines && outlines.length > 0 && (
               <MobileOutlineModal
                 documentID={documentID!}
                 outlines={outlines}
-                onSelectOutline={(outline) => setSelectedOutline(outline)}
+                onSelectOutline={(outline) => {
+                  setCurrentOutline(outline)
+                  setSelectedOutline(outline)
+                }}
                 selectedOutline={selectedOutline}
                 fetchOutlines={fetchOutlines}
+                isLoading={isLoading}
               />
             )}
           </div>
@@ -575,10 +645,15 @@ export default function ViewPresentation() {
 
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
-          className={`relative bg-white h-[30vh] ${
+          className={`relative bg-white h-[30vh] w-full ${
             displayMode === 'People' ? 'h-[38vh]' : ''
           } border border-gray-200 mt-12 mb-6`}
         >
+          {isSlideLoading && (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          )}
           {renderContent({
             displayMode,
             isMobile: true,
@@ -646,7 +721,7 @@ export default function ViewPresentation() {
             >
               <FaArrowLeft
                 className={`h-4 w-4 ${
-                  currentSlide === 1 ? 'text-[#5D5F61]' : 'text-[#091220]'
+                  currentSlide === 0 ? 'text-[#5D5F61]' : 'text-[#091220]'
                 }`}
               />
             </button>
@@ -670,172 +745,3 @@ export default function ViewPresentation() {
     </div>
   )
 }
-
-// export type DisplayMode =
-//   | 'slides'
-//   | 'newContent'
-//   | 'slideNarrative'
-//   | 'customBuilder'
-//   | 'Points'
-//   | 'Timeline'
-//   | 'Images'
-//   | 'Table'
-//   | 'People'
-//   | 'Graphs'
-//   | 'Statistics'
-
-// export default function ViewPresentation() {
-//   const [outlines, setOutlines] = useState<Outline[]>([])
-//   const [currentOutlineIndex, setCurrentOutlineIndex] = useState(0)
-//   const [slideData, setSlideData] = useState<{ [key: string]: any }>({})
-//   const [selectedOutline, setSelectedOutline] = useState<string>('')
-//   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
-//   const navigate = useNavigate()
-//   const authToken = sessionStorage.getItem('authToken')
-//   const documentID = new URLSearchParams(useLocation().search).get(
-//     'documentID'
-//   )!
-
-//   const slideContainerRef = useRef<HTMLDivElement | null>(null)
-
-//   // Fetch Outlines from API
-//   const fetchOutlines = useCallback(async () => {
-//     try {
-//       const response = await axios.get(
-//         `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
-//         {
-//           headers: { Authorization: `Bearer ${authToken}` },
-//         }
-//       )
-//       const fetchedOutlines = response.data.outline
-//       setOutlines(fetchedOutlines)
-//       if (fetchedOutlines.length > 0) {
-//         setSelectedOutline(fetchedOutlines[0].title)
-//       }
-//     } catch (error) {
-//       console.error('Error fetching outlines:', error)
-//     }
-//   }, [authToken, documentID])
-
-//   // WebSocket for Slide Data
-//   useEffect(() => {
-//     const socket = io(SOCKET_URL, { transports: ['websocket'] })
-
-//     console.log('Connecting to WebSocket server...')
-
-//     // When connected
-//     socket.on('connect', () => {
-//       console.log('Connected to WebSocket server', socket.id)
-//     })
-
-//     // Listen for slide data from the backend
-//     socket.on('slidesData', (data) => {
-//       setSlideData((prev) => ({ ...prev, [selectedOutline]: data }))
-//     })
-
-//     // Handle any error messages from the backend
-//     socket.on('error', (error) => {
-//       console.error('Error:', error.message)
-//     })
-
-//     if (selectedOutline) {
-//       socket.emit('fetchSlides', { outline: 'Key Features' })
-//     }
-
-//     // Cleanup: disconnect the socket on component unmount
-//     return () => {
-//       console.log('Disconnecting from WebSocket server...')
-//       socket.disconnect()
-//     }
-//   }, [selectedOutline, SOCKET_URL])
-
-//   // Handle Sidebar Outline Selection
-//   const handleOutlineSelect = (outlineTitle: string) => {
-//     const index = outlines.findIndex((o) => o.title === outlineTitle)
-//     setCurrentOutlineIndex(index)
-//     setSelectedOutline(outlineTitle)
-//     slideContainerRef.current?.scrollTo({
-//       top: index * window.innerHeight,
-//       behavior: 'smooth',
-//     })
-//   }
-
-//   // Handle Scroll to Update Active Outline
-//   const handleScroll = () => {
-//     if (!slideContainerRef.current) return
-//     const scrollTop = slideContainerRef.current.scrollTop
-//     const newIndex = Math.floor(scrollTop / window.innerHeight)
-//     if (newIndex !== currentOutlineIndex && outlines[newIndex]) {
-//       setCurrentOutlineIndex(newIndex)
-//       setSelectedOutline(outlines[newIndex].title)
-//     }
-//   }
-
-//   useEffect(() => {
-//     fetchOutlines()
-//   }, [fetchOutlines])
-
-//   return (
-//     <div className="flex h-screen bg-gray-100">
-//       {/* Sidebar */}
-//       <Sidebar
-//         onOutlineSelect={handleOutlineSelect}
-//         selectedOutline={selectedOutline}
-//         fetchedOutlines={outlines}
-//         documentID={documentID}
-//         authToken={authToken!}
-//         fetchOutlines={fetchOutlines}
-//       />
-
-//       {/* Slide Display and Buttons */}
-//       <div className="flex-1 flex flex-col">
-//         {/* Slide Display Container */}
-//         <div
-//           className="flex-1 overflow-y-scroll snap-y snap-mandatory"
-//           ref={slideContainerRef}
-//           onScroll={handleScroll}
-//         >
-//           {outlines.map((outline, index) => (
-//             <div
-//               key={outline.title}
-//               className="h-screen flex items-center justify-center snap-center bg-white border-b"
-//             >
-//               {slideData[outline.title] ? (
-//                 <iframe
-//                   src={`https://docs.google.com/presentation/d/${
-//                     slideData[outline.title]?.presentationId
-//                   }/embed`}
-//                   title={`Slide ${index + 1}`}
-//                   className="w-[90%] h-[80%] border"
-//                 />
-//               ) : (
-//                 <p>Loading slide data...</p>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Static Action Buttons */}
-//         <div className="p-4 bg-white border-t flex justify-between items-center">
-//           <button
-//             onClick={() => navigate('/share')}
-//             className="bg-blue-500 text-white px-4 py-2 rounded"
-//           >
-//             Share
-//           </button>
-//           <div className="flex gap-2">
-//             <button className="bg-green-500 text-white px-4 py-2 rounded">
-//               Finalize
-//             </button>
-//             <button className="bg-gray-500 text-white px-4 py-2 rounded">
-//               Add New Version
-//             </button>
-//             <button className="bg-red-500 text-white px-4 py-2 rounded">
-//               Delete
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// }

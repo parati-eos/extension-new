@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Outlines, SidebarProps } from '../../types/types'
 import { toast } from 'react-toastify'
+import './viewpresentation.css'
 
 const Sidebar: React.FC<SidebarProps> = ({
   onOutlineSelect,
@@ -10,15 +11,33 @@ const Sidebar: React.FC<SidebarProps> = ({
   documentID,
   authToken,
   fetchOutlines,
+  isLoading,
 }) => {
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
   const [inputIndex, setInputIndex] = useState<number | null>(null)
   const [newOutline, setNewOutline] = useState<string>('')
+  const outlineRefs = useRef<(HTMLLIElement | null)[]>([])
 
   useEffect(() => {
     setOutlines(fetchedOutlines)
   }, [fetchedOutlines])
+
+  // Scroll to the selected outline
+  useEffect(() => {
+    const selectedIndex = outlines.findIndex(
+      (outline) => outline.title === selectedOutline
+    )
+    if (
+      selectedIndex !== -1 &&
+      outlineRefs.current[selectedIndex] // Ensure the ref exists
+    ) {
+      outlineRefs.current[selectedIndex]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }
+  }, [selectedOutline, outlines])
 
   const handleAddOutline = async (index: number) => {
     if (!newOutline.trim()) return
@@ -40,7 +59,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       )
       const result = response.data
       if (result.title && result.type) {
-        toast.success('Outline Successfully Added')
+        toast.success('Outline Successfully Added', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
         fetchOutlines()
       }
       setInputIndex(null)
@@ -51,11 +73,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   }
 
   return (
-    <div className="hidden lg:block w-1/8 h-fit p-4 bg-gray-50 ml-4 rounded-lg border border-gray-300 max-h-screen overflow-y-auto">
+    <div className="no-scrollbar no-scrollbar::-webkit-scrollbar hidden lg:block w-[22%] h-[85%] p-4 bg-gray-50 ml-4 rounded-xl border border-gray-300 overflow-y-auto">
+      {isLoading && (
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+        </div>
+      )}
       <ul className="space-y-2 relative">
         {outlines.map((outline, idx) => (
           <React.Fragment key={outline._id}>
             <li
+              ref={(el) => (outlineRefs.current[idx] = el)}
               className="relative group"
               onMouseEnter={() => setHoverIndex(idx)}
               onMouseLeave={() => setHoverIndex(null)}

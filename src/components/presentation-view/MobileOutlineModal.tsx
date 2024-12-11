@@ -9,6 +9,7 @@ interface MobileOutlineDropdownProps {
   selectedOutline: string
   documentID: string
   fetchOutlines: () => Promise<void>
+  isLoading: boolean
 }
 
 export default function MobileOutlineModal({
@@ -17,6 +18,7 @@ export default function MobileOutlineModal({
   selectedOutline,
   documentID,
   fetchOutlines,
+  isLoading,
 }: MobileOutlineDropdownProps) {
   const [isOutlinesOpen, setIsOutlinesOpen] = useState(false)
   const [isAddSlideModalOpen, setIsAddSlideModalOpen] = useState(false)
@@ -56,6 +58,11 @@ export default function MobileOutlineModal({
         className="border w-full rounded-lg p-4 bg-white"
         onClick={() => setIsOutlinesOpen(true)}
       >
+        {isLoading && (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+          </div>
+        )}
         {selectedOutline}
       </div>
 

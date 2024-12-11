@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { FaPaperclip, FaPlus } from 'react-icons/fa'
 import AttachImage from './shared/attachimage'
 import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { DisplayMode } from '../../../types/presentationView'
 
 interface StatisticProps {
   heading: string
@@ -158,17 +158,16 @@ export default function Statistics({
 
         {/* Generate Slide Button */}
         <button
-  onClick={handleGenerateSlide}
-  disabled={isGenerateDisabled || loading}
-  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-    isGenerateDisabled || loading
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
-  }`}
->
-  {loading ? 'Generating...' : 'Generate Slide'}
-</button>
-
+          onClick={handleGenerateSlide}
+          disabled={isGenerateDisabled || loading}
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 duration-300${
+            isGenerateDisabled || loading
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
+          }`}
+        >
+          {loading ? 'Generating...' : 'Generate Slide'}
+        </button>
       </div>
     </div>
   )

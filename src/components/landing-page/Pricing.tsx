@@ -1,87 +1,99 @@
-import React, { useState } from "react";
-import checkicon from "../../assets/Check icon.png"; // Importing the check icon
+import React, { useState } from 'react'
+import { FaCheckCircle } from 'react-icons/fa' // Importing the check icon
 
 const Pricing: React.FC = () => {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
-  const [pricingModal,setPricingModal]=useState(false)
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
+    'monthly'
+  )
 
   const categories = [
     {
-      title: "Access",
-      features: ["Generate Presentations", "Presentation Uploads"],
+      title: 'Access',
+      features: ['Generate Presentations', 'Presentation Uploads'],
     },
     {
-      title: "Features",
+      title: 'Features',
       features: [
-        "AI Presentation Creation",
-        "Presentation History",
-        "Slide Versioning",
-        "Add Custom Slides",
-        "Custom Slide Builder",
+        'AI Presentation Creation',
+        'Presentation History',
+        'Slide Versioning',
+        'Add Custom Slides',
+        'Custom Slide Builder',
       ],
     },
     {
-      title: "Sharing and Exports",
+      title: 'Sharing and Exports',
       features: [
-        "Presentation Sharing Links",
-        "PDF Exports",
-        "Google Slides Exports",
+        'Presentation Sharing Links',
+        'PDF Exports',
+        'Google Slides Exports',
       ],
     },
-  ];
+  ]
 
   const plans = [
     {
-      name: "FREE",
-      buttonText: "Get Started for Free",
-      description: "Perfect for exploring Zynth.",
+      name: 'FREE',
+      buttonText: 'Get Started for Free',
+      description: 'Perfect for exploring Zynth.',
       price: null, // No price for the free plan
       features: [
-        { text: "Unlimited", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
-        { text: "-", bgColor: "white", icon: null, spacing: "py-10 mb-9" },
-        { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-        { text: "-", bgColor: "white", icon: checkicon, spacing: "py-6" },
-        { text: "-", bgColor: "white", icon: checkicon, spacing: "py-6" },
-        { text: "-", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
-        { text: "-", bgColor: "white", icon: null, spacing: "py-6" },
-        { text: "-", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-        { text: "-", bgColor: "white", icon: null, spacing: "py-6" },
-        { text: "$9 / ₹ 499 / Export", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-10 mb-9' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
+        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
+        {
+          text: '$9 / ₹ 499 / Export',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-6',
+        },
       ],
     },
     {
-      name: "PRO",
-      buttonText: "Upgrade to Pro",
-      description: "Ideal for professionals and businesses.",
-      price: billingCycle === "monthly" ? (
-        <>
-          $9 <br /> ₹999 <br />
-          <span className="text-sm text-gray-500">per month</span>
-        </>
-      ) : (
-        <>
-          $90 <br /> ₹9999 <br />
-          <span className="text-sm text-gray-500">per year</span>
-        </>
-      ),
+      name: 'PRO',
+      buttonText: 'Upgrade to Pro',
+      description: 'Ideal for professionals and businesses.',
+      price:
+        billingCycle === 'monthly' ? (
+          <>
+            $9 <br /> ₹999 <br />
+            <span className="text-sm text-gray-500">per month</span>
+          </>
+        ) : (
+          <>
+            $90 <br /> ₹9999 <br />
+            <span className="text-sm text-gray-500">per year</span>
+          </>
+        ),
       features: [
-        { text: "Unlimited", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
-        { text: "Unlimited", bgColor: "white", icon: null, spacing: "py-10" },
-        { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-        { text: "✔", bgColor: "white", icon: checkicon, spacing: "py-6" },
-        { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-        { text: "Unlimited", bgColor: "white", icon: checkicon, spacing: "py-6" },
-        { text: "", bgColor: "white", icon: checkicon, spacing: "py-10" },
-        { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-        { text: "✔", bgColor: "white", icon: checkicon, spacing: "py-6" },
-        { text: "Unlimited", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
+        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-10' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        {
+          text: 'Unlimited',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-6',
+        },
+        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-10' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
       ],
     },
-  ];
+  ]
 
   return (
     <div className="bg-gray-50 w-full h-full" id="pricing">
-      <section className="py-16 min-h-[300px] ml-[250px]">
+      <section className="py-16 lg:min-h-[300px] lg:ml-[250px] ml-2">
         <div>
           <p className="text-indigo-600 text-lg mb-2">Pricing</p>
           <h1 className="text-gray-900 text-3xl font-bold mb-6">
@@ -90,21 +102,21 @@ const Pricing: React.FC = () => {
           <div className="inline-flex items-center bg-gray-200 rounded-full p-1">
             <button
               className={`px-4 py-2 rounded-full text-sm font-medium ${
-                billingCycle === "monthly"
-                  ? "bg-white text-gray-900 font-bold"
-                  : "bg-transparent text-gray-500"
+                billingCycle === 'monthly'
+                  ? 'bg-white text-gray-900 font-bold'
+                  : 'bg-transparent text-gray-500'
               }`}
-              onClick={() => setBillingCycle("monthly")}
+              onClick={() => setBillingCycle('monthly')}
             >
               Monthly billing
             </button>
             <button
               className={`px-4 py-2 rounded-full text-sm font-medium ${
-                billingCycle === "annual"
-                  ? "bg-white text-gray-900 font-bold"
-                  : "bg-transparent text-gray-500"
+                billingCycle === 'annual'
+                  ? 'bg-white text-gray-900 font-bold'
+                  : 'bg-transparent text-gray-500'
               }`}
-              onClick={() => setBillingCycle("annual")}
+              onClick={() => setBillingCycle('annual')}
             >
               Annual billing
             </button>
@@ -113,9 +125,9 @@ const Pricing: React.FC = () => {
       </section>
 
       <div className="bg-white w-full py-16 px-8">
-        <div className="max-w-6xl mx-auto grid grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
           {/* Side Component: Categories */}
-          <div className="mt-72">
+          <div className="mt-72 hidden lg:block">
             {categories.map((category, index) => (
               <div key={index} className="mb-10">
                 <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
@@ -135,7 +147,7 @@ const Pricing: React.FC = () => {
             <div
               key={planIndex}
               className={`bg-white border ${
-                planIndex === 1 ? "border-indigo-600" : "border-gray-200"
+                planIndex === 1 ? 'border-indigo-600' : 'border-gray-200'
               } rounded-lg shadow-lg p-6`}
             >
               <div className="flex flex-col items-center mb-8">
@@ -150,13 +162,12 @@ const Pricing: React.FC = () => {
                 <p className="text-gray-500 text-center">{plan.description}</p>
               </div>
               <button
-              onClick={() => setPricingModal(true)}
                 className={`w-full font-medium py-2 px-6 ${
-                  planIndex === 0 ? "mb-32" : ""
+                  planIndex === 0 ? 'mb-32' : ''
                 } rounded-lg ${
                   planIndex === 1
-                    ? "bg-[#3667B2] text-white hover:bg-indigo-700"
-                    : "border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50"
+                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
+                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
                 }`}
               >
                 {plan.buttonText}
@@ -168,21 +179,17 @@ const Pricing: React.FC = () => {
                     className={`flex items-center justify-center w-full ${feature.spacing}`}
                     style={{
                       backgroundColor: feature.bgColor,
-                      borderRadius: "0.375rem",
+                      borderRadius: '0.375rem',
                     }}
                   >
                     {feature.icon ? (
-                      <img
-                        src={feature.icon}
-                        alt="Check icon"
-                        className="h-5 w-5"
-                      />
+                      <FaCheckCircle className="h-5 w-5 text-green-500" />
                     ) : (
                       <span
                         className={`${
-                          feature.text === "-"
-                            ? "text-gray-400 text-lg"
-                            : "text-gray-900"
+                          feature.text === '-'
+                            ? 'text-gray-400 text-lg'
+                            : 'text-gray-900'
                         }`}
                       >
                         {feature.text}
@@ -194,8 +201,8 @@ const Pricing: React.FC = () => {
               <button
                 className={`w-full font-medium py-2 px-6 rounded-lg ${
                   planIndex === 1
-                    ? "bg-[#3667B2] text-white hover:bg-indigo-700"
-                    : "border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50"
+                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
+                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
                 }`}
               >
                 {plan.buttonText}
@@ -205,11 +212,10 @@ const Pricing: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Pricing;
-
+export default Pricing
 
 // export const PricingModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 //   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
@@ -248,12 +254,12 @@ export default Pricing;
 //       features: [
 //         { text: "Unlimited", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
 //         { text: "-", bgColor: "white", icon: null, spacing: "py-10 mb-9" },
-//         { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-//         { text: "-", bgColor: "white", icon: checkicon, spacing: "py-6" },
-//         { text: "-", bgColor: "white", icon: checkicon, spacing: "py-6" },
+//         { text: "✔", bgColor: "#F5F7FA", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "-", bgColor: "white", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "-", bgColor: "white", icon: FaCheckCircle, spacing: "py-6" },
 //         { text: "-", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
 //         { text: "-", bgColor: "white", icon: null, spacing: "py-6" },
-//         { text: "-", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
+//         { text: "-", bgColor: "#F5F7FA", icon: FaCheckCircle, spacing: "py-6" },
 //         { text: "-", bgColor: "white", icon: null, spacing: "py-6" },
 //         { text: "$9 / ₹ 499 / Export", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
 //       ],
@@ -276,13 +282,13 @@ export default Pricing;
 //       features: [
 //         { text: "Unlimited", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
 //         { text: "Unlimited", bgColor: "white", icon: null, spacing: "py-10" },
-//         { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-//         { text: "✔", bgColor: "white", icon: checkicon, spacing: "py-6" },
-//         { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-//         { text: "Unlimited", bgColor: "white", icon: checkicon, spacing: "py-6" },
-//         { text: "", bgColor: "white", icon: checkicon, spacing: "py-10" },
-//         { text: "✔", bgColor: "#F5F7FA", icon: checkicon, spacing: "py-6" },
-//         { text: "✔", bgColor: "white", icon: checkicon, spacing: "py-6" },
+//         { text: "✔", bgColor: "#F5F7FA", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "✔", bgColor: "white", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "✔", bgColor: "#F5F7FA", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "Unlimited", bgColor: "white", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "", bgColor: "white", icon: FaCheckCircle, spacing: "py-10" },
+//         { text: "✔", bgColor: "#F5F7FA", icon: FaCheckCircle, spacing: "py-6" },
+//         { text: "✔", bgColor: "white", icon: FaCheckCircle, spacing: "py-6" },
 //         { text: "Unlimited", bgColor: "#F5F7FA", icon: null, spacing: "py-6" },
 //       ],
 //     },
@@ -421,4 +427,3 @@ export default Pricing;
 //     </div>
 //   );
 // };
-
