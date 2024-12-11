@@ -98,7 +98,7 @@ export default function Points({
           isScrollRequired ? 'scrollbar' : ''
         }`}
         style={{
-          maxHeight: window.innerWidth >= 768 ? '50vh' : '40vh',
+          maxHeight: window.innerWidth >= 768 ? '70vh' : '40vh',
         }}
       >
         {points.map((point, index) => (
@@ -116,17 +116,21 @@ export default function Points({
               className="flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {/* Render the "Add new point" button only under the last point */}
-            {index === points.length - 1 &&
-              points.length < 6 &&
-              point.trim() !== '' && (
-                <button
-                  onClick={addNewPoint}
-                  className="text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2 w-[80%] md:w-[17%] items-center md:justify-center h-10"
-                >
-                  <FaPlus className="text-[#000000]" />
-                  <span>Add new point</span>
-                </button>
-              )}
+            {/* Add New Point Button */}
+            {index === points.length - 1 && points.length < 6 && (
+              <button
+                onClick={addNewPoint}
+                className={`text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2 w-[80%] md:w-[17%] items-center md:justify-center h-10 mt-4 ${
+                  point.trim() === ''
+                    ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
+                    : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
+                }`}
+                disabled={point.trim() === ''} // Prevent adding a new point if the current input is empty
+              >
+                <FaPlus className="text-[#000000]" />
+                <span>Add new point</span>
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -140,7 +144,7 @@ export default function Points({
         <button
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled || isLoading}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md active:scale-95 transition transform duration-300${
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
             isGenerateDisabled || isLoading
               ? 'bg-gray-200 text-gray-500'
               : 'bg-[#3667B2] text-white'

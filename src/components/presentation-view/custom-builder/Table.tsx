@@ -30,22 +30,18 @@ export default function Table({
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
       .fill(null)
-      .map(() => Array(2).fill('')), // Start with 2 rows and 2 columns
+      .map(() => Array(2).fill('')),
     columnHeaders: ['Column 1', 'Column 2'],
     rowHeaders: ['Row 1', 'Row 2'],
   })
   const [canGenerate, setCanGenerate] = useState(false)
 
   useEffect(() => {
-    // Validate the data to check if at least 2 cells in 2 different rows and columns are filled
-    const nonEmptyRows = tableData.rows.filter((row) =>
+    // Check if there's at least one non-empty cell in any row and any column
+    const hasNonEmptyCell = tableData.rows.some((row) =>
       row.some((cell) => cell.trim() !== '')
-    ).length
-    const nonEmptyColumns = tableData.columnHeaders.filter((_, colIndex) =>
-      tableData.rows.some((row) => row[colIndex]?.trim() !== '')
-    ).length
-
-    setCanGenerate(nonEmptyRows >= 2 && nonEmptyColumns >= 2)
+    )
+    setCanGenerate(hasNonEmptyCell)
   }, [tableData])
 
   const handleAddRow = () => {
@@ -120,7 +116,6 @@ export default function Table({
     }
   }
 
-  // Helper function to transform a row into IRow format
   const transformRow = (
     row: string[]
   ): {
@@ -191,21 +186,17 @@ export default function Table({
 
   return (
     <div className="flex flex-col w-full h-full">
-      {/* Top Section: Headings */}
       <div className="flex lg:mt-2 items-center justify-between w-full px-4">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
         <BackButton onClick={onBack} />
       </div>
-
-      {/* Table Section */}
       <div className="flex-1 px-4 py-4 overflow-x-auto">
         <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
           <table className="table-auto border-collapse w-full">
             <thead>
               <tr>
-                {/* Empty cell for row headers */}
                 <th className="bg-gray-100 p-2"></th>
                 {tableData.columnHeaders.map((header, index) => (
                   <th key={index} className="bg-gray-100 p-2">
@@ -219,7 +210,6 @@ export default function Table({
                     />
                   </th>
                 ))}
-                {/* Add and Remove Column Buttons */}
                 <th className="bg-gray-50 p-2">
                   <div className="flex justify-center gap-2">
                     <button
@@ -228,7 +218,7 @@ export default function Table({
                       className={`${
                         tableData.columnHeaders.length >= 5
                           ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
+                          : 'text-[#3667B2]'
                       } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
                     >
                       <FaPlus />
@@ -239,7 +229,7 @@ export default function Table({
                       className={`${
                         tableData.columnHeaders.length <= 2
                           ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
+                          : 'text-[#3667B2]'
                       } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
                     >
                       <FaMinus />
@@ -251,7 +241,6 @@ export default function Table({
             <tbody>
               {tableData.rows.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {/* Row Header */}
                   <td className="bg-gray-100">
                     <input
                       type="text"
@@ -288,8 +277,8 @@ export default function Table({
                       className={`${
                         tableData.rows.length >= 8
                           ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
-                      } bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center`}
+                          : 'text-[#3667B2]'
+                      } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
                     >
                       <FaPlus />
                     </button>
@@ -299,8 +288,8 @@ export default function Table({
                       className={`${
                         tableData.rows.length <= 2
                           ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
-                      } bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center`}
+                          : 'text-[#3667B2]'
+                      } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
                     >
                       <FaMinus />
                     </button>
@@ -311,19 +300,20 @@ export default function Table({
           </table>
         </div>
       </div>
-
-      {/* Generate Slide Button */}
-      <button
-        onClick={handleGenerateSlide}
-        disabled={!canGenerate}
-        className={`absolute bottom-4 right-4 py-2 px-4 rounded-md transition-all duration-200 transform active:scale-95 duration-300${
-          canGenerate
-            ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-            : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-        }`}
-      >
-        Generate Slide
-      </button>
+      <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
+        {/* Generate Slide Button */}
+        <button
+          onClick={handleGenerateSlide}
+          disabled={!canGenerate}
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+            canGenerate
+              ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+              : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+          }`}
+        >
+          Generate Slide
+        </button>
+      </div>
     </div>
   )
 }

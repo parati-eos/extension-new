@@ -23,12 +23,12 @@ const Navbar = () => {
     <nav className="bg-white p-2 pt-8 lg:p-3">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
-        <a href="/" target="_blank">
-          <img
-            src={ZynthLogoText}
-            alt="Logo Text"
-            className="h-8 hover:scale-105 active:scale-90 transition transform duration-300"
-          />
+        <a
+          className="transition-all duration-300 transform hover:scale-110 active:scale-95 active:opacity-80"
+          href="/"
+          target="_blank"
+        >
+          <img src={ZynthLogoText} alt="Logo Text" className="h-8" />
         </a>
 
         {/* Menu */}

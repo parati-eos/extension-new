@@ -139,14 +139,14 @@ export default function Statistics({
             onClick={addNewPoint}
             type="button"
             disabled={isAddDisabled}
-            className={`flex items-center justify-center py-2 px-4 rounded-md mt-4 ml-4 border border-gray-300 ${
+            className={`flex items-center justify-center py-2 px-4 rounded-md mt-4 ml-4 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
               title.length >= 6 || isAddDisabled
-                ? 'bg-white cursor-not-allowed'
-                : 'bg-white hover:bg-gray-100'
-            } lg:w-[149px] lg:h-[48px]`}
+              ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
+              : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
+            } `}
           >
             <FaPlus className="h-4 w-4 mr-2 text-black" />
-            <span className="text-[#5D5F61] font-medium">Add Data</span>
+            <span>Add Data</span>
           </button>
         )}
       </div>

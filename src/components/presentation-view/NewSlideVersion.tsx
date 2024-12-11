@@ -1,6 +1,6 @@
-import CustomBuilderIcon from '../../assets/custom-builder.png'
-import SlideNarrativeIcon from '../../assets/slide-narrative.png'
-import QuickGenerateIcon from '../../assets/quick-generate.png'
+import CustomBuilderIcon from '../../assets/custom-builder.svg'
+import SlideNarrativeIcon from '../../assets/Slide narrative.svg'
+import QuickGenerateIcon from '../../assets/quick generate.svg'
 
 interface ButtonProps {
   handleQuickGenerate: () => void
@@ -90,7 +90,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={QuickGenerateIcon}
               alt="Quick Generate"
-              className="object-contain mb-4 w-2/5"
+              className="object-none mb-4 mt-4"
             />
             <span className="text-base font-medium">Quick Generate</span>
           </button>
@@ -107,7 +107,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={SlideNarrativeIcon}
               alt="Slide Narrative"
-              className="object-contain mb-4 w-2/5"
+               className="object-none mb-4 mt-4"
             />
             <span className="text-base font-medium">Slide Narrative</span>
           </button>
@@ -124,7 +124,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={CustomBuilderIcon}
               alt="Custom Builder"
-              className="object-contain mb-4 w-2/5"
+                className="object-none mb-4 mt-4"
             />
             <span className="text-base font-medium">Custom Builder</span>
           </button>

@@ -4,36 +4,80 @@ import { useNavigate } from 'react-router-dom'
 
 const LandingPageNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0)
+      if (window.scrollY > 0) {
+        setIsScrolled(true) // Navbar hides when scrolled down
+      } else {
+        setIsScrolled(false) // Navbar visible when at the top
+      }
+      resetInactivityTimer() // Reset inactivity timer on scroll
+    }
+
+    const handleMouseMove = () => {
+      resetInactivityTimer() // Reset inactivity timer on mouse move
+    }
+
+    // Inactivity timer function
+    let inactivityTimer: NodeJS.Timeout
+    const startInactivityTimer = () => {
+      inactivityTimer = setTimeout(() => {
+        if (isScrolled) {
+          // Only hide when scrolled down
+          setIsNavbarVisible(false) // Hide navbar after inactivity
+        }
+      }, 1000) // 1 second of inactivity
+    }
+
+    const resetInactivityTimer = () => {
+      setIsNavbarVisible(true) // Show navbar when activity occurs
+      clearTimeout(inactivityTimer) // Clear any existing timers
+      startInactivityTimer() // Start a new timer
+    }
+
+    // Handle hover at the top of the page
+    const handleMouseEnter = (e: MouseEvent) => {
+      if (e.clientY < 50) {
+        // If mouse is near the top
+        setIsNavbarVisible(true) // Show navbar
+      }
     }
 
     window.addEventListener('scroll', handleScroll)
+    window.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mousemove', handleMouseEnter) // Hover near the top
+
+    startInactivityTimer() // Start the inactivity timer when the component mounts
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mousemove', handleMouseEnter)
+      clearTimeout(inactivityTimer) // Clean up timer when component unmounts
     }
-  }, [])
+  }, [isScrolled])
 
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-      }`}
+      } ${isNavbarVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} // Hide navbar when inactive
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800">
           <span className="flex items-center">
-            <a href="/" target="_blank" rel="noopener noreferrer">
-              <img
-                className="h-8 hover:scale-105 active:scale-90 transform transition duration-300"
-                src={zynthtext}
-                alt="Zynth"
-              />
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-all duration-300 transform hover:scale-110 active:scale-95 active:opacity-80"
+            >
+              <img className="h-8" src={zynthtext} alt="Zynth" />
             </a>
           </span>
         </div>
@@ -77,9 +121,7 @@ const LandingPageNavbar: React.FC = () => {
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
             onClick={(e) => {
               e.preventDefault()
-              document
-                .getElementById('pricing')
-                ?.scrollIntoView({ behavior: 'smooth' })
+              window.open('/pricing', '_blank')
             }}
           >
             Pricing
