@@ -22,28 +22,42 @@ export default function Images({
   authToken,
   setDisplayMode,
 }: ImagesProps) {
+  
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, replaceIndex?: number) => {
     if (!e.target.files) return
     const files = Array.from(e.target.files)
 
-    if (images.length + files.length > 4) {
+    if (replaceIndex === undefined && images.length + files.length > 4) {
       alert('You can upload a maximum of 4 images.')
       return
     }
 
-    setIsUploading(true)
+    if (replaceIndex !== undefined) setReplacingIndex(replaceIndex)
+    else setIsUploading(true)
+
     try {
       const uploadedImages = await Promise.all(
         files.map((file) => uploadLogoToS3(file))
       )
-      setImages((prevImages) => [...prevImages, ...uploadedImages])
+
+      if (replaceIndex !== undefined) {
+        setImages((prevImages) => {
+          const updatedImages = [...prevImages]
+          updatedImages[replaceIndex] = uploadedImages[0]
+          return updatedImages
+        })
+      } else {
+        setImages((prevImages) => [...prevImages, ...uploadedImages])
+      }
     } catch (error) {
       console.error('Upload failed:', error)
     } finally {
       setIsUploading(false)
+      setReplacingIndex(null)
     }
   }
 
@@ -86,24 +100,49 @@ export default function Images({
       <div className="flex justify-center w-full md:mt-4 lg:mt-8 xl:mt-12">
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
           {images.map((image, index) => (
-            <div key={index} className="w-full aspect-square">
+            <div key={index} className="w-full aspect-square relative">
               <img
                 src={image}
                 alt={`Uploaded ${index + 1}`}
                 className="w-full h-full object-cover rounded-lg"
               />
+              <button
+                onClick={() => document.getElementById(`replaceInput${index}`)?.click()}
+                className="absolute top-2 right-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-lg hover:bg-gray-600"
+              >
+                Reupload
+              </button>
+              <input
+                type="file"
+                id={`replaceInput${index}`}
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => handleFileChange(e, index)}
+              />
             </div>
           ))}
 
           {images.length < 4 && (
-            <div className="flex items-center justify-center w-full h-[30%] md:h-full aspect-square border border-gray-300 rounded-lg">
+            <div className="flex flex-col items-center justify-center w-full h-[30%] md:h-full aspect-square border border-gray-300 rounded-lg">
               <button
                 onClick={() => document.getElementById('imageInput')?.click()}
                 className="flex md:flex-col gap-2 md:gap-0 items-center justify-center w-full h-full"
               >
                 <FaImage className="text-2xl text-gray-500" />
                 <p className="text-gray-500 text-sm md:mt-2">
-                  {isUploading ? 'Uploading...' : 'Upload Image'}
+                  {isUploading && replacingIndex === null ? (
+                    <>
+                      Uploading...
+                      <br />
+                      Please wait
+                    </>
+                  ) : (
+                    <>
+                      Upload Image
+                      <br />
+                      Up to 4 images can be added
+                    </>
+                  )}
                 </p>
               </button>
               <input
@@ -112,26 +151,28 @@ export default function Images({
                 className="hidden"
                 accept="image/*"
                 multiple
-                onChange={handleFileChange}
+                onChange={(e) => handleFileChange(e)}
               />
             </div>
           )}
         </div>
       </div>
-
+      <div className="mt-auto flex w-full px-4 justify-between lg:justify-start lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
       {/* Generate Slide Button */}
       <button
-  onClick={handleSubmit}
-  disabled={!images}
-  className={`absolute bottom-4 right-4 py-2 px-4 rounded-md transition-all duration-200 transform ${
-    images
-      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-      : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-  }`}
->
- Generate Slide
-</button>
-
+        onClick={handleSubmit}
+        disabled={images.length === 0}
+        className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+          images.length
+            ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+            : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+        }`}
+      >
+        Generate Slide
+      </button>
+      
     </div>
+    </div>
+    
   )
 }

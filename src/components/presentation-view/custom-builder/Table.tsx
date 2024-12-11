@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { FaPlus, FaMinus } from 'react-icons/fa'
-import { BackButton } from './shared/BackButton'
-import { DisplayMode } from '../ViewPresentation'
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FaPlus, FaMinus } from 'react-icons/fa';
+import { BackButton } from './shared/BackButton';
+import { DisplayMode } from '../ViewPresentation';
 
 interface TableData {
-  rows: string[][]
-  columnHeaders: string[]
-  rowHeaders: string[]
+  rows: string[][];
+  columnHeaders: string[];
+  rowHeaders: string[];
 }
 
 interface TableProps {
-  heading: string
-  slideType: string
-  documentID: string
-  orgId: string
-  authToken: string
-  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  heading: string;
+  slideType: string;
+  documentID: string;
+  orgId: string;
+  authToken: string;
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>;
 }
 
 export default function Table({
@@ -30,23 +30,19 @@ export default function Table({
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
       .fill(null)
-      .map(() => Array(2).fill('')), // Start with 2 rows and 2 columns
+      .map(() => Array(2).fill('')),
     columnHeaders: ['Column 1', 'Column 2'],
     rowHeaders: ['Row 1', 'Row 2'],
-  })
-  const [canGenerate, setCanGenerate] = useState(false)
+  });
+  const [canGenerate, setCanGenerate] = useState(false);
 
   useEffect(() => {
-    // Validate the data to check if at least 2 cells in 2 different rows and columns are filled
-    const nonEmptyRows = tableData.rows.filter((row) =>
+    // Check if there's at least one non-empty cell in any row and any column
+    const hasNonEmptyCell = tableData.rows.some((row) =>
       row.some((cell) => cell.trim() !== '')
-    ).length
-    const nonEmptyColumns = tableData.columnHeaders.filter((_, colIndex) =>
-      tableData.rows.some((row) => row[colIndex]?.trim() !== '')
-    ).length
-
-    setCanGenerate(nonEmptyRows >= 2 && nonEmptyColumns >= 2)
-  }, [tableData])
+    );
+    setCanGenerate(hasNonEmptyCell);
+  }, [tableData]);
 
   const handleAddRow = () => {
     if (tableData.rows.length < 8) {
@@ -54,9 +50,9 @@ export default function Table({
         ...prev,
         rows: [...prev.rows, Array(prev.columnHeaders.length).fill('')],
         rowHeaders: [...prev.rowHeaders, `Row ${prev.rowHeaders.length + 1}`],
-      }))
+      }));
     }
-  }
+  };
 
   const handleRemoveRow = () => {
     if (tableData.rows.length > 2) {
@@ -64,9 +60,9 @@ export default function Table({
         ...prev,
         rows: prev.rows.slice(0, -1),
         rowHeaders: prev.rowHeaders.slice(0, -1),
-      }))
+      }));
     }
-  }
+  };
 
   const handleAddColumn = () => {
     if (tableData.columnHeaders.length < 5) {
@@ -77,9 +73,9 @@ export default function Table({
           `Column ${prev.columnHeaders.length + 1}`,
         ],
         rows: prev.rows.map((row) => [...row, '']),
-      }))
+      }));
     }
-  }
+  };
 
   const handleRemoveColumn = () => {
     if (tableData.columnHeaders.length > 2) {
@@ -87,9 +83,9 @@ export default function Table({
         ...prev,
         columnHeaders: prev.columnHeaders.slice(0, -1),
         rows: prev.rows.map((row) => row.slice(0, -1)),
-      }))
+      }));
     }
-  }
+  };
 
   const handleCellChange = (
     rowIndex: number,
@@ -100,9 +96,9 @@ export default function Table({
       i === rowIndex
         ? row.map((cell, j) => (j === colIndex ? value : cell))
         : row
-    )
-    setTableData((prev) => ({ ...prev, rows: updatedRows }))
-  }
+    );
+    setTableData((prev) => ({ ...prev, rows: updatedRows }));
+  };
 
   const handleHeaderChange = (
     index: number,
@@ -110,25 +106,24 @@ export default function Table({
     isColumn: boolean
   ) => {
     if (isColumn) {
-      const updatedHeaders = [...tableData.columnHeaders]
-      updatedHeaders[index] = value
-      setTableData((prev) => ({ ...prev, columnHeaders: updatedHeaders }))
+      const updatedHeaders = [...tableData.columnHeaders];
+      updatedHeaders[index] = value;
+      setTableData((prev) => ({ ...prev, columnHeaders: updatedHeaders }));
     } else {
-      const updatedHeaders = [...tableData.rowHeaders]
-      updatedHeaders[index] = value
-      setTableData((prev) => ({ ...prev, rowHeaders: updatedHeaders }))
+      const updatedHeaders = [...tableData.rowHeaders];
+      updatedHeaders[index] = value;
+      setTableData((prev) => ({ ...prev, rowHeaders: updatedHeaders }));
     }
-  }
+  };
 
-  // Helper function to transform a row into IRow format
   const transformRow = (
     row: string[]
   ): {
-    attribute1: string
-    attribute2: string
-    attribute3: string
-    attribute4: string
-    attribute5: string
+    attribute1: string;
+    attribute2: string;
+    attribute3: string;
+    attribute4: string;
+    attribute5: string;
   } => {
     return {
       attribute1: row[0] || '',
@@ -136,8 +131,8 @@ export default function Table({
       attribute3: row[2] || '',
       attribute4: row[3] || '',
       attribute5: row[4] || '',
-    }
-  }
+    };
+  };
 
   const handleGenerateSlide = async () => {
     try {
@@ -177,35 +172,31 @@ export default function Table({
             Authorization: `Bearer ${authToken}`,
           },
         }
-      )
-      alert('Data successfully sent to the server!')
+      );
+      alert('Data successfully sent to the server!');
     } catch (error) {
-      console.error('Error sending data:', error)
-      alert('Failed to send data.')
+      console.error('Error sending data:', error);
+      alert('Failed to send data.');
     }
-  }
+  };
 
   const onBack = () => {
-    setDisplayMode('customBuilder')
-  }
+    setDisplayMode('customBuilder');
+  };
 
   return (
     <div className="flex flex-col w-full h-full">
-      {/* Top Section: Headings */}
       <div className="flex lg:mt-2 items-center justify-between w-full px-4">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
         <BackButton onClick={onBack} />
       </div>
-
-      {/* Table Section */}
       <div className="flex-1 px-4 py-4 overflow-x-auto">
         <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
           <table className="table-auto border-collapse w-full">
             <thead>
               <tr>
-                {/* Empty cell for row headers */}
                 <th className="bg-gray-100 p-2"></th>
                 {tableData.columnHeaders.map((header, index) => (
                   <th key={index} className="bg-gray-100 p-2">
@@ -219,7 +210,6 @@ export default function Table({
                     />
                   </th>
                 ))}
-                {/* Add and Remove Column Buttons */}
                 <th className="bg-gray-50 p-2">
                   <div className="flex justify-center gap-2">
                     <button
@@ -228,7 +218,7 @@ export default function Table({
                       className={`${
                         tableData.columnHeaders.length >= 5
                           ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
+                          : 'text-[#3667B2]'
                       } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
                     >
                       <FaPlus />
@@ -239,7 +229,7 @@ export default function Table({
                       className={`${
                         tableData.columnHeaders.length <= 2
                           ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
+                          : 'text-[#3667B2]'
                       } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
                     >
                       <FaMinus />
@@ -251,7 +241,6 @@ export default function Table({
             <tbody>
               {tableData.rows.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {/* Row Header */}
                   <td className="bg-gray-100">
                     <input
                       type="text"
@@ -282,49 +271,49 @@ export default function Table({
                 {/* Add and Remove Row Buttons */}
                 <td className="bg-gray-50 w-full p-2 flex items-center justify-center">
                   <div className="flex justify-center gap-2">
-                    <button
-                      onClick={handleAddRow}
-                      disabled={tableData.rows.length >= 8}
-                      className={`${
-                        tableData.rows.length >= 8
-                          ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
-                      } bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center`}
-                    >
-                      <FaPlus />
-                    </button>
-                    <button
-                      onClick={handleRemoveRow}
-                      disabled={tableData.rows.length <= 2}
-                      className={`${
-                        tableData.rows.length <= 2
-                          ? 'text-gray-400 cursor-not-allowed'
-                          : 'text-[#8A8B8C]'
-                      } bg-white border border-[#E1E3E5] rounded-full p-1 flex items-center justify-center`}
-                    >
-                      <FaMinus />
-                    </button>
-                  </div>
+          <button
+            onClick={handleAddRow}
+            disabled={tableData.rows.length >= 8}
+            className={`${
+              tableData.rows.length >= 8
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-[#3667B2]'
+            } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
+          >
+            <FaPlus />
+          </button>
+          <button
+            onClick={handleRemoveRow}
+            disabled={tableData.rows.length <= 2}
+            className={`${
+              tableData.rows.length <= 2
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'text-[#3667B2]'
+            } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
+          >
+            <FaMinus />
+          </button>
+        </div>
                 </td>
               </tr>
             </tfoot>
           </table>
         </div>
       </div>
-
+      <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
       {/* Generate Slide Button */}
-      <button
-  onClick={handleGenerateSlide}
-  disabled={!canGenerate}
-  className={`absolute bottom-4 right-4 py-2 px-4 rounded-md transition-all duration-200 transform ${
-    canGenerate
+        <button
+          onClick={handleGenerateSlide}
+          disabled={!canGenerate}
+  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+            canGenerate
       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
       : 'bg-gray-400 text-gray-200 cursor-not-allowed'
   }`}
->
-  Generate Slide
-</button>
-
-    </div>
-  )
+        >
+          Generate Slide
+        </button>
+      </div>
+      </div>
+  );
 }

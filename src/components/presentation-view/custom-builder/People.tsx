@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { FaImage } from 'react-icons/fa'
+import { useState, useRef, useEffect } from 'react'
+import { FaImage, FaPlus } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
@@ -20,6 +20,7 @@ interface IPerson {
   designation: string
   company: string
   description: string
+  loading: boolean // Added loading state to each person
 }
 
 export default function People({
@@ -37,9 +38,17 @@ export default function People({
       company: '',
       description: '',
       image: '',
+      loading: false, // Initial loading state for the first person
     },
   ])
-  const [isLoading, setIsLoading] = useState(false)
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [people]);
 
   const handleInputChange = (value: string, index: number, field: string) => {
     const updatedPeople = [...people]
@@ -48,68 +57,89 @@ export default function People({
   }
 
   const handleImageUpload = async (file: File | null, index: number) => {
-    if (file) {
-      setIsLoading(true)
-      try {
-        const url = await uploadLogoToS3(file)
-        setPeople((prevPeople) => {
-          const updatedPeople = [...prevPeople]
-          updatedPeople[index].image = url
-          return updatedPeople
-        })
-      } catch (error) {
-        console.error('Error uploading image:', error)
-      } finally {
-        setIsLoading(false)
-      }
+    if (!file) {
+      setPeople((prevPeople) => {
+        const updatedPeople = [...prevPeople]
+        updatedPeople[index].image = '' // Clear existing image
+        updatedPeople[index].loading = false // Set loading to false when no file
+        return updatedPeople
+      })
+      return
+    }
+
+    setPeople((prevPeople) => {
+      const updatedPeople = [...prevPeople]
+      updatedPeople[index].loading = true // Set loading to true for the current person
+      return updatedPeople
+    })
+
+    try {
+      const url = await uploadLogoToS3(file)
+      setPeople((prevPeople) => {
+        const updatedPeople = [...prevPeople]
+        updatedPeople[index].image = url
+        updatedPeople[index].loading = false // Set loading to false after upload
+        return updatedPeople
+      })
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      setPeople((prevPeople) => {
+        const updatedPeople = [...prevPeople]
+        updatedPeople[index].loading = false // Set loading to false on error
+        return updatedPeople
+      })
     }
   }
 
   const addNewPerson = () => {
     const currentPerson = people[people.length - 1]
 
-    if (
-      currentPerson.name &&
-      currentPerson.designation &&
-      currentPerson.company &&
-      currentPerson.description &&
-      currentPerson.image
-    ) {
-      if (people.length < 6) {
-        setPeople([
-          ...people,
-          {
-            name: '',
-            designation: '',
-            company: '',
-            description: '',
-            image: '',
-          },
-        ])
-      }
+    // Ensure the mandatory fields are filled before adding a new person
+    if (!currentPerson.name.trim() || !currentPerson.description.trim()) {
+      alert('Please fill in the required fields (Name and Description) before adding a new person.')
+      return
     }
+
+    // Limit the number of people to 6
+    if (people.length >= 6) {
+      alert('You can only add up to 6 people.')
+      return
+    }
+
+    // Add a new person with default values
+    setPeople([
+      ...people,
+      {
+        name: '',
+        designation: '',
+        company: '',
+        description: '',
+        image: '',
+        loading: false, // Initialize loading state for the new person
+      },
+    ])
   }
 
   const isAddMoreDisabled = (() => {
     const currentPerson = people[people.length - 1]
     return (
       !currentPerson.name.trim() ||
-      !currentPerson.designation.trim() ||
-      !currentPerson.company.trim() ||
       !currentPerson.description.trim() ||
-      !currentPerson.image ||
       people.length >= 6
     )
   })()
 
-  // Enable "Generate Slide" if at least one person is fully filled out
-  const isGenerateDisabled = !(
-    people.length > 0 &&
+  const isGenerateDisabled = !(people.length >= 2 && // At least two people
     people[0].name.trim() &&
     people[0].designation.trim() &&
     people[0].company.trim() &&
     people[0].description.trim() &&
-    people[0].image
+    people[0].image &&
+    people[1].name.trim() && // Ensure the second person also has filled fields
+    people[1].designation.trim() &&
+    people[1].company.trim() &&
+    people[1].description.trim() &&
+    people[1].image
   )
 
   const handleGenerateSlide = async () => {
@@ -145,7 +175,6 @@ export default function People({
 
   return (
     <div className="flex flex-col w-full h-full">
-      {/* Heading Section */}
       <div className="flex items-center justify-between w-full p-4">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
@@ -153,8 +182,8 @@ export default function People({
         <BackButton onClick={onBack} />
       </div>
 
-      {/* Input Section */}
       <div
+        ref={containerRef}
         className={`flex-1 px-4 overflow-y-auto md:mt-1 ${
           people.length > 3 ? 'max-h-[calc(100vh-200px)]' : ''
         }`}
@@ -207,7 +236,23 @@ export default function People({
             />
 
             <div className="flex items-center gap-2">
-              {!person.image && !isLoading && (
+              {person.image && (
+                <div className="flex items-center gap-2">
+                  <img
+                    src={person.image}
+                    alt="Uploaded"
+                    className="w-8 h-8 object-cover border border-gray-300"
+                  />
+                  <button
+                    onClick={() => handleImageUpload(null, index)} // Trigger reupload
+                    className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 hover:text-blue-800 transition-all duration-200"
+                  >
+                    Change Image
+                  </button>
+                </div>
+              )}
+
+              {!person.image && !person.loading && (
                 <label className="flex items-center gap-6 md:gap-2 border border-gray-300 px-4 py-2 rounded-md w-[100%] lg:w-[32%] cursor-pointer text-blue-500">
                   <FaImage />
                   <span className="hidden md:block">Select Image</span>
@@ -222,51 +267,44 @@ export default function People({
                   />
                 </label>
               )}
-              {isLoading && <span className="text-gray-500">Uploading...</span>}
-              {person.image && (
-                <img
-                  src={person.image}
-                  alt="Uploaded"
-                  className="w-8 h-8 object-cover border border-gray-300"
-                />
-              )}
+
+              {person.loading && <span className="text-gray-500">Uploading...</span>}
             </div>
 
-            {/* Add More People Button - Medium/Large Screens */}
             {index === people.length - 1 && window.innerWidth >= 768 && (
-              <button
-                onClick={addNewPerson}
-                disabled={isAddMoreDisabled}
-                className={`hidden lg:flex items-center justify-center w-[12%] py-2 rounded-md ${
-                  isAddMoreDisabled
-                    ? 'bg-gray-200 text-gray-500'
-                    : 'bg-[#3667B2] text-white'
-                }`}
-              >
-                Add people
-              </button>
+             <button
+             onClick={addNewPerson}
+             disabled={isAddMoreDisabled}
+             className={`flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+               isAddMoreDisabled
+                 ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
+              : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
+             }`}
+           >
+             <FaPlus className="text-[#000000]" />
+             Add More People
+           </button>
             )}
           </div>
         ))}
       </div>
 
-      {/* Button Section */}
       <div
         className={`mt-auto py-2 gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 ${
           window.innerWidth >= 768 ? 'absolute bottom-4 right-4' : ''
         }`}
       >
-        {/* Add More People Button - Mobile/Small Screens */}
         {window.innerWidth < 768 && (
           <button
             onClick={addNewPerson}
             disabled={isAddMoreDisabled}
-            className={`flex w-[47%] lg:w-[180px] md:hidden items-center justify-center gap-x-2 py-2 rounded-md ${
+            className={`flex w-[47%] lg:w-[180px] md:hidden items-center justify-center gap-x-2 py-2 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
               isAddMoreDisabled
-                ? 'bg-gray-200 text-gray-500'
-                : 'bg-[#3667B2] text-white'
+                ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
+              : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
             }`}
           >
+             <FaPlus className="text-[#000000]" />
             Add More People
           </button>
         )}

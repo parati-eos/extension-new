@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaPaperclip } from 'react-icons/fa'
+import { FaPaperclip, FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { BackButton } from './shared/BackButton'
@@ -112,57 +112,48 @@ export default function Timeline({
       {/* Content container with flex-grow */}
       <div className="flex-1 overflow-y-auto">
         {timeline.map((point, index) => (
-          <div
-            key={index}
-            className={`flex flex-row gap-4 px-4 mb-2 lg:mb-0 ${
-              index === 0 ? 'lg:mt-14' : 'lg:mt-2'
-            }`}
-          >
-            <input
-              type="text"
-              value={timeline[index]}
-              onChange={(e) => handleInputTitle(e.target.value, index)}
-              placeholder={`Enter Timeline ${index + 1}`}
-              className="lg:ml-2 flex-1 lg:w-[45%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="text"
-              value={description[index]}
-              onChange={(e) => handleInputDescription(e.target.value, index)}
-              placeholder={`Enter Description ${index + 1}`}
-              className="lg:ml-2 flex-1 lg:w-[45%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+         <div
+         key={index}
+         className={`flex flex-row gap-4 px-4 mb-2 lg:mb-0 ${
+           index === 0 ? 'lg:mt-14' : 'lg:mt-2'
+         }`}
+       >
+         <input
+           type="text"
+           value={timeline[index]}
+           onChange={(e) => handleInputTitle(e.target.value, index)}
+           placeholder={`Enter Timeline ${index + 1}`}
+           className="flex-1 lg:ml-2 lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+         />
+         <input
+           type="text"
+           value={description[index]}
+           onChange={(e) => handleInputDescription(e.target.value, index)}
+           placeholder={`Enter Description ${index + 1}`}
+           className="lg:ml-2 lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+         />
+       </div>
+       
         ))}
 
         {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
-        {timeline.length < 6 && timeline[timeline.length - 1].trim() !== '' && (
-          <button
-            onClick={addNewPoint}
-            type="button"
-            disabled={isAddDisabled}
-            className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
+        {timeline.length < 6 && (
+  <button
+    onClick={addNewPoint}
+    type="button"
+    disabled={isAddDisabled}
+            className={`flex items-center p-2 gap-2 w-48 py-2 rounded-md mt-4 ml-6 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
               timeline.length >= 6 || isAddDisabled
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-[#3667B2]'
-            }`}
-          >
+              ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
+              : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
+    }`}
+    
+  >
+     <FaPlus className="text-[#000000]" />
             Add New Timeline
-          </button>
-        )}
-        {/* Add New Timeline Button */}
-        <button
-          onClick={addNewPoint}
-          type="button"
-          disabled={timeline.length >= 6 || isAddDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md mt-2 ml-6 hover:bg-[#3667B2] text-white ${
-            timeline.length >= 6 || isAddDisabled
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2]'
-          }`}
-        >
-          Add New Timeline
-        </button>
+  </button>
+)}
+
       </div>
 
       {/* Attach Image and Generate Slide Buttons */}

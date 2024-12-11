@@ -1,11 +1,11 @@
 import React from 'react'
-import PeopleIcon from '../../assets/people-icon.png'
-import GraphIcon from '../../assets/graph-icon.png'
-import StatisticsIcon from '../../assets/statistics-icon.png'
-import PointsIcon from '../../assets/points-icon.png'
-import TimelineIcon from '../../assets/timeline-icon.png'
-import TableIcon from '../../assets/table-icon.png'
-import ImagesIcon from '../../assets/images-icon.png'
+import PeopleIcon from '../../assets/people.svg'
+import GraphIcon from '../../assets/graphs.svg'
+import StatisticsIcon from '../../assets/statistics.svg'
+import PointsIcon from '../../assets/points.svg'
+import TimelineIcon from '../../assets/Presentation.svg'
+import TableIcon from '../../assets/table.svg'
+import ImagesIcon from '../../assets/images.svg'
 import { DisplayMode } from './ViewPresentation'
 import { BackButton } from './custom-builder/shared/BackButton'
 
@@ -36,7 +36,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full p-4">
+    <div className="flex flex-col h-full px-6 py-4">
       {/* Top Section: Headings and Back Button */}
       <div className="flex lg:mt-2 items-center justify-between w-full">
         <div>
@@ -51,20 +51,21 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       </div>
 
       {/* Slide Type Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:ml-6 lg:ml-10 sm:gap-4 mt-3 md:mt-6 lg:mt-12">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2   sm:gap-4 mt-3 md:mt-6 lg:mt-12">
         {slideTypes.map((type) => (
           <div
             key={type.name}
-            className="flex flex-col items-center md:border md:border-gray-300 md:p-2 lg:py-3 lg:w-[80%] rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => onTypeClick(type.name)} // Moved onClick here
+            className="flex flex-col items-center border border-[#E1E3E5] rounded-lg flex-shrink-0 cursor-pointer shadow-md hover:shadow-lg transition-shadow" // Added cursor-pointer class
+            style={{ width: '99%', height: '10rem' }}
+            onClick={() => onTypeClick(type.name)}
           >
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center py-4">
               <img
                 src={type.icon}
                 alt={type.name}
-                className="h-12 w-12 sm:h-16 sm:w-16"
+                className="object-none mt-5 mb-2 "
               />
-              <span className="text-xs sm:text-sm">{type.name}</span>
+              <span className="text-xs font-medium  sm:text-base">{type.name}</span>
             </div>
           </div>
         ))}
