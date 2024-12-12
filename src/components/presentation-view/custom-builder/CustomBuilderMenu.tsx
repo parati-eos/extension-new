@@ -48,7 +48,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       </div>
 
       {/* Slide Type Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 mt-3 md:mt-6 lg:mt-8">
+      <div className="hidden lg:grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 mt-3 md:mt-6 lg:mt-8">
         {slideTypes.map((type) => (
           <div
             key={type.name}
