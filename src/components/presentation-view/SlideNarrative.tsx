@@ -68,50 +68,128 @@ export default function SlideNarrative({
 
   return (
     <div className="flex flex-col p-4 h-full">
-      {/* Top Section: Headings */}
-      <div className="flex lg:mt-2 items-center justify-between w-full px-4">
-        <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-          {heading}
-        </h2>
-        <BackButton onClick={onBack} />
-      </div>
-
-      {/* Input Section */}
-      <div className="flex-1 overflow-y-auto px-1">
-        <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14">
-          <textarea
-            value={narrative}
-            onChange={(e) => setNarrative(e.target.value)}
-            placeholder="Please provide some context and narrative to generate this slide."
-            className="w-full max-w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            style={{
-              height: window.innerWidth >= 1024 ? '380px' : 'auto', // Larger height for large screens
-              maxWidth: window.innerWidth >= 1024 ? '970px' : '100%', // Larger width for large screens
-              resize: 'vertical', // Allow manual resizing vertically
-            }}
-          ></textarea>
-        </div>
-      </div>
-
-      {/* Button container adjustments for medium and large screens */}
-      {/* Attach Image and Generate Slide Buttons */}
-      <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
-        {/* Attach Image Section */}
-        <AttachImage onFileSelected={handleFileSelect} />
-
-        {/* Generate Slide Button */}
-        <button
-          onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled}
-          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
-            isGenerateDisabled
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
-          }`}
-        >
-          Generate Slide
-        </button>
+    {/* Top Section: Headings */}
+    <div className="flex lg:mt-2 items-center justify-end w-full px-4">
+      <h2 className="hidden  font-semibold text-[#091220]">
+        {heading}
+      </h2>
+      <BackButton onClick={onBack} />
+    </div>
+  
+    {/* Input Section for Desktop */}
+    <div className="hidden lg:block flex-1 overflow-y-auto px-4">
+      <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14">
+        <textarea
+          value={narrative}
+          onChange={(e) => setNarrative(e.target.value)}
+          placeholder="Please provide some context and narrative to generate this slide."
+          className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{
+            height: '380px', // Fixed height for large screens
+            maxWidth: '970px', // Fixed width for large screens
+            resize: 'vertical', // Allow manual resizing vertically
+          }}
+        ></textarea>
       </div>
     </div>
-  )
+  
+    {/* Input Section for Medium Screens */}
+    <div className="hidden md:block lg:hidden flex-1 overflow-y-auto px-4">
+      <div className="flex flex-col items-center gap-2 mb-2">
+        <textarea
+          value={narrative}
+          onChange={(e) => setNarrative(e.target.value)}
+          placeholder="Please provide some context and narrative to generate this slide."
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{
+            height: '20vw', // Fixed height for medium screens
+            width: '70vw', // Fixed width for medium screens
+            resize: 'none', // Allow manual resizing vertically
+          }}
+        ></textarea>
+      </div>
+    </div>
+  
+    {/* Input Section for Mobile */}
+    <div className="flex lg:hidden md:hidden flex-1 overflow-y-auto px-4">
+      <div className="flex flex-col items-center gap-2 mb-2">
+        <textarea
+          value={narrative}
+          onChange={(e) => setNarrative(e.target.value)}
+          placeholder="Please provide some context and narrative to generate this slide."
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{
+            width: '70vw', // Fixed 70% width for mobile view
+            height: '40vw', // Fixed height for mobile view
+            resize: 'none',
+          }}
+        ></textarea>
+      </div>
+    </div>
+  
+    {/* Attach Image and Generate Slide Buttons for Desktop */}
+    <div className="hidden lg:flex mt-auto gap-2 px-4 w-full justify-between lg:justify-end lg:w-auto lg:gap-4">
+      {/* Attach Image Section */}
+      <AttachImage onFileSelected={handleFileSelect} />
+  
+      {/* Generate Slide Button */}
+      <button
+        onClick={handleGenerateSlide}
+        disabled={isGenerateDisabled}
+        className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+          isGenerateDisabled
+            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            : 'bg-[#3667B2] text-white'
+        }`}
+      >
+        Generate Slide
+      </button>
+    </div>
+  
+    {/* Attach Image and Generate Slide Buttons for Medium Screens */}
+    <div className="hidden  md:flex lg:hidden mt-4 gap-2 px-4 w-full justify-center">
+    <div className="flex-1">
+      <AttachImage onFileSelected={handleFileSelect} />
+      </div>
+      <button
+        onClick={handleGenerateSlide}
+        disabled={isGenerateDisabled}
+        className={`flex-1 py-2 rounded-md ${
+          isGenerateDisabled
+            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            : 'bg-[#3667B2] text-white'
+        }`}
+      >
+        Generate Slide
+      </button>
+    </div>
+  
+    {/* Attach Image and Generate Slide Buttons for Mobile */}
+    <div className="flex lg:hidden md:hidden mt-4 gap-2 px-4 w-full justify-center">
+    <div className="flex-1 flex items-center gap-2 text-[#5D5F61] p-2 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
+  <FaPaperclip />
+  <label htmlFor="fileInput" className="cursor-pointer">
+    Attach Image
+  </label>
+  <input
+    id="fileInput"
+    type="file"
+    className="hidden"
+    onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+  />
+</div>
+      <button
+        onClick={handleGenerateSlide}
+        disabled={isGenerateDisabled}
+        className={`flex-1 py-2 rounded-md text-sm font-medium ${
+          isGenerateDisabled
+            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            : 'bg-[#3667B2] text-white'
+        }`}
+      >
+        Generate Slide
+      </button>
+    </div>
+  </div>
+    );
 }
