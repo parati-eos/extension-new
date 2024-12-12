@@ -180,8 +180,8 @@ export default function People({
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between w-full p-4">
-            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+          <div className="lg:flex hidden items-center justify-between w-full p-4">
+            <h2 className=" md:block md:text-lg font-semibold text-[#091220]">
               {heading}
             </h2>
             <BackButton onClick={onBack} />
@@ -200,7 +200,7 @@ export default function People({
                   index === people.length - 1 ? 'lg:mb-4' : ''
                 }`}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mt-2">
                   <input
                     type="text"
                     value={person.name}

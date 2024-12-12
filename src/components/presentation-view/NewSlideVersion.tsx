@@ -16,13 +16,13 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   userPlan,
 }) => {
   return (
-    <div className="flex flex-col mt-2 items-center justify-center h-full">
+    <div className="flex flex-col mt-2  items-center justify-center h-full">
       <h2 className="text-xl font-semibold">Create a new slide</h2>
       <h3 className="text-base text-[#5D5F61]">
         How would you like to create a new slide?
       </h3>
-      <div className="flex gap-2 mt-4 ml-4 lg:ml-0  lg:px-4  overflow-hidden">
-        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+      <div className="flex gap-2  lg:mt-4 mt-8 mr-2 lg:mr-0 lg:ml-0  lg:px-4  ">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[33%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleQuickGenerate}
@@ -32,10 +32,10 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
               alt="Quick Generate"
               className="h-12 w-12"
             />
-            <span className="text-sm">Quick Generate</span>
+            <span className="text-xs lg:text-sm">Quick Generate</span>
           </button>
         </div>
-        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[33%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleSlideNarrative}
@@ -45,10 +45,10 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
               alt="Slide Narrative"
               className="h-12 w-12"
             />
-            <span className="text-sm">Slide Narrative</span>
+            <span className="text-xs lg:text-sm">Slide Narrative</span>
           </button>
         </div>
-        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[33%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleCustomBuilderClick}
@@ -59,7 +59,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
               alt="Custom Builder"
               className="h-12 w-12"
             />
-            <span className="text-sm">Custom Builder</span>
+            <span className="text-xs lg:text-sm">Custom Builder</span>
           </button>
         </div>
       </div>

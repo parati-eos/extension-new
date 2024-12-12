@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import { FaPlus, FaMinus } from 'react-icons/fa'
 import { BackButton } from './shared/BackButton'
@@ -54,6 +54,12 @@ export default function Table({
       }))
     }
   }
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight
+    }
+  }, [tableData])
 
   const handleRemoveRow = () => {
     if (tableData.rows.length > 2) {
@@ -191,7 +197,7 @@ export default function Table({
   }
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full p-2">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -204,12 +210,12 @@ export default function Table({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-          <div className="flex-1 px-4 py-4 overflow-x-auto">
+          <div ref={containerRef} className="flex-1 px-4 py-4 overflow-x-auto">
             <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
               <table className="table-auto border-collapse w-full">
                 <thead>
                   <tr>
-                    <th className="bg-gray-100 p-2"></th>
+                    <th className="bg-gray-100 p-2 w-1/5"></th>
                     {tableData.columnHeaders.map((header, index) => (
                       <th key={index} className="bg-gray-100 p-2">
                         <input
@@ -319,7 +325,7 @@ export default function Table({
               </table>
             </div>
           </div>
-          <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
+          <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
             {/* Generate Slide Button */}
             <button
               onClick={handleGenerateSlide}
@@ -332,6 +338,23 @@ export default function Table({
             >
               Generate Slide
             </button>
+          </div>
+          {/* Generate Slide Buttons for Mobile */}
+
+          <div className="flex lg:hidden  mt-4 gap-2  justify-end">
+            <div className="justify-end">
+              <button
+                onClick={handleGenerateSlide}
+                disabled={!canGenerate}
+                className={`flex-1 py-2 px-5 rounded-md text-sm font-medium ${
+                  canGenerate
+                    ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                }`}
+              >
+                Generate Slide
+              </button>
+            </div>
           </div>
         </>
       )}

@@ -137,14 +137,14 @@ export default function Points({
                   value={point}
                   onChange={(e) => handleInputChange(e.target.value, index)}
                   placeholder={`Enter Point ${index + 1}`}
-                  className="lg:hidden w-[60vw] text-[#5D5F61] p-2 mt-2 border border-[#8A8B8C] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="lg:hidden mb-2 w-full text-[#5D5F61] p-3 mt-2 border  border-[#8A8B8C] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {/* Render the "Add new point" button only under the last point */}
                 {/* Add New Point Button */}
                 {index === points.length - 1 && points.length < 6 && (
                   <button
                     onClick={addNewPoint}
-                    className={`text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2 w-[58%] md:w-[17%] items-center md:justify-center h-10 lg:mt-4 ${
+                    className={`text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2   items-center md:justify-center h-10 lg:mt-4 ${
                       point.trim() === ''
                         ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
@@ -178,8 +178,8 @@ export default function Points({
             </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-4 gap-2  w-full justify-center">
-            <div className="flex-1 flex items-center gap-1 text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
+          <div className="flex lg:hidden md:hidden mt-4 gap-2  w-full justify-center">
+            <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
               <FaPaperclip />
               <label htmlFor="fileInput" className="cursor-pointer">
                 Attach Image
@@ -195,7 +195,7 @@ export default function Points({
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled}
-              className={`flex-1 py-2 rounded-md text-sm font-medium ${
+              className={`flex-1 py-3 rounded-md text-sm font-medium ${
                 isGenerateDisabled
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white'
