@@ -51,12 +51,11 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       </div>
 
       {/* Slide Type Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-2   sm:gap-4 mt-3 md:mt-6 lg:mt-12">
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 mt-3 md:mt-6 lg:mt-8">
         {slideTypes.map((type) => (
           <div
             key={type.name}
             className="flex flex-col items-center border border-[#E1E3E5] rounded-lg flex-shrink-0 cursor-pointer shadow-md hover:shadow-lg transition-shadow" // Added cursor-pointer class
-            style={{ width: '99%', height: '10rem' }}
             onClick={() => onTypeClick(type.name)}
           >
             <div className="flex flex-col items-center py-4">

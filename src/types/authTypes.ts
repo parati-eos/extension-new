@@ -5,6 +5,6 @@ export type DecodedToken = {
 }
 
 export interface IpInfoResponse {
-  country_name: string
+  country: string
   [key: string]: any
 }

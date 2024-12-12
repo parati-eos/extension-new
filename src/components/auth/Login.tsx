@@ -59,8 +59,12 @@ function Login() {
 
   const saveUserData = async (userData: Record<string, any>) => {
     try {
-      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoResponse = await fetch(
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+      console.log(ipInfoData)
+
       const signupLink = `${window.location.origin}/signup/${generatedOrgId}`
 
       const userPayload = {
@@ -68,11 +72,13 @@ function Login() {
         name: userData.name,
         orgId: generatedOrgId,
         pptCount: 0,
-        userIPCountry: ipInfoData.country_name!,
+        userIPCountry: ipInfoData.country!,
         signupLink: signupLink,
         signupTime: new Date().toString(),
         latestLogin: new Date().toString(),
       }
+
+      console.log('PAYLOAD', userPayload)
 
       const res = await fetch(`${serverurl}/api/v1/data/userprofile/user`, {
         method: 'POST',

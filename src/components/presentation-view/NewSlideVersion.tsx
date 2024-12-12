@@ -107,7 +107,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={SlideNarrativeIcon}
               alt="Slide Narrative"
-               className="object-none mb-4 mt-4"
+              className="object-none mb-4 mt-4"
             />
             <span className="text-base font-medium">Slide Narrative</span>
           </button>
@@ -124,7 +124,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <img
               src={CustomBuilderIcon}
               alt="Custom Builder"
-                className="object-none mb-4 mt-4"
+              className="object-none mb-4 mt-4"
             />
             <span className="text-base font-medium">Custom Builder</span>
           </button>
