@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useRef, useEffect } from 'react'
 import { FaPaperclip, FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
@@ -32,7 +32,12 @@ export default function Timeline({
     updatedPoints[index] = value
     setTimeline(updatedPoints)
   }
-
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [timeline]);
   const handleInputDescription = (value: string, index: number) => {
     const updatedPoints = [...description]
     updatedPoints[index] = value
@@ -101,20 +106,22 @@ export default function Timeline({
   }
 
   return (
-    <div className="flex flex-col p-4 h-full">
+    <div className="flex flex-col lg:p-4 p-2 h-full">
       {/* Top Section: Headings */}
-      <div className="flex lg:mt-2 items-center justify-between w-full px-4">
+      <div className="flex lg:mt-2 items-center justify-between w-full ">
         <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
           {heading}
         </h2>
         <BackButton onClick={onBack} />
       </div>
       {/* Content container with flex-grow */}
-      <div className="flex-1 overflow-y-auto">
+      <div 
+      ref={containerRef}
+      className="flex-1 overflow-y-auto">
         {timeline.map((point, index) => (
          <div
          key={index}
-         className={`flex flex-row gap-4 px-4 mb-2 lg:mb-0 ${
+         className={`flex flex-col lg:flex-row gap-2 lg:gap-4 lg:px-2 py-2 lg:py-0  mb-2 lg:mb-0 ${
            index === 0 ? 'lg:mt-14' : 'lg:mt-2'
          }`}
        >
@@ -123,14 +130,14 @@ export default function Timeline({
            value={timeline[index]}
            onChange={(e) => handleInputTitle(e.target.value, index)}
            placeholder={`Enter Timeline ${index + 1}`}
-           className="flex-1 lg:ml-2 lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+           className="flex-1 lg:ml-2 w-full lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
          />
          <input
            type="text"
            value={description[index]}
            onChange={(e) => handleInputDescription(e.target.value, index)}
            placeholder={`Enter Description ${index + 1}`}
-           className="lg:ml-2 lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+           className="lg:ml-2 w-full lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
          />
        </div>
        
@@ -142,7 +149,7 @@ export default function Timeline({
     onClick={addNewPoint}
     type="button"
     disabled={isAddDisabled}
-            className={`flex items-center p-2 gap-2 w-48 py-2 rounded-md mt-4 ml-6 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+            className={`flex items-center p-2 gap-2 w-48 py-2 lg:rounded-md mt-4  lg:ml-4 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
               timeline.length >= 6 || isAddDisabled
               ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
               : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
@@ -157,7 +164,7 @@ export default function Timeline({
       </div>
 
       {/* Attach Image and Generate Slide Buttons */}
-      <div className="mt-auto gap-2 flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4">
+      <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
         {/* Attach Image Section */}
         <AttachImage onFileSelected={handleFileSelect} />
 
@@ -174,6 +181,33 @@ export default function Timeline({
           {loading ? 'Generating...' : 'Generate Slide'}
         </button>
       </div>
+      {/* Attach Image and Generate Slide Buttons for Mobile */}
+      <div className="flex lg:hidden md:hidden mt-4 gap-2  w-full justify-center">
+       <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
+  <FaPaperclip />
+  <label htmlFor="fileInput" className="cursor-pointer">
+    Attach Image
+  </label>
+  <input
+    id="fileInput"
+    type="file"
+    className="hidden"
+    onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+  />
+</div>
+
+      <button
+        onClick={handleGenerateSlide}
+        disabled={isGenerateDisabled}
+        className={`flex-1 py-2 rounded-md text-sm font-medium ${
+          isGenerateDisabled
+            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            : 'bg-[#3667B2] text-white'
+        }`}
+      >
+        Generate Slide
+      </button>
+    </div>
     </div>
   )
 }

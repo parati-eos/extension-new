@@ -3,6 +3,7 @@ import axios from 'axios'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
+import { FaPaperclip } from 'react-icons/fa'
 
 interface SlideNarrativeProps {
   heading: string
@@ -66,10 +67,10 @@ export default function SlideNarrative({
   }
 
   return (
-    <div className="flex flex-col p-4 h-full">
+    <div className="flex flex-col p-4  h-full">
       {/* Top Section: Headings */}
-      <div className="flex lg:mt-2 items-center justify-end w-full px-4">
-        <h2 className="hidden  font-semibold text-[#091220]">{heading}</h2>
+      <div className="lg:flex hidden lg:mt-2 items-center justify-between w-full px-4">
+        <h2 className=" font-semibold text-[#091220]">{heading}</h2>
         <BackButton onClick={onBack} />
       </div>
 
@@ -82,9 +83,9 @@ export default function SlideNarrative({
             placeholder="Please provide some context and narrative to generate this slide."
             className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             style={{
-              height: '380px', // Fixed height for large screens
-              maxWidth: '970px', // Fixed width for large screens
-              resize: 'vertical', // Allow manual resizing vertically
+              height: '25rem', // Fixed height for large screens
+              maxWidth: '60rem', // Fixed width for large screens
+              resize: 'none', // Allow manual resizing vertically
             }}
           ></textarea>
         </div>
@@ -99,8 +100,8 @@ export default function SlideNarrative({
             placeholder="Please provide some context and narrative to generate this slide."
             className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             style={{
-              height: '20vw', // Fixed height for medium screens
-              width: '70vw', // Fixed width for medium screens
+              height: '25rem', // Fixed height for medium screens
+              width: '60rem', // Fixed width for medium screens
               resize: 'none', // Allow manual resizing vertically
             }}
           ></textarea>
@@ -108,16 +109,16 @@ export default function SlideNarrative({
       </div>
 
       {/* Input Section for Mobile */}
-      <div className="flex lg:hidden md:hidden flex-1 overflow-y-auto px-4">
-        <div className="flex flex-col items-center gap-2 mb-2">
+      <div className="flex w-full lg:hidden md:hidden flex-1  ">
+        <div className="flex flex-col w-full items-center gap-2 mb-2 ">
           <textarea
             value={narrative}
             onChange={(e) => setNarrative(e.target.value)}
             placeholder="Please provide some context and narrative to generate this slide."
-            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2  border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             style={{
-              width: '70vw', // Fixed 70% width for mobile view
-              height: '40vw', // Fixed height for mobile view
+              width: '100%', // Fixed 70% width for mobile view
+              height: '100%', // Fixed height for mobile view
               resize: 'none',
             }}
           ></textarea>

@@ -615,7 +615,7 @@ export default function ViewPresentation() {
       </div>
 
       {/* MOBILE: MAIN CONTAINER */}
-      <div className="block lg:hidden p-4 mx-auto">
+      <div className="block lg:hidden p-4 ">
         {/* MOBILE: HEADING */}
         <MobileHeading
           handleDownload={handleDownload}
