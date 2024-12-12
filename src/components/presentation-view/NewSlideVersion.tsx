@@ -19,8 +19,8 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
       <h3 className="text-base text-[#5D5F61]">
         How would you like to create a new slide?
       </h3>
-      <div className="flex gap-2 mt-4 px-4 md:px-8 overflow-hidden">
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+      <div className="flex gap-2 mt-4 ml-4 lg:ml-0  lg:px-4  overflow-hidden">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleQuickGenerate}
@@ -33,7 +33,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Quick Generate</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleSlideNarrative}
@@ -46,7 +46,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-sm">Slide Narrative</span>
           </button>
         </div>
-        <div className="flex flex-col items-center border border-gray-300 p-2 flex-shrink-0 w-[30%]">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[30%]">
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleCustomBuilderClick}

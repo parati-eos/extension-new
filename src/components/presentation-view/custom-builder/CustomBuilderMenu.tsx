@@ -24,10 +24,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
     { name: 'Images', icon: ImagesIcon },
     { name: 'Table', icon: TableIcon },
     { name: 'People', icon: PeopleIcon },
-    {
-      name: 'Statistics',
-      icon: StatisticsIcon,
-    },
+    { name: 'Statistics', icon: StatisticsIcon },
     { name: 'Graphs', icon: GraphIcon },
   ]
 
@@ -36,9 +33,9 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full px-6 py-4">
+    <div className="flex flex-col h-full lg:px-4 lg:py-3">
       {/* Top Section: Headings and Back Button */}
-      <div className="flex lg:mt-2 items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full mt-2 ml-6 lg:ml-0  lg:mt-0 lg:mb-4">
         <div>
           <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
             Custom Builder
@@ -62,12 +59,34 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
               <img
                 src={type.icon}
                 alt={type.name}
-                className="object-none mt-5 mb-2 "
+                className="object-none mt-5 mb-2"
               />
               <span className="text-xs font-medium  sm:text-base">
                 {type.name}
               </span>
             </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile View */}
+      <div className="lg:hidden  flex flex-wrap justify-start  ">
+        {slideTypes.map((type) => (
+          <div
+            key={type.name}
+            className="flex flex-col items-center flex-shrink-0 cursor-pointer"
+            style={{
+              width: '30%', // Adjust width to allow 3 divs in a row
+              margin: '5px 0', // Add vertical margin for spacing
+            }}
+            onClick={() => onTypeClick(type.name)}
+          >
+            <img
+              src={type.icon}
+              alt={type.name}
+              className="w-12 h-12 mb-2" // Icon size for mobile
+            />
+            <span className="text-xs font-medium">{type.name}</span>
           </div>
         ))}
       </div>
