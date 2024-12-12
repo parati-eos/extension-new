@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { FaPlus } from 'react-icons/fa'
+import { FaPaperclip, FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { BackButton } from './shared/BackButton'
