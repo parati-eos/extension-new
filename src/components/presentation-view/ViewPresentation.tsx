@@ -1,10 +1,4 @@
-import {
-  FaArrowLeft,
-  FaArrowRight,
-  FaCheck,
-  FaPlus,
-  FaTrash,
-} from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
@@ -29,114 +23,37 @@ import MobileOutlineModal from './MobileOutlineModal'
 import { PricingModal } from '../shared/PricingModal'
 import { DisplayMode } from '../../types/presentationView'
 import './viewpresentation.css'
+import { DesktopButtonSection, MobileButtonSection } from './ActionButtons'
+import { Plan } from '../../types/pricingTypes'
+import { IpInfoResponse } from '../../types/authTypes'
 
 export default function ViewPresentation() {
-  const [currentSlide, setCurrentSlide] = useState(1)
-  const [selectedOutline, setSelectedOutline] = useState('')
+  const [searchParams] = useSearchParams()
+  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
+  const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
+  const userPlan = sessionStorage.getItem('userPlan')
+  const [documentID, setDocumentID] = useState<string | null>(null)
+  const [pptName, setPptName] = useState<string | null>(null)
+  const [presentationID, setPresentationID] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSlideLoading, setIsSlideLoading] = useState(true)
+  const [currentSlide, setCurrentSlide] = useState(1)
   const [currentOutline, setCurrentOutline] = useState('')
+  const [outlineType, setOutlineType] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
   const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
-  const authToken = sessionStorage.getItem('authToken')
-  const [searchParams] = useSearchParams()
-  const [documentID, setDocumentID] = useState<string | null>(null)
-  const [pptName, setPptName] = useState<string | null>(null)
-  const orgId = sessionStorage.getItem('orgId')
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
-  const [slidesId, setSlidesId] = useState([]) // State to store slide IDs
-  const [presentationID, setPresentationID] = useState<string>('')
+  const [slidesId, setSlidesId] = useState<string[]>([])
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-  const [outlineType, setOutlineType] = useState('')
-  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
-
-  // Get DocumentID and Presentation Name
-  useEffect(() => {
-    const getDocumentId = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        const result = response.data
-        console.log('RESULT After 20sec', result)
-
-        setPptName(result.documentName)
-        setDocumentID(result.documentID)
-        setIsLoading(false)
-        setIsSlideLoading(false)
-      } catch (error) {
-        console.error('Error fetching document:', error)
-        setIsLoading(false)
-      }
-    }
-
-    const documentID = searchParams.get('documentID')
-
-    if (!documentID || documentID === 'loading') {
-      // Trigger the API call only if documentID is not present or is 'loading'
-      const timer = setTimeout(() => {
-        getDocumentId()
-      }, 20000) // delay
-
-      // Cleanup the timer in case the component unmounts
-      return () => clearTimeout(timer)
-    } else {
-      // Directly set the documentID if it is already present
-      setDocumentID(documentID)
-      const getPptName = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          const result = response.data
-          setPptName(result.documentName)
-        } catch (error) {
-          console.error('Error fetching document:', error)
-        }
-      }
-      getPptName()
-      setIsLoading(false)
-      setIsSlideLoading(false)
-    }
-  }, [])
-
-  // API CALL TO GET USER SUBSCRIPTION PLAN
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        await axios
-          .get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          .then((response) => {
-            // setUserPlan(response.data.plan_name)
-          })
-          .catch((error) => {
-            console.error('Error fetching organization data:', error)
-          })
-      } catch (error) {}
-    }
-
-    fetchUserPlan()
-  }, [authToken, orgId])
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const pricingModalHeading = 'Refine PPT'
+  const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
+  const [yearlyPlan, setYearlyPlan] = useState<Plan>()
+  const [currency, setCurrency] = useState('')
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -191,7 +108,6 @@ export default function ViewPresentation() {
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (option: string) => {
-    setSelectedOutline(option)
     setCurrentOutline(option)
     setCurrentSlide(outlines.findIndex((o) => o.title === option) + 1)
     const slideIndex = outlines.findIndex((o) => o.title === option)
@@ -205,7 +121,7 @@ export default function ViewPresentation() {
     const slideHeight = e.currentTarget.clientHeight
     const newSlide = Math.round(scrollTop / slideHeight) + 1
     setCurrentSlide(newSlide)
-    setSelectedOutline(outlines[newSlide - 1]?.title || '')
+    setCurrentOutline(outlines[newSlide - 1]?.title || '')
     if (newSlide !== plusClickedSlide) {
       setDisplayMode('slides')
     }
@@ -213,6 +129,7 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
+    setIsSlideLoading(true)
     try {
       await axios
         .post(
@@ -230,6 +147,7 @@ export default function ViewPresentation() {
         )
         .then((response) => {
           console.log('QUICK GENERATE RESPONSE', response)
+          setIsSlideLoading(false)
         })
         .catch((error) => {
           console.log('QUICK GENERATE RESPONSE ERROR', error)
@@ -253,84 +171,6 @@ export default function ViewPresentation() {
     }
   }
 
-  // Web Socket To Get Slide Data
-  useEffect(() => {
-    const socket = io(`${SOCKET_URL}`, {
-      transports: ['websocket'],
-    })
-    console.log('Connecting to WebSocket server...')
-
-    // When connected
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server', socket.id)
-    })
-
-    // Listen for slide data from the backend
-    socket.on('slidesData', (newSlides) => {
-      const result = newSlides
-      setPresentationID(result[0].PresentationID)
-      const ids = result.map((item: any) => item.GenSlideID)
-      setSlidesId(ids)
-      // setIsSlideLoading(false)
-      setTotalSlides(ids.length)
-    })
-
-    // Handle any error messages from the backend
-    socket.on('error', (error) => {
-      console.error('Error:', error.message)
-    })
-
-    // const slideTypeData = currentOutline.replace(/^\d+\.\s*/, '')
-
-    // Automatically fetch slides on component mount
-    socket.emit('fetchSlides', {
-      slideType: 'Key Features',
-      formID: 'Document-1732794823300',
-    })
-
-    // Cleanup when the component unmounts
-    return () => {
-      console.log('Disconnecting from WebSocket server...')
-      socket.disconnect()
-    }
-  }, [currentOutline, SOCKET_URL])
-
-  // Fetch Outlines
-  const fetchOutlines = useCallback(async () => {
-    if (!documentID) return
-
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-      const fetchedOutlines = response.data.outline
-      setOutlines(fetchedOutlines)
-      if (fetchedOutlines.length > 0) {
-        setCurrentOutline(fetchedOutlines[0].title)
-        setSelectedOutline(fetchedOutlines[0].title)
-      }
-    } catch (error) {
-      console.error('Error fetching outlines:', error)
-    }
-  }, [documentID, authToken])
-  useEffect(() => {
-    fetchOutlines()
-  }, [fetchOutlines])
-
-  // Set Slide Type For Quick Generate
-  useEffect(() => {
-    const matchingOutline = outlines.find(
-      (outline) => outline.title === currentOutline
-    )
-    // Update the outlineType state with the type of the matched object
-    setOutlineType(matchingOutline?.type || '')
-  }, [outlines, currentOutline])
-
   // Custom Builder Slide Type Select Handler
   const handleCustomTypeClick = (typeName: DisplayMode) => {
     setDisplayMode(typeName)
@@ -349,12 +189,20 @@ export default function ViewPresentation() {
     switch (displayMode) {
       case 'slides':
         return (
-          <iframe
-            src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
-            title={`Slide ${currentSlideIndex + 1}`}
-            className="w-full h-full"
-            style={{ border: 0 }}
-          />
+          <>
+            {isSlideLoading ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <iframe
+                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
+                title={`Slide ${currentSlideIndex + 1}`}
+                className="w-full h-full"
+                style={{ border: 0 }}
+              />
+            )}
+          </>
         )
       case 'newContent':
         if (isMobile) {
@@ -363,6 +211,7 @@ export default function ViewPresentation() {
               handleQuickGenerate={handleQuickGenerate}
               handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
+              userPlan={userPlan!}
             />
           )
         } else if (plusClickedSlide === index! + 1) {
@@ -371,6 +220,7 @@ export default function ViewPresentation() {
               handleQuickGenerate={handleQuickGenerate}
               handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
+              userPlan={userPlan!}
             />
           )
         }
@@ -477,21 +327,234 @@ export default function ViewPresentation() {
 
   // Mobile Back Button
   const onBack = () => {
-    if (displayMode === 'slideNarrative' || displayMode === 'customBuilder') {
+    if (displayMode === 'slideNarrative') {
+      setDisplayMode('newContent')
+    } else if (displayMode === 'customBuilder') {
       setDisplayMode('newContent')
     } else {
       setDisplayMode('customBuilder')
     }
   }
 
+  // Get DocumentID and Presentation Name
+  useEffect(() => {
+    const getDocumentId = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const result = response.data
+        console.log('RESULT After 20sec', result)
+
+        setPptName(result.documentName)
+        setDocumentID(result.documentID)
+        setIsLoading(false)
+        // setIsSlideLoading(false)
+      } catch (error) {
+        console.error('Error fetching document:', error)
+        setIsLoading(false)
+      }
+    }
+
+    const documentID = searchParams.get('documentID')
+
+    if (!documentID || documentID === 'loading') {
+      // Trigger the API call only if documentID is not present or is 'loading'
+      const timer = setTimeout(() => {
+        getDocumentId()
+      }, 20000) // delay
+
+      // Cleanup the timer in case the component unmounts
+      return () => clearTimeout(timer)
+    } else {
+      // Directly set the documentID if it is already present
+      setDocumentID(documentID)
+      const getPptName = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          const result = response.data
+          setPptName(result.documentName)
+        } catch (error) {
+          console.error('Error fetching document:', error)
+        }
+      }
+      getPptName()
+      setIsLoading(false)
+      setIsSlideLoading(false)
+    }
+  }, [])
+
+  // API CALL TO GET USER SUBSCRIPTION PLAN
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        await axios
+          .get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            // setUserPlan(response.data.plan_name)
+          })
+          .catch((error) => {
+            console.error('Error fetching organization data:', error)
+          })
+      } catch (error) {}
+    }
+
+    fetchUserPlan()
+  }, [authToken, orgId])
+
+  // Web Socket To Get Slide Data
+  useEffect(() => {
+    const socket = io(`${SOCKET_URL}`, {
+      transports: ['websocket'],
+    })
+    console.log('Connecting to WebSocket server...')
+
+    // When connected
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server', socket.id)
+    })
+
+    // Listen for slide data from the backend
+    socket.on('slidesData', async (newSlides) => {
+      const result = await newSlides
+      console.log('SOCKET DATA', result)
+      setPresentationID(result[0].PresentationID)
+      const ids = result.map((item: any) => item.GenSlideID)
+      setSlidesId(ids)
+      setIsSlideLoading(false)
+      setTotalSlides(ids.length)
+    })
+
+    // Handle any error messages from the backend
+    socket.on('error', (error) => {
+      console.error('Error:', error.message)
+    })
+
+    // currentOutline.replace(/^\d+\.\s*/, '')
+
+    // Automatically fetch slides on component mount
+    socket.emit('fetchSlides', {
+      slideType: currentOutline.replace(/^\d+\.\s*/, ''),
+      formID: documentID,
+    })
+
+    // Cleanup when the component unmounts
+    return () => {
+      console.log('Disconnecting from WebSocket server...')
+      socket.disconnect()
+    }
+  }, [currentOutline, SOCKET_URL])
+
+  // Fetch Outlines
+  const fetchOutlines = useCallback(async () => {
+    if (!documentID) return
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      const fetchedOutlines = response.data.outline
+      setOutlines(fetchedOutlines)
+      if (fetchedOutlines.length > 0) {
+        setCurrentOutline(fetchedOutlines[0].title)
+      }
+    } catch (error) {
+      console.error('Error fetching outlines:', error)
+    }
+  }, [documentID, authToken])
+  useEffect(() => {
+    fetchOutlines()
+  }, [fetchOutlines])
+
+  // Set Slide Type For Quick Generate
+  useEffect(() => {
+    const matchingOutline = outlines.find(
+      (outline) => outline.title === currentOutline
+    )
+    // Update the outlineType state with the type of the matched object
+    setOutlineType(matchingOutline?.type || '')
+  }, [outlines, currentOutline])
+
+  // API CALL TO GET PRICING DATA FOR MODAL
+  useEffect(() => {
+    const getPricingData = async () => {
+      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+      await axios
+        .get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (ipInfoData.country_name === 'IN' || 'India') {
+            setMonthlyPlan(response.data.items[3])
+            setYearlyPlan(response.data.items[1])
+            setCurrency('INR')
+          } else {
+            setMonthlyPlan(response.data.items[2])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('USD')
+          }
+        })
+    }
+
+    getPricingData()
+  }, [])
+  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">
+      {/* Pricing Modal */}
+      {isPricingModalOpen && userPlan === 'free' ? (
+        <PricingModal
+          closeModal={() => {
+            setIsPricingModalOpen(false)
+          }}
+          heading={pricingModalHeading}
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency}
+        />
+      ) : (
+        <></>
+      )}
       {/*LARGE SCREEN: HEADING*/}
       <DesktopHeading
         handleDownload={handleDownload}
         handleShare={handleShare}
         pptName={pptName!}
         isLoading={isLoading}
+        userPlan={userPlan!}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -499,7 +562,7 @@ export default function ViewPresentation() {
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
           onOutlineSelect={handleOutlineSelect}
-          selectedOutline={selectedOutline!}
+          selectedOutline={currentOutline!}
           fetchedOutlines={outlines!}
           documentID={documentID!}
           authToken={authToken!}
@@ -537,50 +600,13 @@ export default function ViewPresentation() {
 
           {/* MEDIUM LARGE SCREEN: ACTION BUTTONS */}
           <div className="flex items-center justify-between ml-12">
-            <div className="flex gap-2">
-              <button
-                onClick={handleDelete}
-                className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
-              >
-                <FaTrash className="h-4 w-4 text-[#5D5F61] mr-1" />
-                <span className="hidden text-[#5D5F61] lg:block">
-                  {' '}
-                  Delete Version
-                </span>
-              </button>
-              <button
-                onClick={handleFinalize}
-                className={`p-2 rounded-md flex items-center border active:scale-95 transition transform duration-300${
-                  slidesId[currentSlideIndex] &&
-                  finalized &&
-                  selectedOutline === currentOutline
-                    ? 'border-[#0A8568] bg-[#36fa810a]'
-                    : 'border-gray-300'
-                }`}
-              >
-                <FaCheck
-                  className={`h-4 w-4 mr-1 ${
-                    finalized && selectedOutline === currentOutline
-                      ? 'text-[#0A8568]'
-                      : 'text-[#5D5F61]'
-                  }`}
-                />
-                <span className="hidden text-[#5D5F61] lg:block">
-                  {' '}
-                  Finalize Version
-                </span>
-              </button>
-              <button
-                onClick={handlePlusClick}
-                className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
-              >
-                <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
-                <span className="hidden text-[#3667B2] lg:block">
-                  {' '}
-                  New Version
-                </span>
-              </button>
-            </div>
+            <DesktopButtonSection
+              onDelete={handleDelete}
+              onFinalize={handleFinalize}
+              onNewVersion={handlePlusClick}
+              finalized={finalized}
+              currentSlideId={slidesId[currentSlideIndex]}
+            />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
             <div className="flex items-center gap-2 mr-14">
@@ -615,13 +641,14 @@ export default function ViewPresentation() {
       </div>
 
       {/* MOBILE: MAIN CONTAINER */}
-      <div className="block lg:hidden p-4 mx-auto">
+      <div className="block lg:hidden p-4">
         {/* MOBILE: HEADING */}
         <MobileHeading
           handleDownload={handleDownload}
           handleShare={handleShare}
           pptName={pptName!}
           isLoading={isLoading}
+          userPlan={userPlan!}
         />
 
         {/* MOBILE: OUTLINE Modal */}
@@ -633,9 +660,8 @@ export default function ViewPresentation() {
                 outlines={outlines}
                 onSelectOutline={(outline) => {
                   setCurrentOutline(outline)
-                  setSelectedOutline(outline)
                 }}
-                selectedOutline={selectedOutline}
+                selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
                 isLoading={isLoading}
               />
@@ -645,9 +671,7 @@ export default function ViewPresentation() {
 
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
-          className={`relative bg-white h-[30vh] w-full ${
-            displayMode === 'People' ? 'h-[38vh]' : ''
-          } border border-gray-200 mt-12 mb-6`}
+          className={`relative bg-white h-[30vh] w-full border border-gray-200 mt-12 mb-6`}
         >
           {isSlideLoading && (
             <div className="w-full h-full flex items-center justify-center">
@@ -663,46 +687,14 @@ export default function ViewPresentation() {
         {/* MOBILE: ACTION BUTTONS */}
         <div className="flex items-center justify-between w-full mt-10">
           {displayMode === 'slides' || displayMode === 'newContent' ? (
-            <div className="flex gap-4">
-              <button
-                onClick={handleDelete}
-                className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
-              >
-                <FaTrash className="h-4 w-4 text-[#5D5F61]" />
-              </button>
-              <button
-                onClick={handleFinalize}
-                className={`border ${
-                  finalized && selectedOutline === currentOutline
-                    ? 'border-[#0A8568] bg-[#36fa810a]'
-                    : 'border-gray-300'
-                } p-2 rounded-md flex items-center`}
-              >
-                <FaCheck
-                  className={`h-4 w-4 ${
-                    finalized && selectedOutline === currentOutline
-                      ? 'text-[#0A8568]'
-                      : 'text-[#5D5F61]'
-                  }`}
-                />
-              </button>
-              <button
-                onClick={handlePlusClick}
-                className={`hover:text-blue-600 border ${
-                  displayMode === 'newContent'
-                    ? 'border-gray-300'
-                    : 'border-[#3667B2]'
-                } p-2 rounded-md flex items-center`}
-              >
-                <FaPlus
-                  className={`h-4 w-4 ${
-                    displayMode === 'newContent'
-                      ? 'text-[#5D5F61]'
-                      : 'text-[#3667B2]'
-                  }`}
-                />
-              </button>
-            </div>
+            <MobileButtonSection
+              onDelete={handleDelete}
+              onFinalize={handleFinalize}
+              onNewVersion={handlePlusClick}
+              finalized={finalized}
+              currentSlideId={slidesId[currentSlideIndex]}
+              displayMode={displayMode}
+            />
           ) : (
             <button
               onClick={onBack}

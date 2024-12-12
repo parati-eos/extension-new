@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Googleslides from './GoogleSlides'
-import ParatiLogo from '../../assets/zynth-text.png'
+import ZynthLogo from '../../assets/zynth-text.png'
 import { GooglePresentationProps } from '../../types/types.ts'
 import './presentationshare.css'
 
@@ -21,20 +20,21 @@ const GooglePresentation: React.FC<GooglePresentationProps> = ({ formId }) => {
 
 const SharedPresentation = ({ formId }: SharedPresentationProps) => {
   const [currentSlideKey, setCurrentSlideKey] = useState<number>(0)
-  const navigate = useNavigate()
-  const handleLogoClicked = () => {
-    navigate('/')
-  }
   return (
     <div className="main-container">
       <div className="flex flex-col items-center justify-center">
-        <img
-          src={ParatiLogo}
-          alt="Parati Logo"
-          width={150}
-          className="text-center"
-          onClick={handleLogoClicked}
-        />
+        <a
+          href="/"
+          target="_blank"
+          className="transition-all duration-300 transform hover:scale-110 active:scale-95 active:opacity-80"
+        >
+          <img
+            src={ZynthLogo}
+            alt="Parati Logo"
+            width={150}
+            className="text-center"
+          />
+        </a>
       </div>
       <div className="presentationshare-viewing-container">
         <div className="presentationshare-viewing-center">

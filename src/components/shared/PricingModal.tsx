@@ -109,7 +109,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white w-[90%] sm:w-[85%] md:w-[75%] lg:w-[60%] xl:w-[50%] max-h-[90%] overflow-y-auto rounded-lg shadow-lg p-4 sm:p-6 relative">
+      <div className="bg-white w-[90%] max-h-[90%] overflow-y-auto rounded-lg shadow-lg p-4 sm:p-6 relative">
         <button
           onClick={closeModal}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-900 text-lg sm:text-xl"
@@ -117,7 +117,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           &times;
         </button>
         <div>
-          <h2 className="text-gray-900 text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-center">
+          <h2 className="text-gray-900 text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">
             You are currently on FREE plan. To <br />
             use <span className="text-[#3667B2]">{heading} </span>
             feature, <br />
@@ -147,16 +147,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
         </div>
 
-        <div className="bg-white w-full py-8 px-4 sm:py-16 sm:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 max-w-full">
+        <div className="bg-white w-full py-16 px-8">
+          <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
             {/* Side Component: Categories */}
-            <div>
+            <div className="mt-72 hidden lg:block">
               {categories.map((category, index) => (
-                <div key={index} className="mb-6 sm:mb-10">
-                  <h2 className="text-[#3667B2] text-base sm:text-lg font-semibold mb-2 sm:mb-4">
+                <div key={index} className="mb-10">
+                  <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
                     {category.title}
                   </h2>
-                  <ul className="space-y-4 sm:space-y-6 text-gray-700 ml-4 sm:ml-6">
+                  <ul className="space-y-10 text-gray-700 ml-6">
                     {category.features.map((feature, featureIndex) => (
                       <li key={featureIndex}>{feature}</li>
                     ))}
@@ -171,23 +171,25 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 key={planIndex}
                 className={`bg-white border ${
                   planIndex === 1 ? 'border-indigo-600' : 'border-gray-200'
-                } rounded-lg shadow-lg p-4 sm:p-6`}
+                } rounded-lg shadow-lg p-6`}
               >
-                <div className="flex flex-col items-center mb-6 sm:mb-8">
-                  <h3 className="text-indigo-600 text-base sm:text-lg font-semibold mb-1 sm:mb-2">
+                <div className="flex flex-col items-center mb-8">
+                  <h3 className="text-indigo-600 text-lg font-semibold mb-2">
                     {plan.name}
                   </h3>
                   {plan.price && (
-                    <div className="text-gray-900 text-xl sm:text-3xl font-bold text-center mb-2">
+                    <div className="text-gray-900 text-4xl font-bold text-center mb-2">
                       {plan.price}
                     </div>
                   )}
-                  <p className="text-gray-500 text-sm sm:text-base text-center">
+                  <p className="text-gray-500 text-center">
                     {plan.description}
                   </p>
                 </div>
                 <button
-                  className={`w-full font-medium py-2 px-4 sm:py-3 sm:px-6 rounded-lg ${
+                  className={`w-full font-medium py-2 px-6 ${
+                    planIndex === 0 ? 'mb-32' : ''
+                  } rounded-lg ${
                     planIndex === 1
                       ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
                       : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
@@ -195,7 +197,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 >
                   {plan.buttonText}
                 </button>
-                <ul className="mb-6 sm:mb-8 mt-6 space-y-2 sm:space-y-4">
+                <ul className="mb-8 mt-9 space-y-0">
                   {plan.features.map((feature, featureIndex) => (
                     <li
                       key={featureIndex}
@@ -221,6 +223,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </li>
                   ))}
                 </ul>
+                <button
+                  className={`w-full font-medium py-2 px-6 rounded-lg ${
+                    planIndex === 1
+                      ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
+                      : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
+                  }`}
+                >
+                  {plan.buttonText}
+                </button>
               </div>
             ))}
           </div>

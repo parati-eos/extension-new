@@ -33,7 +33,7 @@ const HistoryContainer: React.FC = () => {
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
-  const userPlan = 'free'
+  const userPlan = sessionStorage.getItem('userPlan')
   const [pricingModalHeading, setPricingModalHeading] = useState('')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
@@ -155,63 +155,38 @@ const HistoryContainer: React.FC = () => {
     setFilteredData(updatedData)
   }, [selectedFilter, selectedSort, historyData])
 
-  // API CALL TO GET USER SUBSCRIPTION PLAN
+  // API CALL TO GET PRICING DATA FOR MODAL
   useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        await axios
-          .get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          .then((response) => {
-            // setUserPlan(response.data.plan_name)
-          })
-          .catch((error) => {
-            console.error('Error fetching organization data:', error)
-          })
-      } catch (error) {}
+    const getPricingData = async () => {
+      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+      await axios
+        .get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (ipInfoData.country_name === 'IN' || 'India') {
+            setMonthlyPlan(response.data.items[3])
+            setYearlyPlan(response.data.items[1])
+            setCurrency('INR')
+          } else {
+            setMonthlyPlan(response.data.items[2])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('USD')
+          }
+        })
     }
 
-    fetchUserPlan()
-  }, [authToken, orgId])
-
-  // API CALL TO GET PRICING DATA FOR MODAL
-  // useEffect(() => {
-  //   const getPricingData = async () => {
-  //     const ipInfoResponse = await fetch('https://ipapi.co/json/')
-  //     const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
-
-  //     await axios
-  //       .get(
-  //         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${authToken}`,
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         if (ipInfoData.country_name === 'IN' || 'India') {
-  //           setMonthlyPlan(response.data.items[3])
-  //           setYearlyPlan(response.data.items[1])
-  //           setCurrency('INR')
-  //         } else {
-  //           setMonthlyPlan(response.data.items[2])
-  //           setYearlyPlan(response.data.items[0])
-  //           setCurrency('USD')
-  //         }
-  //       })
-  //   }
-
-  //   getPricingData()
-  // }, [])
-  // const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
-  // const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+    getPricingData()
+  }, [])
+  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
     <>
@@ -491,7 +466,7 @@ const HistoryContainer: React.FC = () => {
             </div>
           )}
 
-          {/* {isPricingModalOpen && userPlan === 'free' ? (
+          {isPricingModalOpen && userPlan === 'free' ? (
             <PricingModal
               closeModal={() => {
                 setIsPricingModalOpen(false)
@@ -504,7 +479,7 @@ const HistoryContainer: React.FC = () => {
             />
           ) : (
             <></>
-          )} */}
+          )}
 
           {/* Pagination */}
           {filteredData?.length > 10 && (

@@ -41,6 +41,7 @@ export interface HeadingProps {
   handleDownload: () => void
   pptName: string
   isLoading: boolean
+  userPlan: string
 }
 
 export interface Outlines {

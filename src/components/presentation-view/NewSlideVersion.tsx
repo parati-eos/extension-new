@@ -6,12 +6,14 @@ interface ButtonProps {
   handleQuickGenerate: () => void
   handleCustomBuilderClick: () => void
   handleSlideNarrative: () => void
+  userPlan: string
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
   handleSlideNarrative,
+  userPlan,
 }) => {
   return (
     <div className="flex flex-col mt-2 items-center justify-center h-full">
@@ -50,6 +52,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
           <button
             className="flex flex-col items-center justify-center"
             onClick={handleCustomBuilderClick}
+            // disabled={userPlan === 'free'}
           >
             <img
               src={CustomBuilderIcon}
@@ -68,6 +71,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
   handleSlideNarrative,
+  userPlan,
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -120,6 +124,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
           <button
             className="flex flex-col items-center justify-center w-full h-full"
             onClick={handleCustomBuilderClick}
+            // disabled={userPlan === 'free'}
           >
             <img
               src={CustomBuilderIcon}

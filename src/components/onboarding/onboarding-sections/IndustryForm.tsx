@@ -95,7 +95,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
       >
         {/* Input */}
         <div
-          className={`w-full lg:flex lg:justify-center lg:gap-4 mt-8 md:mt-4 px-2 ${
+          className={`w-full lg:flex lg:justify-center lg:gap-4 mt-4 md:mt-4 px-2 ${
             (sector === 'Other' || industry === 'Other') &&
             'md:overflow-y-auto md:max-h-32 lg:max-h-40'
           }`}
@@ -172,7 +172,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
         {/* Buttons */}
         <div
-          className={`flex flex-col items-center justify-center mt-24 md:mt-16 lg:mt-36 ${
+          className={`flex flex-col items-center justify-center mt-16 lg:mt-36 ${
             sector === 'Other' || industry === 'Other' ? 'lg:mt-32' : ''
           } w-full space-y-2 px-2`}
         >

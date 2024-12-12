@@ -50,19 +50,24 @@ const OnboardingContainer: React.FC = () => {
   const submitFormData = async (data: Partial<typeof formData>) => {
     try {
       if (currentSection === 1) {
-        await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationcreate-patch`,
-          {
-            ...data,
-            orgId: orgId,
-            userId: userId,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
+        await axios
+          .post(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationcreate-patch`,
+            {
+              ...data,
+              orgId: orgId,
+              userId: userId,
             },
-          }
-        )
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            console.log(response.data)
+            sessionStorage.setItem('userPlan', response.data.plan.plan_name)
+          })
       } else {
         await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
@@ -172,7 +177,7 @@ const OnboardingContainer: React.FC = () => {
     <>
       {/* Progress Bar for Small and Medium Screens */}
       {!isMediumOrLargerScreen && (
-        <div className="flex mt-[3rem] lg:mt-0 justify-between p-4">
+        <div className="flex mt-[2rem] lg:mt-0 justify-between p-4">
           {[1, 2, 3, 4, 5].map((section) => (
             <div
               key={section}
