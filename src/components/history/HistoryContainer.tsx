@@ -158,7 +158,9 @@ const HistoryContainer: React.FC = () => {
   // API CALL TO GET PRICING DATA FOR MODAL
   useEffect(() => {
     const getPricingData = async () => {
-      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoResponse = await fetch(
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
       await axios
@@ -171,7 +173,7 @@ const HistoryContainer: React.FC = () => {
           }
         )
         .then((response) => {
-          if (ipInfoData.country_name === 'IN' || 'India') {
+          if (ipInfoData.country === 'IN' || 'India') {
             setMonthlyPlan(response.data.items[3])
             setYearlyPlan(response.data.items[1])
             setCurrency('INR')
@@ -183,7 +185,12 @@ const HistoryContainer: React.FC = () => {
         })
     }
 
-    getPricingData()
+    const timer = setTimeout(() => {
+      getPricingData()
+    }, 3000) // delay
+
+    // Cleanup the timer in case the component unmounts
+    return () => clearTimeout(timer)
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100

@@ -62,7 +62,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
         { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
         {
-          text: '$9 / ₹ 499 / Export',
+          text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-6',
@@ -108,11 +108,17 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   ]
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+    <div
+      className={`${
+        window.location.pathname !== '/presentation-view'
+          ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
+          : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
+      }`}
+    >
       <div className="bg-white w-[90%] max-h-[90%] overflow-y-auto rounded-lg shadow-lg p-4 sm:p-6 relative">
         <button
           onClick={closeModal}
-          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-900 text-lg sm:text-xl"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-900 hover:scale-110 active:scale-95 transform transition text-lg md:text-4xl"
         >
           &times;
         </button>

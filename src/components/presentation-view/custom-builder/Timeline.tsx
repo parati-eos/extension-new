@@ -166,12 +166,10 @@ export default function Timeline({
             )}
           </div>
 
-          {/* Attach Image and Generate Slide Buttons */}
+          {/* Attach Image and Generate Slide Large Screen Buttons */}
           <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
             {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
-
-            {/* Generate Slide Button */}
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled || loading}
@@ -185,7 +183,7 @@ export default function Timeline({
             </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden md:hidden mt-4 gap-2  w-full justify-center">
+          <div className="flex lg:hidden mt-4 gap-2 w-full justify-center">
             <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
               <FaPaperclip />
               <label htmlFor="fileInput" className="cursor-pointer">

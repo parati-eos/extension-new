@@ -101,9 +101,6 @@ export default function Points({
             <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
               {heading}
             </h2>
-            <h2 className="lg:hidden md:block md:text-lg font-weight-600 text-[#B4B5B8]">
-              Type slide name
-            </h2>
             <BackButton onClick={onBack} />
           </div>
 
@@ -178,7 +175,7 @@ export default function Points({
             </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden md:hidden mt-4 gap-2  w-full justify-center">
+          <div className="flex lg:hidden mt-4 gap-2  w-full justify-center">
             <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
               <FaPaperclip />
               <label htmlFor="fileInput" className="cursor-pointer">

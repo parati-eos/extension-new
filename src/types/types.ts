@@ -42,6 +42,7 @@ export interface HeadingProps {
   pptName: string
   isLoading: boolean
   userPlan: string
+  openPricingModal: () => void
 }
 
 export interface Outlines {

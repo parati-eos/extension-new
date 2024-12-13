@@ -341,7 +341,7 @@ export default function Table({
           </div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden  mt-4 gap-2  justify-end">
+          <div className="flex lg:hidden mt-4 gap-2 justify-end">
             <div className="justify-end">
               <button
                 onClick={handleGenerateSlide}

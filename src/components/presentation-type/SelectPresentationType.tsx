@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   FaBox,
   FaDesktop,
@@ -73,6 +73,39 @@ const SelectPresentationType: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
+  const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleMouseEnter = () => {
+    // Clear any existing timeout to avoid premature hiding
+    if (dialogTimeoutRef.current) {
+      clearTimeout(dialogTimeoutRef.current)
+    }
+
+    // Show the dialog box
+    setIsDialogVisible(true)
+  }
+
+  const handleMouseLeave = () => {
+    // Start a timer to hide the dialog box after 6 seconds
+    dialogTimeoutRef.current = setTimeout(() => {
+      setIsDialogVisible(false)
+    }, 1000)
+  }
+
+  const handleDialogMouseEnter = () => {
+    // Clear the timeout to keep the dialog visible while hovered
+    if (dialogTimeoutRef.current) {
+      clearTimeout(dialogTimeoutRef.current)
+    }
+  }
+
+  const handleDialogMouseLeave = () => {
+    // Restart the timer when the cursor leaves the dialog
+    dialogTimeoutRef.current = setTimeout(() => {
+      setIsDialogVisible(false)
+    }, 6000)
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -173,7 +206,9 @@ const SelectPresentationType: React.FC = () => {
   // API CALL TO GET PRICING DATA FOR MODAL
   useEffect(() => {
     const getPricingData = async () => {
-      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoResponse = await fetch(
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
       await axios
@@ -186,7 +221,7 @@ const SelectPresentationType: React.FC = () => {
           }
         )
         .then((response) => {
-          if (ipInfoData.country_name === 'IN' || 'India') {
+          if (ipInfoData.country === 'IN' || 'India') {
             setMonthlyPlan(response.data.items[3])
             setYearlyPlan(response.data.items[1])
             setCurrency('INR')
@@ -198,7 +233,12 @@ const SelectPresentationType: React.FC = () => {
         })
     }
 
-    getPricingData()
+    const timer = setTimeout(() => {
+      getPricingData()
+    }, 3000) // delay
+
+    // Cleanup the timer in case the component unmounts
+    return () => clearTimeout(timer)
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
@@ -281,20 +321,75 @@ const SelectPresentationType: React.FC = () => {
           >
             Generate Presentation
           </button>
-          <button
-            onClick={() => {
-              // setIsRefineModalOpen(true)
-              setIsPricingModalOpen(true)
-            }}
-            // disabled={refineButtonDisabled}
-            className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
-              refineButtonDisabled
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
-            }`}
+          {/* <div className="relative group">
+            <button
+              onClick={() => userPlan !== 'free' && setIsRefineModalOpen}
+              disabled={refineButtonDisabled}
+              className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
+                refineButtonDisabled
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
+              }`}
+            >
+              Refine Presentation
+            </button> */}
+
+          {/* On Hover Dialog Box */}
+          {/* {refineButtonDisabled && (
+              <div className="absolute left-full top-1 transform -translate-y-1/2 ml-2 h-[5.5rem] w-[10rem] hidden group-hover:flex bg-gray-200 text-[#3667B2] px-3 py-1 rounded-2xl shadow-lg">
+                <p>
+                  Please upgrade to{' '}
+                  <span>
+                    <button
+                      className="text-purple-600 hover:text-purple-800 hover:scale-110 active:scale-95 transition transform"
+                      onClick={() => setIsPricingModalOpen(true)}
+                    >
+                      Pro
+                    </button>
+                  </span>{' '}
+                  to access this feature.
+                </p>
+              </div>
+            )}
+          </div> */}
+          <div
+            className="relative group"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            Refine Presentation
-          </button>
+            <button
+              disabled={refineButtonDisabled}
+              className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
+                refineButtonDisabled
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
+              }`}
+            >
+              Refine Presentation
+            </button>
+
+            {/* On Hover Dialog Box */}
+            {refineButtonDisabled && isDialogVisible && (
+              <div
+                className="absolute left-full top-1 transform -translate-y-1/2 ml-2 h-[5.5rem] w-[10rem] bg-gray-200 text-[#3667B2] px-3 py-1 rounded-2xl shadow-lg"
+                onMouseEnter={handleDialogMouseEnter}
+                onMouseLeave={handleDialogMouseLeave}
+              >
+                <p>
+                  Please upgrade to{' '}
+                  <span>
+                    <button
+                      className="text-purple-600 hover:text-purple-800 hover:scale-110 active:scale-95 transition transform"
+                      onClick={() => setIsPricingModalOpen(true)}
+                    >
+                      Pro
+                    </button>
+                  </span>{' '}
+                  plan to access this feature.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

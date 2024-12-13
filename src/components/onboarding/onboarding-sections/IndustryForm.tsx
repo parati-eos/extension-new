@@ -17,8 +17,8 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   const [otherIndustry, setOtherIndustry] = useState<string>('')
   const [industryOptions, setIndustryOptions] = useState<string[]>([])
 
+  // Set sector and industry based on initialData
   useEffect(() => {
-    // Set sector and industry based on initialData
     if (
       !Object.keys(industrySectorMap).includes(initialData.sector) &&
       initialData.sector
@@ -43,6 +43,12 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   useEffect(() => {
     if (sector && sector !== 'Other' && sector in industrySectorMap) {
       setIndustryOptions([...industrySectorMap[sector as SectorType], 'Other'])
+    }
+
+    // Automatically set industry to "Other" if sector is "Other"
+    if (sector === 'Other') {
+      setIndustry('Other')
+      setOtherIndustry('') // Reset otherIndustry input
     }
   }, [sector])
 
@@ -76,6 +82,12 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
     }
   }
 
+  const isNextButtonDisabled =
+    !sector ||
+    !industry || // Ensure sector and industry are selected
+    (sector === 'Other' && !otherSector) || // Validate otherSector input
+    (industry === 'Other' && !otherIndustry) // Validate otherIndustry input
+
   return (
     <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
       {/* Heading */}
@@ -91,14 +103,11 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
+        className="flex flex-col items-center justify-center w-full max-w-sm mx-auto"
       >
         {/* Input */}
         <div
-          className={`w-full lg:flex lg:justify-center lg:gap-4 mt-4 md:mt-4 px-2 ${
-            (sector === 'Other' || industry === 'Other') &&
-            'md:overflow-y-auto md:max-h-32 lg:max-h-40'
-          }`}
+          className={`w-full lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-4 px-2`}
         >
           <div className="flex flex-col w-full">
             <label
@@ -111,7 +120,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               id="sector"
               value={sector}
               onChange={handleSectorChange}
-              className="mb-4 lg:p-2 p-3 border w-full rounded-xl"
+              className="mb-2 lg:p-2 p-3 border w-full rounded-xl"
             >
               <option value="" disabled>
                 Select sector
@@ -144,7 +153,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               id="industry"
               value={industry}
               onChange={handleIndustryChange}
-              className="mb-4 lg:p-2 p-3 border w-full rounded-xl"
+              className="mb-2 lg:p-2 p-3 border w-full rounded-xl"
               disabled={!sector || sector === 'Other'}
             >
               <option value="" disabled>
@@ -173,20 +182,10 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         {/* Buttons */}
         <div
           className={`flex flex-col items-center justify-center mt-16 lg:mt-36 ${
-            sector === 'Other' || industry === 'Other' ? 'lg:mt-32' : ''
+            sector === 'other' || industry === 'other' ? 'lg:mt-0' : ''
           } w-full space-y-2 px-2`}
         >
-          <NextButton
-            disabled={
-              !(
-                sector &&
-                industry &&
-                (sector !== 'Other' || otherSector) &&
-                (industry !== 'Other' || otherIndustry)
-              )
-            }
-            text={'Next'}
-          />
+          <NextButton disabled={isNextButtonDisabled} text={'Next'} />
           <BackButton onClick={onBack} />
         </div>
       </form>

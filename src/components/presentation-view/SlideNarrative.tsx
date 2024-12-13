@@ -83,16 +83,14 @@ export default function SlideNarrative({
 
           {/* Input Section for Desktop */}
           <div className="hidden lg:block flex-1 overflow-y-auto px-4">
-            <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14">
+            <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14 xl:mt-8">
               <textarea
                 value={narrative}
                 onChange={(e) => setNarrative(e.target.value)}
                 placeholder="Please provide some context and narrative to generate this slide."
-                className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 h-[25rem] xl:h-[17rem] resize-none border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 style={{
-                  height: '25rem', // Fixed height for large screens
                   maxWidth: '60rem', // Fixed width for large screens
-                  resize: 'none', // Allow manual resizing vertically
                 }}
               ></textarea>
             </div>
@@ -151,26 +149,8 @@ export default function SlideNarrative({
             </button>
           </div>
 
-          {/* Attach Image and Generate Slide Buttons for Medium Screens */}
-          <div className="hidden  md:flex lg:hidden mt-4 gap-2 px-4 w-full justify-center">
-            <div className="flex-1">
-              <AttachImage onFileSelected={handleFileSelect} />
-            </div>
-            <button
-              onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled}
-              className={`flex-1 py-2 rounded-md ${
-                isGenerateDisabled
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white'
-              }`}
-            >
-              Generate Slide
-            </button>
-          </div>
-
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden md:hidden mt-4 gap-2 px-4 w-full justify-center">
+          <div className="flex lg:hidden mt-4 gap-2 px-4 w-full justify-center">
             <div className="flex-1 flex items-center gap-2 text-[#5D5F61] p-2 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
               <FaPaperclip />
               <label htmlFor="fileInput" className="cursor-pointer">

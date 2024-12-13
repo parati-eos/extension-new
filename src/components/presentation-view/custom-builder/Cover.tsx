@@ -7,17 +7,18 @@ import { BackButton } from './shared/BackButton'
 
 export default function Cover(
   heading: string,
+  documentID: string,
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 ) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       setIsUploading(true)
-
       try {
         const url = await uploadLogoToS3(file)
         setLogo(url)
@@ -36,9 +37,15 @@ export default function Cover(
   const handleGenerateSlide = async () => {
     try {
       const response = await axios.post(
-        ``,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/cover`,
         {
-          logo,
+          type: 'cover',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            logo: logo,
+          },
         },
         {
           headers: {

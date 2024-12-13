@@ -9,7 +9,6 @@ import {
   FaTimes,
   FaBars,
 } from 'react-icons/fa'
-import ZynthLogo from '../../assets/Zynth ICON (For Dark Bg).png'
 import ZynthLogoText from '../../assets/zynth-text.png'
 import { Section } from '../../types/onboardingTypes'
 
@@ -78,18 +77,20 @@ const Sidebar: React.FC<SidebarProps> = ({
             onClick={toggleSidebar}
           />
         )}
-        
-        <div className="flex items-center mb-8 mt-8 ml-4 md:ml-2 gap-1">
-        <img src={ZynthLogo} alt="Zynth Logo" className="w-12 h-12" />
-        <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-all duration-300 transform hover:scale-110 active:scale-95 active:opacity-80"
-            >
-              <img className="h-8" src={ZynthLogoText} alt="Zynth" />
-            </a>
-         
+
+        <div className="flex items-center justify-center mb-8 mt-8 mr-2 gap-1">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-all duration-300 transform "
+          >
+            <img
+              className="h-8 hover:scale-110 active:scale-95 active:opacity-80 transition-all transform"
+              src={ZynthLogoText}
+              alt="Zynth"
+            />
+          </a>
         </div>
 
         <div className="relative">

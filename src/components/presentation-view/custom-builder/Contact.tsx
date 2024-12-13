@@ -29,21 +29,30 @@ export default function Contact({
 
   const handleSubmit = async () => {
     const payload = {
-      websiteLink,
-      email,
-      phone,
-      linkedin,
+      type: 'contact',
+      title: heading,
+      documentID: documentID,
+      data: {
+        slideName: heading,
+        websiteLink,
+        email,
+        phone,
+        linkedin,
+      },
     }
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify(payload),
-      })
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/contact`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      )
 
       if (!response.ok) {
         throw new Error('Failed to submit contact details')

@@ -70,7 +70,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       </div>
 
       {/* Mobile View */}
-      <div className="lg:hidden  flex flex-wrap justify-start  ">
+      <div className="lg:hidden flex flex-wrap justify-start mt-4">
         {slideTypes.map((type) => (
           <div
             key={type.name}

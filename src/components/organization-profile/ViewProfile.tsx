@@ -81,7 +81,7 @@ const ViewProfile: React.FC = () => {
                     {organizationData?.companyName}
                   </h2>
                   <p className="text-sm text-gray-500">
-                    {organizationData?.industry} • {organizationData?.sector}
+                    {organizationData?.sector} • {organizationData?.industry}
                   </p>
                   {/* Edit Button */}
                   <button
@@ -170,7 +170,7 @@ const ViewProfile: React.FC = () => {
                     {organizationData?.companyName}
                   </h2>
                   <p className="text-lg text-gray-500 leading-relaxed">
-                    {organizationData?.industry} • {organizationData?.sector}
+                    {organizationData?.sector} • {organizationData?.industry}
                   </p>
                 </div>
               </div>

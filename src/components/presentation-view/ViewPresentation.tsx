@@ -190,7 +190,7 @@ export default function ViewPresentation() {
       case 'slides':
         return (
           <>
-            {isSlideLoading ? (
+            {isSlideLoading || !presentationID ? (
               <div className="w-full h-full flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
               </div>
@@ -435,13 +435,18 @@ export default function ViewPresentation() {
 
     // Listen for slide data from the backend
     socket.on('slidesData', (newSlides) => {
-      const result = newSlides
-      console.log('SOCKET DATA', result)
-      setPresentationID(result[0].PresentationID)
-      const ids = result.map((item: any) => item.GenSlideID)
-      setSlidesId(ids)
-      setIsSlideLoading(false)
-      setTotalSlides(ids.length)
+      if (newSlides && newSlides.length > 0) {
+        console.log('SOCKET DATA', newSlides)
+
+        // Safely set presentationID and other states
+        setPresentationID(newSlides[0].PresentationID)
+        const ids = newSlides.map((item: any) => item.GenSlideID)
+        setSlidesId(ids)
+        setIsSlideLoading(false)
+        setTotalSlides(ids.length)
+      } else {
+        console.warn('Received empty or invalid slides data')
+      }
     })
 
     // Handle any error messages from the backend
@@ -455,7 +460,7 @@ export default function ViewPresentation() {
     // Automatically fetch slides on component mount
     socket.emit('fetchSlides', {
       slideType: currentOutline.replace(/^\d+\.\s*/, ''),
-      formID: 'Document-1734064155465',
+      formID: documentID,
     })
 
     // Cleanup when the component unmounts
@@ -503,7 +508,9 @@ export default function ViewPresentation() {
   // API CALL TO GET PRICING DATA FOR MODAL
   useEffect(() => {
     const getPricingData = async () => {
-      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoResponse = await fetch(
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
       await axios
@@ -516,7 +523,7 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          if (ipInfoData.country_name === 'IN' || 'India') {
+          if (ipInfoData.country === 'IN' || 'India') {
             setMonthlyPlan(response.data.items[3])
             setYearlyPlan(response.data.items[1])
             setCurrency('INR')
@@ -528,7 +535,12 @@ export default function ViewPresentation() {
         })
     }
 
-    getPricingData()
+    const timer = setTimeout(() => {
+      getPricingData()
+    }, 3000) // delay
+
+    // Cleanup the timer in case the component unmounts
+    return () => clearTimeout(timer)
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
@@ -556,6 +568,7 @@ export default function ViewPresentation() {
         pptName={pptName!}
         isLoading={isLoading}
         userPlan={userPlan!}
+        openPricingModal={() => setIsPricingModalOpen(true)}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -650,6 +663,7 @@ export default function ViewPresentation() {
           pptName={pptName!}
           isLoading={isLoading}
           userPlan={userPlan!}
+          openPricingModal={() => setIsPricingModalOpen(true)}
         />
 
         {/* MOBILE: OUTLINE Modal */}
@@ -672,7 +686,9 @@ export default function ViewPresentation() {
 
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
-          className={`relative bg-white h-[30vh] w-full border border-gray-200 mt-12 mb-6`}
+          className={`relative bg-white ${
+            displayMode !== 'slides' ? 'h-[45vh] md:h-[50vh]' : 'h-[30vh]'
+          } w-full border border-gray-200 mt-12 mb-6`}
         >
           {isSlideLoading && (
             <div className="w-full h-full flex items-center justify-center">
@@ -686,7 +702,11 @@ export default function ViewPresentation() {
         </div>
 
         {/* MOBILE: ACTION BUTTONS */}
-        <div className="flex items-center justify-between w-full mt-10">
+        <div
+          className={`relative flex items-center justify-between w-full ${
+            displayMode === 'slides' ? 'mt-[11.2em]' : 'mt-10'
+          }`}
+        >
           {displayMode === 'slides' || displayMode === 'newContent' ? (
             <MobileButtonSection
               onDelete={handleDelete}

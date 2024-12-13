@@ -280,5 +280,5 @@ export const industrySectorMap = {
     'Upcycling',
     'Waste to Energy',
   ],
-  Other: [],
+  Other: ['Other'],
 }
