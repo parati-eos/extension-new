@@ -69,21 +69,21 @@ export default function Images({
     try {
       await axios
         .post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
-          {
-            type: 'images',
-            title: heading,
-            documentID: documentID,
-            data: {
-              slideName: heading,
-              imageurl: images,
-            },
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
+        {
+          type: 'images',
+          title: heading,
+          documentID: documentID,
+          data: {
+            slideName: heading,
+            imageurl: images,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
         )
         .then((response) => {
           alert('Images submitted successfully!')
@@ -184,6 +184,11 @@ export default function Images({
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
               {images.map((image, index) => (
                 <div key={index} className="w-full aspect-square relative">
+                  {replacingIndex === index ? (
+                    <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
+                      <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  ) : null}
                   <img
                     src={image}
                     alt={`Uploaded ${index + 1}`}
@@ -244,9 +249,8 @@ export default function Images({
               )}
             </div>
           </div>
-          {/* Desktop Generate Slide Button  */}
-          <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-start lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
-            {/* Generate Slide Button */}
+
+          <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
             <button
               onClick={handleSubmit}
               disabled={images.length === 0}

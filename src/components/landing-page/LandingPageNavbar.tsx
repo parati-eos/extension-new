@@ -114,7 +114,19 @@ const LandingPageNavbar: React.FC = () => {
                 ?.scrollIntoView({ behavior: 'smooth' })
             }}
           >
-            How it works
+            How Zynth Works
+          </a>
+          <a
+            href="#sample-presentation"
+            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            onClick={(e) => {
+              e.preventDefault()
+              document
+                .getElementById('sample-presentation')
+                ?.scrollIntoView({ behavior: 'smooth' })
+            }}
+          >
+            Sample Presentation
           </a>
           <a
             href="#pricing"
@@ -132,6 +144,7 @@ const LandingPageNavbar: React.FC = () => {
           >
             Blog
           </a>
+          
         </div>
 
         {/* Right Buttons */}
@@ -160,7 +173,15 @@ const LandingPageNavbar: React.FC = () => {
                 href="#how-it-works"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
-                How it works
+                  How Zynth Works
+              </a>
+            </li>
+            <li>
+              <a
+                href="#sample-presentation"
+                className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+              >
+                  Sample Presentation
               </a>
             </li>
             <li>
@@ -190,6 +211,7 @@ const LandingPageNavbar: React.FC = () => {
                 Login
               </button>
             </li>
+         
           </ul>
         </div>
       )}

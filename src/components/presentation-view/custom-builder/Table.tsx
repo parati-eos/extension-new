@@ -38,12 +38,22 @@ export default function Table({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Check if there's at least one non-empty cell in any row and any column
-    const hasNonEmptyCell = tableData.rows.some((row) =>
-      row.some((cell) => cell.trim() !== '')
-    )
-    setCanGenerate(hasNonEmptyCell)
-  }, [tableData])
+    // Count fully completed rows
+    const completedRows = tableData.rows.filter((row) =>
+      row.every((cell) => cell.trim() !== '')
+    ).length;
+  
+    // Count fully completed columns
+    const columnCount = tableData.rows[0]?.length || 0;
+    const completedColumns = Array.from({ length: columnCount }).filter((_, colIndex) =>
+      tableData.rows.every((row) => row[colIndex]?.trim() !== '')
+    ).length;
+  
+    // Enable generation only if at least 2 rows and 2 columns are fully completed
+    setCanGenerate(completedRows >= 2 && completedColumns >= 2);
+  }, [tableData]);
+  
+  
 
   const handleAddRow = () => {
     if (tableData.rows.length < 8) {

@@ -56,10 +56,9 @@ export default function Timeline({
     timeline[timeline.length - 1].trim() === '' ||
     description[description.length - 1].trim() === ''
 
-  const isGenerateDisabled = timeline.some(
-    (point, index) => point.trim() === '' || description[index].trim() === ''
-  )
-
+    const isGenerateDisabled = 
+    timeline.filter((point, index) => point.trim() !== '' && description[index].trim() !== '').length < 3;
+  
   const handleGenerateSlide = async () => {
     setLoading(true)
     try {

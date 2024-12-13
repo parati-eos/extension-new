@@ -82,21 +82,21 @@ export default function SlideNarrative({
           </div>
 
           {/* Input Section for Desktop */}
+          {/* Input Section for Desktop */}
           <div className="hidden lg:block flex-1 overflow-y-auto px-4">
-            <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14">
+            <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14 xl:mt-8">
               <textarea
                 value={narrative}
                 onChange={(e) => setNarrative(e.target.value)}
                 placeholder="Please provide some context and narrative to generate this slide."
-                className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-2 h-[25rem] xl:h-[17rem] resize-none border border-gray-300 rounded-md lg:rounded-lg focus:outline none focus:ring-2 focus:ring-blue-500"
                 style={{
-                  height: '25rem', // Fixed height for large screens
                   maxWidth: '60rem', // Fixed width for large screens
-                  resize: 'none', // Allow manual resizing vertically
                 }}
               ></textarea>
             </div>
           </div>
+          
 
           {/* Input Section for Medium Screens */}
           <div className="hidden md:block lg:hidden flex-1 overflow-y-auto px-4">
