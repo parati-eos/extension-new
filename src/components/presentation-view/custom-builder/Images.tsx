@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { FaImage, FaPaperclip } from 'react-icons/fa'
+import { FaImage,} from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'

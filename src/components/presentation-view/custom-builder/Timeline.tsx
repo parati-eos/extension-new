@@ -156,7 +156,7 @@ export default function Timeline({
     }`}
     
   >
-     <FaPlus className="text-[#000000]" />
+     <FaPlus/>
             Add New Timeline
   </button>
 )}

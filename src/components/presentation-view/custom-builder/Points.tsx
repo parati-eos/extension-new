@@ -136,14 +136,14 @@ export default function Points({
 {index === points.length - 1 && points.length < 6 && (
   <button
     onClick={addNewPoint}
-    className={`text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2   items-center md:justify-center h-10 lg:mt-4 ${
+    className={`text-[#5D5F61]  md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2   items-center md:justify-center h-10 lg:mt-4 ${
       point.trim() === ''
         ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
     }`}
     disabled={point.trim() === ''} // Prevent adding a new point if the current input is empty
   >
-                  <FaPlus className="text-[#000000]" />
+                  <FaPlus />
     <span>Add new point</span>
   </button>
 )}
