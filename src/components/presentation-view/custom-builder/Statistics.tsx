@@ -162,7 +162,7 @@ export default function Statistics({
                     : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
                 } `}
               >
-                <FaPlus className="h-4 w-4 mr-2 text-black" />
+                <FaPlus className="h-4 w-4 mr-2" />
                 <span>Add Data</span>
               </button>
             )}

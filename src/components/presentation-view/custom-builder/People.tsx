@@ -288,7 +288,7 @@ export default function People({
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
                     }`}
                   >
-                    <FaPlus className="text-[#000000]" />
+                    <FaPlus />
                     Add More People
                   </button>
                 )}

@@ -151,7 +151,7 @@ export default function Points({
                     }`}
                     disabled={point.trim() === ''} // Prevent adding a new point if the current input is empty
                   >
-                    <FaPlus className="text-[#000000]" />
+                    <FaPlus />
                     <span>Add new point</span>
                   </button>
                 )}

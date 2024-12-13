@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { FaImage, FaPaperclip } from 'react-icons/fa'
+import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
@@ -114,70 +114,7 @@ export default function Images({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-          {/* Mobile Image Upload Container */}
-          <div className="flex flex-col   lg:hidden w-full h-full md:mt-4 lg:mt-12">
-            <div className="flex items-center border justify-between border-gray-300 rounded-lg p-4">
-              <div className="flex items-center gap-4">
-                <FaImage className="text-4xl text-gray-500" />
-                <p className="text-gray-500 text-sm text-center">
-                  {isUploading && replacingIndex === null
-                    ? 'Uploading... Please wait'
-                    : 'Upload Image(s)'}
-                </p>
-              </div>
-              <button
-                onClick={() =>
-                  document.getElementById('mobileImageInput')?.click()
-                }
-                className="text-[#3667B2] px-4 py-2 rounded-md "
-              >
-                Upload
-              </button>
-              <input
-                type="file"
-                id="mobileImageInput"
-                className="hidden"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleFileChange(e)}
-              />
-            </div>
 
-            {/* Display Uploaded Images for Mobile */}
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              {images.map((image, index) => (
-                <div key={index} className="relative w-full h-24">
-                  {/* Display uploaded image */}
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index + 1}`}
-                    className="w-full h-full object-cover rounded-md"
-                  />
-
-                  {/* Reupload button */}
-                  <button
-                    onClick={() =>
-                      document
-                        .getElementById(`replaceInputMobile${index}`)
-                        ?.click()
-                    }
-                    className="absolute top-1 right-1 bg-gray-800 text-white text-xs py-1 px-2 rounded-md hover:bg-gray-600"
-                  >
-                    Reupload
-                  </button>
-
-                  {/* Hidden input for replacing the image */}
-                  <input
-                    type="file"
-                    id={`replaceInputMobile${index}`}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, index)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>{' '}
           {/* Mobile Image Upload Container */}
           <div className="flex flex-col lg:hidden w-full h-full md:mt-4 lg:mt-12">
             <div className="flex items-center border justify-between border-gray-300 rounded-lg p-4">

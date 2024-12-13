@@ -434,8 +434,8 @@ export default function ViewPresentation() {
     })
 
     // Listen for slide data from the backend
-    socket.on('slidesData', async (newSlides) => {
-      const result = await newSlides
+    socket.on('slidesData', (newSlides) => {
+      const result = newSlides
       console.log('SOCKET DATA', result)
       setPresentationID(result[0].PresentationID)
       const ids = result.map((item: any) => item.GenSlideID)
@@ -450,11 +450,12 @@ export default function ViewPresentation() {
     })
 
     // currentOutline.replace(/^\d+\.\s*/, '')
+    console.log('Outline Passed', currentOutline.replace(/^\d+\.\s*/, ''))
 
     // Automatically fetch slides on component mount
     socket.emit('fetchSlides', {
       slideType: currentOutline.replace(/^\d+\.\s*/, ''),
-      formID: documentID,
+      formID: 'Document-1734064155465',
     })
 
     // Cleanup when the component unmounts
