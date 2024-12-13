@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { FaImage,} from 'react-icons/fa'
+import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
@@ -69,21 +69,21 @@ export default function Images({
     try {
       await axios
         .post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
-        {
-          type: 'images',
-          title: heading,
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            imageurl: images,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
+          {
+            type: 'images',
+            title: heading,
+            documentID: documentID,
+            data: {
+              slideName: heading,
+              imageurl: images,
+            },
           },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
         )
         .then((response) => {
           alert('Images submitted successfully!')
@@ -164,7 +164,7 @@ export default function Images({
                     }
                     className="absolute top-1 right-1 bg-gray-800 text-white text-xs py-1 px-2 rounded-md hover:bg-gray-600"
                   >
-                    Reupload
+                    Re-upload
                   </button>
 
                   {/* Hidden input for replacing the image */}
@@ -200,7 +200,7 @@ export default function Images({
                     }
                     className="absolute top-2 right-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-lg hover:bg-gray-600"
                   >
-                    Reupload
+                    Re-upload
                   </button>
                   <input
                     type="file"
