@@ -84,15 +84,15 @@ const Pricing: React.FC = () => {
       description: 'Perfect for exploring Zynth.',
       price: null,
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-10 mb-9' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-4 ' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4 ' },
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-4' },
+        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
         {
           text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
@@ -120,21 +120,21 @@ const Pricing: React.FC = () => {
           </>
         ),
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-10' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
+        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-4' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
         {
           text: 'Unlimited',
           bgColor: 'white',
           icon: FaCheckCircle,
           spacing: 'py-6',
         },
-        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-10' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
+        { text: '', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-4' },
       ],
     },
   ]
@@ -175,13 +175,13 @@ const Pricing: React.FC = () => {
       <div className="bg-white w-full py-16 px-8">
         <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
           {/* Side Component: Categories */}
-          <div className="mt-72 hidden lg:block">
+          <div className="mt-[17rem] hidden lg:block">
             {categories.map((category, index) => (
               <div key={index} className="mb-10">
                 <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
                   {category.title}
                 </h2>
-                <ul className="space-y-10 text-gray-700 ml-6">
+                <ul className="space-y-8 text-gray-700 ml-6">
                   {category.features.map((feature, featureIndex) => (
                     <li key={featureIndex}>{feature}</li>
                   ))}
@@ -220,11 +220,11 @@ const Pricing: React.FC = () => {
               >
                 {plan.buttonText}
               </button>
-              <ul className="mb-8 mt-9 space-y-0">
+              <ul className="mb-8 mt-4 space-y-0 ">
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={featureIndex}
-                    className={`flex items-center justify-center w-full ${feature.spacing}`}
+                    className={`flex items-center justify-center w-full mt-2 ${feature.spacing}`}
                     style={{
                       backgroundColor: feature.bgColor,
                       borderRadius: '0.375rem',
