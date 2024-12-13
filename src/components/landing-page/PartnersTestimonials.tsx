@@ -31,12 +31,24 @@ const PartnersTestimonials: React.FC = () => {
       <div className="bg-white py-12 pb-14">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-8">Our Partners</h2>
-          <div className="flex justify-center">
-            <img
-              src={secondfooterimage}
+          <div className="flex justify-between">
+          
+              <img
+              src="https://zynthimage.s3.amazonaws.com/uploads/184_images%20%283%29.png"
               alt="Our Partners"
-              className="h-16 md:h-24"
+              className="md:h-48 h-28 "
             />
+              <img
+              src="https://zynthimage.s3.amazonaws.com/uploads/375_vr90kaasazgk14pgxt8h%20%281%29.png"
+              alt="Our Partners"
+              className="md:h-48 h-28"
+            />
+              <img
+              src="https://zynthimage.s3.amazonaws.com/uploads/320_Untitled%20design.png"
+              alt="Our Partners"
+              className="md:h-48 h-28"
+            />
+
           </div>
         </div>
       </div>
