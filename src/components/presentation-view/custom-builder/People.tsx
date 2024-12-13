@@ -171,9 +171,9 @@ export default function People({
 
   const isGenerateDisabled = !(
     people[0].name.trim() &&
-    people[0].company.trim() &&
-    people[0].designation.trim() &&
-    people[0].description.trim()
+    people[0].description.trim() &&
+    people[1].name.trim() &&
+    people[1].description.trim()
   )
 
   const onBack = () => {
@@ -248,51 +248,51 @@ export default function People({
                   className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
-<div className="flex items-center gap-2">
-  {person.image && (
-    <div className="flex items-center gap-2">
-      <img
-        src={person.image}
-        alt="Uploaded"
-        className="w-8 h-8 object-cover border border-gray-300"
-      />
-      <label
-        className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 hover:text-blue-800 transition-all duration-200 cursor-pointer"
-      >
-        Change Image
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) =>
-            handleImageUpload(e.target.files?.[0] || null, index)
-          }
-        />
-      </label>
-    </div>
-  )}
+                <div className="flex items-center gap-2">
+                  {person.image && (
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={person.image}
+                        alt="Uploaded"
+                        className="w-8 h-8 object-cover border border-gray-300"
+                      />
+                      <label className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-lg hover:bg-blue-200 hover:text-blue-800 transition-all duration-200 cursor-pointer">
+                        Change Image
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handleImageUpload(
+                              e.target.files?.[0] || null,
+                              index
+                            )
+                          }
+                        />
+                      </label>
+                    </div>
+                  )}
 
-  {!person.image && !person.loading && (
-    <label className="flex items-center gap-6 md:gap-2 border border-gray-300 px-4 py-2 rounded-md w-[100%] lg:w-[32%] cursor-pointer text-blue-500">
-      <FaImage />
-      <span className="hidden md:block">Select Image</span>
-      <span className="md:hidden">Upload Image</span>
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) =>
-          handleImageUpload(e.target.files?.[0] || null, index)
-        }
-      />
-    </label>
-  )}
+                  {!person.image && !person.loading && (
+                    <label className="flex items-center gap-6 md:gap-2 border border-gray-300 px-4 py-2 rounded-md w-[100%] lg:w-[32%] cursor-pointer text-blue-500">
+                      <FaImage />
+                      <span className="hidden md:block">Select Image</span>
+                      <span className="md:hidden">Upload Image</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) =>
+                          handleImageUpload(e.target.files?.[0] || null, index)
+                        }
+                      />
+                    </label>
+                  )}
 
-  {person.loading && (
-    <span className="text-gray-500">Uploading...</span>
-  )}
-</div>
-
+                  {person.loading && (
+                    <span className="text-gray-500">Uploading...</span>
+                  )}
+                </div>
 
                 {index === people.length - 1 && window.innerWidth >= 768 && (
                   <button

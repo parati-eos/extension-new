@@ -53,7 +53,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   return (
     <div className="w-full mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 mb-8">
+      <div className="flex flex-col items-center gap-1 mb-8 md:mb-6">
         <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Contact Details

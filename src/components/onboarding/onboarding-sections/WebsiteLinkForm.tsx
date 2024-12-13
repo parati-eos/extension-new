@@ -46,7 +46,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow mt-2 w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-[3.5rem] md:mt-6 px-2 mb-24">
+        <div className="w-full mt-[3.5rem] md:mt-12 px-2 mb-24">
           <label
             htmlFor="websiteLink"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -64,7 +64,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-1 md:mt-10 w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 px-2">
           <NextButton disabled={!websiteLink} text={'Next'} />
           <BackButton onClick={onBack} />
         </div>
