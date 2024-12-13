@@ -61,7 +61,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full border border-gray-200 mt-10 md:mt-6 p-10 rounded-lg hover:scale-105">
+        <div className="w-[90%] md:w-full border border-gray-200 mt-6 md:mt-6 p-10 rounded-lg hover:scale-105">
           <input
             type="file"
             id="companyLogo"
@@ -95,7 +95,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
         </div>
 
         {/* Button */}
-        <div className="flex flex-col items-center justify-center mt-[5.5rem] md:mt-7 w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center mt-[3.5rem] md:mt-7 w-full space-y-2 px-2">
           <NextButton disabled={!logo} text={'Next'} />
           <BackButton onClick={onBack} />
         </div>

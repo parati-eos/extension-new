@@ -67,7 +67,9 @@ const SelectPresentationType: React.FC = () => {
   const [selectedTypeName, setSelectedTypeName] = useState<string | null>('')
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
-  const [userPlan, setUserPlan] = useState('free')
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const pricingModalHeading = 'Refine PPT'
+  const userPlan = sessionStorage.getItem('userPlan')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
@@ -168,63 +170,38 @@ const SelectPresentationType: React.FC = () => {
       ? !customTypeInput.trim()
       : !selectedType
 
-  // API CALL TO GET USER SUBSCRIPTION PLAN
+  // API CALL TO GET PRICING DATA FOR MODAL
   useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        await axios
-          .get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          .then((response) => {
-            // setUserPlan(response.data.plan_name)
-          })
-          .catch((error) => {
-            console.error('Error fetching organization data:', error)
-          })
-      } catch (error) {}
+    const getPricingData = async () => {
+      const ipInfoResponse = await fetch('https://ipapi.co/json/')
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+      await axios
+        .get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (ipInfoData.country_name === 'IN' || 'India') {
+            setMonthlyPlan(response.data.items[3])
+            setYearlyPlan(response.data.items[1])
+            setCurrency('INR')
+          } else {
+            setMonthlyPlan(response.data.items[2])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('USD')
+          }
+        })
     }
 
-    fetchUserPlan()
-  }, [authToken, orgId])
-
-  // API CALL TO GET PRICING DATA FOR MODAL
-  // useEffect(() => {
-  //   const getPricingData = async () => {
-  //     const ipInfoResponse = await fetch('https://ipapi.co/json/')
-  //     const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
-
-  //     await axios
-  //       .get(
-  //         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${authToken}`,
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         if (ipInfoData.country_name === 'IN' || 'India') {
-  //           setMonthlyPlan(response.data.items[3])
-  //           setYearlyPlan(response.data.items[1])
-  //           setCurrency('INR')
-  //         } else {
-  //           setMonthlyPlan(response.data.items[2])
-  //           setYearlyPlan(response.data.items[0])
-  //           setCurrency('USD')
-  //         }
-  //       })
-  //   }
-
-  //   getPricingData()
-  // }, [])
-  // const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
-  // const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+    getPricingData()
+  }, [])
+  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
@@ -305,8 +282,11 @@ const SelectPresentationType: React.FC = () => {
             Generate Presentation
           </button>
           <button
-            onClick={() => setIsRefineModalOpen(true)}
-            disabled={refineButtonDisabled}
+            onClick={() => {
+              // setIsRefineModalOpen(true)
+              setIsPricingModalOpen(true)
+            }}
+            // disabled={refineButtonDisabled}
             className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
               refineButtonDisabled
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -316,6 +296,21 @@ const SelectPresentationType: React.FC = () => {
             Refine Presentation
           </button>
         </div>
+      )}
+
+      {/* Pricing Modal */}
+      {isPricingModalOpen && userPlan === 'free' ? (
+        <PricingModal
+          closeModal={() => {
+            setIsPricingModalOpen(false)
+          }}
+          heading={pricingModalHeading}
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency}
+        />
+      ) : (
+        <></>
       )}
 
       {/* Generate Modal*/}
