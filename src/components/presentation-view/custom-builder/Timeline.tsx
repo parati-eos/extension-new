@@ -25,6 +25,7 @@ export default function Timeline({
   const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
   const [loading, setLoading] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null) // Add selected image state
 
   const handleInputTitle = (value: string, index: number) => {
@@ -170,16 +171,30 @@ export default function Timeline({
             {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
             <button
-              onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled || loading}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
-                isGenerateDisabled || loading
+      onClick={(e) => {
+        if (!isGenerateDisabled) {
+          handleGenerateSlide()
+        } else {
+          e.preventDefault() // Block click when disabled
+        }
+      }}
+      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+        className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
+        isGenerateDisabled || loading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
-              }`}
-            >
-              {loading ? 'Generating...' : 'Generate Slide'}
-            </button>
+          : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
+      }`}
+    >
+      {loading ? 'Generating...' : 'Generate Slide'}
+
+      {/* Tooltip */}
+      {isGenerateDisabled && showTooltip && (
+        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+          Minimum 3 timelines required
+        </span>
+      )}
+    </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-4 gap-2 w-full justify-center">
@@ -197,16 +212,30 @@ export default function Timeline({
             </div>
 
             <button
-              onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled}
-              className={`flex-1 py-2 rounded-md text-sm font-medium ${
-                isGenerateDisabled
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white'
-              }`}
-            >
-              Generate Slide
-            </button>
+      onClick={(e) => {
+        if (!isGenerateDisabled) {
+          handleGenerateSlide()
+        } else {
+          e.preventDefault() // Prevent action when disabled
+        }
+      }}
+      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+      className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md text-sm font-medium transition-all duration-200 transform active:scale-95 ${
+        isGenerateDisabled || loading
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
+          : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
+      }`}
+    >
+      {loading ? 'Generating...' : 'Generate Slide'}
+
+      {/* Tooltip */}
+      {isGenerateDisabled && showTooltip && (
+        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+          Minimum 3 timelines required
+        </span>
+      )}
+    </button>
           </div>
         </>
       )}

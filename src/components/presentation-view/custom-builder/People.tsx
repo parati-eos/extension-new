@@ -75,6 +75,7 @@ export default function People({
       })
       return
     }
+  
 
     setPeople((prevPeople) => {
       const updatedPeople = [...prevPeople]
@@ -168,7 +169,12 @@ export default function People({
       alert('Failed to send data.')
     }
   }
-
+  const handleNameChange = (value: string, index: number) => {
+    // Ensure that only alphabetic characters and spaces are allowed in the name input
+    const sanitizedValue = value.replace(/[^a-zA-Z\s]/g, '')
+    handleInputChange(sanitizedValue, index, 'name')
+  }
+  const [showTooltip, setShowTooltip] = useState(false)
   const isGenerateDisabled = !(
     people[0].name.trim() &&
     people[0].description.trim() &&
@@ -212,9 +218,8 @@ export default function People({
                   <input
                     type="text"
                     value={person.name}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, index, 'name')
-                    }
+                    
+                    onChange={(e) => handleNameChange(e.target.value, index)} 
                     placeholder="Name"
                     className="p-2 border border-gray-300 rounded-md lg:rounded-lg"
                   />
@@ -314,8 +319,16 @@ export default function People({
 
           <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
             <button
-              disabled={isGenerateDisabled}
-              onClick={handleGenerateSlide}
+         
+              onClick={(e) => {
+                if (!isGenerateDisabled) {
+                  handleGenerateSlide()
+                } else {
+                  e.preventDefault() // Prevent action when disabled
+                }
+              }}
+              onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
               className={`px-4 py-2 mb-2 rounded active:scale-95 transition transform duration-300 ${
                 isGenerateDisabled
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
@@ -323,6 +336,12 @@ export default function People({
               }`}
             >
               Generate Slide
+               {/* Tooltip */}
+      {isGenerateDisabled && showTooltip && (
+        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+        Minimum 2 people required
+        </span>
+      )}
             </button>
           </div>
         </>
