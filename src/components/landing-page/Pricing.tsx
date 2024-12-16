@@ -81,30 +81,47 @@ const Pricing: React.FC = () => {
     {
       name: 'FREE',
       buttonText: 'Get Started for Free',
-      description: 'Perfect for exploring Zynth.',
+      description: (
+        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+         Perfect for exploring Zynth.
+        </span>
+      ),
+
       price: null,
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-4 ' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4 ' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-4' },
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4 ',margin: '' },
+      
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-3 ',margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-7 ',margin: '' },
+       
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
+        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-4',margin: '' },
+        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' ,margin: ''},
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-5' ,margin: ''},
+        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4',margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
+        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
+        
         {
           text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
-          spacing: 'py-6',
+          spacing: 'py-4',
+          margin: ''
         },
       ],
     },
     {
       name: 'PRO',
       buttonText: 'Upgrade to Pro',
-      description: 'Ideal for professionals and businesses.',
+      description: (
+        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+          Ideal for professionals and businesses.
+        </span>
+      ),
       price:
         billingCycle === 'monthly' ? (
           <>
@@ -120,21 +137,31 @@ const Pricing: React.FC = () => {
           </>
         ),
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' },
-        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-4' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-0.5 ',margin: '' },
+        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4 ',margin: '' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-3 ',margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-7 ',margin: '' },
+       
+        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
+        { text: '', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
+        
+        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4',margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
+        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-5' ,margin: ''},
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-5' ,margin: ''},
+        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4',margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
+        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
+        
         {
           text: 'Unlimited',
-          bgColor: 'white',
-          icon: FaCheckCircle,
-          spacing: 'py-6',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: ''
         },
-        { text: '', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' },
-        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-4' },
       ],
     },
   ]
@@ -175,7 +202,7 @@ const Pricing: React.FC = () => {
       <div className="bg-white w-full py-16 px-8">
         <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
           {/* Side Component: Categories */}
-          <div className="mt-[17rem] hidden lg:block">
+          <div className="mt-[15rem] hidden lg:block">
             {categories.map((category, index) => (
               <div key={index} className="mb-10">
                 <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
@@ -211,7 +238,7 @@ const Pricing: React.FC = () => {
               </div>
               <button
                 className={`w-full font-medium py-2 px-6 ${
-                  planIndex === 0 ? 'mb-32' : ''
+                  planIndex === 0 ? 'mb-[5.5rem]' : ''
                 } rounded-lg ${
                   planIndex === 1
                     ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
@@ -220,32 +247,33 @@ const Pricing: React.FC = () => {
               >
                 {plan.buttonText}
               </button>
-              <ul className="mb-8 mt-4 space-y-0 ">
-                {plan.features.map((feature, featureIndex) => (
-                  <li
-                    key={featureIndex}
-                    className={`flex items-center justify-center w-full mt-2 ${feature.spacing}`}
-                    style={{
-                      backgroundColor: feature.bgColor,
-                      borderRadius: '0.375rem',
-                    }}
-                  >
-                    {feature.icon ? (
-                      <FaCheckCircle className="h-5 w-5 text-green-500" />
-                    ) : (
-                      <span
-                        className={`${
-                          feature.text === '-'
-                            ? 'text-gray-400 text-lg'
-                            : 'text-gray-900'
-                        }`}
-                      >
-                        {feature.text}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
+              <ul className="mb-8 mt-4 space-y-0">
+  {plan.features.map((feature, featureIndex) => (
+    <li
+      key={featureIndex}
+      className={`flex items-center justify-center w-full mt-6 ${feature.spacing} ${feature.margin }`}
+      style={{
+        backgroundColor: feature.bgColor,
+        borderRadius: '0.375rem',
+        // margin:feature.margin
+      }}
+    >
+      {feature.icon ? (
+        <FaCheckCircle className="h-5 w-5 text-green-500" />
+      ) : (
+        <span
+          className={`${
+            feature.text === '-' ? 'text-gray-400 text-lg' : 'text-gray-900'
+          }`}
+        >
+          {feature.text}
+        </span>
+      )}
+    </li>
+  ))}
+</ul>
+
+
               <button
                 className={`w-full font-medium py-2 px-6 rounded-lg ${
                   planIndex === 1
