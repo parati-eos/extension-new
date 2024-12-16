@@ -4,6 +4,7 @@ import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface PointsProps {
   heading: string
@@ -74,7 +75,10 @@ export default function Points({
       }
       console.log('Server response:', response.data)
     } catch (error) {
-      console.error('Error sending data:', error)
+      toast.error('Error sending data', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to send data.')
     } finally {
       setIsLoading(false)

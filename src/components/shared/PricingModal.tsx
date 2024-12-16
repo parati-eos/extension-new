@@ -49,30 +49,119 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     {
       name: 'FREE',
       buttonText: 'Get Started for Free',
-      description: 'Perfect for exploring Zynth.',
+      description: (
+        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+          Perfect for exploring Zynth.
+        </span>
+      ),
+
       price: null,
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-10 mb-9' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
+        {
+          text: 'Unlimited',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4 ',
+          margin: '',
+        },
+
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-3 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-7 ',
+          margin: '',
+        },
+
+        {
+          text: '✔',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+
         {
           text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
-          spacing: 'py-6',
+          spacing: 'py-4',
+          margin: '',
         },
       ],
     },
     {
       name: 'PRO',
       buttonText: 'Upgrade to Pro',
-      description: 'Ideal for professionals and businesses.',
+      description: (
+        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+          Ideal for professionals and businesses.
+        </span>
+      ),
       price:
         billingCycle === 'monthly' ? (
           <>
@@ -88,21 +177,115 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </>
         ),
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: 'Unlimited', bgColor: 'white', icon: null, spacing: 'py-10' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-0.5 ',
+          margin: '',
+        },
         {
           text: 'Unlimited',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-3 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-7 ',
+          margin: '',
+        },
+
+        {
+          text: '✔',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '-',
           bgColor: 'white',
           icon: FaCheckCircle,
-          spacing: 'py-6',
+          spacing: 'py-4',
+          margin: '',
         },
-        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-10' },
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: '✔', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
+        {
+          text: '',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-5',
+          margin: '',
+        },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+
+        {
+          text: 'Unlimited',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
       ],
     },
   ]
@@ -156,13 +339,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         <div className="bg-white w-full py-16 px-8">
           <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
             {/* Side Component: Categories */}
-            <div className="mt-72 hidden lg:block">
+            <div className="mt-[15rem] hidden lg:block">
               {categories.map((category, index) => (
                 <div key={index} className="mb-10">
                   <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
                     {category.title}
                   </h2>
-                  <ul className="space-y-10 text-gray-700 ml-6">
+                  <ul className="space-y-8 text-gray-700 ml-6">
                     {category.features.map((feature, featureIndex) => (
                       <li key={featureIndex}>{feature}</li>
                     ))}
@@ -194,7 +377,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 </div>
                 <button
                   className={`w-full font-medium py-2 px-6 ${
-                    planIndex === 0 ? 'mb-32' : ''
+                    planIndex === 0 ? 'mb-[5.5rem]' : ''
                   } rounded-lg ${
                     planIndex === 1
                       ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
@@ -203,14 +386,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 >
                   {plan.buttonText}
                 </button>
-                <ul className="mb-8 mt-9 space-y-0">
+                <ul className="mb-8 mt-4 space-y-0">
                   {plan.features.map((feature, featureIndex) => (
                     <li
                       key={featureIndex}
-                      className={`flex items-center justify-center w-full ${feature.spacing}`}
+                      className={`flex items-center justify-center w-full mt-6 ${feature.spacing} ${feature.margin}`}
                       style={{
                         backgroundColor: feature.bgColor,
                         borderRadius: '0.375rem',
+                        // margin:feature.margin
                       }}
                     >
                       {feature.icon ? (
@@ -229,6 +413,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </li>
                   ))}
                 </ul>
+
                 <button
                   className={`w-full font-medium py-2 px-6 rounded-lg ${
                     planIndex === 1

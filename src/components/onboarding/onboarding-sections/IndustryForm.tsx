@@ -137,7 +137,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               <input
                 type="text"
                 placeholder="Enter your sector"
-                className="lg:p-2 p-4 border w-full rounded-xl"
+                className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
                 value={otherSector}
                 onChange={(e) => setOtherSector(e.target.value)}
               />
@@ -178,7 +178,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               <input
                 type="text"
                 placeholder="Enter your industry"
-                className="lg:p-2 p-4 border w-full rounded-xl"
+                className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
                 value={otherIndustry}
                 onChange={(e) => setOtherIndustry(e.target.value)}
               />

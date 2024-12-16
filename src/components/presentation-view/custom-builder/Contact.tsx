@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FaPaperclip } from 'react-icons/fa'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface ContactProps {
   heading: string
@@ -60,7 +61,10 @@ export default function Contact({
 
       console.log('Contact details submitted successfully')
     } catch (error) {
-      console.error(error)
+      toast.error('Error while submitting data', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
     }
   }
 

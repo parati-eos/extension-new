@@ -4,6 +4,7 @@ import { FaPaperclip, FaPlus } from 'react-icons/fa'
 import AttachImage from './shared/attachimage'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface StatisticProps {
   heading: string
@@ -88,7 +89,10 @@ export default function Statistics({
       console.log('PATCH Response:', response.data)
       alert('Slide generated successfully!')
     } catch (error) {
-      console.error('Error generating slide:', error)
+      toast.error('Error generating slide', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to generate slide.')
     } finally {
       setLoading(false)
@@ -168,8 +172,8 @@ export default function Statistics({
             )}
           </div>
 
-         {/* Attach Image and Generate Slide Large Screen Buttons */}
-         <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
+          {/* Attach Image and Generate Slide Large Screen Buttons */}
+          <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
             {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
             <button

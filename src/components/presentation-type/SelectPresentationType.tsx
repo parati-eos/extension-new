@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { IpInfoResponse } from '../../types/authTypes'
 import { Plan } from '../../types/pricingTypes'
 import { PricingModal } from '../shared/PricingModal'
+import { toast } from 'react-toastify'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -146,7 +147,10 @@ const SelectPresentationType: React.FC = () => {
           )
         }
       } catch (error) {
-        console.error('Error generating document:', error)
+        toast.error('Error generating ppt', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       }
     }
 
@@ -182,10 +186,12 @@ const SelectPresentationType: React.FC = () => {
           navigate(
             `/presentation-view/?documentID=${result.documentID}/?presentationName=${result.presentationName}/?slideType=${selectedTypeName}`
           )
-          console.log(result)
         }
       } catch (error) {
-        console.error('Error refining presentation:', error)
+        toast.error('Error refining ppt', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
         alert('Failed to refine the presentation. Please try again.')
       }
     }

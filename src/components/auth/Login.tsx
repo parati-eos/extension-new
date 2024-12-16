@@ -63,7 +63,6 @@ function Login() {
         'https://ipinfo.io/json?token=f0e9cf876d422e'
       )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
-      console.log(ipInfoData)
 
       const signupLink = `${window.location.origin}/signup/${generatedOrgId}`
 
@@ -77,8 +76,6 @@ function Login() {
         signupTime: new Date().toString(),
         latestLogin: new Date().toString(),
       }
-
-      console.log('PAYLOAD', userPayload)
 
       const res = await fetch(`${serverurl}/api/v1/data/userprofile/user`, {
         method: 'POST',

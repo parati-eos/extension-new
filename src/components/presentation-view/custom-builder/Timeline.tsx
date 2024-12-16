@@ -4,6 +4,7 @@ import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface TimelineProps {
   heading: string
@@ -57,9 +58,11 @@ export default function Timeline({
     timeline[timeline.length - 1].trim() === '' ||
     description[description.length - 1].trim() === ''
 
-    const isGenerateDisabled = 
-    timeline.filter((point, index) => point.trim() !== '' && description[index].trim() !== '').length < 3;
-  
+  const isGenerateDisabled =
+    timeline.filter(
+      (point, index) => point.trim() !== '' && description[index].trim() !== ''
+    ).length < 3
+
   const handleGenerateSlide = async () => {
     setLoading(true)
     try {
@@ -90,7 +93,10 @@ export default function Timeline({
       console.log('PATCH Response:', response.data)
       alert('Slide generated successfully!')
     } catch (error) {
-      console.error('Error generating slide:', error)
+      toast.error('Error generating slide', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to generate slide.')
     } finally {
       setLoading(false)
@@ -171,30 +177,30 @@ export default function Timeline({
             {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
             <button
-      onClick={(e) => {
-        if (!isGenerateDisabled) {
-          handleGenerateSlide()
-        } else {
-          e.preventDefault() // Block click when disabled
-        }
-      }}
-      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-        className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
-        isGenerateDisabled || loading
+              onClick={(e) => {
+                if (!isGenerateDisabled) {
+                  handleGenerateSlide()
+                } else {
+                  e.preventDefault() // Block click when disabled
+                }
+              }}
+              onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
+                isGenerateDisabled || loading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-          : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
-      }`}
-    >
-      {loading ? 'Generating...' : 'Generate Slide'}
+                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
+              }`}
+            >
+              {loading ? 'Generating...' : 'Generate Slide'}
 
-      {/* Tooltip */}
-      {isGenerateDisabled && showTooltip && (
-        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-          Minimum 3 timelines required
-        </span>
-      )}
-    </button>
+              {/* Tooltip */}
+              {isGenerateDisabled && showTooltip && (
+                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  Minimum 3 timelines required
+                </span>
+              )}
+            </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-4 gap-2 w-full justify-center">
@@ -212,30 +218,30 @@ export default function Timeline({
             </div>
 
             <button
-      onClick={(e) => {
-        if (!isGenerateDisabled) {
-          handleGenerateSlide()
-        } else {
-          e.preventDefault() // Prevent action when disabled
-        }
-      }}
-      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-      className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md text-sm font-medium transition-all duration-200 transform active:scale-95 ${
-        isGenerateDisabled || loading
-          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
-          : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
-      }`}
-    >
-      {loading ? 'Generating...' : 'Generate Slide'}
+              onClick={(e) => {
+                if (!isGenerateDisabled) {
+                  handleGenerateSlide()
+                } else {
+                  e.preventDefault() // Prevent action when disabled
+                }
+              }}
+              onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md text-sm font-medium transition-all duration-200 transform active:scale-95 ${
+                isGenerateDisabled || loading
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
+                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
+              }`}
+            >
+              {loading ? 'Generating...' : 'Generate Slide'}
 
-      {/* Tooltip */}
-      {isGenerateDisabled && showTooltip && (
-        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-          Minimum 3 timelines required
-        </span>
-      )}
-    </button>
+              {/* Tooltip */}
+              {isGenerateDisabled && showTooltip && (
+                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  Minimum 3 timelines required
+                </span>
+              )}
+            </button>
           </div>
         </>
       )}

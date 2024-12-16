@@ -4,6 +4,7 @@ import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface PeopleProps {
   heading: string
@@ -75,7 +76,6 @@ export default function People({
       })
       return
     }
-  
 
     setPeople((prevPeople) => {
       const updatedPeople = [...prevPeople]
@@ -92,7 +92,10 @@ export default function People({
         return updatedPeople
       })
     } catch (error) {
-      console.error('Error uploading image:', error)
+      toast.error('Error uploading image', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       setPeople((prevPeople) => {
         const updatedPeople = [...prevPeople]
         updatedPeople[index].loading = false // Set loading to false on error
@@ -165,7 +168,10 @@ export default function People({
       setIsLoading(false)
       console.log('Server response:', response.data)
     } catch (error) {
-      console.error('Error sending data:', error)
+      toast.error('Error sending data', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to send data.')
     }
   }
@@ -218,8 +224,7 @@ export default function People({
                   <input
                     type="text"
                     value={person.name}
-                    
-                    onChange={(e) => handleNameChange(e.target.value, index)} 
+                    onChange={(e) => handleNameChange(e.target.value, index)}
                     placeholder="Name"
                     className="p-2 border border-gray-300 rounded-md lg:rounded-lg"
                   />
@@ -319,7 +324,6 @@ export default function People({
 
           <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
             <button
-         
               onClick={(e) => {
                 if (!isGenerateDisabled) {
                   handleGenerateSlide()
@@ -336,12 +340,12 @@ export default function People({
               }`}
             >
               Generate Slide
-               {/* Tooltip */}
-      {isGenerateDisabled && showTooltip && (
-        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-        Minimum 2 people required
-        </span>
-      )}
+              {/* Tooltip */}
+              {isGenerateDisabled && showTooltip && (
+                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  Minimum 2 people required
+                </span>
+              )}
             </button>
           </div>
         </>

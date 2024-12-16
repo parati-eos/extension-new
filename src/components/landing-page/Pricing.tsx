@@ -3,6 +3,7 @@ import { FaCheckCircle } from 'react-icons/fa' // Importing the check icon
 import { Plan } from '../../types/pricingTypes'
 import axios from 'axios'
 import { IpInfoResponse } from '../../types/authTypes'
+import { useNavigate } from 'react-router-dom'
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -11,6 +12,7 @@ const Pricing: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
+  const navigate = useNavigate()
 
   const categories = [
     {
@@ -397,11 +399,13 @@ const Pricing: React.FC = () => {
                   planIndex === 0 ? 'mb-[5.5rem]' : ''
                 } rounded-lg ${
                   planIndex === 1
-                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
-                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
+                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
+                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
                 }`}
               >
-                {plan.buttonText}
+                <a href="/auth" target="_blank">
+                  {plan.buttonText}
+                </a>
               </button>
               <ul className="mb-8 mt-4 space-y-0">
                 {plan.features.map((feature, featureIndex) => (
@@ -432,13 +436,16 @@ const Pricing: React.FC = () => {
               </ul>
 
               <button
+                onClick={() => navigate('/auth')}
                 className={`w-full font-medium py-2 px-6 rounded-lg ${
                   planIndex === 1
-                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
-                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
+                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
+                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
                 }`}
               >
-                {plan.buttonText}
+                <a href="/auth" target="_blank">
+                  {plan.buttonText}
+                </a>
               </button>
             </div>
           ))}

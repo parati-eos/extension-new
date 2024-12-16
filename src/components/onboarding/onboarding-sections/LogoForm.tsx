@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FaImage, FaBullseye } from 'react-icons/fa'
 import { LogoFormProps } from '../../../types/onboardingTypes'
 import { BackButton, NextButton } from '../shared/Buttons'
+import { toast } from 'react-toastify'
 
 const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,
@@ -29,7 +30,10 @@ const LogoForm: React.FC<LogoFormProps> = ({
         const url = await uploadLogoToS3(file)
         setLogo(url)
       } catch (error) {
-        console.error('Error uploading logo:', error)
+        toast.error('Error uploading logo', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       } finally {
         setIsUploading(false)
       }

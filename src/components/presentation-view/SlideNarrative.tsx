@@ -4,6 +4,7 @@ import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { FaPaperclip } from 'react-icons/fa'
+import { toast } from 'react-toastify'
 
 interface SlideNarrativeProps {
   heading: string
@@ -54,7 +55,10 @@ export default function SlideNarrative({
         setIsLoading(false)
       }
     } catch (error) {
-      console.error('Error sending narrative:', error)
+      toast.error('Error generating slide', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to send narrative.')
     } finally {
       setIsLoading(false)

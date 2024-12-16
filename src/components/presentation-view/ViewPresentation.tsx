@@ -26,6 +26,7 @@ import './viewpresentation.css'
 import { DesktopButtonSection, MobileButtonSection } from './ActionButtons'
 import { Plan } from '../../types/pricingTypes'
 import { IpInfoResponse } from '../../types/authTypes'
+import { toast } from 'react-toastify'
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
@@ -146,14 +147,22 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          console.log('QUICK GENERATE RESPONSE', response)
+          alert('Quick Generate Success')
           setIsSlideLoading(false)
+          console.log('QUICK GENERATE RESPONSE', response)
         })
         .catch((error) => {
-          console.log('QUICK GENERATE RESPONSE ERROR', error)
+          toast.error('Error while generating slide', {
+            position: 'top-center',
+            autoClose: 2000,
+          })
+          setIsSlideLoading(false)
         })
     } catch (error) {
-      console.log('QUICK GENERATE TRY CATCH ERROR', error)
+      toast.error('Error while generating slide', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
     }
   }
 
@@ -546,7 +555,7 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh]">
+    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh] no-scrollbar">
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal

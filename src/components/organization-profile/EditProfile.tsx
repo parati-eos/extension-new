@@ -4,6 +4,7 @@ import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationData } from '../../types/types'
 import { industrySectorMap } from '../../utils/industrySector'
+import { toast } from 'react-toastify'
 
 const EditProfile: React.FC = () => {
   const [formData, setFormData] = useState<OrganizationData>({
@@ -57,7 +58,10 @@ const EditProfile: React.FC = () => {
         const url = await uploadLogoToS3(file)
         setLogo(url)
       } catch (error) {
-        console.error('Error uploading logo:', error)
+        toast.error('Error uploading logo', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       } finally {
         setIsUploading(false)
       }
@@ -114,7 +118,10 @@ const EditProfile: React.FC = () => {
       )
       navigate('/organization-profile')
     } catch (error) {
-      console.error('Failed to update profile', error)
+      toast.error('Failed to update profile', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to update profile. Please try again.')
     } finally {
       setLoading(false)
@@ -162,7 +169,10 @@ const EditProfile: React.FC = () => {
 
         setInitialLoading(false)
       } catch (error) {
-        console.error('Failed to fetch profile data', error)
+        toast.error('Failed to fetch profile data', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       }
     }
 

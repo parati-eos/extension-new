@@ -4,6 +4,7 @@ import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { DisplayMode } from '../../../types/presentationView'
 import { BackButton } from './shared/BackButton'
+import { toast } from 'react-toastify'
 
 export default function Cover(
   heading: string,
@@ -23,7 +24,10 @@ export default function Cover(
         const url = await uploadLogoToS3(file)
         setLogo(url)
       } catch (error) {
-        console.error('Error uploading logo:', error)
+        toast.error('Error uploading logo', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       } finally {
         setIsUploading(false)
       }
@@ -56,7 +60,10 @@ export default function Cover(
 
       console.log(response.data)
     } catch (error) {
-      console.log(error)
+      toast.error('Error while generating slide', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
     }
   }
 
