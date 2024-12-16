@@ -168,22 +168,47 @@ export default function Statistics({
             )}
           </div>
 
-          {/* Button container */}
-          <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
-            {/* Use AttachImage component */}
+         {/* Attach Image and Generate Slide Large Screen Buttons */}
+         <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
+            {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
-
-            {/* Generate Slide Button */}
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled || loading}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 duration-300${
+              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
                 isGenerateDisabled || loading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:scale-105 active:scale-95'
+                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
               }`}
             >
               {loading ? 'Generating...' : 'Generate Slide'}
+            </button>
+          </div>
+          {/* Attach Image and Generate Slide Buttons for Mobile */}
+          <div className="flex lg:hidden mt-4 gap-2 w-full justify-center">
+            <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
+              <FaPaperclip />
+              <label htmlFor="fileInput" className="cursor-pointer">
+                Attach Image
+              </label>
+              <input
+                id="fileInput"
+                type="file"
+                className="hidden"
+                onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+              />
+            </div>
+
+            <button
+              onClick={handleGenerateSlide}
+              disabled={isGenerateDisabled}
+              className={`flex-1 py-2 rounded-md text-sm font-medium ${
+                isGenerateDisabled
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-[#3667B2] text-white'
+              }`}
+            >
+              Generate Slide
             </button>
           </div>
         </>

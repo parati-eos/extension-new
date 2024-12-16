@@ -36,6 +36,7 @@ export default function Table({
   })
   const [canGenerate, setCanGenerate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
 
   useEffect(() => {
     // Count fully completed rows
@@ -338,8 +339,16 @@ export default function Table({
           <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
             {/* Generate Slide Button */}
             <button
-              onClick={handleGenerateSlide}
-              disabled={!canGenerate}
+             onClick={(e) => {
+              if (canGenerate) {
+                handleGenerateSlide()
+              } else {
+                e.preventDefault() // Prevent action when disabled
+              }
+            }}
+            onMouseEnter={() => !canGenerate && setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+           
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
                 canGenerate
                   ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
@@ -347,23 +356,46 @@ export default function Table({
               }`}
             >
               Generate Slide
-            </button>
+            {/* Tooltip */}
+      {!canGenerate && showTooltip && (
+        <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+          Miminum 2 rows and 2 columns required
+        </span>
+      )}
+    </button>
           </div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden mt-4 gap-2 justify-end">
+          <div className="flex lg:hidden mt-4 gap-2 justify-end mr-2 ">
             <div className="justify-end">
-              <button
-                onClick={handleGenerateSlide}
-                disabled={!canGenerate}
-                className={`flex-1 py-2 px-5 rounded-md text-sm font-medium ${
-                  canGenerate
-                    ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                }`}
-              >
-                Generate Slide
-              </button>
+              
+            <div className="relative inline-block">
+      <button
+        onClick={(e) => {
+          if (canGenerate) {
+            handleGenerateSlide()
+          } else {
+            e.preventDefault() // Block action when disabled
+          }
+        }}
+        onMouseEnter={() => !canGenerate && setShowTooltip(true)} // Show tooltip
+        onMouseLeave={() => setShowTooltip(false)} // Hide tooltip
+        className={`flex-1 py-2 px-5 rounded-md text-sm font-medium transition-all duration-200 ${
+          canGenerate
+            ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
+            : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
+        }`}
+      >
+        Generate Slide
+      </button>
+
+      {/* Tooltip */}
+      {!canGenerate && showTooltip && (
+        <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+          Miminum 2 rows and <br></br>2 columns required
+        </span>
+      )}
+    </div>
             </div>
           </div>
         </>
