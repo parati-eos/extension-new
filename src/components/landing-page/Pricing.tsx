@@ -82,9 +82,11 @@ const Pricing: React.FC = () => {
       name: 'FREE',
       buttonText: 'Get Started for Free',
       description: (
+        <div className="mb-[5.5rem]">
         <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-         Perfect for exploring Zynth.
+          Perfect for exploring Zynth.
         </span>
+      </div>
       ),
 
       price: null,
@@ -139,7 +141,7 @@ const Pricing: React.FC = () => {
       features: [
         { text: '', bgColor: 'white', icon: null, spacing: 'py-0.5 ',margin: '' },
         { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4 ',margin: '' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-3 ',margin: '' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-3 ',margin: '',textColor: 'text-black', },
         { text: '', bgColor: 'white', icon: null, spacing: 'py-7 ',margin: '' },
        
         { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: '' },
@@ -238,7 +240,7 @@ const Pricing: React.FC = () => {
               </div>
               <button
                 className={`w-full font-medium py-2 px-6 ${
-                  planIndex === 0 ? 'mb-[5.5rem]' : ''
+                  planIndex === 0 
                 } rounded-lg ${
                   planIndex === 1
                     ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
@@ -263,7 +265,7 @@ const Pricing: React.FC = () => {
       ) : (
         <span
           className={`${
-            feature.text === '-' ? 'text-gray-400 text-lg' : 'text-gray-900'
+            feature.text === '-' ? 'black text-lg' : 'black'
           }`}
         >
           {feature.text}
