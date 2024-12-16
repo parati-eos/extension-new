@@ -102,16 +102,16 @@ function Login() {
   return (
     <div className="relative flex flex-col shadow-lg h-screen">
       {/* Background Split */}
-      <div className="absolute top-0 left-0 w-full h-1/2 bg-[#3667B2]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-1/2 bg-white"></div>
+      <div className="absolute top-0 left-0 w-full h-3/4 md:h-1/2 bg-[#3667B2]"></div>
+      <div className="absolute bottom-0 left-0 w-full h-1/4 md:h-1/2 bg-white"></div>
 
       <div className="relative flex flex-col md:flex-row justify-center items-center h-full w-full">
         {/* Image Section */}
-        <div className="flex justify-center items-center h-[40vh] md:h-full w-full md:w-1/2 md:px-0">
+        <div className="flex justify-center items-center h-[50vh]  md:h-full w-full md:w-1/2 md:px-0">
           <img
             src={ContentImage}
             alt="Auth"
-            className="h-full w-full max-h-[400px] md:max-h-none object-cover "
+            className="h-full w-full  md:max-h-none object-cover "
             loading="lazy"
           />
         </div>
