@@ -4,7 +4,8 @@ import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationData } from '../../types/types'
 import { industrySectorMap } from '../../utils/industrySector'
-import { toast } from 'react-toastify'
+
+type SectorType = keyof typeof industrySectorMap
 
 const EditProfile: React.FC = () => {
   const [formData, setFormData] = useState<OrganizationData>({
@@ -58,10 +59,7 @@ const EditProfile: React.FC = () => {
         const url = await uploadLogoToS3(file)
         setLogo(url)
       } catch (error) {
-        toast.error('Error uploading logo', {
-          position: 'top-center',
-          autoClose: 2000,
-        })
+        console.error('Error uploading logo:', error)
       } finally {
         setIsUploading(false)
       }
@@ -118,10 +116,7 @@ const EditProfile: React.FC = () => {
       )
       navigate('/organization-profile')
     } catch (error) {
-      toast.error('Failed to update profile', {
-        position: 'top-center',
-        autoClose: 2000,
-      })
+      console.error('Failed to update profile', error)
       alert('Failed to update profile. Please try again.')
     } finally {
       setLoading(false)
@@ -169,10 +164,7 @@ const EditProfile: React.FC = () => {
 
         setInitialLoading(false)
       } catch (error) {
-        toast.error('Failed to fetch profile data', {
-          position: 'top-center',
-          autoClose: 2000,
-        })
+        console.error('Failed to fetch profile data', error)
       }
     }
 
@@ -296,7 +288,8 @@ const EditProfile: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                {formData.industry === 'Other' && (
+                {formData.industry === 'Other' ||
+                formData.sector === 'Other' ? (
                   <input
                     type="text"
                     placeholder="Enter your industry"
@@ -304,6 +297,8 @@ const EditProfile: React.FC = () => {
                     onChange={(e) => setOtherIndustry(e.target.value)}
                     className="mt-2 w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
                   />
+                ) : (
+                  <></>
                 )}
               </div>
             </div>
