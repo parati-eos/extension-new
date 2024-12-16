@@ -76,13 +76,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       price:
         billingCycle === 'monthly' ? (
           <>
-            {monthlyPlanAmount} {currency}
+            {monthlyPlanAmount}/- {currency}
             <br />
             <span className="text-sm text-gray-500">per month</span>
           </>
         ) : (
           <>
-            {yearlyPlanAmount} {currency}
+            {yearlyPlanAmount}/- {currency}
             <br />
             <span className="text-sm text-gray-500">per year</span>
           </>

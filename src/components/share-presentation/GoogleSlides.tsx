@@ -39,7 +39,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
           visible={true}
           height="120"
           width="120"
-          color="#E6A500"
+          color="#3667B2"
           ariaLabel="grid-loading"
           radius="12.5"
         />

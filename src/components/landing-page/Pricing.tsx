@@ -85,7 +85,7 @@ const Pricing: React.FC = () => {
       price: null,
       features: [
         { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-6' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-10 mb-9' },
+        { text: '-', bgColor: 'white', icon: null, spacing: 'py-6' },
         { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-6' },
         { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
         { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-6' },
