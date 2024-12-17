@@ -484,6 +484,7 @@ export default function ViewPresentation() {
   //   }
   // }, [currentOutline, SOCKET_URL])
   useEffect(() => {
+    setIsNoGeneratedSlide(false)
     const socket = io(`${SOCKET_URL}`, {
       transports: ['websocket'],
     })
@@ -548,7 +549,8 @@ export default function ViewPresentation() {
           setIsSlideLoading(true)
           timeoutId = setTimeout(() => {
             console.warn('No valid slide data received within 90 seconds')
-            setIsSlideLoading(true)
+            setIsSlideLoading(false)
+            setIsNoGeneratedSlide(true)
             timeoutId = null
           }, 90000) // 90 seconds
         }
@@ -658,7 +660,7 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
+    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
@@ -710,12 +712,11 @@ export default function ViewPresentation() {
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-center scroll-smooth w-full h-full mb-4"
               >
-                {isDocumentIDLoading ||
-                  (isSlideLoading && (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                    </div>
-                  ))}
+                {isSlideLoading && (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                )}
                 {renderContent({
                   displayMode,
                   isMobile: false,

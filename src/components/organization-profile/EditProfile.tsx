@@ -163,25 +163,23 @@ const EditProfile: React.FC = () => {
         setFormData(data)
 
         if (
-          !Object.keys(industrySectorMap).includes(formData.sector) &&
-          formData.sector
+          !Object.keys(industrySectorMap).includes(data.sector) &&
+          data.sector
         ) {
           setSector('Other')
-          setOtherSector(formData.sector)
+          setOtherSector(data.sector)
         } else {
-          setSector(formData.sector)
+          setSector(data.sector)
         }
 
         if (
-          !Object.values(industrySectorMap)
-            .flat()
-            .includes(formData.industry) &&
-          formData.industry
+          !Object.values(industrySectorMap).flat().includes(data.industry) &&
+          data.industry
         ) {
           setIndustry('Other')
-          setOtherIndustry(formData.industry)
+          setOtherIndustry(data.industry)
         } else {
-          setIndustry(formData.industry)
+          setIndustry(data.industry)
         }
 
         setInitialLoading(false)
