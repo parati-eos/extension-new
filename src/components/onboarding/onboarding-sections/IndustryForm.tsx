@@ -190,10 +190,10 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
         {/* Buttons */}
         <div
-          className={`flex flex-col items-center justify-center mt-16 lg:mt-32 ${
-            sector === 'other' || industry === 'other'
-              ? 'lg:mt-0 space-y-0'
-              : ''
+          className={`flex flex-col items-center justify-center mt-16 ${
+            sector === 'Other' || industry === 'Other'
+              ? 'lg:mt-[7.5rem] mb-8 space-y-0'
+              : 'lg:mt-32'
           } w-full space-y-2 px-2`}
         >
           <NextButton disabled={isNextButtonDisabled} text={'Next'} />

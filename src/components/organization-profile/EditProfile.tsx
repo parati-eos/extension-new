@@ -39,6 +39,8 @@ const EditProfile: React.FC = () => {
   })
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [sector, setSector] = useState(formData.sector)
+  const [industry, setIndustry] = useState(formData.industry)
   const [otherSector, setOtherSector] = useState('')
   const [otherIndustry, setOtherIndustry] = useState('')
   const [logo, setLogo] = useState<string | null>(null)
@@ -93,16 +95,34 @@ const EditProfile: React.FC = () => {
     }
   }
 
+  const handleSectorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value as SectorType // Cast to SectorType
+    setSector(selectedValue)
+    if (selectedValue === 'Other') {
+      setOtherSector('')
+      setOtherIndustry('')
+    }
+  }
+
+  const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value
+    setIndustry(selectedValue)
+    if (selectedValue !== 'Other') {
+      setOtherIndustry('') // Clear otherIndustry input
+    }
+  }
+
   const handleUpdate = async () => {
     setLoading(true)
     try {
+      const sectorData = sector === 'Other' ? otherSector : sector
+      const industryData = industry === 'Other' ? otherIndustry : industry
       const updatedData = {
         ...formData,
         orgId: orgId,
         userId: userId,
-        sector: formData.sector === 'Other' ? otherSector : formData.sector,
-        industry:
-          formData.industry === 'Other' ? otherIndustry : formData.industry,
+        sector: sectorData,
+        industry: industryData,
         logo: logo || formData.logo,
       }
       await axios.patch(
@@ -142,24 +162,26 @@ const EditProfile: React.FC = () => {
         const data = response.data
         setFormData(data)
 
-        const validSector = Object.keys(industrySectorMap).includes(data.sector)
-        const validIndustry = Object.values(industrySectorMap)
-          .flat()
-          .includes(data.industry)
-
-        if (!validSector && data.sector) {
-          setFormData((prev) => ({ ...prev, sector: 'Other' }))
-          setOtherSector(data.sector)
+        if (
+          !Object.keys(industrySectorMap).includes(formData.sector) &&
+          formData.sector
+        ) {
+          setSector('Other')
+          setOtherSector(formData.sector)
         } else {
-          setIndustryOptions(
-            industrySectorMap[data.sector as keyof typeof industrySectorMap] ||
-              []
-          )
+          setSector(formData.sector)
         }
 
-        if (!validIndustry && data.industry) {
-          setFormData((prev) => ({ ...prev, industry: 'Other' }))
-          setOtherIndustry(data.industry)
+        if (
+          !Object.values(industrySectorMap)
+            .flat()
+            .includes(formData.industry) &&
+          formData.industry
+        ) {
+          setIndustry('Other')
+          setOtherIndustry(formData.industry)
+        } else {
+          setIndustry(formData.industry)
         }
 
         setInitialLoading(false)
@@ -172,13 +194,16 @@ const EditProfile: React.FC = () => {
   }, [orgId, authToken])
 
   useEffect(() => {
-    if (formData.sector && formData.sector !== 'Other') {
-      setIndustryOptions(
-        industrySectorMap[formData.sector as keyof typeof industrySectorMap] ||
-          []
-      )
+    if (sector && sector !== 'Other' && sector in industrySectorMap) {
+      setIndustryOptions([...industrySectorMap[sector as SectorType], 'Other'])
     }
-  }, [formData.sector])
+
+    // Automatically set industry to "Other" if sector is "Other"
+    if (sector === 'Other') {
+      setIndustry('Other')
+      setOtherIndustry('') // Reset otherIndustry input
+    }
+  }, [sector])
 
   return (
     <>
@@ -246,8 +271,8 @@ const EditProfile: React.FC = () => {
                 </label>
                 <select
                   name="sector"
-                  value={formData.sector}
-                  onChange={handleInputChange}
+                  value={sector}
+                  onChange={handleSectorChange}
                   className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
                 >
                   <option value="" disabled>
@@ -275,21 +300,28 @@ const EditProfile: React.FC = () => {
                 </label>
                 <select
                   name="industry"
-                  value={formData.industry}
-                  onChange={handleInputChange}
+                  value={industry}
+                  onChange={handleIndustryChange}
+                  disabled={!sector || sector === 'Other'}
                   className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
                 >
-                  <option value="" disabled>
-                    Select industry
-                  </option>
+                  {sector !== 'Other' && (
+                    <option value="" disabled>
+                      Select industry
+                    </option>
+                  )}
+                  {sector === 'Other' && (
+                    <option value="" disabled>
+                      Other
+                    </option>
+                  )}
                   {industryOptions.map((industryOption) => (
                     <option key={industryOption} value={industryOption}>
                       {industryOption}
                     </option>
                   ))}
                 </select>
-                {formData.industry === 'Other' ||
-                formData.sector === 'Other' ? (
+                {industry === 'Other' || sector === 'Other' ? (
                   <input
                     type="text"
                     placeholder="Enter your industry"
