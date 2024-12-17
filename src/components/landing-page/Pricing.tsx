@@ -457,7 +457,7 @@ const Pricing: React.FC = () => {
         </div>
       </div>
       {/* Mobile View */}
-      <div className=" rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden  ">
+      <div className=" rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden overflow-y-scroll scrollbar-none  ">
         <div className="px-4 ">
           <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
           <p className="text-sm font-medium  text-gray-600 mb-4">

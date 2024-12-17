@@ -247,7 +247,7 @@ const EditProfile: React.FC = () => {
                   value={formData.companyName}
                   onChange={handleInputChange}
                   placeholder="AZ Corporation"
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
               <div>
@@ -260,7 +260,7 @@ const EditProfile: React.FC = () => {
                   value={formData.websiteLink}
                   onChange={handleInputChange}
                   placeholder="www.azcorporation.com"
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
               <div>
@@ -271,7 +271,7 @@ const EditProfile: React.FC = () => {
                   name="sector"
                   value={sector}
                   onChange={handleSectorChange}
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                 className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 >
                   <option value="" disabled>
                     Select sector
@@ -288,7 +288,7 @@ const EditProfile: React.FC = () => {
                     placeholder="Enter your sector"
                     value={otherSector}
                     onChange={(e) => setOtherSector(e.target.value)}
-                    className="mt-2 w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 )}
               </div>
@@ -301,7 +301,7 @@ const EditProfile: React.FC = () => {
                   value={industry}
                   onChange={handleIndustryChange}
                   disabled={!sector || sector === 'Other'}
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 >
                   {sector !== 'Other' && (
                     <option value="" disabled>
@@ -325,7 +325,7 @@ const EditProfile: React.FC = () => {
                     placeholder="Enter your industry"
                     value={otherIndustry}
                     onChange={(e) => setOtherIndustry(e.target.value)}
-                    className="mt-2 w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 ) : (
                   <></>
@@ -346,7 +346,7 @@ const EditProfile: React.FC = () => {
                   value={formData.contactPhone}
                   onChange={handleInputChange}
                   placeholder="+91-804 1457"
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
               <div>
@@ -359,7 +359,7 @@ const EditProfile: React.FC = () => {
                   value={formData.linkedinLink}
                   onChange={handleInputChange}
                   placeholder="azcorporation"
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                 className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
               <div>
@@ -372,7 +372,7 @@ const EditProfile: React.FC = () => {
                   value={formData.contactEmail}
                   onChange={handleInputChange}
                   placeholder="contact@azcorporation.com"
-                  className="w-full border border-[#8A8B8C] rounded-lg px-3 py-3 lg:py-2 text-gray-700 focus:outline-none focus:ring focus:border-[#3667B2]"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
             </div>
