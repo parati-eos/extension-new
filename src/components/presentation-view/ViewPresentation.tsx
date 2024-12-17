@@ -558,7 +558,7 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-[100vh] no-scrollbar">
+    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] md:h-[100vh] h-full no-scrollbar">
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
@@ -716,7 +716,7 @@ export default function ViewPresentation() {
         {/* MOBILE: ACTION BUTTONS */}
         <div
           className={`relative flex items-center justify-between w-full ${
-            displayMode === 'slides' ? 'mt-[11.2em]' : 'mt-10'
+            displayMode === 'slides' 
           }`}
         >
           {displayMode === 'slides' || displayMode === 'newContent' ? (

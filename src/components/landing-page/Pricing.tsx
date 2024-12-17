@@ -86,7 +86,7 @@ const Pricing: React.FC = () => {
       description: (
         <div className="mb-[5.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-            Perfect for exploring Zynth. Perfect for exploring Zynth.
+            Perfect for exploring Zynth.
           </span>
         </div>
       ),
@@ -328,8 +328,8 @@ const Pricing: React.FC = () => {
   ]
 
   return (
-    <div className="bg-gray-50 w-full h-full " id="pricing ">
-      <section className="py-16 lg:min-h-[300px] lg:ml-[250px] ml-2">
+    <div className="bg-gray-50 w-full lg:p-12 p-1 h-full no-scrollbar no-scrollbar::-webkit-scrollbar " id="pricing">
+      <section className="py-16 lg:min-h-[300px] lg:p-4 lg:ml-36 ml-2">
         <div className="p-2">
           <p className="text-indigo-600 text-lg mb-2">Pricing</p>
           <h1 className="text-gray-900 text-3xl font-bold mb-6">
@@ -395,7 +395,7 @@ const Pricing: React.FC = () => {
                     {plan.price}
                   </div>
                 )}
-                <p className="text-gray-500 text-center">{plan.description}</p>
+                <p className="text-gray-500 font-medium text-center">{plan.description}</p>
               </div>
               <button
                 className={`w-full font-medium py-2 px-6 ${
@@ -452,13 +452,19 @@ const Pricing: React.FC = () => {
         </div>
       </div>
       {/* Mobile View */}
-      <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden  ">
+      <div className=" rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden overflow-y-scroll scrollbar-none  ">
         <div className="px-4 ">
           <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm font-medium  text-gray-600 mb-4">
             Perfect for exploring Zynth.
           </p>
-          <button className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+          <button
+          
+          onClick={() => navigate('/auth')}
+          className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 font-semibold rounded-lg border border-[#3667B2]"
+          
+          
+          >
             Get Started for Free
           </button>
         </div>
@@ -468,11 +474,11 @@ const Pricing: React.FC = () => {
             Access
           </h2>
           <ul className="text-gray-700 ">
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full ">
               General Presentations
               <span className="font-medium">Unlimited</span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
               Presentation Uploads
               <span className="font-medium mr-2 text-black">-</span>
             </li>
@@ -484,29 +490,29 @@ const Pricing: React.FC = () => {
             Features
           </h2>
           <ul className="text-gray-700">
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-[#F5F7FA] font-medium flex justify-between items-center px-2 py-6 w-full ">
               AI Presentation Creation
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-white font-medium flex justify-between items-center px-2 py-6 w-full ">
               Presentation History
               <span className="font-medium">
-                <FaCheckCircle className="h-6 w-6 text-green-500" />
+                <FaCheckCircle className="h-6 w-6 font-medium text-green-500" />
               </span>
             </li>
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full ">
               Slide Versioning
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
               Add Custom Slides
               <span className="font-medium mr-2 text-black">-</span>
             </li>
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full ">
               Custom Slide Builder
               <span className="font-medium mr-2 text-black">-</span>
             </li>
@@ -518,17 +524,17 @@ const Pricing: React.FC = () => {
             Sharing and Exports
           </h2>
           <ul className="text-gray-700">
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-[#F5F7FA] font-medium flex justify-between items-center px-2 py-6 w-full ">
               Presentation Sharing Links
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
               PDF Exports
               <span className="font-medium mr-2 text-black">-</span>
             </li>
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full">
               Google Slides Exports
               <span className="font-medium  text-black">
                 $9 / ₹ 499 / Export
@@ -540,9 +546,24 @@ const Pricing: React.FC = () => {
       <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
         <div className="px-4 ">
           <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-gray-600 font-medium mb-4">
             Ideal for professionals and businesses.
           </p>
+          <h3 className="text-2xl font-bold">
+  {billingCycle === 'monthly' ? (
+    <>
+      {monthlyPlanAmount} {currency}
+      <br />
+      <span className="text-sm text-gray-500">per month</span>
+    </>
+  ) : (
+    <>
+      {yearlyPlanAmount} {currency}
+      <br />
+      <span className="text-sm text-gray-500">per year</span>
+    </>
+  )}
+</h3>
           <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
             Upgrade to Pro
           </button>
@@ -553,11 +574,11 @@ const Pricing: React.FC = () => {
             Access
           </h2>
           <ul className="text-gray-700 ">
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+            <li className="bg-[#F5F7FA] font-medium flex justify-between items-center px-2 py-6 w-full ">
               General Presentations
               <span className="font-medium">Unlimited</span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-white font-medium flex justify-between items-center px-2 py-6 w-full">
               Presentation Uploads
               <span className="font-medium ">Unlimited</span>
             </li>
@@ -569,31 +590,31 @@ const Pricing: React.FC = () => {
             Features
           </h2>
           <ul className="text-gray-700">
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full">
               AI Presentation Creation
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
               Presentation History
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full">
               Slide Versioning
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full">
               Add Custom Slides
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
               Custom Slide Builder
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
@@ -607,30 +628,34 @@ const Pricing: React.FC = () => {
             Sharing and Exports
           </h2>
           <ul className="text-gray-700">
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
               Presentation Sharing Links
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full">
               PDF Exports
               <span className="font-medium">
                 <FaCheckCircle className="h-6 w-6 text-green-500" />
               </span>
             </li>
-            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+            <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
               Google Slides Exports
               <span className="font-medium  text-black">
                 $9 / ₹ 499 / Export
               </span>
             </li>
           </ul>
-          <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+          <div className='px-4 py-2 '>
+          <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
             Upgrade to Pro
           </button>
+          
+          </div>
         </div>
       </div>
+    
     </div>
   )
 }
