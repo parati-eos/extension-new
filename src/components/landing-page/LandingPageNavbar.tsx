@@ -186,7 +186,7 @@ const LandingPageNavbar: React.FC = () => {
             </li>
             <li>
               <a
-                href="#pricing"
+                 onClick={() => navigate('/pricing')}
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
                 Pricing

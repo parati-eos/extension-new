@@ -38,6 +38,7 @@ export default function Table({
   const [canGenerate, setCanGenerate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
+  const [isRowAdded, setIsRowAdded] = useState(false);
 
   useEffect(() => {
     // Count fully completed rows
@@ -62,15 +63,19 @@ export default function Table({
         ...prev,
         rows: [...prev.rows, Array(prev.columnHeaders.length).fill('')],
         rowHeaders: [...prev.rowHeaders, `Row ${prev.rowHeaders.length + 1}`],
-      }))
+      }));
+      setIsRowAdded(true); // Trigger scrolling ONLY when adding rows
     }
-  }
+  };
+  
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight
+    if (isRowAdded && containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight; // Scroll only when a row is added
+      setIsRowAdded(false); // Reset the flag to prevent further scrolling
     }
-  }, [tableData])
+  }, [isRowAdded]);
+  
 
   const handleRemoveRow = () => {
     if (tableData.rows.length > 2) {
