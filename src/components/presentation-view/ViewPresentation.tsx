@@ -706,17 +706,17 @@ export default function ViewPresentation() {
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
           >
+            {isSlideLoading && (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            )}
             {outlines.map((outline, index) => (
               <div
                 key={outline.title}
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-center scroll-smooth w-full h-full mb-4"
               >
-                {isSlideLoading && (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                  </div>
-                )}
                 {renderContent({
                   displayMode,
                   isMobile: false,
