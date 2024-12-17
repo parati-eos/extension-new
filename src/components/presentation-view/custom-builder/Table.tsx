@@ -4,6 +4,7 @@ import { FaPlus, FaMinus } from 'react-icons/fa'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import '../viewpresentation.css'
 
 interface TableData {
   rows: string[][]
@@ -38,7 +39,7 @@ export default function Table({
   const [canGenerate, setCanGenerate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
-  const [isRowAdded, setIsRowAdded] = useState(false);
+  const [isRowAdded, setIsRowAdded] = useState(false)
 
   useEffect(() => {
     // Count fully completed rows
@@ -63,19 +64,18 @@ export default function Table({
         ...prev,
         rows: [...prev.rows, Array(prev.columnHeaders.length).fill('')],
         rowHeaders: [...prev.rowHeaders, `Row ${prev.rowHeaders.length + 1}`],
-      }));
-      setIsRowAdded(true); // Trigger scrolling ONLY when adding rows
+      }))
+      setIsRowAdded(true) // Trigger scrolling ONLY when adding rows
     }
-  };
-  
+  }
+
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (isRowAdded && containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight; // Scroll only when a row is added
-      setIsRowAdded(false); // Reset the flag to prevent further scrolling
+      containerRef.current.scrollTop = containerRef.current.scrollHeight // Scroll only when a row is added
+      setIsRowAdded(false) // Reset the flag to prevent further scrolling
     }
-  }, [isRowAdded]);
-  
+  }, [isRowAdded])
 
   const handleRemoveRow = () => {
     if (tableData.rows.length > 2) {
@@ -216,7 +216,7 @@ export default function Table({
   }
 
   return (
-    <div className="flex flex-col w-full h-full p-2">
+    <div className="flex flex-col w-full h-full p-2 no-scrollbar::-webkit-scrollbar">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -229,7 +229,10 @@ export default function Table({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-          <div ref={containerRef} className="flex-1 px-4 py-4 overflow-x-auto">
+          <div
+            ref={containerRef}
+            className="flex-1 px-4 py-4 overflow-x-auto no-scrollbar::-webkit-scrollbar"
+          >
             <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
               <table className="table-auto border-collapse w-full">
                 <thead>

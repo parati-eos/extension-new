@@ -50,9 +50,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       name: 'FREE',
       buttonText: 'Get Started for Free',
       description: (
-        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-          Perfect for exploring Zynth.
-        </span>
+        <div className="mb-[5.5rem]">
+          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+            Perfect for exploring Zynth.
+          </span>
+        </div>
       ),
 
       price: null,
@@ -165,13 +167,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       price:
         billingCycle === 'monthly' ? (
           <>
-            {monthlyPlanAmount}/- {currency}
+            {monthlyPlanAmount} {currency}
             <br />
             <span className="text-sm text-gray-500">per month</span>
           </>
         ) : (
           <>
-            {yearlyPlanAmount}/- {currency}
+            {yearlyPlanAmount} {currency}
             <br />
             <span className="text-sm text-gray-500">per year</span>
           </>
@@ -197,6 +199,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           icon: null,
           spacing: 'py-3 ',
           margin: '',
+          textColor: 'text-black',
         },
         {
           text: '',

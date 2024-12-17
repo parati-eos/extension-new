@@ -284,7 +284,7 @@ const EditProfile: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                {formData.sector === 'Other' && (
+                {sector === 'Other' && (
                   <input
                     type="text"
                     placeholder="Enter your sector"

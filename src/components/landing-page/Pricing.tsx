@@ -86,7 +86,7 @@ const Pricing: React.FC = () => {
       description: (
         <div className="mb-[5.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-            Perfect for exploring Zynth. Perfect for exploring Zynth.
+            Perfect for exploring Zynth.
           </span>
         </div>
       ),

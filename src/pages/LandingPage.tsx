@@ -10,7 +10,7 @@ import Pricing from '../components/landing-page/Pricing'
 
 const LandingPage: React.FC = () => {
   return (
-    <>
+    <div className="no-scrollbar no-scrollbar::-webkit-scrollbar">
       <LandingPageNavbar />
       <Heading />
       <AboutSection />
@@ -18,7 +18,7 @@ const LandingPage: React.FC = () => {
       <Hero />
       <PartnersTestimonials />
       <Footer />
-    </>
+    </div>
   )
 }
 
