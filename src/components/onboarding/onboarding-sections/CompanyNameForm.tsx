@@ -51,7 +51,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
             type="text"
             id="companyName"
             placeholder="Enter company name"
-            className="mb-4 lg:p-2 p-4 border w-full rounded-xl"
+            className="mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
             value={companyName}
             onChange={handleInputChange}
           />

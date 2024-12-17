@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { IpInfoResponse } from '../../types/authTypes'
 import { Plan } from '../../types/pricingTypes'
 import { PricingModal } from '../shared/PricingModal'
+import { toast } from 'react-toastify'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -146,7 +147,10 @@ const SelectPresentationType: React.FC = () => {
           )
         }
       } catch (error) {
-        console.error('Error generating document:', error)
+        toast.error('Error generating ppt', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       }
     }
 
@@ -182,10 +186,12 @@ const SelectPresentationType: React.FC = () => {
           navigate(
             `/presentation-view/?documentID=${result.documentID}/?presentationName=${result.presentationName}/?slideType=${selectedTypeName}`
           )
-          console.log(result)
         }
       } catch (error) {
-        console.error('Error refining presentation:', error)
+        toast.error('Error refining ppt', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
         alert('Failed to refine the presentation. Please try again.')
       }
     }
@@ -284,8 +290,11 @@ const SelectPresentationType: React.FC = () => {
                   type="text"
                   value={customTypeInput}
                   onChange={(e) => {
-                    setCustomTypeInput(e.target.value)
-                    setSelectedTypeName(e.target.value)
+                    const value = e.target.value
+                    // Allow only alphabets and spaces
+                    const textOnly = value.replace(/[^a-zA-Z\s]/g, '')
+                    setCustomTypeInput(textOnly)
+                    setSelectedTypeName(textOnly)
                   }}
                   placeholder="Enter Custom type"
                   className="mt-2 p-2 border rounded w-full"
@@ -321,37 +330,6 @@ const SelectPresentationType: React.FC = () => {
           >
             Generate Presentation
           </button>
-          {/* <div className="relative group">
-            <button
-              onClick={() => userPlan !== 'free' && setIsRefineModalOpen}
-              disabled={refineButtonDisabled}
-              className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
-                refineButtonDisabled
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
-              }`}
-            >
-              Refine Presentation
-            </button> */}
-
-          {/* On Hover Dialog Box */}
-          {/* {refineButtonDisabled && (
-              <div className="absolute left-full top-1 transform -translate-y-1/2 ml-2 h-[5.5rem] w-[10rem] hidden group-hover:flex bg-gray-200 text-[#3667B2] px-3 py-1 rounded-2xl shadow-lg">
-                <p>
-                  Please upgrade to{' '}
-                  <span>
-                    <button
-                      className="text-purple-600 hover:text-purple-800 hover:scale-110 active:scale-95 transition transform"
-                      onClick={() => setIsPricingModalOpen(true)}
-                    >
-                      Pro
-                    </button>
-                  </span>{' '}
-                  to access this feature.
-                </p>
-              </div>
-            )}
-          </div> */}
           <div
             className="relative group"
             onMouseEnter={handleMouseEnter}
@@ -436,8 +414,10 @@ const SelectPresentationType: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  setIsRefineModalOpen(true)
+                  setIsPricingModalOpen(true)
+                  setIsModalOpen(false)
                 }}
+                // disabled={refineButtonDisabled}
                 className="bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
               >
                 Refine Presentation

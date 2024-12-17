@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { PricingModal } from '../shared/PricingModal'
 import { IpInfoResponse } from '../../types/authTypes'
 import { Plan } from '../../types/pricingTypes'
+import { toast } from 'react-toastify'
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -123,7 +124,10 @@ const HistoryContainer: React.FC = () => {
         setFilteredData(result.data || []) // Ensure filteredData is also set
         setIsLoading(false)
       } catch (error) {
-        console.error('Error fetching history data:', error)
+        toast.error('Error fetching history data', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
         setIsLoading(false) // Stop loading in case of an error
       }
     }

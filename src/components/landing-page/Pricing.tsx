@@ -3,6 +3,7 @@ import { FaCheckCircle } from 'react-icons/fa' // Importing the check icon
 import { Plan } from '../../types/pricingTypes'
 import axios from 'axios'
 import { IpInfoResponse } from '../../types/authTypes'
+import { useNavigate } from 'react-router-dom'
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -11,6 +12,7 @@ const Pricing: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
+  const navigate = useNavigate()
 
   const categories = [
     {
@@ -83,36 +85,108 @@ const Pricing: React.FC = () => {
       buttonText: 'Get Started for Free',
       description: (
         <div className="mb-[5.5rem]">
-        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-          Perfect for exploring Zynth.
-        </span>
-      </div>
+          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+            Perfect for exploring Zynth. Perfect for exploring Zynth.
+          </span>
+        </div>
       ),
 
       price: null,
       features: [
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4 ',margin: '' },
-      
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-3 ',margin: '' },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-7 ',margin: '' },
-       
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: '' },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
-        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-4',margin: '' },
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4' ,margin: ''},
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-5' ,margin: ''},
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4',margin: '' },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
-        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
-        
+        {
+          text: 'Unlimited',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4 ',
+          margin: '',
+        },
+
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-3 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-7 ',
+          margin: '',
+        },
+
+        {
+          text: '✔',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+
         {
           text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
-          margin: ''
+          margin: '',
         },
       ],
     },
@@ -139,30 +213,115 @@ const Pricing: React.FC = () => {
           </>
         ),
       features: [
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-0.5 ',margin: '' },
-        { text: 'Unlimited', bgColor: '#F5F7FA', icon: null, spacing: 'py-4 ',margin: '' },
-        { text: '-', bgColor: 'white', icon: null, spacing: 'py-3 ',margin: '',textColor: 'text-black', },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-7 ',margin: '' },
-       
-        { text: '✔', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: '' },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
-        { text: '', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
-        
-        { text: '-', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4',margin: '' },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
-        { text: '-', bgColor: '#F5F7FA', icon: FaCheckCircle, spacing: 'py-5' ,margin: ''},
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-5' ,margin: ''},
-        { text: '-', bgColor: '#F5F7FA', icon: null, spacing: 'py-4',margin: '' },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-1 ',margin: '' },
-        { text: '', bgColor: 'white', icon: FaCheckCircle, spacing: 'py-4' ,margin: ''},
-        
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-0.5 ',
+          margin: '',
+        },
+        {
+          text: 'Unlimited',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-3 ',
+          margin: '',
+          textColor: 'text-black',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-7 ',
+          margin: '',
+        },
+
+        {
+          text: '✔',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+
+        {
+          text: '-',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: FaCheckCircle,
+          spacing: 'py-5',
+          margin: '',
+        },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
+        {
+          text: '-',
+          bgColor: '#F5F7FA',
+          icon: null,
+          spacing: 'py-4',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: null,
+          spacing: 'py-1 ',
+          margin: '',
+        },
+        {
+          text: '',
+          bgColor: 'white',
+          icon: FaCheckCircle,
+          spacing: 'py-4',
+          margin: '',
+        },
+
         {
           text: 'Unlimited',
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
-          margin: ''
+          margin: '',
         },
       ],
     },
@@ -171,7 +330,7 @@ const Pricing: React.FC = () => {
   return (
     <div className="bg-gray-50 w-full h-full " id="pricing ">
       <section className="py-16 lg:min-h-[300px] lg:ml-[250px] ml-2">
-        <div className='p-2'>
+        <div className="p-2">
           <p className="text-indigo-600 text-lg mb-2">Pricing</p>
           <h1 className="text-gray-900 text-3xl font-bold mb-6">
             AI slide maker for all your <br /> presentation needs.
@@ -240,204 +399,238 @@ const Pricing: React.FC = () => {
               </div>
               <button
                 className={`w-full font-medium py-2 px-6 ${
-                  planIndex === 0 
+                  planIndex === 0
                 } rounded-lg ${
                   planIndex === 1
-                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
-                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
+                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
+                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
                 }`}
               >
-                {plan.buttonText}
+                <a href="/auth" target="_blank">
+                  {plan.buttonText}
+                </a>
               </button>
               <ul className="mb-8 mt-4 space-y-0">
-  {plan.features.map((feature, featureIndex) => (
-    <li
-      key={featureIndex}
-      className={`flex items-center justify-center w-full mt-6 ${feature.spacing} ${feature.margin }`}
-      style={{
-        backgroundColor: feature.bgColor,
-        borderRadius: '0.375rem',
-    
-      }}
-    >
-      {feature.icon ? (
-        <FaCheckCircle className="h-5 w-5 text-green-500" />
-      ) : (
-        <span
-          className={`${
-            feature.text === '-' ? 'black text-lg' : 'black'
-          }`}
-        >
-          {feature.text}
-        </span>
-      )}
-    </li>
-  ))}
-</ul>
-
-
-
+                {plan.features.map((feature, featureIndex) => (
+                  <li
+                    key={featureIndex}
+                    className={`flex items-center justify-center w-full mt-6 ${feature.spacing} ${feature.margin}`}
+                    style={{
+                      backgroundColor: feature.bgColor,
+                      borderRadius: '0.375rem',
+                    }}
+                  >
+                    {feature.icon ? (
+                      <FaCheckCircle className="h-5 w-5 text-green-500" />
+                    ) : (
+                      <span
+                        className={`${
+                          feature.text === '-' ? 'black text-lg' : 'black'
+                        }`}
+                      >
+                        {feature.text}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
 
               <button
-                className={`w-full font-medium py-2 px-6  ${
+                onClick={() => navigate('/auth')}
+                className={`w-full font-medium py-2 px-6 rounded-lg ${
                   planIndex === 1
-                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700'
-                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50'
+                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
+                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
                 }`}
               >
-                {plan.buttonText}
+                <a href="/auth" target="_blank">
+                  {plan.buttonText}
+                </a>
               </button>
             </div>
           ))}
         </div>
       </div>
-{/* Mobile View */}
+      {/* Mobile View */}
       <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden  ">
-        <div className='px-4 '>
+        <div className="px-4 ">
+          <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Perfect for exploring Zynth.
+          </p>
+          <button className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+            Get Started for Free
+          </button>
+        </div>
 
-        <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
-  <p className="text-sm text-gray-600 mb-4">Perfect for exploring Zynth.</p>
-  <button className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
-    Get Started for Free
-  </button>
-  </div>
-        
- 
+        <div className="mt-4  ">
+          <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            Access
+          </h2>
+          <ul className="text-gray-700 ">
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              General Presentations
+              <span className="font-medium">Unlimited</span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+              Presentation Uploads
+              <span className="font-medium mr-2 text-black">-</span>
+            </li>
+          </ul>
+        </div>
 
-  <div className="mt-4  ">
-    <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">Access</h2>
-    <ul className="text-gray-700 ">
-    <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
-  General Presentations
-  <span className="font-medium">Unlimited</span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
-  Presentation Uploads
-  <span className="font-medium mr-2 text-black">-</span>
-</li>
-    </ul>
-  </div>
+        <div className="mt-4">
+          <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            Features
+          </h2>
+          <ul className="text-gray-700">
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              AI Presentation Creation
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+              Presentation History
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              Slide Versioning
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+              Add Custom Slides
+              <span className="font-medium mr-2 text-black">-</span>
+            </li>
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              Custom Slide Builder
+              <span className="font-medium mr-2 text-black">-</span>
+            </li>
+          </ul>
+        </div>
 
-  <div className="mt-4">
-  <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">Features</h2>
-    <ul className="text-gray-700">
-    <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
-    AI Presentation Creation
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
-Presentation History
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
-Slide Versioning
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
-Add Custom Slides
-<span className="font-medium mr-2 text-black">-</span>
-</li>
-<li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
-Custom Slide Builder
-<span className="font-medium mr-2 text-black">-</span>
-</li>
-    </ul>
-  </div>
+        <div className="mt-4">
+          <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            Sharing and Exports
+          </h2>
+          <ul className="text-gray-700">
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              Presentation Sharing Links
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              PDF Exports
+              <span className="font-medium mr-2 text-black">-</span>
+            </li>
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              Google Slides Exports
+              <span className="font-medium  text-black">
+                $9 / ₹ 499 / Export
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
+        <div className="px-4 ">
+          <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Ideal for professionals and businesses.
+          </p>
+          <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+            Upgrade to Pro
+          </button>
+        </div>
 
-  <div className="mt-4">
-  <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">Sharing and Exports</h2>
-    <ul className="text-gray-700">
-    <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
-    Presentation Sharing Links
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full">
-PDF Exports
-<span className="font-medium mr-2 text-black">-</span>
-</li>
-<li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-Google Slides Exports
-<span className="font-medium  text-black">$9 / ₹ 499 / Export</span>
-</li>
-      
-    </ul>
-  </div>
-</div>
-<div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
-        <div className='px-4 '>
+        <div className="mt-4  ">
+          <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            Access
+          </h2>
+          <ul className="text-gray-700 ">
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              General Presentations
+              <span className="font-medium">Unlimited</span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              Presentation Uploads
+              <span className="font-medium ">Unlimited</span>
+            </li>
+          </ul>
+        </div>
 
-        <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
-  <p className="text-sm text-gray-600 mb-4">Ideal for professionals and businesses.</p>
-  <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
-    Upgrade to Pro
-  </button>
-  </div>
-        
- 
+        <div className="mt-4">
+          <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            Features
+          </h2>
+          <ul className="text-gray-700">
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              AI Presentation Creation
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              Presentation History
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              Slide Versioning
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              Add Custom Slides
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              Custom Slide Builder
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+          </ul>
+        </div>
 
-  <div className="mt-4  ">
-    <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">Access</h2>
-    <ul className="text-gray-700 ">
-    <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
-  General Presentations
-  <span className="font-medium">Unlimited</span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full">
-  Presentation Uploads
-  <span className="font-medium ">Unlimited</span>
-</li>
-    </ul>
-  </div>
-
-  <div className="mt-4">
-  <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">Features</h2>
-    <ul className="text-gray-700">
-    <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-    AI Presentation Creation
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full">
-Presentation History
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-Slide Versioning
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full">
-Add Custom Slides
-<span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-Custom Slide Builder
-<span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-    </ul>
-  </div>
-
-  <div className="mt-4">
-  <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">Sharing and Exports</h2>
-    <ul className="text-gray-700">
-    <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-    Presentation Sharing Links
-  <span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-white flex justify-between items-center px-2 py-6 w-full">
-PDF Exports
-<span className="font-medium"><FaCheckCircle className="h-6 w-6 text-green-500" /></span>
-</li>
-<li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-Google Slides Exports
-<span className="font-medium  text-black">$9 / ₹ 499 / Export</span>
-</li>
-      
-    </ul>
-    <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
-    Upgrade to Pro
-  </button>
-  </div>
-</div>
-
+        <div className="mt-4">
+          <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            Sharing and Exports
+          </h2>
+          <ul className="text-gray-700">
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              Presentation Sharing Links
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              PDF Exports
+              <span className="font-medium">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+              </span>
+            </li>
+            <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              Google Slides Exports
+              <span className="font-medium  text-black">
+                $9 / ₹ 499 / Export
+              </span>
+            </li>
+          </ul>
+          <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+            Upgrade to Pro
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

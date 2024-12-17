@@ -4,6 +4,7 @@ import { FaImage } from 'react-icons/fa'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface ImagesProps {
   heading: string
@@ -57,7 +58,10 @@ export default function Images({
         setImages((prevImages) => [...prevImages, ...uploadedImages])
       }
     } catch (error) {
-      console.error('Upload failed:', error)
+      toast.error('Upload failed', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
     } finally {
       setIsUploading(false)
       setReplacingIndex(null)
@@ -90,7 +94,10 @@ export default function Images({
           setIsLoading(false)
         })
     } catch (error) {
-      console.error('Submit failed:', error)
+      toast.error('Submit failed', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       alert('Failed to submit images.')
     }
   }

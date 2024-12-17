@@ -57,7 +57,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             type="text"
             id="websiteLink"
             placeholder="Enter website link"
-            className="mb-4 lg:p-2 p-4 border w-full rounded-xl"
+            className="mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
             value={websiteLink}
             onChange={handleInputChange}
           />

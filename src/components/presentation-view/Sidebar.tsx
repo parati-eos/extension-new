@@ -18,6 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [inputIndex, setInputIndex] = useState<number | null>(null)
   const [newOutline, setNewOutline] = useState<string>('')
   const outlineRefs = useRef<(HTMLLIElement | null)[]>([])
+  const [newOutlineLoading, setNewOutlineLoading] = useState(false)
 
   useEffect(() => {
     setOutlines(fetchedOutlines)
@@ -40,6 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [selectedOutline, outlines])
 
   const handleAddOutline = async (index: number) => {
+    setNewOutlineLoading(true)
     if (!newOutline.trim()) return
     const updatedOutline = { title: newOutline }
 
@@ -64,11 +66,15 @@ const Sidebar: React.FC<SidebarProps> = ({
           autoClose: 2000,
         })
         fetchOutlines()
+        setNewOutlineLoading(false)
       }
       setInputIndex(null)
       setNewOutline('')
     } catch (error) {
-      console.error('Error adding outline:', error)
+      toast.error('Error adding outline', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
     }
   }
 
@@ -134,14 +140,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div className="absolute inset-y-0 right-2 flex items-center space-x-1">
                     <button
                       onClick={() => handleAddOutline(idx)}
-                      disabled={!newOutline.trim()}
+                      disabled={!newOutline.trim() || newOutlineLoading}
                       className={`text-green-600 ${
-                        !newOutline.trim()
-                          ? 'opacity-20 cursor-not-allowed'
+                        !newOutline.trim() || newOutlineLoading
+                          ? 'opacity-20'
                           : ''
                       }`}
                     >
-                      ✔️
+                      {newOutlineLoading ? '' : '✔️'}
                     </button>
                     <button
                       onClick={() => {

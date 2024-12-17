@@ -112,6 +112,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
   pptName,
   isLoading,
   userPlan,
+  openPricingModal,
 }) => {
   return (
     <div className="flex items-center justify-between gap-2 mt-6 mb-5">
@@ -125,7 +126,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
       </h1>
       <div className="flex gap-2">
         <button
-          onClick={handleDownload}
+          onClick={openPricingModal}
           className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
         >
           <FaDownload className="h-4 w-4" />

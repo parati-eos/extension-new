@@ -8,6 +8,7 @@ import WebsiteLinkForm from './onboarding-sections/WebsiteLinkForm.tsx'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { FormData } from '../../types/onboardingTypes.ts'
+import { toast } from 'react-toastify'
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
@@ -65,7 +66,6 @@ const OnboardingContainer: React.FC = () => {
             }
           )
           .then((response) => {
-            console.log(response.data)
             sessionStorage.setItem('userPlan', response.data.plan.plan_name)
           })
       } else {
@@ -81,7 +81,10 @@ const OnboardingContainer: React.FC = () => {
       }
       setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
     } catch (error) {
-      console.error('Error submitting form data:', error)
+      toast.error('Error submitting form data', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
     }
   }
 

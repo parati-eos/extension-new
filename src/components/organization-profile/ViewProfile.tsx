@@ -4,6 +4,7 @@ import { FaEdit, FaLink, FaEnvelope, FaPhone, FaLinkedin } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { OrganizationData } from '../../types/types'
+import { toast } from 'react-toastify'
 
 const ViewProfile: React.FC = () => {
   const navigate = useNavigate()
@@ -36,7 +37,10 @@ const ViewProfile: React.FC = () => {
         setIsLoading(false)
       })
       .catch((error) => {
-        console.error('Error fetching organization data:', error)
+        toast.error('Error fetching organization data', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       })
   }, [])
 

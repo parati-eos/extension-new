@@ -77,7 +77,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             type="text"
             id="email"
             placeholder="Enter email"
-            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl ${
+            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
               !isEmailValid ? 'border-red-500' : ''
             }`}
             value={contactEmail}
@@ -99,7 +99,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             type="text"
             id="phone"
             placeholder="Enter phone number"
-            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl ${
+            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
               !isPhoneValid ? 'border-red-500' : ''
             }`}
             value={contactPhone}
@@ -122,7 +122,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             type="text"
             id="linkedin"
             placeholder="Link of your LinkedIn profile"
-            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl ${
+            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
               !isLinkedinValid ? 'border-red-500' : ''
             }`}
             value={linkedinLink}

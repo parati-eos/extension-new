@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FaImage, FaBullseye } from 'react-icons/fa'
 import { LogoFormProps } from '../../../types/onboardingTypes'
 import { BackButton, NextButton } from '../shared/Buttons'
+import { toast } from 'react-toastify'
 
 const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,
@@ -29,7 +30,10 @@ const LogoForm: React.FC<LogoFormProps> = ({
         const url = await uploadLogoToS3(file)
         setLogo(url)
       } catch (error) {
-        console.error('Error uploading logo:', error)
+        toast.error('Error uploading logo', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
       } finally {
         setIsUploading(false)
       }
@@ -61,7 +65,11 @@ const LogoForm: React.FC<LogoFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-[90%] md:w-full border border-gray-200 mt-6 md:mt-6 p-10 rounded-lg hover:scale-105">
+        <div
+          className={`w-[90%] md:w-full border border-gray-200 mt-6 md:mt-6 ${
+            logo !== '' ? 'md:mt-0' : ''
+          } p-10 rounded-lg hover:scale-105`}
+        >
           <input
             type="file"
             id="companyLogo"
@@ -95,7 +103,11 @@ const LogoForm: React.FC<LogoFormProps> = ({
         </div>
 
         {/* Button */}
-        <div className="flex flex-col items-center justify-center mt-[3.5rem] md:mt-7 w-full space-y-2 px-2">
+        <div
+          className={`flex flex-col items-center justify-center mt-[3.5rem] md:mt-7 ${
+            logo !== '' ? 'md:mt-1' : ''
+          } w-full space-y-2 px-2`}
+        >
           <NextButton disabled={!logo} text={'Next'} />
           <BackButton onClick={onBack} />
         </div>
