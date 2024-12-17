@@ -38,7 +38,7 @@ export default function ViewPresentation() {
   const [pptName, setPptName] = useState<string | null>(null)
   const [presentationID, setPresentationID] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
-  const [isSlideLoading, setIsSlideLoading] = useState(true)
+  const [isSlideLoading, setIsSlideLoading] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(1)
   const [currentOutline, setCurrentOutline] = useState('')
   const [outlineType, setOutlineType] = useState('')
@@ -432,6 +432,7 @@ export default function ViewPresentation() {
 
   // Web Socket To Get Slide Data
   useEffect(() => {
+    setIsSlideLoading(true)
     const socket = io(`${SOCKET_URL}`, {
       transports: ['websocket'],
     })
@@ -455,6 +456,7 @@ export default function ViewPresentation() {
         setTotalSlides(ids.length)
       } else {
         console.warn('Received empty or invalid slides data')
+        setIsSlideLoading(true)
       }
     })
 
@@ -465,6 +467,7 @@ export default function ViewPresentation() {
 
     // currentOutline.replace(/^\d+\.\s*/, '')
     console.log('Outline Passed', currentOutline.replace(/^\d+\.\s*/, ''))
+    console.log('Document ID Passed', documentID)
 
     // Automatically fetch slides on component mount
     socket.emit('fetchSlides', {
