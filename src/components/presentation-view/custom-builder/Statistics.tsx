@@ -26,6 +26,7 @@ export default function Statistics({
   const [description, setDescription] = useState([''])
   const [loading, setLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [isRowAdded, setIsRowAdded] = useState(false) // Flag to track new row addition
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...title]
@@ -38,21 +39,24 @@ export default function Statistics({
     updatedPoints[index] = value
     setDescription(updatedPoints)
   }
+
   const containerRef = useRef<HTMLDivElement | null>(null)
+
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight
+    if (isRowAdded && containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight // Scroll only when a new row is added
+      setIsRowAdded(false) // Reset the flag to prevent further scrolling
     }
-  }, [description])
+  }, [isRowAdded]) // Dependency only on isRowAdded
 
   const addNewPoint = () => {
     if (title.length < 6) {
       setTitle([...title, ''])
       setDescription([...description, ''])
+      setIsRowAdded(true) // Set flag to trigger scrolling
     }
   }
 
-  // Disable "Add New Timeline" button if the last title or description is empty
   const isAddDisabled =
     title[title.length - 1].trim() === '' ||
     description[description.length - 1].trim() === ''
@@ -150,7 +154,6 @@ export default function Statistics({
               </div>
             ))}
 
-            {/* Add New Data Button is removed after 6 inputs */}
             {title.length < 6 && (
               <button
                 onClick={addNewPoint}
@@ -158,8 +161,8 @@ export default function Statistics({
                 disabled={isAddDisabled}
                 className={`flex items-center justify-center py-2 px-4 rounded-md mt-4 ml-4 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
                   title.length >= 6 || isAddDisabled
-                    ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
-                    : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
+                    ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed'
+                    : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'
                 } `}
               >
                 <FaPlus className="h-4 w-4 mr-2" />
@@ -168,9 +171,7 @@ export default function Statistics({
             )}
           </div>
 
-         {/* Attach Image and Generate Slide Large Screen Buttons */}
-         <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
-            {/* Attach Image Section */}
+          <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
             <AttachImage onFileSelected={handleFileSelect} />
             <button
               onClick={handleGenerateSlide}
@@ -184,7 +185,7 @@ export default function Statistics({
               {loading ? 'Generating...' : 'Generate Slide'}
             </button>
           </div>
-          {/* Attach Image and Generate Slide Buttons for Mobile */}
+
           <div className="flex lg:hidden mt-4 gap-2 w-full justify-center">
             <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
               <FaPaperclip />
