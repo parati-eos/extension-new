@@ -25,7 +25,7 @@ const Heading: React.FC = () => {
         <h1 className="md:hidden text-3xl font-bold text-[#3667B2] z-10">
           AI Presentation Generator
         </h1>
-        <p className="mt-4 font-normal text-gray-700 w-[90%] md:max-w-lg z-10">
+        <p className="mt-4 font-normal text-black w-[90%] md:max-w-lg z-10">
           From startup pitch decks to corporate proposals, Zynth’s AI
           presentation maker helps you craft visually compelling,
           professional-grade slides in minutes—no design skills required.

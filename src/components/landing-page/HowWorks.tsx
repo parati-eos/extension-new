@@ -25,7 +25,7 @@ const HowWorks: React.FC = () => {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   AI Presentation Maker
                 </h3>
-                <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
                   <li>
                     Generate a new presentation or refine an existing one.
                   </li>
@@ -63,7 +63,7 @@ const HowWorks: React.FC = () => {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Customizable Slide Designs
                 </h3>
-                <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
                   <li>
                     Instantly create a new slide with AI in a single click.
                   </li>
@@ -101,7 +101,7 @@ const HowWorks: React.FC = () => {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Seamless Presentation Sharing
                 </h3>
-                <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
                   <li>Share your AI presentation instantly via weblinks.</li>
                   <li>Download your AI-generated presentation as a PDF.</li>
                   <li>

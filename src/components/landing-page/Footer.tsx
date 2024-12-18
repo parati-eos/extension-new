@@ -56,11 +56,11 @@ const Footer: React.FC = () => {
                 alt="Zynth Logo"
                 className="h-10 mb-4 md:mb-2 mx-auto md:mx-0"
               />
-              <p className="text-gray-700 text-sm">
+              <p className="text-black text-sm">
                 Create your investor presentations in a few minutes using our
                 AI-powered pitch deck builder. No design skills needed.
               </p>
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-black text-sm mt-2">
                 © 2024 Parati Technologies Private Limited. All rights reserved.
               </p>
             </div>

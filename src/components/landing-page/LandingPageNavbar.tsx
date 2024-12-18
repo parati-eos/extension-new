@@ -83,7 +83,7 @@ const LandingPageNavbar: React.FC = () => {
         </div>
 
         {/* Mobile & Small Screen Navbar */}
-        <div className="md:hidden flex items-center space-x-4">
+        <div className="lg:hidden flex items-center space-x-4">
           <button
             onClick={() => navigate('/auth')}
             className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white active:scale-95 transition transform duration-300 px-4 py-1 rounded"
@@ -103,7 +103,7 @@ const LandingPageNavbar: React.FC = () => {
         </div>
 
         {/* Desktop Center Links */}
-        <div className="hidden md:flex space-x-10 items-center">
+        <div className="hidden lg:flex space-x-10 items-center">
           <a
             href="#how-it-works"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
@@ -148,7 +148,7 @@ const LandingPageNavbar: React.FC = () => {
         </div>
 
         {/* Right Buttons */}
-        <div className="hidden md:flex space-x-10">
+        <div className="hidden lg:flex space-x-10">
           <button
             onClick={() => navigate('/auth')}
             className="text-gray-800 hover:text-blue-600 active:scale-95 transition-all transform duration-300"
@@ -166,7 +166,7 @@ const LandingPageNavbar: React.FC = () => {
 
       {/* Dropdown for Mobile */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-md">
+        <div className="lg:hidden  bg-white shadow-md">
           <ul className="flex flex-col items-center space-y-2 p-4">
             <li>
               <a

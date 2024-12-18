@@ -37,7 +37,7 @@ const AboutSection: React.FC = () => {
       </div>
 
       {/* Description */}
-      <p className="text-center text-lg md:text-base text-gray-600 w-[90%] md:max-w-xl mx-auto mb-12">
+      <p className="text-center text-lg md:text-base text-black w-[90%] md:max-w-xl mx-auto mb-12">
         Zynth empowers you to create tailored presentations for every purpose.
         Go beyond generic PowerPoint presentation templates and use your
         personal slides maker.
@@ -49,7 +49,7 @@ const AboutSection: React.FC = () => {
           <h3 className="text-2xl md:text-lg font-semibold text-gray-900 mb-4 md:mb-2">
             For Businesses
           </h3>
-          <p className="text-gray-600 text-xl md:text-base">
+          <p className="text-black text-xl md:text-base">
             Impress stakeholders with polished pitch decks, sales presentations,
             project proposals, and more.
           </p>
@@ -58,7 +58,7 @@ const AboutSection: React.FC = () => {
           <h3 className="text-2xl md:text-lg font-semibold text-gray-900 mb-4 md:mb-2">
             For Educators
           </h3>
-          <p className="text-gray-600 text-xl md:text-base">
+          <p className="text-black text-xl md:text-base">
             Simplify classroom lessons, research reports, or academic projects
             with our AI PPT maker.
           </p>
@@ -67,7 +67,7 @@ const AboutSection: React.FC = () => {
           <h3 className="text-2xl md:text-lg font-semibold text-gray-900 mb-4 md:mb-2">
             For Creatives
           </h3>
-          <p className="text-gray-600 text-xl md:text-base">
+          <p className="text-black text-xl md:text-base">
             Instantly build visually stunning AI slides for personal projects or
             creative ideas.
           </p>
