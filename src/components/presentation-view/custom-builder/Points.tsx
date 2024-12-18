@@ -101,7 +101,7 @@ export default function Points({
       ) : (
         <>
           {/* Top Section: Headings */}
-          <div className="flex lg:mt-2 items-center justify-between w-full lg:px-4">
+          <div className="flex  items-center justify-between w-full ">
             <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
               {heading}
             </h2>
@@ -161,7 +161,7 @@ export default function Points({
           </div>
 
           {/* Button container */}
-          <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
+          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
             {/* Use AttachImage component */}
             <AttachImage onFileSelected={handleFileSelect} />
 
@@ -179,24 +179,15 @@ export default function Points({
             </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-4 gap-2  w-full justify-center">
-            <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
-              <FaPaperclip />
-              <label htmlFor="fileInput" className="cursor-pointer">
-                Attach Image
-              </label>
-              <input
-                id="fileInput"
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
-              />
+          <div className="flex lg:hidden mt-2 gap-2  w-full ">
+            <div className="flex-1  items-center justify-center gap-2">
+            <AttachImage onFileSelected={handleFileSelect} />
             </div>
 
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled}
-              className={`flex-1 py-3 rounded-md text-sm font-medium ${
+              className={`flex-1 py-2 rounded-md ${
                 isGenerateDisabled
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white'

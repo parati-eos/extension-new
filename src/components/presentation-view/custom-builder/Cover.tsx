@@ -81,8 +81,8 @@ export default function Cover(
 
       <div className="w-full lg:flex lg:flex-col lg:justify-center lg:items-center lg:p-4 lg:sm:p-8">
         {/* Top Section: Headings */}
-        <div className="flex lg:mt-2 items-center justify-between w-full px-4">
-          <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+        <div className="flex  items-center justify-between w-full px-4">
+          <h2 className=" md:block md:text-lg font-semibold text-[#091220]">
             {heading}
           </h2>
           <BackButton onClick={onBack} />

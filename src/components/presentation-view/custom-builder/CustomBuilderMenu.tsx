@@ -33,9 +33,9 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full lg:px-4 lg:py-3">
+    <div className="flex flex-col h-full lg:p-4 p-2">
       {/* Top Section: Headings and Back Button */}
-      <div className="flex items-center justify-between w-full mt-2 ml-6 lg:ml-0  lg:mt-0 lg:mb-4">
+      <div className="flex items-center justify-between w-full  ">
         <div>
           <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
             Custom Builder
@@ -70,7 +70,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       </div>
 
       {/* Mobile View */}
-      <div className="lg:hidden flex flex-wrap justify-start mt-4">
+      <div className="lg:hidden flex flex-wrap justify-start p-2">
         {slideTypes.map((type) => (
           <div
             key={type.name}

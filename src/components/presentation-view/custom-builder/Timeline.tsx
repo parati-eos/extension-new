@@ -120,8 +120,8 @@ export default function Timeline({
       ) : (
         <>
           {/* Top Section: Headings */}
-          <div className="flex lg:mt-2 items-center justify-between w-full ">
-            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+          <div className="flex  items-center justify-between w-full ">
+            <h2 className=" md:text-lg font-semibold text-[#091220]">
               {heading}
             </h2>
             <BackButton onClick={onBack} />
@@ -173,7 +173,7 @@ export default function Timeline({
           </div>
 
           {/* Attach Image and Generate Slide Large Screen Buttons */}
-          <div className="hidden mt-auto gap-2 lg:flex w-full px-2 justify-between lg:justify-end lg:w-auto lg:gap-4">
+          <div className="hidden mt-auto gap-2 lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4">
             {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
             <button
@@ -203,19 +203,13 @@ export default function Timeline({
             </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-4 gap-2 w-full justify-center">
-            <div className="flex-1 flex items-center justify-evenly text-[#5D5F61] p-1 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
-              <FaPaperclip />
-              <label htmlFor="fileInput" className="cursor-pointer">
-                Attach Image
-              </label>
-              <input
-                id="fileInput"
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
-              />
+          <div className="flex lg:hidden mt-2 gap-2  w-full">
+           
+            <div className="flex-1  items-center justify-center gap-2">
+               {/* Attach Image Section */}
+            <AttachImage onFileSelected={handleFileSelect} />
             </div>
+           
 
             <button
               onClick={(e) => {
@@ -227,7 +221,7 @@ export default function Timeline({
               }}
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
-              className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md text-sm font-medium transition-all duration-200 transform active:scale-95 ${
+              className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 ${
                 isGenerateDisabled || loading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                   : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
