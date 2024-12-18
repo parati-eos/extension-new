@@ -111,8 +111,8 @@ export default function Points({
           {/* Input Section with Scrolling */}
           <div
             ref={containerRef}
-            className={`flex-1 overflow-y-auto lg:px-4 ${
-              isScrollRequired ? 'scrollbar' : ''
+            className={`flex-1 overflow-y-auto  ${
+              isScrollRequired ? 'scrollbar-none' : ''
             }`}
             style={{
               maxHeight: window.innerWidth >= 768 ? '70vh' : '40vh',
@@ -121,7 +121,7 @@ export default function Points({
             {points.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center gap-2 mb-2 lg:mb-0 ${
+                className={`flex flex-col items-center gap-2 mb-2 lg:mb-0 p-1 ${
                   index === 0 ? 'lg:mt-14' : 'lg:mt-2'
                 }`}
               >
@@ -130,7 +130,7 @@ export default function Points({
                   value={point}
                   onChange={(e) => handleInputChange(e.target.value, index)}
                   placeholder={`Enter Point ${index + 1}`}
-                  className="hidden lg:block flex-1 w-full lg:py-4 p-2  border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="hidden lg:block flex-1 w-full lg:py-4 p-2   border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {/* Mobile View Input */}
                 <input
@@ -138,7 +138,7 @@ export default function Points({
                   value={point}
                   onChange={(e) => handleInputChange(e.target.value, index)}
                   placeholder={`Enter Point ${index + 1}`}
-                  className="lg:hidden mb-2 w-full text-[#5D5F61] p-3 mt-2 border  border-[#8A8B8C] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="lg:hidden mb-2  w-full text-[#5D5F61] p-3 mt-2 border  border-[#8A8B8C] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 {/* Render the "Add new point" button only under the last point */}
                 {/* Add New Point Button */}

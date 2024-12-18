@@ -1,20 +1,36 @@
-import { FaPaperclip, FaImage } from 'react-icons/fa'
+import { FaImage } from 'react-icons/fa'
 import React, { useState } from 'react'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { DisplayMode } from '../../../types/presentationView'
 import { BackButton } from './shared/BackButton'
 import { toast } from 'react-toastify'
+import AttachImage from './shared/attachimage'
 
-export default function Cover(
-  heading: string,
-  documentID: string,
+
+interface CoverProps {
+  heading: string
+  slideType: string
+  documentID: string
+  orgId: string
+  authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
-) {
+}
+
+export default function Cover({
+  heading,
+  slideType,
+  documentID,
+  orgId,
+  authToken,
+  setDisplayMode,
+}: CoverProps) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
-  const authToken = sessionStorage.getItem('authToken')
-  const orgId = sessionStorage.getItem('orgId')
+  const [isLoading, setIsLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+    const [images, setImages] = useState<string[]>([])
+
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -23,7 +39,9 @@ export default function Cover(
       try {
         const url = await uploadLogoToS3(file)
         setLogo(url)
-      } catch (error) {
+      } 
+      
+      catch (error) {
         toast.error('Error uploading logo', {
           position: 'top-center',
           autoClose: 2000,
@@ -34,21 +52,26 @@ export default function Cover(
     }
   }
 
+  const handleFileSelect = (file: File | null) => {
+    setSelectedImage(file)
+  }
+
   const handleButtonClick = () => {
     document.getElementById('logoUploadInput')?.click()
   }
 
   const handleGenerateSlide = async () => {
+    setIsLoading(true)
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/cover`,
         {
           type: 'cover',
           title: heading,
-          documentID: documentID,
+          documentID,
           data: {
             slideName: heading,
-            logo: logo,
+            logo,
           },
         },
         {
@@ -57,51 +80,52 @@ export default function Cover(
           },
         }
       )
-
+      toast.success('Slide generated successfully!', {
+        position: 'top-center',
+        autoClose: 2000,
+      })
       console.log(response.data)
     } catch (error) {
       toast.error('Error while generating slide', {
         position: 'top-center',
         autoClose: 2000,
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const onBack = () => {
-    setDisplayMode('customBuilder')
+    setDisplayMode('newContent')
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="hidden lg:flex lg:w-full lg:absolute lg:left-0 lg:pl-8 lg:pr-8 lg:pt-4">
-        <div className="flex items-center gap-8 w-full">
-          <div className="flex gap-2"></div>
-        </div>
+    <div className="flex flex-col h-full w-full p-2 lg:p-6">
+      {/* Header Section */}
+      <div className="flex items-center justify-between w-full mb-4">
+        <h2 className="md:block md:text-lg font-semibold text-[#091220]">
+          {heading}
+        </h2>
+        <BackButton onClick={onBack} />
       </div>
 
-      <div className="w-full lg:flex lg:flex-col lg:justify-center lg:items-center lg:p-4 lg:sm:p-8">
-        {/* Top Section: Headings */}
-        <div className="flex  items-center justify-between w-full px-4">
-          <h2 className=" md:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
-          <BackButton onClick={onBack} />
-        </div>
-
-        <div className="w-[95%] mt-[0.5rem] lg:mt-0 border border-gray-300 rounded-xl p-4 h-72 flex flex-col justify-center items-center md:transition-transform md:transform md:hover:scale-105 mb-16">
+      {/* Main Content */}
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        {/* Logo Upload Section */}
+        <div className="w-full border border-gray-300 rounded-xl h-full flex flex-col justify-center items-center md:transition-transform md:transform md:hover:scale-105">
           <input
             type="file"
             id="logoUploadInput"
             accept="image/*"
-            onChange={handleFileChange}
+            onChange={(e) => handleFileChange(e)}
             className="hidden"
           />
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col h-[60%] w-[60%] items-center justify-center">
             {logo ? (
               <img
                 src={logo}
                 alt="Uploaded Logo"
-                className="w-24 h-24 lg:w-48 lg:h-48 object-contain mb-4"
+                className="h-72 w-72 object-contain rounded-md"
               />
             ) : (
               <>
@@ -114,29 +138,50 @@ export default function Cover(
             <button
               type="button"
               onClick={handleButtonClick}
-              className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white active:scale-95 transition transform duration-300"
+              className="px-4 py-2 mt-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white active:scale-95 transition transform duration-300"
             >
               {logo ? 'Upload Again' : 'Upload Logo'}
             </button>
           </div>
         </div>
 
-        <div className="flex gap-3 justify-end lg:justify-end w-full">
-          <button
-            type="button"
-            className="flex items-center px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] hover:bg-[#3667B2] hover:border-[#2d599c] hover:text-white rounded-md active:scale-95 transition transform duration-300 text-[#797C81]"
-          >
-            <FaPaperclip className="h-4 w-4" />
-            <span>Attach Image</span>
-          </button>
+        {/* Button Container */}
+        <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2 lg:mt-8 mt-2">
+          {/* Attach Image Component */}
+          <AttachImage 
+         
+          onFileSelected={handleFileSelect} />
+
+          {/* Generate Slide Button */}
           <button
             onClick={handleGenerateSlide}
-            type="button"
-            className="px-6 py-2 h-[3.3rem] lg:h-[2.7rem] border border-[#8A8B8C] bg-[#3667B2] hover:bg-white hover:border-[#797C81] hover:text-[#797C81] rounded-md active:scale-95 transition transform duration-300 text-white"
+            disabled={!logo}
+            className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
+              !logo
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+            }`}
           >
-            Generate Slide
+            {isLoading ? 'Loading...' : 'Generate Slide'}
           </button>
         </div>
+        {/* Attach Image and Generate Slide Buttons for Mobile */}
+        <div className="flex lg:hidden mt-2 gap-2  w-full ">
+            <div className="flex-1  items-center justify-center gap-2">
+            <AttachImage onFileSelected={handleFileSelect} />
+            </div>
+
+            <button
+              onClick={handleGenerateSlide}
+              disabled={!logo}
+              className={`flex-1 py-2 rounded-md ${
+                !logo ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#3667B2] text-white'
+              }`}
+            >
+              {isLoading ? 'Loading...' : 'Generate Slide'}
+      
+            </button>
+          </div>
       </div>
     </div>
   )

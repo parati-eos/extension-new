@@ -46,14 +46,14 @@ export default function Table({
     const completedRows = tableData.rows.filter((row) =>
       row.every((cell) => cell.trim() !== '')
     ).length
-
+  
     // Count fully completed columns
     const columnCount = tableData.rows[0]?.length || 0
     const completedColumns = Array.from({ length: columnCount }).filter(
       (_, colIndex) =>
         tableData.rows.every((row) => row[colIndex]?.trim() !== '')
     ).length
-
+  
     // Enable generation only if at least 2 rows and 2 columns are fully completed
     setCanGenerate(completedRows >= 2 && completedColumns >= 2)
   }, [tableData])
@@ -229,151 +229,165 @@ export default function Table({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-          <div ref={containerRef} className="flex-1 overflow-x-auto scrollbar-none">
-            <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
-              <table className="table-auto border-collapse w-full">
-                <thead>
-                  <tr>
-                    <th className="bg-gray-100 p-2 w-1/5"></th>
-                    {tableData.columnHeaders.map((header, index) => (
-                      <th key={index} className="bg-gray-100 p-2">
-                        <input
-                          type="text"
-                          value={header}
-                          onChange={(e) =>
-                            handleHeaderChange(index, e.target.value, true)
-                          }
-                          className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
-                        />
-                      </th>
-                    ))}
-                    <th className="bg-gray-50 p-2">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={handleAddColumn}
-                          disabled={tableData.columnHeaders.length >= 5}
-                          className={`${
-                            tableData.columnHeaders.length >= 5
-                              ? 'text-gray-400 cursor-not-allowed'
-                              : 'text-[#3667B2]'
-                          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
-                        >
-                          <FaPlus />
-                        </button>
-                        <button
-                          onClick={handleRemoveColumn}
-                          disabled={tableData.columnHeaders.length <= 2}
-                          className={`${
-                            tableData.columnHeaders.length <= 2
-                              ? 'text-gray-400 cursor-not-allowed'
-                              : 'text-[#3667B2]'
-                          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
-                        >
-                          <FaMinus />
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.rows.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      <td className="bg-gray-100">
-                        <input
-                          type="text"
-                          value={tableData.rowHeaders[rowIndex]}
-                          onChange={(e) =>
-                            handleHeaderChange(rowIndex, e.target.value, false)
-                          }
-                          className="w-full font-medium text-center border-none bg-transparent focus:outline-none"
-                        />
-                      </td>
-                      {row.map((cell, colIndex) => (
-                        <td
-                          key={colIndex}
-                          className="border border-gray-300 p-2"
-                        >
-                          <input
-                            type="text"
-                            value={cell}
-                            onChange={(e) =>
-                              handleCellChange(
-                                rowIndex,
-                                colIndex,
-                                e.target.value
-                              )
-                            }
-                            className="w-full text-center border-none bg-transparent focus:outline-none"
-                          />
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    {/* Add and Remove Row Buttons */}
-                    <td className="bg-gray-50 w-full p-2 flex items-center justify-center">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={handleAddRow}
-                          disabled={tableData.rows.length >= 8}
-                          className={`${
-                            tableData.rows.length >= 8
-                              ? 'text-gray-400 cursor-not-allowed'
-                              : 'text-[#3667B2]'
-                          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
-                        >
-                          <FaPlus />
-                        </button>
-                        <button
-                          onClick={handleRemoveRow}
-                          disabled={tableData.rows.length <= 2}
-                          className={`${
-                            tableData.rows.length <= 2
-                              ? 'text-gray-400 cursor-not-allowed'
-                              : 'text-[#3667B2]'
-                          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
-                        >
-                          <FaMinus />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
-            {/* Generate Slide Button */}
-            <button
-              onClick={(e) => {
-                if (canGenerate) {
-                  handleGenerateSlide()
-                } else {
-                  e.preventDefault() // Prevent action when disabled
+          <div ref={containerRef} className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none">
+  <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
+    <table className="table-auto w-full ">
+      <thead>
+        <tr>
+          <th className="bg-gray-100 p-2 lg:w-1/5 lg:min-w-0 min-w-[27vw]"> {/* First Column */}
+            <input
+              type="text"
+              value="Row Headers"
+              className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+              readOnly
+            />
+          </th>
+          {tableData.columnHeaders.map((header, index) => (
+            <th
+              key={index}
+              className={`bg-gray-100 lg:p-2 p-1 ${
+                index === 0 ? 'lg:min-w-[0vw] min-w-[20vw]' : 'lg:min-w-[0vw] min-w-[22vw]'
+              }`} // Set width for first and other columns
+            >
+              <input
+                type="text"
+                value={header}
+                onChange={(e) =>
+                  handleHeaderChange(index, e.target.value, true)
                 }
-              }}
+                className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+              />
+            </th>
+          ))}
+          <th className="bg-gray-50 lg:p-2 p-1 lg:min-w-[0vw] min-w-[10vw]">
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={handleAddColumn}
+                disabled={tableData.columnHeaders.length >= 5}
+                className={`${
+                  tableData.columnHeaders.length >= 5
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-[#3667B2]'
+                } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
+              >
+                <FaPlus />
+              </button>
+              <button
+                onClick={handleRemoveColumn}
+                disabled={tableData.columnHeaders.length <= 2}
+                className={`${
+                  tableData.columnHeaders.length <= 2
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-[#3667B2]'
+                } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
+              >
+                <FaMinus />
+              </button>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {tableData.rows.map((row, rowIndex) => (
+          <tr key={rowIndex}>
+            <td className="bg-gray-100 lg:min-w-[0vw] min-w-[22vw]">
+              <input
+                type="text"
+                value={tableData.rowHeaders[rowIndex]}
+                onChange={(e) =>
+                  handleHeaderChange(rowIndex, e.target.value, false)
+                }
+                className="w-full font-medium text-center border-none bg-transparent focus:outline-none"
+              />
+            </td>
+            {row.map((cell, colIndex) => (
+              <td
+                key={colIndex}
+                className={`border border-gray-300 p-2 ${
+                  colIndex === 0 ? 'lg:min-w-[0vw] min-w-[20vw]' : 'lg:min-w-[0vw] min-w-[22vw]'
+                }`}
+              >
+                <input
+                  type="text"
+                  value={cell}
+                  onChange={(e) =>
+                    handleCellChange(
+                      rowIndex,
+                      colIndex,
+                      e.target.value
+                    )
+                  }
+                  className="w-full text-center border-none bg-transparent focus:outline-none"
+                />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        <tr>
+          {/* Add and Remove Row Buttons */}
+          <td className="bg-gray-50 w-full p-1 flex items-center justify-center lg:min-w-[0vw] min-w-[20vw]">
+            <div className="flex justify-center gap-2">
+              <button
+                onClick={handleAddRow}
+                disabled={tableData.rows.length >= 8}
+                className={`${
+                  tableData.rows.length >= 8
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-[#3667B2]'
+                } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
+              >
+                <FaPlus />
+              </button>
+              <button
+                onClick={handleRemoveRow}
+                disabled={tableData.rows.length <= 2}
+                className={`${
+                  tableData.rows.length <= 2
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-[#3667B2]'
+                } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
+              >
+                <FaMinus />
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
+  {/* Generate Slide Button */}
+  <button
+    onClick={(e) => {
+      if (canGenerate) {
+        handleGenerateSlide()
+      } else {
+        e.preventDefault() // Prevent action when disabled
+      }
+    }}
               onMouseEnter={() => !canGenerate && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-                canGenerate
+      canGenerate
                    ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Generate Slide
-              {/* Tooltip */}
-              {!canGenerate && showTooltip && (
-                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Miminum 2 rows and 2 columns required
-                </span>
-              )}
+    }`}
+  >
+    Generate Slide
+  {/* Tooltip */}
+  {!canGenerate && showTooltip && (
+                <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                 Minimum 2 rows and 2 columns required.<br></br> Please fill all cells.
+    </span>
+  )}
             </button>
-          </div>
+</div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden mt-2 gap-2 justify-end mr-2 ">
+          <div className="flex lg:hidden  gap-2 justify-end  ">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
@@ -397,8 +411,8 @@ export default function Table({
 
                 {/* Tooltip */}
                 {!canGenerate && showTooltip && (
-                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                    Miminum 2 rows and <br></br>2 columns required
+                  <span className="absolute top-[-60px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                    Minimum 2 rows and <br></br>  2 columns required.<br></br> Please fill all cells.
                   </span>
                 )}
               </div>

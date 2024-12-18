@@ -27,6 +27,8 @@ import { DesktopButtonSection, MobileButtonSection } from './ActionButtons'
 import { Plan } from '../../types/pricingTypes'
 import { IpInfoResponse } from '../../types/authTypes'
 import { toast } from 'react-toastify'
+import Contact from './custom-builder/Contact'
+import Cover from './custom-builder/Cover'
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
@@ -231,7 +233,17 @@ export default function ViewPresentation() {
           return (
             <MobileNewSlideVersion
               handleQuickGenerate={handleQuickGenerate}
-              handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
+              handleCustomBuilderClick={() => {
+                if (currentOutline === outlines[0].title) {
+                  setDisplayMode('Cover')
+                } else if (
+                  currentOutline === outlines[outlines.length - 1].title
+                ) {
+                  setDisplayMode('Contact')
+                } else {
+                  setDisplayMode('customBuilder')
+                }
+              }}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
             />
@@ -240,7 +252,17 @@ export default function ViewPresentation() {
           return (
             <DesktopNewSlideVersion
               handleQuickGenerate={handleQuickGenerate}
-              handleCustomBuilderClick={() => setDisplayMode('customBuilder')}
+              handleCustomBuilderClick={() => {
+                if (currentOutline === outlines[0].title) {
+                  setDisplayMode('Cover')
+                } else if (
+                  currentOutline === outlines[outlines.length - 1].title
+                ) {
+                  setDisplayMode('Contact')
+                } else {
+                  setDisplayMode('customBuilder')
+                }
+              }}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
             />
@@ -334,6 +356,29 @@ export default function ViewPresentation() {
       case 'Graphs':
         return (
           <Graphs
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={setDisplayMode}
+          />
+          
+        )
+        case 'Contact':
+        return (
+          <Contact
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={setDisplayMode}
+          />
+        )
+      case 'Cover':
+        return (
+          <Cover
             heading={currentOutline.replace(/^\d+\.\s*/, '')}
             slideType={outlineType}
             documentID={documentID!}

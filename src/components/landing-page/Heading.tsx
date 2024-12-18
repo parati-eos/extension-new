@@ -25,7 +25,7 @@ const Heading: React.FC = () => {
         <h1 className="md:hidden text-3xl font-bold text-[#3667B2] z-10">
           AI Presentation Generator
         </h1>
-        <p className="mt-4 text-gray-700 w-[90%] md:max-w-lg z-10">
+        <p className="mt-4 font-normal text-gray-700 w-[90%] md:max-w-lg z-10">
           From startup pitch decks to corporate proposals, Zynth’s AI
           presentation maker helps you craft visually compelling,
           professional-grade slides in minutes—no design skills required.
@@ -33,7 +33,7 @@ const Heading: React.FC = () => {
         <div className="mt-6 flex flex-col md:justify-center w-[90%] md:flex-row gap-4 z-10">
           <button
             onClick={() => navigate('/auth')}
-            className="px-11 py-3 text-white bg-[#3667B2] rounded-md hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] active:scale-95 transition transform duration-300"
+            className="px-11 py-3  text-white bg-[#3667B2] rounded-md hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] active:scale-95 transition transform duration-300"
           >
             Get Started for Free
           </button>
