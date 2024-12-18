@@ -192,7 +192,6 @@ const SelectPresentationType: React.FC = () => {
           position: 'top-center',
           autoClose: 2000,
         })
-        alert('Failed to refine the presentation. Please try again.')
       }
     }
 

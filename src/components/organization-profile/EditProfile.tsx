@@ -4,6 +4,7 @@ import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationData } from '../../types/types'
 import { industrySectorMap } from '../../utils/industrySector'
+import { toast } from 'react-toastify'
 
 type SectorType = keyof typeof industrySectorMap
 
@@ -137,7 +138,7 @@ const EditProfile: React.FC = () => {
       navigate('/organization-profile')
     } catch (error) {
       console.error('Failed to update profile', error)
-      alert('Failed to update profile. Please try again.')
+      toast.error('Failed to update profile. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -271,7 +272,7 @@ const EditProfile: React.FC = () => {
                   name="sector"
                   value={sector}
                   onChange={handleSectorChange}
-                 className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 >
                   <option value="" disabled>
                     Select sector
@@ -325,7 +326,7 @@ const EditProfile: React.FC = () => {
                     placeholder="Enter your industry"
                     value={otherIndustry}
                     onChange={(e) => setOtherIndustry(e.target.value)}
-                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                    className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 ) : (
                   <></>
@@ -359,7 +360,7 @@ const EditProfile: React.FC = () => {
                   value={formData.linkedinLink}
                   onChange={handleInputChange}
                   placeholder="azcorporation"
-                 className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
               <div>

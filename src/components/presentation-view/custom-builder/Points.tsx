@@ -71,7 +71,7 @@ export default function Points({
         }
       )
       if (response.status === 200) {
-        alert('Data successfully sent to the server!')
+        toast.success('Data successfully sent to the server!')
       }
       console.log('Server response:', response.data)
     } catch (error) {
@@ -79,7 +79,7 @@ export default function Points({
         position: 'top-center',
         autoClose: 2000,
       })
-      alert('Failed to send data.')
+      toast.error('Failed to send data.')
     } finally {
       setIsLoading(false)
     }
@@ -181,7 +181,7 @@ export default function Points({
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-2 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
-            <AttachImage onFileSelected={handleFileSelect} />
+              <AttachImage onFileSelected={handleFileSelect} />
             </div>
 
             <button

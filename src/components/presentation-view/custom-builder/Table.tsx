@@ -199,7 +199,7 @@ export default function Table({
           }
         )
         .then((response) => {
-          alert('Data successfully sent to the server!')
+          toast.success('Data successfully sent to the server!')
           setIsLoading(false)
         })
     } catch (error) {
@@ -207,7 +207,7 @@ export default function Table({
         position: 'top-center',
         autoClose: 2000,
       })
-      alert('Failed to send data.')
+      toast.error('Failed to send data.')
     }
   }
 
@@ -229,7 +229,10 @@ export default function Table({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-          <div ref={containerRef} className="flex-1 overflow-x-auto scrollbar-none">
+          <div
+            ref={containerRef}
+            className="flex-1 overflow-x-auto scrollbar-none"
+          >
             <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
               <table className="table-auto border-collapse w-full">
                 <thead>
@@ -358,7 +361,7 @@ export default function Table({
               onMouseLeave={() => setShowTooltip(false)}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
                 canGenerate
-                   ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+                  ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
               }`}
             >

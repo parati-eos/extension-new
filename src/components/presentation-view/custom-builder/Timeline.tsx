@@ -91,13 +91,13 @@ export default function Timeline({
       )
 
       console.log('PATCH Response:', response.data)
-      alert('Slide generated successfully!')
+      toast.success('Data submitted successfully!')
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-center',
         autoClose: 2000,
       })
-      alert('Failed to generate slide.')
+      toast.error('Failed to generate slide.')
     } finally {
       setLoading(false)
     }
@@ -204,12 +204,10 @@ export default function Timeline({
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-2 gap-2  w-full">
-           
             <div className="flex-1  items-center justify-center gap-2">
-               {/* Attach Image Section */}
-            <AttachImage onFileSelected={handleFileSelect} />
+              {/* Attach Image Section */}
+              <AttachImage onFileSelected={handleFileSelect} />
             </div>
-           
 
             <button
               onClick={(e) => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { FaTimes, FaPlus, FaChevronDown } from 'react-icons/fa'
 import { Outlines } from '../../types/types'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 interface MobileOutlineDropdownProps {
   outlines: Outlines[]
@@ -45,7 +46,7 @@ export default function MobileOutlineModal({
       const result = response.data
       if (result.type && result.title) {
         setIsAddSlideModalOpen(false)
-        alert('Success')
+        toast.success('Outline Added')
         fetchOutlines()
       }
     }
@@ -55,21 +56,22 @@ export default function MobileOutlineModal({
     <div>
       {/* Dropdown Button */}
       <div
-  className="border w-full rounded-lg p-4 bg-white flex justify-between items-center cursor-pointer"
-  onClick={() => setIsOutlinesOpen(true)}
->
-  {isLoading ? (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-    </div>
-  ) : (
-    <>
-      <span className="text-[#091220]">{selectedOutline || "Select Outline"}</span>
-      <FaChevronDown className="text-gray-500" />
-    </>
-  )}
-</div>
-
+        className="border w-full rounded-lg p-4 bg-white flex justify-between items-center cursor-pointer"
+        onClick={() => setIsOutlinesOpen(true)}
+      >
+        {isLoading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <>
+            <span className="text-[#091220]">
+              {selectedOutline || 'Select Outline'}
+            </span>
+            <FaChevronDown className="text-gray-500" />
+          </>
+        )}
+      </div>
 
       {/* Full-Screen Outlines List */}
       {isOutlinesOpen && (
@@ -98,7 +100,7 @@ export default function MobileOutlineModal({
             {outlines.map((outline, index) => (
               <li
                 key={index}
-                className="py-2 text-[#091220]"
+                className="py-2 font-medium text-[#091220]"
                 onClick={() => {
                   onSelectOutline(outline.title)
                   setIsOutlinesOpen(false)

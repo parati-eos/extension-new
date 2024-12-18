@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Outlines, SidebarProps } from '../../types/types'
 import { toast } from 'react-toastify'
+import { FaCheck, FaTimes } from 'react-icons/fa'
 import './viewpresentation.css'
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -97,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               {/* Outline Title */}
               <button
                 onClick={() => onOutlineSelect(outline.title)}
-                className={`block w-full max-w-xs text-left p-2 rounded-lg ${
+                className={`block w-full max-w-xs font-normal text-left p-2 rounded-lg ${
                   selectedOutline === outline.title
                     ? 'bg-blue-50 text-[#3667B2]'
                     : 'hover:bg-gray-200 text-gray-600'
@@ -141,22 +142,29 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <button
                       onClick={() => handleAddOutline(idx)}
                       disabled={!newOutline.trim() || newOutlineLoading}
-                      className={`text-green-600 ${
+                      className={`text-[#0A8568] ${
                         !newOutline.trim() || newOutlineLoading
                           ? 'opacity-20'
                           : ''
                       }`}
                     >
-                      {newOutlineLoading ? '' : '✔️'}
+                      {newOutlineLoading && ''}
+                      <FaCheck
+                        className={`text-[#0A8568] ${
+                          !newOutline.trim() || newOutlineLoading
+                            ? 'opacity-20'
+                            : ''
+                        }`}
+                      />
                     </button>
                     <button
                       onClick={() => {
                         setInputIndex(null)
                         setNewOutline('')
                       }}
-                      className="text-red-500 text-sm"
+                      className="text-[#8A8B8C] text-sm"
                     >
-                      ❌
+                      <FaTimes className="text-[#8A8B8C] text-base" />
                     </button>
                   </div>
                 </div>

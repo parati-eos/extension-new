@@ -6,15 +6,25 @@ import { DisplayMode } from '../../../types/presentationView'
 import { BackButton } from './shared/BackButton'
 import { toast } from 'react-toastify'
 
-export default function Cover(
-  heading: string,
-  documentID: string,
+interface CoverProps {
+  heading: string
+  slideType: string
+  documentID: string
+  orgId: string
+  authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
-) {
+}
+
+export default function Cover({
+  heading,
+  slideType,
+  documentID,
+  orgId,
+  authToken,
+  setDisplayMode,
+}: CoverProps) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
-  const authToken = sessionStorage.getItem('authToken')
-  const orgId = sessionStorage.getItem('orgId')
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -68,7 +78,7 @@ export default function Cover(
   }
 
   const onBack = () => {
-    setDisplayMode('customBuilder')
+    setDisplayMode('newContent')
   }
 
   return (

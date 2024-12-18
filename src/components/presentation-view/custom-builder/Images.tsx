@@ -122,8 +122,8 @@ export default function Images({
             <BackButton onClick={onBack} />
           </div>
 
-          {/* Mobile Image Upload Container */}
-          <div className="flex flex-col lg:hidden w-full h-full md:mt-4 lg:mt-12">
+          {/* Mobile Images Input and Display Section */}
+          <div className="flex flex-col lg:hidden w-full h-full md:mt-4">
             <div className="flex items-center border justify-between border-gray-300 rounded-lg p-4">
               <div className="flex items-center gap-4">
                 <FaImage className="text-4xl text-gray-500" />
@@ -186,7 +186,8 @@ export default function Images({
               ))}
             </div>
           </div>
-          {/* Image Input Section */}
+
+          {/* Large Screens Images Input and Display Section */}
           <div className="hidden lg:flex justify-center w-full md:mt-4 lg:mt-12">
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
               {images.map((image, index) => (
@@ -257,6 +258,7 @@ export default function Images({
             </div>
           </div>
 
+          {/* Genereate Slide Button for Large Screens */}
           <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
             <button
               onClick={handleSubmit}
@@ -270,6 +272,7 @@ export default function Images({
               Generate Slide
             </button>
           </div>
+
           {/* Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden  mt-4 gap-2  justify-end">
             <div className="justify-end">

@@ -1,22 +1,26 @@
 import CustomBuilderIcon from '../../assets/custom-builder.svg'
 import SlideNarrativeIcon from '../../assets/Slide narrative.svg'
 import QuickGenerateIcon from '../../assets/quick generate.svg'
+import { BackButton } from './custom-builder/shared/BackButton'
+import { DisplayMode } from '@/src/types/presentationView'
 
 interface ButtonProps {
   handleQuickGenerate: () => void
   handleCustomBuilderClick: () => void
   handleSlideNarrative: () => void
   userPlan: string
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
   handleSlideNarrative,
+  setDisplayMode,
   userPlan,
 }) => {
   return (
-    <div className="flex flex-col mt-2  items-center justify-center h-full">
+    <div className="flex flex-col mt-2 items-center justify-center h-full">
       <h2 className="text-xl font-semibold">Create a new slide</h2>
       <h3 className="text-base text-[#5D5F61]">
         How would you like to create a new slide?
@@ -72,9 +76,17 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleCustomBuilderClick,
   handleSlideNarrative,
   userPlan,
+  setDisplayMode,
 }) => {
+  const onBack = () => {
+    setDisplayMode('slides')
+  }
+
   return (
     <div className="flex flex-col items-center justify-center h-full">
+      <div className="hidden md:flex justify-end w-[95%] md:absolute md:top-4">
+        <BackButton onClick={onBack} />
+      </div>
       <h2 className="text-xl text-[#091220] font-semibold mb-3">
         Create a new slide
       </h2>

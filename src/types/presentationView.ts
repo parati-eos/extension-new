@@ -11,3 +11,5 @@ export type DisplayMode =
   | 'Graphs'
   | 'Statistics'
   | 'SlideNarrative'
+  | 'Cover'
+  | 'Contact'

@@ -91,13 +91,13 @@ export default function Statistics({
       )
 
       console.log('PATCH Response:', response.data)
-      alert('Slide generated successfully!')
+      toast.success('Data submitted successfully')
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-center',
         autoClose: 2000,
       })
-      alert('Failed to generate slide.')
+      toast.error('Failed to generate slide.')
     } finally {
       setLoading(false)
     }
@@ -112,7 +112,7 @@ export default function Statistics({
   }
 
   return (
-    <div className="flex flex-col  p-2 lg:p-4 w-full h-full">
+    <div className="flex flex-col p-2 lg:p-4 w-full h-full">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -130,7 +130,7 @@ export default function Statistics({
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto scrollbar-none  lg:w-[65%]"
+            className="flex-1 overflow-y-auto scrollbar-none lg:w-[65%]"
           >
             {title.map((point, index) => (
               <div
@@ -192,8 +192,8 @@ export default function Statistics({
 
           <div className="flex lg:hidden mt-4 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
-               {/* Attach Image Section */}
-            <AttachImage onFileSelected={handleFileSelect} />
+              {/* Attach Image Section */}
+              <AttachImage onFileSelected={handleFileSelect} />
             </div>
 
             <button

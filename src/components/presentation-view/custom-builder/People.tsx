@@ -164,7 +164,7 @@ export default function People({
           },
         }
       )
-      alert('Data successfully sent to the server!')
+      toast.success('Data successfully sent to the server!')
       setIsLoading(false)
       console.log('Server response:', response.data)
     } catch (error) {
@@ -172,14 +172,16 @@ export default function People({
         position: 'top-center',
         autoClose: 2000,
       })
-      alert('Failed to send data.')
+      toast.error('Failed to send data.')
     }
   }
+
   const handleNameChange = (value: string, index: number) => {
     // Ensure that only alphabetic characters and spaces are allowed in the name input
     const sanitizedValue = value.replace(/[^a-zA-Z\s]/g, '')
     handleInputChange(sanitizedValue, index, 'name')
   }
+
   const [showTooltip, setShowTooltip] = useState(false)
   const isGenerateDisabled = !(
     people[0].name.trim() &&

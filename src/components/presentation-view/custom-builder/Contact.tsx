@@ -69,7 +69,7 @@ export default function Contact({
   }
 
   const onBack = () => {
-    setDisplayMode('customBuilder')
+    setDisplayMode('newContent')
   }
 
   return (

@@ -3,7 +3,6 @@ import axios from 'axios'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
-import { FaPaperclip } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 
 interface SlideNarrativeProps {
@@ -26,6 +25,7 @@ export default function SlideNarrative({
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null) // Track the attached image
+
   const handleFileSelect = (file: File | null) => {
     setSelectedImage(file)
   }
@@ -40,6 +40,7 @@ export default function SlideNarrative({
           type: slideType,
           title: heading,
           documentID: documentID,
+          userId: sessionStorage.getItem('userEmail'),
           input: narrative,
         },
         {
@@ -51,15 +52,16 @@ export default function SlideNarrative({
       console.log('Server response:', response.data)
       if (response.data === 'ok') {
         setNarrative('')
-        alert('Success')
+        toast.success('Data submitted successfully')
         setIsLoading(false)
+        setDisplayMode('slides')
       }
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-center',
         autoClose: 2000,
       })
-      alert('Failed to send narrative.')
+      toast.error('Failed to send narrative.')
     } finally {
       setIsLoading(false)
     }
@@ -70,10 +72,7 @@ export default function SlideNarrative({
   const onBack = () => {
     setDisplayMode('newContent')
   }
-    const fileInputRef = React.useRef<HTMLInputElement>(null) // Ref for file input
-  const triggerFileInput = () => {
-    fileInputRef.current?.click() // Programmatically trigger the file input
-  }
+
   return (
     <div className="flex flex-col p-2 lg:p-4 h-full">
       {isLoading ? (
@@ -87,7 +86,6 @@ export default function SlideNarrative({
             <h2 className="font-semibold text-[#091220]">{heading}</h2>
             <BackButton onClick={onBack} />
           </div>
-
 
           {/* Input Section for Desktop */}
           <div className="hidden lg:block flex-1 overflow-y-auto px-4 scrollbar-none">
@@ -160,8 +158,8 @@ export default function SlideNarrative({
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-4 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
-               {/* Attach Image Section */}
-            <AttachImage onFileSelected={handleFileSelect} />
+              {/* Attach Image Section */}
+              <AttachImage onFileSelected={handleFileSelect} />
             </div>
             <button
               onClick={handleGenerateSlide}
