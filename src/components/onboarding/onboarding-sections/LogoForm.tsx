@@ -4,6 +4,7 @@ import { FaImage, FaBullseye } from 'react-icons/fa'
 import { LogoFormProps } from '../../../types/onboardingTypes'
 import { BackButton, NextButton } from '../shared/Buttons'
 import { toast } from 'react-toastify'
+import removeBackground from '../../../utils/removeBG'
 
 const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,
@@ -27,7 +28,9 @@ const LogoForm: React.FC<LogoFormProps> = ({
 
       try {
         // Upload file to S3 and get the URL
-        const url = await uploadLogoToS3(file)
+        console.log('File selected:', file)
+        const processedFile = await removeBackground(file)
+        const url = await uploadLogoToS3(processedFile)
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {
