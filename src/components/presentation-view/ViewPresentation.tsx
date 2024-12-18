@@ -484,105 +484,103 @@ export default function ViewPresentation() {
   //   }
   // }, [currentOutline, SOCKET_URL])
   useEffect(() => {
-    setIsNoGeneratedSlide(false)
-    const socket = io(`${SOCKET_URL}`, {
-      transports: ['websocket'],
-    })
-    console.log('Connecting to WebSocket server...')
-
-    let timeoutId: NodeJS.Timeout | null = null // To track the 90-second timeout
-
-    // Function to handle valid slide data
-    const handleSlideData = (newSlides: any[]) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId) // Clear the timer if valid data is received
-      }
-      console.log('SOCKET DATA', newSlides)
-      setPresentationID(newSlides[0]?.PresentationID || null)
-      const ids = newSlides.map((item: any) => item.GenSlideID).filter(Boolean) // Filter out null/empty GenSlideID
-      setSlidesId(ids)
-      setTotalSlides(ids.length)
-      setIsSlideLoading(false) // Set loading to false since we received data
+    if (outlines.length > 0) {
       setIsNoGeneratedSlide(false)
-    }
+      const socket = io(`${SOCKET_URL}`, {
+        transports: ['websocket'],
+      })
+      console.log('Connecting to WebSocket server...')
 
-    // When connected
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server', socket.id)
-    })
+      let timeoutId: NodeJS.Timeout | null = null // To track the 90-second timeout
 
-    // Listen for slide data from the backend
-    socket.on('slidesData', (newSlides) => {
-      if (newSlides && newSlides.length > 0) {
-        // Check if valid GenSlideID exists
-        const hasValidGenSlideID = newSlides.some(
-          (item: any) => item.GenSlideID && item.GenSlideID.trim() !== ''
-        )
+      // Function to handle valid slide data
+      const handleSlideData = (newSlides: any[]) => {
+        if (timeoutId) {
+          clearTimeout(timeoutId) // Clear the timer if valid data is received
+        }
+        console.log('SOCKET DATA', newSlides)
+        setPresentationID(newSlides[0]?.PresentationID || null)
+        const ids = newSlides
+          .map((item: any) => item.GenSlideID)
+          .filter(Boolean) // Filter out null/empty GenSlideID
+        setSlidesId(ids)
+        setTotalSlides(ids.length)
+        setIsSlideLoading(false) // Set loading to false since we received data
+        setIsNoGeneratedSlide(false)
+      }
 
-        if (hasValidGenSlideID) {
-          handleSlideData(newSlides) // Handle valid data
+      // When connected
+      socket.on('connect', () => {
+        console.log('Connected to WebSocket server', socket.id)
+      })
+
+      // Listen for slide data from the backend
+      socket.on('slidesData', (newSlides) => {
+        if (newSlides && newSlides.length > 0) {
+          // Check if valid GenSlideID exists
+          const hasValidGenSlideID = newSlides.some(
+            (item: any) => item.GenSlideID && item.GenSlideID.trim() !== ''
+          )
+
+          if (hasValidGenSlideID) {
+            handleSlideData(newSlides) // Handle valid data
+          } else {
+            console.warn('Received slides data with empty GenSlideID')
+            setIsSlideLoading(true)
+            // Start 90-second timer if not already running
+            if (!timeoutId) {
+              setIsSlideLoading(true)
+              timeoutId = setTimeout(() => {
+                console.log('No valid slide data received within 90 seconds')
+                setIsNoGeneratedSlide(true)
+                setIsSlideLoading(false) // Stop loading after 90 seconds
+                console.log('EMPTY SLIDE IDS', slidesId)
+                timeoutId = null
+              }, 90000) // 90 seconds
+            }
+
+            setPresentationID(newSlides[0]?.PresentationID || null) // Update PresentationID
+          }
         } else {
-          console.warn('Received slides data with empty GenSlideID')
+          console.warn('Received empty or invalid slides data')
 
           // Start 90-second timer if not already running
           if (!timeoutId) {
             setIsSlideLoading(true)
             timeoutId = setTimeout(() => {
-              console.log('No valid slide data received within 90 seconds')
+              console.warn('No valid slide data received within 90 seconds')
+              setIsSlideLoading(false)
               setIsNoGeneratedSlide(true)
-              setIsSlideLoading(false) // Stop loading after 90 seconds
-              // setSlidesId([])
-              console.log('EMPTY SLIDE IDS', slidesId)
               timeoutId = null
             }, 90000) // 90 seconds
           }
-
-          setPresentationID(newSlides[0]?.PresentationID || null) // Update PresentationID
-          setSlidesId([]) // No valid GenSlideID
-          setTotalSlides(0)
         }
-      } else {
-        console.warn('Received empty or invalid slides data')
+      })
 
-        // Start 90-second timer if not already running
-        if (!timeoutId) {
-          setIsSlideLoading(true)
-          timeoutId = setTimeout(() => {
-            console.warn('No valid slide data received within 90 seconds')
-            setIsSlideLoading(false)
-            setIsNoGeneratedSlide(true)
-            timeoutId = null
-          }, 90000) // 90 seconds
+      // Handle any error messages from the backend
+      socket.on('error', (error) => {
+        console.error('Error:', error.message)
+      })
+
+      console.log('Outline Passed : ', currentOutline.replace(/^\d+\.\s*/, ''))
+      console.log('DocumentID Passed : ', documentID)
+
+      // Automatically fetch slides on component mount
+      socket.emit('fetchSlides', {
+        slideType: currentOutline.replace(/^\d+\.\s*/, ''),
+        formID: documentID,
+      })
+
+      // Cleanup when the component unmounts
+      return () => {
+        console.log('Disconnecting from WebSocket server...')
+        if (timeoutId) {
+          clearTimeout(timeoutId) // Clear any existing timer on unmount
         }
-
-        setSlidesId([])
-        setTotalSlides(0)
+        socket.disconnect()
       }
-    })
-
-    // Handle any error messages from the backend
-    socket.on('error', (error) => {
-      console.error('Error:', error.message)
-    })
-
-    console.log('Outline Passed : ', currentOutline.replace(/^\d+\.\s*/, ''))
-    console.log('DocumentID Passed : ', documentID)
-
-    // Automatically fetch slides on component mount
-    socket.emit('fetchSlides', {
-      slideType: currentOutline.replace(/^\d+\.\s*/, ''),
-      formID: documentID,
-    })
-
-    // Cleanup when the component unmounts
-    return () => {
-      console.log('Disconnecting from WebSocket server...')
-      if (timeoutId) {
-        clearTimeout(timeoutId) // Clear any existing timer on unmount
-      }
-      socket.disconnect()
     }
-  }, [currentOutline, SOCKET_URL, documentID])
+  }, [currentOutline, SOCKET_URL, documentID, slidesId])
 
   // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
@@ -598,6 +596,8 @@ export default function ViewPresentation() {
         }
       )
       const fetchedOutlines = response.data.outline
+      console.log('Fetched Outlines: ', fetchedOutlines)
+
       setOutlines(fetchedOutlines)
       if (fetchedOutlines.length > 0) {
         setCurrentOutline(fetchedOutlines[0].title)
@@ -655,12 +655,12 @@ export default function ViewPresentation() {
 
     // Cleanup the timer in case the component unmounts
     return () => clearTimeout(timer)
-  }, [])
+  }, [authToken])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
+    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh]">
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
