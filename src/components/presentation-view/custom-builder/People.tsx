@@ -53,12 +53,48 @@ export default function People({
   const [isLoading, setIsLoading] = useState(false)
 
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const isFirstRender = useRef(true) // Tracks if it's the first render
+  const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
 
+  // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight
+    const container = containerRef.current
+
+    if (container) {
+      const handleScroll = () => {
+        const nearBottom =
+          Math.abs(
+            container.scrollHeight -
+              container.scrollTop -
+              container.clientHeight
+          ) < 1
+
+        // If not near the bottom, assume user interaction
+        setIsUserInteracting(!nearBottom)
+      }
+
+      container.addEventListener('scroll', handleScroll)
+      return () => container.removeEventListener('scroll', handleScroll)
     }
-  }, [people])
+  }, [])
+
+  // Handle scroll logic for the first render and subsequent updates
+  useEffect(() => {
+    const container = containerRef.current
+
+    if (container) {
+      if (isFirstRender.current) {
+        // Delay the scroll setting to ensure DOM content is fully rendered
+        requestAnimationFrame(() => {
+          container.scrollTop = 0 // Explicitly set scroll to the top
+        })
+        isFirstRender.current = false // Mark first render as complete
+      } else if (!isUserInteracting) {
+        // Only scroll to the bottom if the user is not interacting
+        container.scrollTop = container.scrollHeight
+      }
+    }
+  }, [people, isUserInteracting])
 
   const handleInputChange = (value: string, index: number, field: string) => {
     const updatedPeople = [...people]
@@ -218,17 +254,17 @@ export default function People({
             {people.map((person, index) => (
               <div
                 key={index}
-                className={`flex flex-col gap-4 mb-2 ${
+                className={`flex flex-col gap-4 mb-2 p-1 ${
                   index === people.length - 1 ? 'lg:mb-4' : ''
                 }`}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mt-2">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mt-2 ">
                   <input
                     type="text"
                     value={person.name}
                     onChange={(e) => handleNameChange(e.target.value, index)}
                     placeholder="Name"
-                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg"
+                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
                     type="text"
@@ -237,7 +273,7 @@ export default function People({
                       handleInputChange(e.target.value, index, 'designation')
                     }
                     placeholder="Designation"
-                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg"
+                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
                     type="text"
@@ -246,7 +282,7 @@ export default function People({
                       handleInputChange(e.target.value, index, 'company')
                     }
                     placeholder="Company"
-                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg"
+                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -306,11 +342,11 @@ export default function People({
                   )}
                 </div>
 
-                {index === people.length - 1 && window.innerWidth >= 768 && (
+                {index === people.length - 1 && (
                   <button
                     onClick={addNewPerson}
                     disabled={isAddMoreDisabled}
-                    className={`flex w-[47%] lg:w-[180px] items-center justify-center gap-x-2 py-2 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+                    className={`flex w-1/2  lg:w-[180px] items-center justify-center gap-x-2 py-2 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
                       isAddMoreDisabled
                         ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
@@ -324,33 +360,31 @@ export default function People({
             ))}
           </div>
 
-          <div className=" flex w-full  lg:justify-end lg:w-auto ">
-            <div className="justify-end">
-              <button
-                onClick={(e) => {
-                  if (!isGenerateDisabled) {
-                    handleGenerateSlide()
-                  } else {
-                    e.preventDefault() // Prevent action when disabled
-                  }
-                }}
-                onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-                className={`lg:w-[180px] py-2 px-5 justify-end mb-2 rounded-md active:scale-95 transition transform duration-300 ${
-                  isGenerateDisabled
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-                }`}
-              >
-                Generate Slide
-                {/* Tooltip */}
-                {isGenerateDisabled && showTooltip && (
-                  <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                    Minimum 2 people required
-                  </span>
-                )}
-              </button>
-            </div>
+          <div className=" flex w-full  justify-end ">
+            <button
+              onClick={(e) => {
+                if (!isGenerateDisabled) {
+                  handleGenerateSlide()
+                } else {
+                  e.preventDefault() // Prevent action when disabled
+                }
+              }}
+              onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+              className={`lg:w-[180px] py-2 px-5 justify-end  rounded-md active:scale-95 transition transform duration-300 ${
+                isGenerateDisabled
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+              }`}
+            >
+              Generate Slide
+              {/* Tooltip */}
+              {isGenerateDisabled && showTooltip && (
+                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  Minimum 2 people required
+                </span>
+              )}
+            </button>
           </div>
         </>
       )}

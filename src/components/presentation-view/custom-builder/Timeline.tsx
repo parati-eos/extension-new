@@ -127,11 +127,11 @@ export default function Timeline({
             <BackButton onClick={onBack} />
           </div>
           {/* Content container with flex-grow */}
-          <div ref={containerRef} className="flex-1 overflow-y-auto">
+          <div ref={containerRef} className="flex-1 overflow-y-auto scrollbar-none">
             {timeline.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col lg:flex-row gap-2 lg:gap-4 lg:px-2 py-2 lg:py-0  mb-2 lg:mb-0 ${
+                className={`flex flex-col lg:flex-row gap-2 lg:gap-4 lg:px-2 py-2 lg:py-0 p-1 mb-2 lg:mb-0 ${
                   index === 0 ? 'lg:mt-14' : 'lg:mt-2'
                 }`}
               >
@@ -160,7 +160,7 @@ export default function Timeline({
                 onClick={addNewPoint}
                 type="button"
                 disabled={isAddDisabled}
-                className={`flex items-center p-2 gap-2 w-48 py-2 lg:rounded-md mt-4  lg:ml-4 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+                className={`flex items-center p-2 gap-2 w-48 py-2 lg:rounded-md mt-4  ml-1 lg:ml-4 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
                   timeline.length >= 6 || isAddDisabled
                     ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
                     : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state

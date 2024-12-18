@@ -372,6 +372,29 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
           />
+          
+        )
+        case 'Contact':
+        return (
+          <Contact
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={setDisplayMode}
+          />
+        )
+      case 'Cover':
+        return (
+          <Cover
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={setDisplayMode}
+          />
         )
       case 'Contact':
         return (

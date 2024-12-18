@@ -40,9 +40,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
           <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
             Custom Builder
           </h2>
-          <h3 className="text-sm sm:text-base text-[#5D5F61]">
-            Select your slide type
-          </h3>
+         
         </div>
         <BackButton onClick={onBack} />
       </div>

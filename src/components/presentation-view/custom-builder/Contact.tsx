@@ -3,6 +3,7 @@ import { FaPaperclip } from 'react-icons/fa'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import AttachImage from './shared/attachimage'
 
 interface ContactProps {
   heading: string
@@ -25,6 +26,7 @@ export default function Contact({
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [linkedin, setLinkedin] = useState('')
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
 
   const isButtonDisabled = !(websiteLink || email || phone || linkedin)
 
@@ -68,6 +70,9 @@ export default function Contact({
     }
   }
 
+  const handleFileSelect = (file: File | null) => {
+    setSelectedImage(file)
+  }
   const onBack = () => {
     setDisplayMode('newContent')
   }
@@ -83,60 +88,78 @@ export default function Contact({
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 overflow-y-auto lg:w-[65%] space-y-4 mt-6">
+      <div className="flex-1 overflow-y-auto lg:w-[65%] scrollbar-none ">
         {/* Input fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
           <input
             type="text"
             value={websiteLink}
             onChange={(e) => setWebsiteLink(e.target.value)}
             placeholder="Website link"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-4 border font-medium  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter email"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Enter phone"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="url"
             value={linkedin}
             onChange={(e) => setLinkedin(e.target.value)}
             placeholder="Linkedin profile link"
-            className="p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         {/* Attach Image Button */}
-        <button className="p-3 flex items-center lg:w-[49%] border border-gray-300 rounded-lg active:scale-95 transition transform duration-300">
-          <div className="flex items-center ml-1">
-            <FaPaperclip className="mr-2" />
-            <span>Attach Image</span>
-          </div>
-        </button>
+        <div className="hidden  lg:flex w-full  justify-between lg:justify-start mt-2 lg:w-auto lg:gap-4 gap-2">
+            {/* Use AttachImage component */}
+            <AttachImage onFileSelected={handleFileSelect} />
+            </div>
       </div>
 
       {/* Generate Slide Button */}
-      <button
-        onClick={handleSubmit}
-        disabled={isButtonDisabled}
-        className={`absolute bottom-4 right-4 py-2 px-4 rounded-md active:scale-95 transition transform duration-300${
-          isButtonDisabled
-            ? 'bg-gray-400 text-gray-200'
-            : 'bg-[#3667B2] text-white'
-        }`}
-      >
-        Generate Slide
-      </button>
+      <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
+            <button
+              onClick={handleSubmit}
+              disabled={isButtonDisabled}
+              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+                isButtonDisabled
+                 ? 'bg-gray-200 text-gray-500'
+                  : 'bg-[#3667B2] text-white'
+              }`}
+            >
+              Generate Slide
+            </button>
+          </div>
+           {/* Attach Image and Generate Slide Buttons for Mobile */}
+           <div className="flex lg:hidden mt-2 gap-2  w-full ">
+            <div className="flex-1  items-center justify-center gap-2">
+            <AttachImage onFileSelected={handleFileSelect} />
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={isButtonDisabled}
+              className={`flex-1 py-2 rounded-md ${
+                isButtonDisabled
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-[#3667B2] text-white'
+              }`}
+            >
+              Generate Slide
+            </button>
+          </div>
     </div>
   )
 }

@@ -231,15 +231,31 @@ export default function Table({
           </div>
           <div
             ref={containerRef}
-            className="flex-1 overflow-x-auto scrollbar-none"
+            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none"
           >
-            <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
-              <table className="table-auto border-collapse w-full">
+            <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
+              <table className="table-auto w-full ">
                 <thead>
                   <tr>
-                    <th className="bg-gray-100 p-2 w-1/5"></th>
+                    <th className="bg-gray-100 p-2 lg:w-1/5 lg:min-w-0 min-w-[27vw]">
+                      {' '}
+                      {/* First Column */}
+                      <input
+                        type="text"
+                        value="Row Headers"
+                        className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+                        readOnly
+                      />
+                    </th>
                     {tableData.columnHeaders.map((header, index) => (
-                      <th key={index} className="bg-gray-100 p-2">
+                      <th
+                        key={index}
+                        className={`bg-gray-100 lg:p-2 p-1 ${
+                          index === 0
+                            ? 'lg:min-w-[0vw] min-w-[20vw]'
+                            : 'lg:min-w-[0vw] min-w-[22vw]'
+                        }`} // Set width for first and other columns
+                      >
                         <input
                           type="text"
                           value={header}
@@ -250,7 +266,7 @@ export default function Table({
                         />
                       </th>
                     ))}
-                    <th className="bg-gray-50 p-2">
+                    <th className="bg-gray-50 lg:p-2 p-1 lg:min-w-[0vw] min-w-[10vw]">
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={handleAddColumn}
@@ -281,7 +297,7 @@ export default function Table({
                 <tbody>
                   {tableData.rows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="bg-gray-100">
+                      <td className="bg-gray-100 lg:min-w-[0vw] min-w-[22vw]">
                         <input
                           type="text"
                           value={tableData.rowHeaders[rowIndex]}
@@ -294,7 +310,11 @@ export default function Table({
                       {row.map((cell, colIndex) => (
                         <td
                           key={colIndex}
-                          className="border border-gray-300 p-2"
+                          className={`border border-gray-300 p-2 ${
+                            colIndex === 0
+                              ? 'lg:min-w-[0vw] min-w-[20vw]'
+                              : 'lg:min-w-[0vw] min-w-[22vw]'
+                          }`}
                         >
                           <input
                             type="text"
@@ -316,7 +336,7 @@ export default function Table({
                 <tfoot>
                   <tr>
                     {/* Add and Remove Row Buttons */}
-                    <td className="bg-gray-50 w-full p-2 flex items-center justify-center">
+                    <td className="bg-gray-50 w-full p-1 flex items-center justify-center lg:min-w-[0vw] min-w-[20vw]">
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={handleAddRow}
@@ -368,15 +388,16 @@ export default function Table({
               Generate Slide
               {/* Tooltip */}
               {!canGenerate && showTooltip && (
-                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Miminum 2 rows and 2 columns required
+                <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  Minimum 2 rows and 2 columns required.<br></br> Please fill
+                  all cells.
                 </span>
               )}
             </button>
           </div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden mt-2 gap-2 justify-end mr-2 ">
+          <div className="flex lg:hidden  gap-2 justify-end  ">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
@@ -400,8 +421,9 @@ export default function Table({
 
                 {/* Tooltip */}
                 {!canGenerate && showTooltip && (
-                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                    Miminum 2 rows and <br></br>2 columns required
+                  <span className="absolute top-[-60px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                    Minimum 2 rows and <br></br> 2 columns required.<br></br>{' '}
+                    Please fill all cells.
                   </span>
                 )}
               </div>
