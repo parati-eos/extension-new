@@ -50,9 +50,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       name: 'FREE',
       buttonText: 'Get Started for Free',
       description: (
-        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-          Perfect for exploring Zynth.
-        </span>
+        <div className="mb-[5.5rem]">
+          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+            Perfect for exploring Zynth.
+          </span>
+        </div>
       ),
 
       price: null,
@@ -165,13 +167,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       price:
         billingCycle === 'monthly' ? (
           <>
-            {monthlyPlanAmount}/- {currency}
+            {monthlyPlanAmount} {currency}
             <br />
             <span className="text-sm text-gray-500">per month</span>
           </>
         ) : (
           <>
-            {yearlyPlanAmount}/- {currency}
+            {yearlyPlanAmount} {currency}
             <br />
             <span className="text-sm text-gray-500">per year</span>
           </>
@@ -197,6 +199,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           icon: null,
           spacing: 'py-3 ',
           margin: '',
+          textColor: 'text-black',
         },
         {
           text: '',
@@ -371,7 +374,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                       {plan.price}
                     </div>
                   )}
-                  <p className="text-gray-500 text-center">
+                  <p className="text-gray-500 font-medium text-center">
                     {plan.description}
                   </p>
                 </div>
@@ -430,13 +433,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
         </div>
         {/* Mobile View */}
-        <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden  ">
+        <div className=" rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden  ">
           <div className="px-4 ">
             <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm font-medium  text-gray-600 mb-4">
               Perfect for exploring Zynth.
             </p>
-            <button className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+            <button
+              // onClick={() => navigate('/auth')}
+              className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 font-semibold rounded-lg border border-[#3667B2]"
+            >
               Get Started for Free
             </button>
           </div>
@@ -446,11 +452,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Access
             </h2>
             <ul className="text-gray-700 ">
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full ">
                 General Presentations
                 <span className="font-medium">Unlimited</span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Presentation Uploads
                 <span className="font-medium mr-2 text-black">-</span>
               </li>
@@ -462,29 +468,29 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Features
             </h2>
             <ul className="text-gray-700">
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-[#F5F7FA] font-medium flex justify-between items-center px-2 py-6 w-full ">
                 AI Presentation Creation
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-white font-medium flex justify-between items-center px-2 py-6 w-full ">
                 Presentation History
                 <span className="font-medium">
-                  <FaCheckCircle className="h-6 w-6 text-green-500" />
+                  <FaCheckCircle className="h-6 w-6 font-medium text-green-500" />
                 </span>
               </li>
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full ">
                 Slide Versioning
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Add Custom Slides
                 <span className="font-medium mr-2 text-black">-</span>
               </li>
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Custom Slide Builder
                 <span className="font-medium mr-2 text-black">-</span>
               </li>
@@ -496,21 +502,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Sharing and Exports
             </h2>
             <ul className="text-gray-700">
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-[#F5F7FA] font-medium flex justify-between items-center px-2 py-6 w-full ">
                 Presentation Sharing Links
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
                 PDF Exports
                 <span className="font-medium mr-2 text-black">-</span>
-              </li>
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
-                Google Slides Exports
-                <span className="font-medium  text-black">
-                  $9 / ₹ 499 / Export
-                </span>
               </li>
             </ul>
           </div>
@@ -518,9 +518,24 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
           <div className="px-4 ">
             <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 font-medium mb-4">
               Ideal for professionals and businesses.
             </p>
+            <h3 className="text-2xl font-bold">
+              {billingCycle === 'monthly' ? (
+                <>
+                  {monthlyPlanAmount} {currency}
+                  <br />
+                  <span className="text-sm text-gray-500">per month</span>
+                </>
+              ) : (
+                <>
+                  {yearlyPlanAmount} {currency}
+                  <br />
+                  <span className="text-sm text-gray-500">per year</span>
+                </>
+              )}
+            </h3>
             <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
               Upgrade to Pro
             </button>
@@ -531,11 +546,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Access
             </h2>
             <ul className="text-gray-700 ">
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full ">
+              <li className="bg-[#F5F7FA] font-medium flex justify-between items-center px-2 py-6 w-full ">
                 General Presentations
                 <span className="font-medium">Unlimited</span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-white font-medium flex justify-between items-center px-2 py-6 w-full">
                 Presentation Uploads
                 <span className="font-medium ">Unlimited</span>
               </li>
@@ -547,31 +562,31 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Features
             </h2>
             <ul className="text-gray-700">
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full">
                 AI Presentation Creation
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
                 Presentation History
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full">
                 Slide Versioning
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full">
                 Add Custom Slides
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Custom Slide Builder
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
@@ -585,28 +600,31 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Sharing and Exports
             </h2>
             <ul className="text-gray-700">
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Presentation Sharing Links
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-white flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full">
                 PDF Exports
                 <span className="font-medium">
                   <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
-              <li className="bg-[#F5F7FA] flex justify-between items-center px-2 py-6 w-full">
+              <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
                 <span className="font-medium  text-black">
-                  $9 / ₹ 499 / Export
+                  {currency === 'IN' || 'India' ? '₹499' : '$9'} Export
+                  {currency === 'IN' || ''}
                 </span>
               </li>
             </ul>
-            <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
-              Upgrade to Pro
-            </button>
+            <div className="px-4 py-2 ">
+              <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
+                Upgrade to Pro
+              </button>
+            </div>
           </div>
         </div>
       </div>

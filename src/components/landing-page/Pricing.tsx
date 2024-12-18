@@ -328,7 +328,10 @@ const Pricing: React.FC = () => {
   ]
 
   return (
-    <div className="bg-gray-50 w-full lg:p-12 p-1 h-full no-scrollbar no-scrollbar::-webkit-scrollbar " id="pricing">
+    <div
+      className="bg-gray-50 w-full lg:p-12 p-1 h-full no-scrollbar no-scrollbar::-webkit-scrollbar"
+      id="pricing"
+    >
       <section className="py-16 lg:min-h-[300px] lg:p-4 lg:ml-36 ml-2">
         <div className="p-2">
           <p className="text-indigo-600 text-lg mb-2">Pricing</p>
@@ -395,7 +398,9 @@ const Pricing: React.FC = () => {
                     {plan.price}
                   </div>
                 )}
-                <p className="text-gray-500 font-medium text-center">{plan.description}</p>
+                <p className="text-gray-500 font-medium text-center">
+                  {plan.description}
+                </p>
               </div>
               <button
                 className={`w-full font-medium py-2 px-6 ${
@@ -459,11 +464,8 @@ const Pricing: React.FC = () => {
             Perfect for exploring Zynth.
           </p>
           <button
-          
-          onClick={() => navigate('/auth')}
-          className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 font-semibold rounded-lg border border-[#3667B2]"
-          
-          
+            onClick={() => navigate('/auth')}
+            className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 font-semibold rounded-lg border border-[#3667B2]"
           >
             Get Started for Free
           </button>
@@ -534,36 +536,30 @@ const Pricing: React.FC = () => {
               PDF Exports
               <span className="font-medium mr-2 text-black">-</span>
             </li>
-            <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full">
-              Google Slides Exports
-              <span className="font-medium  text-black">
-                $9 / ₹ 499 / Export
-              </span>
-            </li>
           </ul>
         </div>
       </div>
-      <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
+      <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]">
         <div className="px-4 ">
           <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
           <p className="text-sm text-gray-600 font-medium mb-4">
             Ideal for professionals and businesses.
           </p>
           <h3 className="text-2xl font-bold">
-  {billingCycle === 'monthly' ? (
-    <>
-      {monthlyPlanAmount} {currency}
-      <br />
-      <span className="text-sm text-gray-500">per month</span>
-    </>
-  ) : (
-    <>
-      {yearlyPlanAmount} {currency}
-      <br />
-      <span className="text-sm text-gray-500">per year</span>
-    </>
-  )}
-</h3>
+            {billingCycle === 'monthly' ? (
+              <>
+                {monthlyPlanAmount} {currency}
+                <br />
+                <span className="text-sm text-gray-500">per month</span>
+              </>
+            ) : (
+              <>
+                {yearlyPlanAmount} {currency}
+                <br />
+                <span className="text-sm text-gray-500">per year</span>
+              </>
+            )}
+          </h3>
           <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
             Upgrade to Pro
           </button>
@@ -643,19 +639,17 @@ const Pricing: React.FC = () => {
             <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
               Google Slides Exports
               <span className="font-medium  text-black">
-                $9 / ₹ 499 / Export
+                {currency === 'IN' || 'India' ? '₹499' : '$9'} Export
               </span>
             </li>
           </ul>
-          <div className='px-4 py-2 '>
-          <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
-            Upgrade to Pro
-          </button>
-          
+          <div className="px-4 py-2 ">
+            <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
+              Upgrade to Pro
+            </button>
           </div>
         </div>
       </div>
-    
     </div>
   )
 }
