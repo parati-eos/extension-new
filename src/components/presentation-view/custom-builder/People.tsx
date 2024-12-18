@@ -193,15 +193,15 @@ export default function People({
   }
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full p-2 lg:p-4">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
         </div>
       ) : (
         <>
-          <div className="lg:flex hidden items-center justify-between w-full p-4">
-            <h2 className=" md:block md:text-lg font-semibold text-[#091220]">
+          <div className="lg:flex hidden items-center justify-between w-full ">
+            <h2 className=" hidden md:block md:text-lg font-semibold text-[#091220]">
               {heading}
             </h2>
             <BackButton onClick={onBack} />
@@ -209,7 +209,7 @@ export default function People({
 
           <div
             ref={containerRef}
-            className={`flex-1 px-4 overflow-y-auto md:mt-1 ${
+            className={`flex-1 lg:px-2 overflow-y-auto scrollbar-none md:mt-1 ${
               people.length > 3 ? 'max-h-[calc(100vh-200px)]' : ''
             }`}
           >
@@ -322,7 +322,8 @@ export default function People({
             ))}
           </div>
 
-          <div className="mt-auto flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
+          <div className=" flex w-full  lg:justify-end lg:w-auto ">
+          <div className="justify-end">
             <button
               onClick={(e) => {
                 if (!isGenerateDisabled) {
@@ -333,7 +334,7 @@ export default function People({
               }}
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
-              className={`px-4 py-2 mb-2 rounded active:scale-95 transition transform duration-300 ${
+              className={`lg:w-[180px] py-2 px-5 justify-end mb-2 rounded-md active:scale-95 transition transform duration-300 ${
                 isGenerateDisabled
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
@@ -347,6 +348,7 @@ export default function People({
                 </span>
               )}
             </button>
+            </div>
           </div>
         </>
       )}

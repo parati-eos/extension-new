@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
@@ -70,9 +70,12 @@ export default function SlideNarrative({
   const onBack = () => {
     setDisplayMode('newContent')
   }
-
+    const fileInputRef = React.useRef<HTMLInputElement>(null) // Ref for file input
+  const triggerFileInput = () => {
+    fileInputRef.current?.click() // Programmatically trigger the file input
+  }
   return (
-    <div className="flex flex-col p-4 h-full">
+    <div className="flex flex-col p-2 lg:p-4 h-full">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -85,9 +88,9 @@ export default function SlideNarrative({
             <BackButton onClick={onBack} />
           </div>
 
+
           {/* Input Section for Desktop */}
-          {/* Input Section for Desktop */}
-          <div className="hidden lg:block flex-1 overflow-y-auto px-4">
+          <div className="hidden lg:block flex-1 overflow-y-auto px-4 scrollbar-none">
             <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14 xl:mt-8">
               <textarea
                 value={narrative}
@@ -102,7 +105,7 @@ export default function SlideNarrative({
           </div>
 
           {/* Input Section for Medium Screens */}
-          <div className="hidden md:block lg:hidden flex-1 overflow-y-auto px-4">
+          <div className="hidden md:block lg:hidden flex-1 overflow-y-auto px-4 scrollbar-none">
             <div className="flex flex-col items-center gap-2 mb-2">
               <textarea
                 value={narrative}
@@ -119,7 +122,7 @@ export default function SlideNarrative({
           </div>
 
           {/* Input Section for Mobile */}
-          <div className="flex w-full lg:hidden md:hidden flex-1  ">
+          <div className="flex w-full lg:hidden md:hidden flex-1 scrollbar-none ">
             <div className="flex flex-col w-full items-center gap-2 mb-2 ">
               <textarea
                 value={narrative}
@@ -155,25 +158,17 @@ export default function SlideNarrative({
           </div>
 
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-4 gap-2 px-4 w-full justify-center">
-            <div className="flex-1 flex items-center gap-2 text-[#5D5F61] p-2 border border-gray-300 rounded-md focus:outline-none cursor-pointer">
-              <FaPaperclip />
-              <label htmlFor="fileInput" className="cursor-pointer">
-                Attach Image
-              </label>
-              <input
-                id="fileInput"
-                type="file"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
-              />
+          <div className="flex lg:hidden mt-4 gap-2  w-full ">
+            <div className="flex-1  items-center justify-center gap-2">
+               {/* Attach Image Section */}
+            <AttachImage onFileSelected={handleFileSelect} />
             </div>
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled}
-              className={`flex-1 py-2 rounded-md text-sm font-medium ${
+              className={`flex-1 py-2 rounded-md   ${
                 isGenerateDisabled
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  ? 'bg-gray-200 text-black cursor-not-allowed'
                   : 'bg-[#3667B2] text-white'
               }`}
             >

@@ -216,23 +216,20 @@ export default function Table({
   }
 
   return (
-    <div className="flex flex-col w-full h-full p-2 no-scrollbar::-webkit-scrollbar">
+    <div className="flex flex-col w-full h-full lg:p-4 p-2">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
         </div>
       ) : (
         <>
-          <div className="flex lg:mt-2 items-center justify-between w-full px-4">
+          <div className="flex lg:mb-2 items-center justify-between w-full ">
             <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
               {heading}
             </h2>
             <BackButton onClick={onBack} />
           </div>
-          <div
-            ref={containerRef}
-            className="flex-1 px-4 py-4 overflow-x-auto no-scrollbar::-webkit-scrollbar"
-          >
+          <div ref={containerRef} className="flex-1 overflow-x-auto scrollbar-none">
             <div className="overflow-y-auto max-h-[calc(100vh-150px)]">
               <table className="table-auto border-collapse w-full">
                 <thead>
@@ -347,7 +344,7 @@ export default function Table({
               </table>
             </div>
           </div>
-          <div className="hidden mt-auto lg:flex w-full px-4 justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2 mb-4 mr-4">
+          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
             {/* Generate Slide Button */}
             <button
               onClick={(e) => {
@@ -361,8 +358,8 @@ export default function Table({
               onMouseLeave={() => setShowTooltip(false)}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
                 canGenerate
-                  ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-                  : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                   ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
               }`}
             >
               Generate Slide
@@ -376,7 +373,7 @@ export default function Table({
           </div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden mt-4 gap-2 justify-end mr-2 ">
+          <div className="flex lg:hidden mt-2 gap-2 justify-end mr-2 ">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
@@ -389,7 +386,7 @@ export default function Table({
                   }}
                   onMouseEnter={() => !canGenerate && setShowTooltip(true)} // Show tooltip
                   onMouseLeave={() => setShowTooltip(false)} // Hide tooltip
-                  className={`flex-1 py-2 px-5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
                     canGenerate
                       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
                       : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
