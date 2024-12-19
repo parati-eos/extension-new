@@ -560,7 +560,10 @@ const Pricing: React.FC = () => {
               </>
             )}
           </h3>
-          <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+          <button 
+          
+          onClick={() => navigate('/auth')}
+          className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
             Sign up for Pro
           </button>
         </div>
@@ -644,7 +647,10 @@ const Pricing: React.FC = () => {
             </li>
           </ul>
           <div className="px-4 py-2 ">
-            <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
+            <button 
+            onClick={() => navigate('/auth')}
+            
+            className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
             Sign up for Pro
             </button>
           </div>

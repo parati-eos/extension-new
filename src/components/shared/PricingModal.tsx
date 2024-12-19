@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 interface PricingModalProps {
   closeModal: () => void
@@ -8,6 +9,7 @@ interface PricingModalProps {
   yearlyPlanAmount: number
   currency: string
 }
+
 
 const categories = [
   {
@@ -292,6 +294,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       ],
     },
   ]
+  const navigate = useNavigate()
 
   return (
     <div
@@ -440,7 +443,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Perfect for exploring Zynth.
             </p>
             <button
-              // onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth')}
               className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 font-semibold rounded-lg border border-[#3667B2]"
             >
               Get Started for Free
@@ -536,7 +539,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 </>
               )}
             </h3>
-            <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+            <button 
+            onClick={() => navigate('/auth')}
+            className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
             Sign up for Pro
             </button>
           </div>
@@ -621,7 +626,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               </li>
             </ul>
             <div className="px-4 py-2 ">
-              <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
+              <button 
+              onClick={() => navigate('/auth')}
+              className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
               Sign up for Pro
               </button>
             </div>

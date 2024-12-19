@@ -247,7 +247,7 @@ const EditProfile: React.FC = () => {
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleInputChange}
-                  placeholder="AZ Corporation"
+                  placeholder="Enter Company Name"
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
@@ -260,7 +260,7 @@ const EditProfile: React.FC = () => {
                   name="websiteLink"
                   value={formData.websiteLink}
                   onChange={handleInputChange}
-                  placeholder="www.azcorporation.com"
+                  placeholder="Enter Website Name"
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
@@ -286,10 +286,10 @@ const EditProfile: React.FC = () => {
                 {sector === 'Other' && (
                   <input
                     type="text"
-                    placeholder="Enter your sector"
+                    placeholder="Enter Your Sector"
                     value={otherSector}
                     onChange={(e) => setOtherSector(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                    className="w-full border mt-2 lg:mt-4 border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 )}
               </div>
@@ -302,7 +302,7 @@ const EditProfile: React.FC = () => {
                   value={industry}
                   onChange={handleIndustryChange}
                   disabled={!sector || sector === 'Other'}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  className="w-full border border-gray-300  rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 >
                   {sector !== 'Other' && (
                     <option value="" disabled>
@@ -323,10 +323,10 @@ const EditProfile: React.FC = () => {
                 {industry === 'Other' || sector === 'Other' ? (
                   <input
                     type="text"
-                    placeholder="Enter your industry"
+                    placeholder="Enter Your Industry"
                     value={otherIndustry}
                     onChange={(e) => setOtherIndustry(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                    className="w-full border mt-2 lg:mt-4 border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                   />
                 ) : (
                   <></>
@@ -346,7 +346,7 @@ const EditProfile: React.FC = () => {
                   name="contactPhone"
                   value={formData.contactPhone}
                   onChange={handleInputChange}
-                  placeholder="+91-804 1457"
+                  placeholder="Enter Company Phone"
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
@@ -359,7 +359,7 @@ const EditProfile: React.FC = () => {
                   name="linkedinLink"
                   value={formData.linkedinLink}
                   onChange={handleInputChange}
-                  placeholder="azcorporation"
+                  placeholder="Enter Company Linkedin"
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>
@@ -372,7 +372,7 @@ const EditProfile: React.FC = () => {
                   name="contactEmail"
                   value={formData.contactEmail}
                   onChange={handleInputChange}
-                  placeholder="contact@azcorporation.com"
+                  placeholder="Enter Company Email"
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 />
               </div>

@@ -69,7 +69,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
       >
         {/* Input */}
         <div
-          className={`w-[90%] md:w-full border border-gray-200 mt-6 md:mt-6 ${
+          className={`w-[90%] md:w-full border border-gray-200 mt-4 md:mt-6 ${
             logo !== '' ? 'md:mt-0' : ''
           } p-10 rounded-lg hover:scale-105`}
         >

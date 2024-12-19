@@ -1,42 +1,39 @@
-import React, { useEffect, useState } from 'react'
-import { FaPhone } from 'react-icons/fa'
-import { ContactDetailsFormProps } from '../../../types/onboardingTypes'
-import { BackButton, NextButton } from '../shared/Buttons'
+import React, { useEffect, useState } from 'react';
+import { FaPhone } from 'react-icons/fa';
+import { ContactDetailsFormProps } from '../../../types/onboardingTypes';
+import { BackButton, NextButton } from '../shared/Buttons';
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onContinue,
   onBack,
   initialData,
 }) => {
-  const [contactEmail, setContactEmail] = useState(initialData.contactEmail)
-  const [contactPhone, setContactPhone] = useState(initialData.contactPhone)
-  const [linkedinLink, setLinkedinLink] = useState(initialData.linkedinLink)
-  const [isLinkedinValid, setIsLinkedinValid] = useState(true)
-  const [isEmailValid, setIsEmailValid] = useState(true)
-  const [isPhoneValid, setIsPhoneValid] = useState(true)
+  const [contactEmail, setContactEmail] = useState(initialData.contactEmail || '');
+  const [contactPhone, setContactPhone] = useState(initialData.contactPhone || '');
+  const [linkedinLink, setLinkedinLink] = useState(initialData.linkedinLink || '');
+  const [isLinkedinValid, setIsLinkedinValid] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
 
   useEffect(() => {
-    setContactEmail(initialData.contactEmail)
-    setContactPhone(initialData.contactPhone)
-    setLinkedinLink(initialData.linkedinLink)
-  }, [initialData])
+    setContactEmail(initialData.contactEmail || '');
+    setContactPhone(initialData.contactPhone || '');
+    setLinkedinLink(initialData.linkedinLink || '');
+  }, [initialData]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setContactEmail(value)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-
-    setIsEmailValid(!value || emailRegex.test(value))
-  }
+    const value = e.target.value;
+    setContactEmail(value);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    setIsEmailValid(value === '' || emailRegex.test(value)); // Valid if empty or matches regex
+  };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setContactPhone(value)
-    const phoneRegex = /^\+?[1-9]\d{9,14}$/
-
-
-    setIsPhoneValid(!value || phoneRegex.test(value))
-  }
+    const value = e.target.value;
+    setContactPhone(value);
+    const phoneRegex = /^\+?[1-9]\d{9,14}$/;
+    setIsPhoneValid(value === '' || phoneRegex.test(value)); // Valid if empty or matches regex
+  };
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.trim();
@@ -44,28 +41,29 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
       value = `https://${value}`;
     }
     setLinkedinLink(value);
-  
+
     const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}$/;
-    // Check if the field is not empty and matches the regex
-    setIsLinkedinValid(value !== '' && linkedinRegex.test(value));
+    setIsLinkedinValid(value === '' || linkedinRegex.test(value)); // Valid if empty or matches regex
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onContinue({ contactEmail, contactPhone, linkedinLink })
-  }
+    e.preventDefault();
+    onContinue({ contactEmail, contactPhone, linkedinLink });
+  };
 
-  // Disable Finish button if any field is invalid
-  const isFormValid = isEmailValid && isPhoneValid && isLinkedinValid && linkedinLink.trim() !== '';
+  // Form is valid if all filled fields are valid or all fields are empty
+  const isFormValid =
+    (contactEmail === '' && contactPhone === '' && linkedinLink === '') || // All empty
+    ((contactEmail === '' || isEmailValid) &&
+      (contactPhone === '' || isPhoneValid) &&
+      (linkedinLink === '' || isLinkedinValid)); // At least one filled and valid
 
   return (
     <div className="w-full mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 mb-8 md:mb-6">
+      <div className="flex flex-col items-center gap-1 lg:mb-8 mb-4 md:mb-6">
         <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
-        <h1 className="text-2xl text-[#091220] font-bold mb-1">
-          Contact Details
-        </h1>
+        <h1 className="text-2xl text-[#091220] font-bold mb-1">Contact Details</h1>
         <p className="text-[#5D5F61]">Provide your contact details</p>
       </div>
 
@@ -74,11 +72,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Email */}
-        <div className="w-full px-2">
-          <label
-            htmlFor="email"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
+        <div className="w-full px-2 ">
+          <label htmlFor="email" className="mb-3 font-semibold text-[#4A4B4D] block text-left">
             Company Email
           </label>
           <input
@@ -91,17 +86,10 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             value={contactEmail}
             onChange={handleEmailChange}
           />
-          {!isEmailValid && (
-            <p className="text-red-500 text-sm">
-              Please enter a valid email address.
-            </p>
-          )}
+          {!isEmailValid && <p className="text-red-500 text-sm">Please enter a valid email address.</p>}
 
           {/* Phone */}
-          <label
-            htmlFor="phone"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
+          <label htmlFor="phone" className="mb-3 font-semibold text-[#4A4B4D] block text-left">
             Company Phone
           </label>
           <input
@@ -116,16 +104,12 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
           />
           {!isPhoneValid && (
             <p className="text-red-500 text-sm">
-              Please enter a valid phone number. Remove 0 from the start if
-              present.
+              Please enter a valid phone number. Remove 0 from the start if present.
             </p>
           )}
 
           {/* LinkedIn */}
-          <label
-            htmlFor="linkedin"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
+          <label htmlFor="linkedin" className="mb-3 font-semibold text-[#4A4B4D] block text-left">
             Company LinkedIn
           </label>
           <input
@@ -139,20 +123,18 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             onChange={handleLinkedinChange}
           />
           {!isLinkedinValid && (
-            <p className="text-[#FF0000] text-sm text-left">
-              Please enter a valid LinkedIn URL
-            </p>
+            <p className="text-[#FF0000] text-sm text-left">Please enter a valid LinkedIn URL</p>
           )}
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center w-full space-y-2 px-2">
-          <NextButton text="Finish" disabled={!isFormValid} /> {/* Disable button if form is invalid */}
+        <div className="flex flex-col items-center justify-center w-full space-y-2 px-2 lg:mt-0 ">
+          <NextButton text="Finish" disabled={!isFormValid} />
           <BackButton onClick={onBack} />
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default ContactDetailsForm
+export default ContactDetailsForm;
