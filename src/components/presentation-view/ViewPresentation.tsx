@@ -112,7 +112,7 @@ export default function ViewPresentation() {
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (option: string) => {
     setCurrentOutline(option)
-    setCurrentSlide(outlines.findIndex((o) => o.title === option) + 1)
+    setCurrentSlide(outlines.findIndex((o) => o.title === option))
     const slideIndex = outlines.findIndex((o) => o.title === option)
     slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
     setCurrentSlideIndex(0)
@@ -372,9 +372,8 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
           />
-          
         )
-        case 'Contact':
+      case 'Contact':
         return (
           <Contact
             heading={currentOutline.replace(/^\d+\.\s*/, '')}
