@@ -58,9 +58,6 @@ export default function ViewPresentation() {
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [hasDataBeenReceived, setHasDataBeenReceived] = useState(false)
-  const [currentSlidesData, setCurrentSlidesData] = useState<string[]>([]) // Store the latest slides data
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -102,59 +99,38 @@ export default function ViewPresentation() {
   }
 
   // Handle Add New Slide Version Button
-  const handlePlusClick = () => {
-    if (!isSlideLoading) {
-      if (displayMode === 'newContent') {
-        console.log('Reached IF')
-        setDisplayMode('slides')
-        setPlusClickedSlide(null)
-      } else {
-        console.log('Reached Else')
-        setDisplayMode('newContent')
-        setPlusClickedSlide(currentSlide)
-      }
+  const handlePlusClick = async () => {
+    if (displayMode === 'newContent') {
+      console.log('Reached IF')
+      setDisplayMode('slides')
+      setPlusClickedSlide(null)
+    } else {
+      console.log('Reached Else')
+      setDisplayMode('newContent')
+      setPlusClickedSlide(currentSlide)
     }
   }
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
-  const handleOutlineSelect = (title: string) => {
-    setCurrentOutline(title)
-    const slideIndex = outlines.findIndex((o) => o.title === title)
-    setCurrentSlide(slideIndex)
-    slideRefs.current[slideIndex]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest', // Ensures the target div stays centered
-    })
+  const handleOutlineSelect = (option: string) => {
+    setCurrentOutline(option)
+    setCurrentSlide(outlines.findIndex((o) => o.title === option))
+    const slideIndex = outlines.findIndex((o) => o.title === option)
+    slideRefs.current[slideIndex]?.scrollIntoView({ behavior: 'smooth' })
     setCurrentSlideIndex(0)
-    setDisplayMode('slides')
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
-  const debounce = (fn: Function, delay: number) => {
-    let timer: NodeJS.Timeout
-    return (...args: any[]) => {
-      clearTimeout(timer)
-      timer = setTimeout(() => fn(...args), delay)
-    }
-  }
-  const handleScroll = debounce(() => {
-    if (!scrollContainerRef.current) return
-    const scrollTop = scrollContainerRef.current.scrollTop || 0
-
-    const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
-      if (!slideRef) return false
-      const offset = slideRef.offsetTop - scrollTop
-      return offset >= 0 && offset < slideRef.offsetHeight
-    })
-
-    if (
-      closestIndex !== -1 &&
-      outlines[closestIndex]?.title !== currentOutline
-    ) {
-      setCurrentOutline(outlines[closestIndex]?.title)
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = e.currentTarget.scrollTop
+    const slideHeight = e.currentTarget.clientHeight
+    const newSlide = Math.round(scrollTop / slideHeight) + 1
+    setCurrentSlide(newSlide)
+    setCurrentOutline(outlines[newSlide - 1]?.title || '')
+    if (newSlide !== plusClickedSlide) {
       setDisplayMode('slides')
     }
-  }, 100)
+  }
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
@@ -177,7 +153,6 @@ export default function ViewPresentation() {
         .then((response) => {
           toast.success('Quick Generate Success')
           setIsSlideLoading(false)
-          setDisplayMode('slides')
           console.log('QUICK GENERATE RESPONSE', response)
         })
         .catch((error) => {
@@ -186,7 +161,6 @@ export default function ViewPresentation() {
             autoClose: 2000,
           })
           setIsSlideLoading(false)
-          setDisplayMode('slides')
         })
     } catch (error) {
       toast.error('Error while generating slide', {
@@ -243,10 +217,9 @@ export default function ViewPresentation() {
       case 'slides':
         return (
           <>
-            {isSlideLoading && !isNoGeneratedSlide && (
-              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
+            {isSlideLoading && (
+              <div className="w-full h-full flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                <h1>Generating Slide Please Wait...</h1>
               </div>
             )}
             {!isSlideLoading && !isNoGeneratedSlide && (
@@ -257,11 +230,9 @@ export default function ViewPresentation() {
                 style={{ border: 0 }}
               />
             )}
-            {isNoGeneratedSlide && !isSlideLoading && (
+            {isNoGeneratedSlide && (
               <div className="w-full h-full flex items-center justify-center">
-                <h1 className="text-red-500">
-                  Sorry! Slide Could Not Be Generated
-                </h1>
+                <h1>No Slide Generated</h1>
               </div>
             )}
           </>
@@ -287,7 +258,7 @@ export default function ViewPresentation() {
               userPlan={userPlan!}
             />
           )
-        } else if (plusClickedSlide === index!) {
+        } else if (plusClickedSlide === index! + 1) {
           return (
             <DesktopNewSlideVersion
               setDisplayMode={setDisplayMode}
@@ -426,7 +397,28 @@ export default function ViewPresentation() {
             setDisplayMode={setDisplayMode}
           />
         )
-
+      case 'Contact':
+        return (
+          <Contact
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={setDisplayMode}
+          />
+        )
+      case 'Cover':
+        return (
+          <Cover
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={setDisplayMode}
+          />
+        )
       default:
         return null
     }
@@ -446,6 +438,7 @@ export default function ViewPresentation() {
         )
         const result = response.data
         console.log('RESULT After 20sec', result)
+
         setPptName(result.documentName)
         setDocumentID(result.documentID)
         setIsDocumentIDLoading(false)
@@ -486,6 +479,7 @@ export default function ViewPresentation() {
       }
       getPptName()
       setIsDocumentIDLoading(false)
+      setIsSlideLoading(false)
     }
   }, [])
 
@@ -515,109 +509,260 @@ export default function ViewPresentation() {
   }, [authToken, orgId])
 
   // TODO: WEB SOCKET
+  // useEffect(() => {
+  //   const socket = io(`${SOCKET_URL}`, {
+  //     transports: ['websocket'],
+  //   })
+  //   console.log('Connecting to WebSocket server...')
+
+  //   // When connected
+  //   socket.on('connect', () => {
+  //     console.log('Connected to WebSocket server', socket.id)
+  //   })
+
+  //   // Listen for slide data from the backend
+  //   socket.on('slidesData', (newSlides) => {
+  //     if (newSlides && newSlides.length > 0) {
+  //       console.log('SOCKET DATA', newSlides)
+
+  //       // Safely set presentationID and other states
+  //       setPresentationID(newSlides[0].PresentationID)
+  //       const ids = newSlides.map((item: any) => item.GenSlideID)
+  //       setSlidesId(ids)
+  //       setIsSlideLoading(false)
+  //       setTotalSlides(ids.length)
+  //     } else {
+  //       console.warn('Received empty or invalid slides data')
+  //       setSlidesId([])
+  //       setTotalSlides(0)
+  //       setIsSlideLoading(true)
+  //     }
+  //   })
+
+  //   // Handle any error messages from the backend
+  //   socket.on('error', (error) => {
+  //     console.error('Error:', error.message)
+  //   })
+
+  //   // currentOutline.replace(/^\d+\.\s*/, '')
+  //   console.log('Outline Passed', currentOutline.replace(/^\d+\.\s*/, ''))
+
+  //   // Automatically fetch slides on component mount
+  //   socket.emit('fetchSlides', {
+  //     slideType: currentOutline.replace(/^\d+\.\s*/, ''),
+  //     formID: documentID,
+  //   })
+
+  //   // Cleanup when the component unmounts
+  //   return () => {
+  //     console.log('Disconnecting from WebSocket server...')
+  //     socket.disconnect()
+  //   }
+  // }, [currentOutline, SOCKET_URL])
+  //
+  //
+  //
+  // useEffect(() => {
+  //   if (outlines.length > 0) {
+  //     setIsNoGeneratedSlide(false)
+  //     const socket = io(`${SOCKET_URL}`, {
+  //       transports: ['websocket'],
+  //     })
+  //     console.log('Connecting to WebSocket server...')
+
+  //     let timeoutId: NodeJS.Timeout | null = null // To track the 90-second timeout
+
+  //     // Function to handle valid slide data
+  //     const handleSlideData = (newSlides: any[]) => {
+  //       if (timeoutId) {
+  //         clearTimeout(timeoutId) // Clear the timer if valid data is received
+  //       }
+  //       console.log('SOCKET DATA', newSlides)
+  //       setPresentationID(newSlides[0]?.PresentationID || null)
+  //       const ids = newSlides
+  //         .map((item: any) => item.GenSlideID)
+  //         .filter(Boolean) // Filter out null/empty GenSlideID
+  //       setSlidesId(ids)
+  //       setTotalSlides(ids.length)
+  //       setIsSlideLoading(false) // Set loading to false since we received data
+  //       setIsNoGeneratedSlide(false)
+  //     }
+
+  //     // When connected
+  //     socket.on('connect', () => {
+  //       console.log('Connected to WebSocket server', socket.id)
+  //     })
+
+  //     // Listen for slide data from the backend
+  //     socket.on('slidesData', (newSlides) => {
+  //       if (newSlides && newSlides.length > 0) {
+  //         // Check if valid GenSlideID exists
+  //         const hasValidGenSlideID = newSlides.some(
+  //           (item: any) => item.GenSlideID && item.GenSlideID.trim() !== ''
+  //         )
+
+  //         if (hasValidGenSlideID) {
+  //           handleSlideData(newSlides) // Handle valid data
+  //         } else {
+  //           console.warn('Received slides data with empty GenSlideID')
+  //           setIsSlideLoading(true)
+
+  //           // Start 90-second timer if not already running
+  //           if (!timeoutId) {
+  //             timeoutId = setTimeout(() => {
+  //               console.log('No valid slide data received within 90 seconds')
+  //               setIsNoGeneratedSlide(true)
+  //               // setSlidesId([])
+  //               console.log('EMPTY SLIDE IDS', slidesId)
+  //               timeoutId = null
+  //             }, 90000) // 90 seconds
+  //           }
+
+  //           setPresentationID(newSlides[0]?.PresentationID || null) // Update PresentationID
+  //           setSlidesId([]) // No valid GenSlideID
+  //           setTotalSlides(0)
+  //         }
+  //       } else {
+  //         console.warn('Received empty or invalid slides data')
+  //         setIsSlideLoading(true)
+
+  //         // Start 90-second timer if not already running
+  //         if (!timeoutId) {
+  //           timeoutId = setTimeout(() => {
+  //             console.warn('No valid slide data received within 90 seconds')
+  //             setIsNoGeneratedSlide(true)
+  //             timeoutId = null
+  //           }, 90000) // 90 seconds
+  //         }
+
+  //         setIsSlideLoading(false)
+  //         setSlidesId([])
+  //         setTotalSlides(0)
+  //       }
+  //     })
+
+  //     // Handle any error messages from the backend
+  //     socket.on('error', (error) => {
+  //       console.error('Error:', error.message)
+  //     })
+
+  //     console.log('Outline Passed : ', currentOutline.replace(/^\d+\.\s*/, ''))
+  //     console.log('DocumentID Passed : ', documentID)
+
+  //     // Automatically fetch slides on component mount
+  //     socket.emit('fetchSlides', {
+  //       slideType: currentOutline.replace(/^\d+\.\s*/, ''),
+  //       formID: documentID,
+  //     })
+
+  //     // Cleanup when the component unmounts
+  //     return () => {
+  //       console.log('Disconnecting from WebSocket server...')
+  //       if (timeoutId) {
+  //         clearTimeout(timeoutId) // Clear any existing timer on unmount
+  //       }
+  //       socket.disconnect()
+  //     }
+  //   }
+  // }, [currentOutline, SOCKET_URL, documentID])
   useEffect(() => {
-    if (outlines && outlines.length > 0) {
+    if (outlines.length > 0) {
+      setIsNoGeneratedSlide(false)
       const socket = io(`${SOCKET_URL}`, {
         transports: ['websocket'],
       })
-      console.info('Connecting to WebSocket server...')
+      console.log('Connecting to WebSocket server...')
 
-      // When connected
+      let timeoutId: NodeJS.Timeout | null = null // To track the 90-second timeout
+
+      const handleValidData = (newSlides: any[]) => {
+        if (timeoutId) {
+          clearTimeout(timeoutId) // Clear the timer if valid data is received
+          timeoutId = null
+        }
+        console.log('Valid Slide Data Received:', newSlides)
+
+        const presentationID = newSlides[0]?.PresentationID || null
+        const validGenSlideIDs = newSlides
+          .map((item: any) => item.GenSlideID)
+          .filter(Boolean) // Filter out null/empty GenSlideID
+
+        setPresentationID(presentationID)
+        setSlidesId(validGenSlideIDs)
+        setTotalSlides(validGenSlideIDs.length)
+        setIsSlideLoading(false)
+        setIsNoGeneratedSlide(false)
+      }
+
+      const handlePartialData = (newSlides: any[]) => {
+        if (!timeoutId) {
+          timeoutId = setTimeout(() => {
+            console.warn('GenSlideID still missing after 90 seconds.')
+            setIsSlideLoading(false)
+            setIsNoGeneratedSlide(true)
+            timeoutId = null
+          }, 90000) // 90 seconds
+        }
+        const presentationID = newSlides[0]?.PresentationID || null
+        setPresentationID(presentationID)
+        setSlidesId([]) // GenSlideID is missing
+        setTotalSlides(0)
+        setIsSlideLoading(true) // Keep loading state active
+      }
+
       socket.on('connect', () => {
-        console.info('Connected to WebSocket server', socket.id)
+        console.log('Connected to WebSocket server', socket.id)
       })
-
-      // FETCH slide data from the backend
-      let timer: NodeJS.Timeout | null = null
 
       socket.on('slidesData', (newSlides) => {
-        if (
-          hasDataBeenReceived &&
-          JSON.stringify(currentSlidesData) ===
-            JSON.stringify(newSlides.map((item: any) => item.GenSlideID))
-        ) {
-          return
-        }
+        if (newSlides && newSlides.length > 0) {
+          const hasValidGenSlideID = newSlides.some(
+            (item: any) => item.GenSlideID && item.GenSlideID.trim() !== ''
+          )
 
-        if (
-          newSlides &&
-          newSlides.length > 0 &&
-          newSlides[0].GenSlideID !== '' &&
-          newSlides[0].GenSlideID !== null
-        ) {
-          console.log('SOCKET DATA', newSlides)
-          setPresentationID(newSlides[0].PresentationID)
-          const ids = newSlides.map((item: any) => item.GenSlideID)
-          setSlidesId(ids)
-          setIsSlideLoading(false)
-          setIsNoGeneratedSlide(false)
-          setTotalSlides(ids.length)
-          // Clear any existing timer
-          if (timer) {
-            clearTimeout(timer)
-            timer = null
-          }
-        } else if (
-          newSlides &&
-          newSlides.length > 0 &&
-          (newSlides[0].GenSlideID === '' || newSlides[0].GenSlideID === null)
-        ) {
-          console.log('Listening for valid GenSlideID for 90sec...')
-          setIsSlideLoading(true)
-          setIsNoGeneratedSlide(false) // Reset this to avoid premature handling.
-
-          // Start a 90-second timer
-          if (!timer) {
-            timer = setTimeout(() => {
-              console.warn('No valid data received in 90 seconds')
-              setSlidesId([])
-              setTotalSlides(0)
-              setIsSlideLoading(false)
-              setIsNoGeneratedSlide(true)
-              timer = null // Reset the timer
-            }, 90000)
+          if (hasValidGenSlideID) {
+            handleValidData(newSlides)
+          } else {
+            console.warn('Slides data received without valid GenSlideID.')
+            handlePartialData(newSlides)
           }
         } else {
-          console.warn('Received empty or invalid slides data')
-          setSlidesId([])
-          setTotalSlides(0)
-          setIsSlideLoading(false)
-          setIsNoGeneratedSlide(true)
+          console.warn(
+            'Received empty or invalid slides data. Retrying till 90sec expires'
+          )
+          setIsSlideLoading(true)
+          if (!timeoutId) {
+            timeoutId = setTimeout(() => {
+              console.warn('No valid slide data received within 90 seconds.')
+              setIsNoGeneratedSlide(true)
+              setIsSlideLoading(false)
+              timeoutId = null
+            }, 90000)
+          }
         }
       })
 
-      // Handle any error messages from the backend
       socket.on('error', (error) => {
         console.error('Error:', error.message)
       })
 
-      // currentOutline.replace(/^\d+\.\s*/, '')
-      console.log('Outline Passed: ', currentOutline.replace(/^\d+\.\s*/, ''))
-      console.log('DocumentID Passed: ', documentID)
+      console.log('Outline Passed : ', currentOutline.replace(/^\d+\.\s*/, ''))
+      console.log('DocumentID Passed : ', documentID)
 
-      // Automatically fetch slides on component mount
       socket.emit('fetchSlides', {
         slideType: currentOutline.replace(/^\d+\.\s*/, ''),
         formID: documentID,
       })
 
-      // Cleanup when the component unmounts
       return () => {
-        console.info('Disconnecting from WebSocket server...')
+        console.log('Disconnecting from WebSocket server...')
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
         socket.disconnect()
       }
     }
-
-    setHasDataBeenReceived(false)
-    setCurrentSlidesData([])
-  }, [
-    currentOutline,
-    SOCKET_URL,
-    documentID,
-    outlines,
-    currentSlidesData,
-    hasDataBeenReceived,
-  ])
+  }, [currentOutline, SOCKET_URL, documentID])
 
   // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
@@ -740,7 +885,6 @@ export default function ViewPresentation() {
             className="no-scrollbar rounded-sm shadow-lg relative w-[90%] bg-white border border-gray-200 mb-2 ml-12 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
             style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
-            ref={scrollContainerRef}
           >
             {isSlideLoading && (
               <div className="w-full h-full flex items-center justify-center">
@@ -825,12 +969,6 @@ export default function ViewPresentation() {
                 outlines={outlines}
                 onSelectOutline={(outline) => {
                   setCurrentOutline(outline)
-                  const slideIndex = outlines.findIndex(
-                    (o) => o.title === outline
-                  )
-                  setCurrentSlide(slideIndex)
-                  setCurrentSlideIndex(0)
-                  setDisplayMode('slides')
                 }}
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
@@ -846,6 +984,11 @@ export default function ViewPresentation() {
             displayMode !== 'slides' ? 'h-[45vh] md:h-[50vh]' : 'h-[30vh]'
           } w-full border border-gray-200 mt-12 mb-6`}
         >
+          {isSlideLoading && (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          )}
           {renderContent({
             displayMode,
             isMobile: true,

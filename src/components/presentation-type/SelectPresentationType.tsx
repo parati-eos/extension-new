@@ -335,7 +335,7 @@ const SelectPresentationType: React.FC = () => {
             onMouseLeave={handleMouseLeave}
           >
             <button
-              disabled={refineButtonDisabled}
+              // disabled={refineButtonDisabled}
               className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
                 refineButtonDisabled
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -353,7 +353,7 @@ const SelectPresentationType: React.FC = () => {
                 onMouseLeave={handleDialogMouseLeave}
               >
                 <p>
-                  Please {' '}
+                  Please{' '}
                   <span>
                     <button
                       className="text-purple-600 hover:text-purple-800 hover:scale-110 active:scale-95 transition transform"

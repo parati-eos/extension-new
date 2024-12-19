@@ -52,7 +52,7 @@ export default function SlideNarrative({
       console.log('Server response:', response.data)
       if (response.data === 'ok') {
         setNarrative('')
-  
+
         setIsLoading(false)
         setDisplayMode('slides')
       }
@@ -62,6 +62,7 @@ export default function SlideNarrative({
         autoClose: 2000,
       })
       toast.error('Failed to send narrative.')
+      setDisplayMode('slides')
     } finally {
       setIsLoading(false)
     }
@@ -96,11 +97,9 @@ export default function SlideNarrative({
                 onChange={(e) => setNarrative(e.target.value)}
                 placeholder="Please provide some context and narrative to generate this slide."
                 className="w-full resize-none h-full p-2 border overflow-y-auto scrollbar-none rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                
               ></textarea>
             </div>
           </div>
-
 
           {/* Input Section for Mobile */}
           <div className="flex w-full h-full lg:hidden md:hidden flex-1  ">
@@ -110,7 +109,6 @@ export default function SlideNarrative({
                 onChange={(e) => setNarrative(e.target.value)}
                 placeholder="Please provide some context and narrative to generate this slide."
                 className="p-2  w-full h-full border border-gray-300 overflow-y-auto scrollbar-none rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                
               ></textarea>
             </div>
           </div>
