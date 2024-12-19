@@ -238,13 +238,13 @@ export default function People({
         </div>
       ) : (
         <>
-          <div className="lg:flex hidden items-center justify-between w-full ">
-            <h2 className=" hidden md:block md:text-lg font-semibold text-[#091220]">
-              {heading}
+          <div className="flex  items-center justify-between w-full ">
+            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+              {slideType}
             </h2>
             <BackButton onClick={onBack} />
           </div>
-
+<h3>{heading}</h3>
           <div
             ref={containerRef}
             className={`flex-1 lg:px-2 overflow-y-auto scrollbar-none md:mt-1 ${
@@ -263,7 +263,7 @@ export default function People({
                     type="text"
                     value={person.name}
                     onChange={(e) => handleNameChange(e.target.value, index)}
-                    placeholder="Name"
+                    placeholder={`Enter Name ${index + 1}`}
                     className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
@@ -272,7 +272,7 @@ export default function People({
                     onChange={(e) =>
                       handleInputChange(e.target.value, index, 'designation')
                     }
-                    placeholder="Designation"
+                    placeholder={`Enter Designation ${index + 1}`}
                     className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
@@ -281,7 +281,7 @@ export default function People({
                     onChange={(e) =>
                       handleInputChange(e.target.value, index, 'company')
                     }
-                    placeholder="Company"
+                    placeholder={`Enter Company ${index + 1}`}
                     className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -292,7 +292,7 @@ export default function People({
                   onChange={(e) =>
                     handleInputChange(e.target.value, index, 'description')
                   }
-                  placeholder="Description"
+                  placeholder={`Enter Description ${index + 1}`}
                   className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 

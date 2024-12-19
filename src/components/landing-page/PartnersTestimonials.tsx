@@ -84,7 +84,7 @@ const PartnersTestimonials: React.FC = () => {
       <div className="text-center mt-6">
         <button
           onClick={() => navigate('/auth')}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 mb-4 active:scale-95 transition transform duration-300"
+          className="bg-blue-600 text-white px-6 py-3 font-semibold rounded-lg shadow-md hover:bg-blue-700 mb-4 active:scale-95 transition transform duration-300"
         >
           See How Zynth Can Help You
         </button>

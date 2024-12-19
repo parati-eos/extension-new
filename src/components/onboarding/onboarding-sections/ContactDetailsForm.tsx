@@ -24,31 +24,39 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setContactEmail(value)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
     setIsEmailValid(!value || emailRegex.test(value))
   }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setContactPhone(value)
-    const phoneRegex = /^\+?[1-9]\d{1,14}$/
+    const phoneRegex = /^\+?[1-9]\d{9,14}$/
+
+
     setIsPhoneValid(!value || phoneRegex.test(value))
   }
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value
+    let value = e.target.value.trim();
     if (!value.startsWith('http://') && !value.startsWith('https://')) {
-      value = `https://${value}`
+      value = `https://${value}`;
     }
-    setLinkedinLink(value)
-    const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/.*$/
-    setIsLinkedinValid(!value || linkedinRegex.test(value))
-  }
+    setLinkedinLink(value);
+  
+    const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}$/;
+    // Check if the field is not empty and matches the regex
+    setIsLinkedinValid(value !== '' && linkedinRegex.test(value));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onContinue({ contactEmail, contactPhone, linkedinLink })
   }
+
+  // Disable Finish button if any field is invalid
+  const isFormValid = isEmailValid && isPhoneValid && isLinkedinValid && linkedinLink.trim() !== '';
 
   return (
     <div className="w-full mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
@@ -65,7 +73,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
-        {/* Input */}
+        {/* Email */}
         <div className="w-full px-2">
           <label
             htmlFor="email"
@@ -89,6 +97,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             </p>
           )}
 
+          {/* Phone */}
           <label
             htmlFor="phone"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -112,6 +121,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             </p>
           )}
 
+          {/* LinkedIn */}
           <label
             htmlFor="linkedin"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -137,7 +147,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
         {/* Buttons */}
         <div className="flex flex-col items-center justify-center w-full space-y-2 px-2">
-          <NextButton text="Finish" />
+          <NextButton text="Finish" disabled={!isFormValid} /> {/* Disable button if form is invalid */}
           <BackButton onClick={onBack} />
         </div>
       </form>

@@ -96,7 +96,7 @@ export default function Cover({
   }
 
   return (
-    <div className="flex flex-col h-full w-full p-2 lg:p-6">
+    <div className="flex flex-col h-full w-full p-2 lg:p-4">
       {/* Header Section */}
       <div className="flex items-center justify-between w-full mb-4">
         <h2 className="md:block md:text-lg font-semibold text-[#091220]">
@@ -108,7 +108,7 @@ export default function Cover({
       {/* Main Content */}
       <div className="w-full h-full flex flex-col items-center justify-center">
         {/* Logo Upload Section */}
-        <div className="w-full border border-gray-300 rounded-xl h-full flex flex-col justify-center items-center md:transition-transform md:transform md:hover:scale-105">
+        <div className="w-full border border-gray-300 rounded-xl h-full flex flex-col justify-center items-center ">
           <input
             type="file"
             id="logoUploadInput"

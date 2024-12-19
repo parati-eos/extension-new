@@ -223,12 +223,13 @@ export default function Table({
         </div>
       ) : (
         <>
-          <div className="flex lg:mb-2 items-center justify-between w-full ">
+         <div className="flex  items-center justify-between w-full ">
             <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-              {heading}
+              {slideType}
             </h2>
             <BackButton onClick={onBack} />
           </div>
+<h3>{heading}</h3>
           <div
             ref={containerRef}
             className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none"

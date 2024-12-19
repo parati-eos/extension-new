@@ -52,7 +52,7 @@ export default function SlideNarrative({
       console.log('Server response:', response.data)
       if (response.data === 'ok') {
         setNarrative('')
-        toast.success('Data submitted successfully')
+  
         setIsLoading(false)
         setDisplayMode('slides')
       }
@@ -82,62 +82,41 @@ export default function SlideNarrative({
       ) : (
         <>
           {/* Top Section: Headings */}
-          <div className="hidden lg:flex mt-2 items-center justify-between w-full px-4">
-            <h2 className="font-semibold text-[#091220]">{heading}</h2>
+          <div className="hidden lg:flex  items-center justify-between  ">
+            <h2 className="font-semibold text-[#091220]">{slideType}</h2>
             <BackButton onClick={onBack} />
           </div>
+          <h3>{heading}</h3>
 
           {/* Input Section for Desktop */}
-          <div className="hidden lg:block flex-1 overflow-y-auto px-4 scrollbar-none">
-            <div className="flex flex-col items-center gap-2 mb-2 lg:mb-0 lg:mt-14 xl:mt-8">
+          <div className="hidden h-full w-full md:block flex-1 p-2 ">
+            <div className="flex flex-col items-center justify-center h-full w-full ">
               <textarea
                 value={narrative}
                 onChange={(e) => setNarrative(e.target.value)}
                 placeholder="Please provide some context and narrative to generate this slide."
-                className="w-full p-2 h-[25rem] xl:h-[17rem] resize-none border border-gray-300 rounded-md lg:rounded-lg focus:outline none focus:ring-2 focus:ring-blue-500"
-                style={{
-                  maxWidth: '60rem', // Fixed width for large screens
-                }}
+                className="w-full resize-none h-full p-2 border overflow-y-auto scrollbar-none rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                
               ></textarea>
             </div>
           </div>
 
-          {/* Input Section for Medium Screens */}
-          <div className="hidden md:block lg:hidden flex-1 overflow-y-auto px-4 scrollbar-none">
-            <div className="flex flex-col items-center gap-2 mb-2">
-              <textarea
-                value={narrative}
-                onChange={(e) => setNarrative(e.target.value)}
-                placeholder="Please provide some context and narrative to generate this slide."
-                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style={{
-                  height: '25rem', // Fixed height for medium screens
-                  width: '60rem', // Fixed width for medium screens
-                  resize: 'none', // Allow manual resizing vertically
-                }}
-              ></textarea>
-            </div>
-          </div>
 
           {/* Input Section for Mobile */}
-          <div className="flex w-full lg:hidden md:hidden flex-1 scrollbar-none ">
-            <div className="flex flex-col w-full items-center gap-2 mb-2 ">
+          <div className="flex w-full h-full lg:hidden md:hidden flex-1  ">
+            <div className="p-2 flex flex-col h-full w-full items-center justify-center  ">
               <textarea
                 value={narrative}
                 onChange={(e) => setNarrative(e.target.value)}
                 placeholder="Please provide some context and narrative to generate this slide."
-                className="p-2  border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style={{
-                  width: '100%', // Fixed 70% width for mobile view
-                  height: '100%', // Fixed height for mobile view
-                  resize: 'none',
-                }}
+                className="p-2  w-full h-full border border-gray-300 overflow-y-auto scrollbar-none rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                
               ></textarea>
             </div>
           </div>
 
           {/* Attach Image and Generate Slide Buttons for Desktop */}
-          <div className="hidden lg:flex mt-auto gap-2 px-4 w-full justify-between lg:justify-end lg:w-auto lg:gap-4">
+          <div className="hidden  lg:flex w-full   lg:justify-end lg:w-auto lg:gap-4">
             {/* Attach Image Section */}
             <AttachImage onFileSelected={handleFileSelect} />
 
@@ -145,10 +124,10 @@ export default function SlideNarrative({
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md ${
+              className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
                 isGenerateDisabled
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white'
+                  : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
               }`}
             >
               Generate Slide
@@ -156,7 +135,7 @@ export default function SlideNarrative({
           </div>
 
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-4 gap-2  w-full ">
+          <div className="flex lg:hidden p-2 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
               {/* Attach Image Section */}
               <AttachImage onFileSelected={handleFileSelect} />

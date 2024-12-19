@@ -192,7 +192,7 @@ const Pricing: React.FC = () => {
     },
     {
       name: 'PRO',
-      buttonText: 'Upgrade to Pro',
+      buttonText: 'Sign up for Pro',
       description: (
         <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
           Ideal for professionals and businesses.
@@ -561,7 +561,7 @@ const Pricing: React.FC = () => {
             )}
           </h3>
           <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
-            Upgrade to Pro
+            Sign up for Pro
           </button>
         </div>
 
@@ -645,7 +645,7 @@ const Pricing: React.FC = () => {
           </ul>
           <div className="px-4 py-2 ">
             <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
-              Upgrade to Pro
+            Sign up for Pro
             </button>
           </div>
         </div>

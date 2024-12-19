@@ -33,11 +33,11 @@ const Heading: React.FC = () => {
         <div className="mt-6 flex flex-col md:justify-center w-[90%] md:flex-row gap-4 z-10">
           <button
             onClick={() => navigate('/auth')}
-            className="px-11 py-3  text-white bg-[#3667B2] rounded-md hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] active:scale-95 transition transform duration-300"
+            className="px-11 py-3 font-semibold text-white bg-[#3667B2] rounded-md hover:bg-white hover:text-[#3667B2] hover:border hover:border-[#3667B2] active:scale-95 transition transform duration-300"
           >
             Get Started for Free
           </button>
-          <button className="px-11 py-3 text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 active:scale-95 active:bg-blue-100 transition transform duration-300">
+          <button className="px-11 py-3 font-semibold text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 active:scale-95 active:bg-blue-100 transition transform duration-300">
             Watch Demo
           </button>
         </div>

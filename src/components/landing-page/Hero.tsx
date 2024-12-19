@@ -99,14 +99,18 @@ export const Hero = () => {
 export const Header = () => {
   return (
     <div  >
-      <PresentationGrid />
+      <PresentationGrid 
+      
+      
+      />
       <motion.h2
+      id=
+      "sample-presentation"  
         className="text-2xl  md:text-4xl font-bold text-white text-center bg-gray-50 py-12"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0, transition: { duration: 1 } }}
       >
-        <span id=
-    "sample-presentation" 
+        <span 
         
         
         className="text-gray-800 text-4xl font-bold">Built On Zynth</span>

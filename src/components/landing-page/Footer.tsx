@@ -16,14 +16,14 @@ const Footer: React.FC = () => {
         style={{ backgroundImage: `url(${freepikbg})` }}
       >
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Get Started with Zynth </h1>
-          <p className="text-lg mb-8">
+          <h1 className="text-4xl font-semibold mb-4">Get Started with Zynth </h1>
+          <p className="text-lg mb-8 font-semibold">
             More than a simple PowerPoint make Zynth is your personal <br></br>{' '}
             AI presentation creator.
           </p>
           <button
             onClick={() => navigate('/auth')}
-            className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600 active:scale-95 active:opacity-80 transition-all duration-300"
+            className="bg-yellow-500 text-black font-semibold py-5 px-8 rounded-lg hover:bg-yellow-600 active:scale-95 active:opacity-80 transition-all duration-300"
           >
             Get Started for Free
           </button>

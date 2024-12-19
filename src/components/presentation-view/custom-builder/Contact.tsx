@@ -80,12 +80,13 @@ export default function Contact({
   return (
     <div className="flex flex-col p-4 h-full w-full">
       {/* Heading */}
-      <div className="flex items-center justify-between w-full mb-4">
-        <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-          {heading}
-        </h2>
-        <BackButton onClick={onBack} />
-      </div>
+      <div className="flex  items-center justify-between w-full ">
+            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+              {slideType}
+            </h2>
+            <BackButton onClick={onBack} />
+          </div>
+<h3>{heading}</h3>
 
       {/* Content Section */}
       <div className="flex-1 overflow-y-auto lg:w-[65%] scrollbar-none ">
@@ -95,57 +96,58 @@ export default function Contact({
             type="text"
             value={websiteLink}
             onChange={(e) => setWebsiteLink(e.target.value)}
-            placeholder="Website link"
+            placeholder="Enter Website Link"
             className="p-4 border font-medium  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email"
+            placeholder="Enter Email"
             className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            placeholder="Enter phone"
+            placeholder="Enter Phone"
             className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="url"
             value={linkedin}
             onChange={(e) => setLinkedin(e.target.value)}
-            placeholder="Linkedin profile link"
+            placeholder="Linkedin Profile Link"
             className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         {/* Attach Image Button */}
-        <div className="hidden  lg:flex w-full  justify-between lg:justify-start mt-2 lg:w-auto lg:gap-4 gap-2">
-            {/* Use AttachImage component */}
-            <AttachImage onFileSelected={handleFileSelect} />
-            </div>
+       
       </div>
 
-      {/* Generate Slide Button */}
-      <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
+      {/* Button container */}
+      <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
+            {/* Use AttachImage component */}
+            <AttachImage onFileSelected={handleFileSelect} />
+
+            {/* Generate Slide Button */}
             <button
               onClick={handleSubmit}
               disabled={isButtonDisabled}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
                 isButtonDisabled
-                 ? 'bg-gray-200 text-gray-500'
+                  ? 'bg-gray-200 text-gray-500'
                   : 'bg-[#3667B2] text-white'
               }`}
             >
-              Generate Slide
+           Generate Slide
             </button>
           </div>
-           {/* Attach Image and Generate Slide Buttons for Mobile */}
-           <div className="flex lg:hidden mt-2 gap-2  w-full ">
+          {/* Attach Image and Generate Slide Buttons for Mobile */}
+          <div className="flex lg:hidden mt-2 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
-            <AttachImage onFileSelected={handleFileSelect} />
+              <AttachImage onFileSelected={handleFileSelect} />
             </div>
 
             <button

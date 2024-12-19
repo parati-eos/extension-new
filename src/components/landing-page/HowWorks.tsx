@@ -38,7 +38,7 @@ const HowWorks: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                  className="mt-6 px-6 py-2 font-semibold bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
                 >
                   Generate Presentation
                 </button>
@@ -76,7 +76,7 @@ const HowWorks: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                  className="mt-6 px-6 py-2 bg-transparent font-semibold border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
                 >
                   Refine Presentation
                 </button>
@@ -111,7 +111,7 @@ const HowWorks: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                  className="mt-6 px-6 py-2 bg-transparent font-semibold border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
                 >
                   Share Presentation
                 </button>
