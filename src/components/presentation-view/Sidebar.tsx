@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       if (selectedIndex === 0) {
         outlineRefs.current[selectedIndex]?.scrollIntoView({
           behavior: 'smooth',
-          block: 'start',
+          block: 'center',
         })
       }
     }
