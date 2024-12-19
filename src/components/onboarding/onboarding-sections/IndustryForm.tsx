@@ -90,9 +90,9 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
     (industry === 'Other' && !otherIndustry) // Validate otherIndustry input
 
   return (
-    <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
+    <div className="w-full h-full flex flex-col items-center justify-center mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 mb-8">
+      <div className="flex flex-col items-center gap-1 lg:mb-8 lg:absolute lg:top-20">
         <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Your Industry
@@ -104,11 +104,11 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center w-full max-w-sm mx-auto"
+        className="flex lg:p-0 p-2 flex-col items-center justify-center w-full  mx-auto lg:mt-24"
       >
         {/* Input */}
         <div
-          className={`w-full lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 ${
+          className={` w-full lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
             sector === 'Other' || industry === 'Other' ? 'md:mt-2' : ''
           } px-2`}
         >
@@ -191,11 +191,11 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
         {/* Buttons */}
         <div
-          className={`flex flex-col items-center justify-center mt-16 ${
+          className={`flex flex-col items-center justify-center lg:max-w-sm mt-[6.3rem] ${
             sector === 'Other' || industry === 'Other'
-              ? 'lg:mt-[7.5rem] mb-8 space-y-0'
-              : 'lg:mt-32'
-          } w-full space-y-2 px-2`}
+              ? 'lg:mt-[14rem] mb-8 space-y-0'
+              : 'lg:mt-[14.5rem]'
+          } w-full space-y-2 `}
         >
           {isNextLoading ? (
             <div className="w-full h-full flex items-center justify-center">

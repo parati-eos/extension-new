@@ -9,33 +9,37 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   initialData,
   isNextLoading,
 }) => {
-  const [contactEmail, setContactEmail] = useState(initialData.contactEmail)
-  const [contactPhone, setContactPhone] = useState(initialData.contactPhone)
-  const [linkedinLink, setLinkedinLink] = useState(initialData.linkedinLink)
+  const [contactEmail, setContactEmail] = useState(
+    initialData.contactEmail || ''
+  )
+  const [contactPhone, setContactPhone] = useState(
+    initialData.contactPhone || ''
+  )
+  const [linkedinLink, setLinkedinLink] = useState(
+    initialData.linkedinLink || ''
+  )
   const [isLinkedinValid, setIsLinkedinValid] = useState(true)
   const [isEmailValid, setIsEmailValid] = useState(true)
   const [isPhoneValid, setIsPhoneValid] = useState(true)
 
   useEffect(() => {
-    setContactEmail(initialData.contactEmail)
-    setContactPhone(initialData.contactPhone)
-    setLinkedinLink(initialData.linkedinLink)
+    setContactEmail(initialData.contactEmail || '')
+    setContactPhone(initialData.contactPhone || '')
+    setLinkedinLink(initialData.linkedinLink || '')
   }, [initialData])
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setContactEmail(value)
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-
-    setIsEmailValid(!value || emailRegex.test(value))
+    setIsEmailValid(value === '' || emailRegex.test(value)) // Valid if empty or matches regex
   }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setContactPhone(value)
     const phoneRegex = /^\+?[1-9]\d{9,14}$/
-
-    setIsPhoneValid(!value || phoneRegex.test(value))
+    setIsPhoneValid(value === '' || phoneRegex.test(value)) // Valid if empty or matches regex
   }
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,8 +51,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
     const linkedinRegex =
       /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}$/
-    // Check if the field is not empty and matches the regex
-    setIsLinkedinValid(value !== '' && linkedinRegex.test(value))
+    setIsLinkedinValid(value === '' || linkedinRegex.test(value)) // Valid if empty or matches regex
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,17 +59,17 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     onContinue({ contactEmail, contactPhone, linkedinLink })
   }
 
-  // Disable Finish button if any field is invalid
+  // Form is valid if all filled fields are valid or all fields are empty
   const isFormValid =
-    isEmailValid &&
-    isPhoneValid &&
-    isLinkedinValid &&
-    linkedinLink.trim() !== ''
+    (contactEmail === '' && contactPhone === '' && linkedinLink === '') || // All empty
+    ((contactEmail === '' || isEmailValid) &&
+      (contactPhone === '' || isPhoneValid) &&
+      (linkedinLink === '' || isLinkedinValid)) // At least one filled and valid
 
   return (
     <div className="w-full mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 mb-8 md:mb-6">
+      <div className="flex flex-col items-center gap-1 lg:mb-8 mb-4 md:mb-6">
         <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Contact Details
@@ -79,7 +82,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Email */}
-        <div className="w-full px-2">
+        <div className="w-full px-2 ">
           <label
             htmlFor="email"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -151,7 +154,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center w-full space-y-2 px-2 lg:mt-0 ">
           {isNextLoading ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -159,7 +162,6 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
           ) : (
             <>
               <NextButton text="Finish" disabled={!isFormValid} />{' '}
-              {/* Disable button if form is invalid */}
               <BackButton onClick={onBack} />
             </>
           )}

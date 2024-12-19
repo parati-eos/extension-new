@@ -81,7 +81,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
 
             {userPlan === 'free' && isDialogVisible && (
               <div
-                className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 h-[5.5rem] w-[10rem] bg-gray-200 text-[#3667B2] px-3 py-1 rounded-2xl shadow-lg"
+                className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 h-[6rem] w-[10rem] bg-gray-200 text-[#3667B2] px-3 py-1 rounded-2xl shadow-lg"
                 onMouseEnter={handleDialogMouseEnter}
                 onMouseLeave={handleDialogMouseLeave}
               >

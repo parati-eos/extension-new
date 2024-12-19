@@ -215,7 +215,7 @@ const OnboardingContainer: React.FC = () => {
         )}
 
         {/* Onboarding Content */}
-        <div className="flex-1 flex items-center justify-center w-full lg:mt-2 xl:mt-4 bg-white">
+        <div className="flex-1 flex items-center justify-center w-full lg:mt-2  xl:mt-4 bg-white">
           {renderSectionContent()}
         </div>
       </div>
