@@ -23,8 +23,8 @@ export default function Statistics({
   authToken,
   setDisplayMode,
 }: StatisticProps) {
-  const [title, setTitle] = useState(['', '', '']); // Initialize with 3 empty strings
-  const [description, setDescription] = useState(['', '', '']); // Initialize with 3 empty strings
+  const [title, setTitle] = useState(['', '', '']) // Initialize with 3 empty strings
+  const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
   const [showTooltip, setShowTooltip] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
@@ -59,15 +59,15 @@ export default function Statistics({
     }
   }
   const isAddDisabled =
-  title.length >= 6 || // Limit to 6 points
-  title[title.length - 1].trim() === '' || 
-  description[description.length - 1].trim() === ''
+    title.length >= 6 || // Limit to 6 points
+    title[title.length - 1].trim() === '' ||
+    description[description.length - 1].trim() === ''
 
-  const isGenerateDisabled = title.length < 3 || title.some(
-    (point, index) => point.trim() === '' || description[index].trim() === ''
-  )
-
-  
+  const isGenerateDisabled =
+    title.length < 3 ||
+    title.some(
+      (point, index) => point.trim() === '' || description[index].trim() === ''
+    )
 
   const handleGenerateSlide = async () => {
     setLoading(true)
@@ -95,6 +95,7 @@ export default function Statistics({
 
       console.log('PATCH Response:', response.data)
       toast.success('Data submitted successfully')
+      setDisplayMode('slides')
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-center',
@@ -129,7 +130,7 @@ export default function Statistics({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-<h3>{heading}</h3>
+          <h3>{heading}</h3>
 
           {/* Content container with flex-grow */}
           <div
@@ -138,26 +139,28 @@ export default function Statistics({
           >
             {title.map((point, index) => (
               <div
-              key={index}
-              className={`flex gap-2 p-1 mb-2 lg:mb-0 ${
-                index === 0 ? 'lg:mt-14' : 'lg:mt-2'
-              }`}
-            >
-              <input
-                type="text"
-                value={title[index]}
-                onChange={(e) => handleInputTitle(e.target.value, index)}
-                placeholder={`Enter Data Label ${index + 1}`}
-                className="lg:ml-1 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                value={description[index]}
-                onChange={(e) => handleInputDescription(e.target.value, index)}
-                placeholder={`Enter Value ${index + 1}`}
-                className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+                key={index}
+                className={`flex gap-2 p-1 mb-2 lg:mb-0 ${
+                  index === 0 ? 'lg:mt-14' : 'lg:mt-2'
+                }`}
+              >
+                <input
+                  type="text"
+                  value={title[index]}
+                  onChange={(e) => handleInputTitle(e.target.value, index)}
+                  placeholder={`Enter Data Label ${index + 1}`}
+                  className="lg:ml-1 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  value={description[index]}
+                  onChange={(e) =>
+                    handleInputDescription(e.target.value, index)
+                  }
+                  placeholder={`Enter Value ${index + 1}`}
+                  className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
             ))}
 
             {title.length < 6 && (
@@ -180,38 +183,39 @@ export default function Statistics({
           <div className="hidden  lg:flex w-full   lg:justify-end lg:w-auto lg:gap-4">
             <AttachImage onFileSelected={handleFileSelect} />
             <div className="hidden lg:flex w-full lg:justify-end lg:w-auto lg:gap-4">
+              <div className="flex-1 relative">
+                <button
+                  onClick={(e) => {
+                    if (!isGenerateDisabled) {
+                      handleGenerateSlide()
+                    } else {
+                      e.preventDefault() // Prevent action when disabled
+                    }
+                  }}
+                  onMouseEnter={() =>
+                    isGenerateDisabled && setShowTooltip(true)
+                  }
+                  onMouseLeave={() => setShowTooltip(false)}
+                  className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
+                    isGenerateDisabled
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+                  }`}
+                >
+                  Generate Slide
+                </button>
 
-  <div className="flex-1 relative">
-    <button
-      onClick={(e) => {
-        if (!isGenerateDisabled) {
-          handleGenerateSlide();
-        } else {
-          e.preventDefault(); // Prevent action when disabled
-        }
-      }}
-      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-      className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-        isGenerateDisabled
-          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-          : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-      }`}
-    >
-      Generate Slide
-    </button>
-    
-    {/* Tooltip */}
-    {isGenerateDisabled && showTooltip && (
-      <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-        Minimum 3 data points required.<br></br> Please fill all cells.
-      </span>
-    )}
-  </div>
-</div>
-
+                {/* Tooltip */}
+                {isGenerateDisabled && showTooltip && (
+                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
+                    Minimum 3 data points required.<br></br> Please fill all
+                    cells.
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-             {/* {Mobile View} */}
+          {/* {Mobile View} */}
           <div className="flex lg:hidden mt-4 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
               {/* Attach Image Section */}
@@ -219,32 +223,33 @@ export default function Statistics({
             </div>
 
             <div className="flex-1 relative">
-    <button
-      onClick={(e) => {
-        if (!isGenerateDisabled) {
-          handleGenerateSlide();
-        } else {
-          e.preventDefault(); // Prevent action when disabled
-        }
-      }}
-      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-      className={`flex-1 py-2 rounded-md w-full ${
-        isGenerateDisabled
-          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-          : 'bg-[#3667B2] text-white'
-      }`}
-    >
-      Generate Slide
-    </button>
-    
-    {/* Tooltip */}
-    {isGenerateDisabled && showTooltip && (
-      <span className="absolute top-[-45px] left-1/2 -translate-x-[55%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-            Minimum 3 data points required.<br></br> Please fill all cells.
-      </span>
-    )}
-  </div>
+              <button
+                onClick={(e) => {
+                  if (!isGenerateDisabled) {
+                    handleGenerateSlide()
+                  } else {
+                    e.preventDefault() // Prevent action when disabled
+                  }
+                }}
+                onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+                className={`flex-1 py-2 rounded-md w-full ${
+                  isGenerateDisabled
+                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#3667B2] text-white'
+                }`}
+              >
+                Generate Slide
+              </button>
+
+              {/* Tooltip */}
+              {isGenerateDisabled && showTooltip && (
+                <span className="absolute top-[-45px] left-1/2 -translate-x-[55%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
+                  Minimum 3 data points required.<br></br> Please fill all
+                  cells.
+                </span>
+              )}
+            </div>
           </div>
         </>
       )}

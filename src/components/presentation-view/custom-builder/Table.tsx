@@ -201,6 +201,7 @@ export default function Table({
         .then((response) => {
           toast.success('Data successfully sent to the server!')
           setIsLoading(false)
+          setDisplayMode('slides')
         })
     } catch (error) {
       toast.error('Error sending data', {
@@ -223,13 +224,13 @@ export default function Table({
         </div>
       ) : (
         <>
-         <div className="flex  items-center justify-between w-full ">
+          <div className="flex  items-center justify-between w-full ">
             <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
               {slideType}
             </h2>
             <BackButton onClick={onBack} />
           </div>
-<h3>{heading}</h3>
+          <h3>{heading}</h3>
           <div
             ref={containerRef}
             className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none"

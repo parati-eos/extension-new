@@ -336,6 +336,7 @@ const SelectPresentationType: React.FC = () => {
           >
             <button
               // disabled={refineButtonDisabled}
+              onClick={() => setIsRefineModalOpen(true)}
               className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
                 refineButtonDisabled
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -413,8 +414,8 @@ const SelectPresentationType: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  setIsPricingModalOpen(true)
-                  setIsModalOpen(false)
+                  // setIsPricingModalOpen(true)
+                  setIsModalOpen(true)
                 }}
                 // disabled={refineButtonDisabled}
                 className="bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"

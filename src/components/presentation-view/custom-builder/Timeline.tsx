@@ -92,6 +92,7 @@ export default function Timeline({
 
       console.log('PATCH Response:', response.data)
       toast.success('Data submitted successfully!')
+      setDisplayMode('slides')
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-center',
@@ -128,7 +129,10 @@ export default function Timeline({
           </div>
           <h3>{heading}</h3>
           {/* Content container with flex-grow */}
-          <div ref={containerRef} className="flex-1 overflow-y-auto scrollbar-none">
+          <div
+            ref={containerRef}
+            className="flex-1 overflow-y-auto scrollbar-none"
+          >
             {timeline.map((point, index) => (
               <div
                 key={index}

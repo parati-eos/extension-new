@@ -74,6 +74,7 @@ export default function Points({
         toast.success('Data successfully sent to the server!')
       }
       console.log('Server response:', response.data)
+      setDisplayMode('slides')
     } catch (error) {
       toast.error('Error sending data', {
         position: 'top-center',
@@ -107,7 +108,7 @@ export default function Points({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-<h3>{heading}</h3>
+          <h3>{heading}</h3>
           {/* Input Section with Scrolling */}
           <div
             ref={containerRef}

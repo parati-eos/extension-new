@@ -92,6 +92,7 @@ export default function Images({
         .then((response) => {
           alert('Images submitted successfully!')
           setIsLoading(false)
+          setDisplayMode('slides')
         })
     } catch (error) {
       toast.error('Submit failed', {

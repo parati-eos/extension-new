@@ -202,6 +202,7 @@ export default function People({
       )
       toast.success('Data successfully sent to the server!')
       setIsLoading(false)
+      setDisplayMode('slides')
       console.log('Server response:', response.data)
     } catch (error) {
       toast.error('Error sending data', {
@@ -244,7 +245,7 @@ export default function People({
             </h2>
             <BackButton onClick={onBack} />
           </div>
-<h3>{heading}</h3>
+          <h3>{heading}</h3>
           <div
             ref={containerRef}
             className={`flex-1 lg:px-2 overflow-y-auto scrollbar-none md:mt-1 ${
