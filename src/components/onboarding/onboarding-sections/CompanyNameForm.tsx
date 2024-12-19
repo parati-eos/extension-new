@@ -6,6 +6,7 @@ import { NextButton } from '../shared/Buttons'
 const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   onContinue,
   initialData,
+  isNextLoading,
 }) => {
   const [companyName, setCompanyName] = useState(initialData)
 
@@ -59,7 +60,13 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
 
         {/* Buttons */}
         <div className="flex flex-col items-center justify-center mt-[4.5rem] md:mt-[6.5rem] w-full space-y-2 px-2">
-          <NextButton disabled={!companyName} text={'Continue'} />
+          {isNextLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <NextButton disabled={!companyName} text={'Continue'} />
+          )}
         </div>
       </form>
     </div>

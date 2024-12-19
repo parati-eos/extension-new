@@ -10,6 +10,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
   onContinue,
   onBack,
   initialData,
+  isNextLoading,
 }) => {
   const [logo, setLogo] = useState<string | null>(initialData)
   const [isUploading, setIsUploading] = useState(false)
@@ -111,8 +112,16 @@ const LogoForm: React.FC<LogoFormProps> = ({
             logo !== '' ? 'md:mt-1' : ''
           } w-full space-y-2 px-2`}
         >
-          <NextButton disabled={!logo} text={'Next'} />
-          <BackButton onClick={onBack} />
+          {isNextLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <>
+              <NextButton disabled={!logo} text={'Next'} />
+              <BackButton onClick={onBack} />
+            </>
+          )}
         </div>
       </form>
     </div>

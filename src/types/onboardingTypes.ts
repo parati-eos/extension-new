@@ -1,6 +1,7 @@
 export interface CompanyNameFormProps {
   onContinue: (data: { companyName: string }) => void
   initialData: string
+  isNextLoading: boolean
 }
 
 export interface ContactDetailsFormProps {
@@ -15,24 +16,28 @@ export interface ContactDetailsFormProps {
     contactPhone: string
     linkedinLink: string
   }
+  isNextLoading: boolean
 }
 
 export interface IndustryFormProps {
   onContinue: (data: { sector: string; industry: string }) => void
   onBack: () => void
   initialData: { sector: string; industry: string }
+  isNextLoading: boolean
 }
 
 export interface LogoFormProps {
   onContinue: (data: { logo: string }) => void
   onBack: () => void
   initialData: string | null
+  isNextLoading: boolean
 }
 
 export interface WebsiteLinkFormProps {
   onContinue: (data: { websiteLink: string }) => void
   onBack: () => void
   initialData: string
+  isNextLoading: boolean
 }
 
 export interface FormData {

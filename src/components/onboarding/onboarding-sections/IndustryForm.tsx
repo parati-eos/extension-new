@@ -10,6 +10,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   onContinue,
   onBack,
   initialData,
+  isNextLoading,
 }) => {
   const [sector, setSector] = useState(initialData.sector)
   const [industry, setIndustry] = useState(initialData.industry)
@@ -196,8 +197,16 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
               : 'lg:mt-32'
           } w-full space-y-2 px-2`}
         >
-          <NextButton disabled={isNextButtonDisabled} text={'Next'} />
-          <BackButton onClick={onBack} />
+          {isNextLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <>
+              <NextButton disabled={isNextButtonDisabled} text={'Next'} />
+              <BackButton onClick={onBack} />
+            </>
+          )}
         </div>
       </form>
     </div>

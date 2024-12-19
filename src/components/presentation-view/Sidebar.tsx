@@ -27,17 +27,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   // Scroll to the selected outline
   useEffect(() => {
-    const selectedIndex = outlines.findIndex(
-      (outline) => outline.title === selectedOutline
-    )
-    if (
-      selectedIndex !== -1 &&
-      outlineRefs.current[selectedIndex] // Ensure the ref exists
-    ) {
-      outlineRefs.current[selectedIndex]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      })
+    if (selectedOutline) {
+      const selectedIndex = outlines.findIndex(
+        (outline) => outline.title === selectedOutline
+      )
+      if (selectedIndex === 0) {
+        outlineRefs.current[selectedIndex]?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }
     }
   }, [selectedOutline, outlines])
 

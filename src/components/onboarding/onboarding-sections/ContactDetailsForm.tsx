@@ -7,6 +7,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onContinue,
   onBack,
   initialData,
+  isNextLoading,
 }) => {
   const [contactEmail, setContactEmail] = useState(initialData.contactEmail)
   const [contactPhone, setContactPhone] = useState(initialData.contactPhone)
@@ -34,21 +35,21 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     setContactPhone(value)
     const phoneRegex = /^\+?[1-9]\d{9,14}$/
 
-
     setIsPhoneValid(!value || phoneRegex.test(value))
   }
 
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.trim();
+    let value = e.target.value.trim()
     if (!value.startsWith('http://') && !value.startsWith('https://')) {
-      value = `https://${value}`;
+      value = `https://${value}`
     }
-    setLinkedinLink(value);
-  
-    const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}$/;
+    setLinkedinLink(value)
+
+    const linkedinRegex =
+      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}$/
     // Check if the field is not empty and matches the regex
-    setIsLinkedinValid(value !== '' && linkedinRegex.test(value));
-  };
+    setIsLinkedinValid(value !== '' && linkedinRegex.test(value))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,7 +57,11 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   }
 
   // Disable Finish button if any field is invalid
-  const isFormValid = isEmailValid && isPhoneValid && isLinkedinValid && linkedinLink.trim() !== '';
+  const isFormValid =
+    isEmailValid &&
+    isPhoneValid &&
+    isLinkedinValid &&
+    linkedinLink.trim() !== ''
 
   return (
     <div className="w-full mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
@@ -147,8 +152,17 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
         {/* Buttons */}
         <div className="flex flex-col items-center justify-center w-full space-y-2 px-2">
-          <NextButton text="Finish" disabled={!isFormValid} /> {/* Disable button if form is invalid */}
-          <BackButton onClick={onBack} />
+          {isNextLoading ? (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <>
+              <NextButton text="Finish" disabled={!isFormValid} />{' '}
+              {/* Disable button if form is invalid */}
+              <BackButton onClick={onBack} />
+            </>
+          )}
         </div>
       </form>
     </div>

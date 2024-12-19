@@ -14,6 +14,7 @@ const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
   const [visitedSections, setVisitedSections] = useState<number[]>([1]) // Start with the first section visited
   const [isMediumOrLargerScreen, setIsMediumOrLargerScreen] = useState(false)
+  const [isNextLoading, setIsNextLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     companyName: '',
     contactEmail: '',
@@ -49,6 +50,7 @@ const OnboardingContainer: React.FC = () => {
 
   // Function to handle API calls (POST for first section, PATCH for others)
   const submitFormData = async (data: Partial<typeof formData>) => {
+    setIsNextLoading(true)
     try {
       if (currentSection === 1) {
         await axios
@@ -67,6 +69,7 @@ const OnboardingContainer: React.FC = () => {
           )
           .then((response) => {
             sessionStorage.setItem('userPlan', response.data.plan.plan_name)
+            setIsNextLoading(false)
           })
       } else {
         await axios.patch(
@@ -80,6 +83,7 @@ const OnboardingContainer: React.FC = () => {
         )
       }
       setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
+      setIsNextLoading(false)
     } catch (error) {
       toast.error('Error submitting form data', {
         position: 'top-center',
@@ -102,12 +106,16 @@ const OnboardingContainer: React.FC = () => {
 
     const nextSection = currentSection + 1
     if (nextSection <= 5) {
-      setCurrentSection(nextSection)
-      if (!visitedSections.includes(nextSection)) {
-        setVisitedSections([...visitedSections, nextSection])
+      if (!isNextLoading) {
+        setCurrentSection(nextSection)
+        if (!visitedSections.includes(nextSection)) {
+          setVisitedSections([...visitedSections, nextSection])
+        }
       }
     } else {
-      navigate('/new-presentation')
+      if (!isNextLoading) {
+        navigate('/new-presentation')
+      }
     }
   }
 
@@ -130,6 +138,7 @@ const OnboardingContainer: React.FC = () => {
           <CompanyNameForm
             onContinue={handleContinue}
             initialData={formData.companyName}
+            isNextLoading={isNextLoading}
           />
         )
       case 2:
@@ -138,6 +147,7 @@ const OnboardingContainer: React.FC = () => {
             onContinue={handleContinue}
             onBack={handleBack}
             initialData={formData.logo}
+            isNextLoading={isNextLoading}
           />
         )
       case 3:
@@ -146,6 +156,7 @@ const OnboardingContainer: React.FC = () => {
             onContinue={handleContinue}
             onBack={handleBack}
             initialData={formData.websiteLink}
+            isNextLoading={isNextLoading}
           />
         )
       case 4:
@@ -153,6 +164,7 @@ const OnboardingContainer: React.FC = () => {
           <IndustryForm
             onContinue={handleContinue}
             onBack={handleBack}
+            isNextLoading={isNextLoading}
             initialData={{
               sector: formData.sector,
               industry: formData.industry,
@@ -164,6 +176,7 @@ const OnboardingContainer: React.FC = () => {
           <ContactDetailsForm
             onContinue={handleContinue}
             onBack={handleBack}
+            isNextLoading={isNextLoading}
             initialData={{
               contactEmail: formData.contactEmail,
               contactPhone: formData.contactPhone,
