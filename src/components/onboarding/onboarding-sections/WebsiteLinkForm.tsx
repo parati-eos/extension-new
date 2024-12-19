@@ -9,10 +9,22 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
   initialData,
 }) => {
   const [websiteLink, setWebsiteLink] = useState(initialData)
+  const [isValidLink, setIsValidLink] = useState(false)
 
   useEffect(() => {
     setWebsiteLink(initialData)
+    validateLink(initialData) // Validate the initial data if provided
   }, [initialData])
+
+  const validateLink = (link: string | undefined) => {
+    if (!link) {
+      setIsValidLink(false)
+      return
+    }
+    // Regular expression to validate a URL
+    const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+    setIsValidLink(urlRegex.test(link))
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let updatedValue = e.target.value
@@ -23,11 +35,12 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
       updatedValue = `https://${updatedValue}`
     }
     setWebsiteLink(updatedValue)
+    validateLink(updatedValue)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (websiteLink) {
+    if (isValidLink && websiteLink) {
       onContinue({ websiteLink })
     }
   }
@@ -61,11 +74,16 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             value={websiteLink}
             onChange={handleInputChange}
           />
+          {!isValidLink && websiteLink && (
+            <p className="text-red-500 text-sm mt-2">
+              Please enter a valid website link.
+            </p>
+          )}
         </div>
 
         {/* Buttons */}
         <div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 px-2">
-          <NextButton disabled={!websiteLink} text={'Next'} />
+          <NextButton disabled={!isValidLink} text={'Next'} />
           <BackButton onClick={onBack} />
         </div>
       </form>

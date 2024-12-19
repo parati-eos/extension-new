@@ -25,7 +25,7 @@ const HowWorks: React.FC = () => {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   AI Presentation Maker
                 </h3>
-                <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
                   <li>
                     Generate a new presentation or refine an existing one.
                   </li>
@@ -38,7 +38,7 @@ const HowWorks: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                  className="mt-6 px-6 py-2 font-semibold bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
                 >
                   Generate Presentation
                 </button>
@@ -63,7 +63,7 @@ const HowWorks: React.FC = () => {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Customizable Slide Designs
                 </h3>
-                <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
                   <li>
                     Instantly create a new slide with AI in a single click.
                   </li>
@@ -76,7 +76,7 @@ const HowWorks: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                  className="mt-6 px-6 py-2 bg-transparent font-semibold border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
                 >
                   Refine Presentation
                 </button>
@@ -101,7 +101,7 @@ const HowWorks: React.FC = () => {
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Seamless Presentation Sharing
                 </h3>
-                <ul className="mt-4 text-gray-600 space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
                   <li>Share your AI presentation instantly via weblinks.</li>
                   <li>Download your AI-generated presentation as a PDF.</li>
                   <li>
@@ -111,7 +111,7 @@ const HowWorks: React.FC = () => {
                 </ul>
                 <button
                   onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+                  className="mt-6 px-6 py-2 bg-transparent font-semibold border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
                 >
                   Share Presentation
                 </button>

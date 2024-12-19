@@ -123,12 +123,13 @@ export default function Statistics({
       ) : (
         <>
           {/* Top Section: Headings */}
-          <div className="flex  items-center justify-between ">
-            <h2 className=" hidden md:block md:text-lg font-semibold text-[#091220]">
-              {heading}
+          <div className="flex  items-center justify-between w-full ">
+            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
+              {slideType}
             </h2>
             <BackButton onClick={onBack} />
           </div>
+<h3>{heading}</h3>
 
           {/* Content container with flex-grow */}
           <div
@@ -146,14 +147,14 @@ export default function Statistics({
                 type="text"
                 value={title[index]}
                 onChange={(e) => handleInputTitle(e.target.value, index)}
-                placeholder={`Enter Data label ${index + 1}`}
+                placeholder={`Enter Data Label ${index + 1}`}
                 className="lg:ml-1 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="text"
                 value={description[index]}
                 onChange={(e) => handleInputDescription(e.target.value, index)}
-                placeholder={`Enter value ${index + 1}`}
+                placeholder={`Enter Value ${index + 1}`}
                 className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

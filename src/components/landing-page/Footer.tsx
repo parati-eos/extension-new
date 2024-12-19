@@ -16,14 +16,14 @@ const Footer: React.FC = () => {
         style={{ backgroundImage: `url(${freepikbg})` }}
       >
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Get Started with Zynth </h1>
-          <p className="text-lg mb-8">
+          <h1 className="text-4xl font-semibold mb-4">Get Started with Zynth </h1>
+          <p className="text-lg mb-8 font-semibold">
             More than a simple PowerPoint make Zynth is your personal <br></br>{' '}
             AI presentation creator.
           </p>
           <button
             onClick={() => navigate('/auth')}
-            className="bg-yellow-500 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-600 active:scale-95 active:opacity-80 transition-all duration-300"
+            className="bg-yellow-500 text-black font-semibold py-5 px-8 rounded-lg hover:bg-yellow-600 active:scale-95 active:opacity-80 transition-all duration-300"
           >
             Get Started for Free
           </button>
@@ -56,11 +56,11 @@ const Footer: React.FC = () => {
                 alt="Zynth Logo"
                 className="h-10 mb-4 md:mb-2 mx-auto md:mx-0"
               />
-              <p className="text-gray-700 text-sm">
+              <p className="text-black text-sm">
                 Create your investor presentations in a few minutes using our
                 AI-powered pitch deck builder. No design skills needed.
               </p>
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-black text-sm mt-2">
                 © 2024 Parati Technologies Private Limited. All rights reserved.
               </p>
             </div>

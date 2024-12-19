@@ -117,10 +117,11 @@ export default function Images({
           {/* Heading */}
           <div className="flex items-center justify-between w-full mb-4">
             <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-              {heading}
+              {slideType}
             </h2>
             <BackButton onClick={onBack} />
           </div>
+          <h3>{heading}</h3>
 
           {/* Mobile Images Input and Display Section */}
           <div className="flex flex-col lg:hidden w-full h-full md:mt-4">

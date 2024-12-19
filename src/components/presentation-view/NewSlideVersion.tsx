@@ -20,15 +20,18 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   userPlan,
 }) => {
   return (
-    <div className="flex flex-col mt-2 items-center justify-center h-full">
-      <h2 className="text-xl font-semibold">Create a new slide</h2>
-      <h3 className="text-base text-[#5D5F61]">
-        How would you like to create a new slide?
-      </h3>
-      <div className="flex gap-2  lg:mt-4 mt-8 mr-2 lg:mr-0 lg:ml-0  lg:px-4  ">
-        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[33%]">
+    <div className="flex flex-col  w-full h-full p-2 ">
+
+     <div className="flex flex-col w-full h-full items-center justify-center  text-center ">
+  <h2 className="text-xl font-semibold">Create a new slide</h2>
+  <h3 className="text-base text-[#5D5F61] mt-2">
+    How would you like to create a new slide?
+  </h3>
+
+      <div className="w-full flex justify-between  mt-8   ">
+        <div className="flex flex-col items-center rounded-md border  border-gray-300 p-4 flex-shrink-0 w-[33%]">
           <button
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center "
             onClick={handleQuickGenerate}
           >
             <img
@@ -39,9 +42,9 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-xs lg:text-sm">Quick Generate</span>
           </button>
         </div>
-        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[33%]">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-4 flex-shrink-0 w-[33%]">
           <button
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center "
             onClick={handleSlideNarrative}
           >
             <img
@@ -52,9 +55,9 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-xs lg:text-sm">Slide Narrative</span>
           </button>
         </div>
-        <div className="flex flex-col items-center rounded-md border border-gray-300 p-2 flex-shrink-0 w-[33%]">
+        <div className="flex flex-col items-center rounded-md border border-gray-300 p-4 flex-shrink-0 w-[33%]">
           <button
-            className="flex flex-col items-center justify-center"
+            className="flex flex-col items-center justify-center "
             onClick={handleCustomBuilderClick}
             // disabled={userPlan === 'free'}
           >
@@ -67,6 +70,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
           </button>
         </div>
       </div>
+    </div>
     </div>
   )
 }
@@ -83,21 +87,22 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <div className="hidden md:flex justify-end w-[95%] md:absolute md:top-4">
+    <div className="flex flex-col h-full items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
         <BackButton onClick={onBack} />
       </div>
-      <h2 className="text-xl text-[#091220] font-semibold mb-3">
-        Create a new slide
-      </h2>
-      <h3 className="text-base text-[#5D5F61] mb-8">
-        How would you like to create a new slide?
-      </h3>
-      <div className="flex gap-8 px-8 md:px-16 w-full overflow-hidden">
-        {/* Quick Generate */}
+      <div className="text-center">
+        <h2 className="text-xl text-[#091220] font-semibold mb-3">
+          Create a new slide
+        </h2>
+        <h3 className="text-base text-[#5D5F61]">
+          How would you like to create a new slide?
+        </h3>
+      </div>
+      <div className="flex   justify-between mt-8 w-full overflow-hidden p-4">
         <div
           className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-          style={{ width: '30%', height: '12rem' }} // Replaced pixels with % and rem
+          style={{ width: '30%', height: '12rem' }}
         >
           <button
             className="flex flex-col items-center justify-center w-full h-full"
@@ -111,10 +116,9 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-base font-medium">Quick Generate</span>
           </button>
         </div>
-        {/* Custom Builder */}
         <div
           className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-          style={{ width: '30%', height: '12rem' }} // Replaced pixels with % and rem
+          style={{ width: '30%', height: '12rem' }}
         >
           <button
             className="flex flex-col items-center justify-center w-full h-full"
@@ -128,15 +132,13 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             <span className="text-base font-medium">Slide Narrative</span>
           </button>
         </div>
-        {/* Slide Narrative */}
         <div
           className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-          style={{ width: '30%', height: '12rem' }} // Replaced pixels with % and rem
+          style={{ width: '30%', height: '12rem' }}
         >
           <button
             className="flex flex-col items-center justify-center w-full h-full"
             onClick={handleCustomBuilderClick}
-            // disabled={userPlan === 'free'}
           >
             <img
               src={CustomBuilderIcon}
@@ -150,3 +152,5 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
     </div>
   )
 }
+
+   

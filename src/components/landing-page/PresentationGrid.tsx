@@ -25,11 +25,11 @@ const PresentationGrid: React.FC = () => {
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
         Presentation Builder for Every Team
       </h1>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-10 px-4">
         {presentationTypes.map((type) => (
           <div
             key={type.id}
-            className="relative flex flex-col items-center justify-center p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg cursor-default lg:h-40 lg:w-52"
+            className="relative flex flex-col items-center justify-center p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg cursor-default lg:h-40 lg:w-full"
           >
             <img
               src={type.iconUrl}

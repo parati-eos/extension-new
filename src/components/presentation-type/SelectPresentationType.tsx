@@ -255,7 +255,7 @@ const SelectPresentationType: React.FC = () => {
         Create new or refine presentation
       </h1>
       {/* Subheading */}
-      <p className="text-[#5D5F61] text-left mt-2">
+      <p className="text-[#5D5F61] font-semibold text-left mt-2">
         Select presentation type to generate or refine your presentation
       </p>
 
@@ -321,7 +321,7 @@ const SelectPresentationType: React.FC = () => {
           <button
             onClick={handleGenerate}
             disabled={isButtonDisabled}
-            className={`h-[3.1rem] text-white px-4 rounded-lg active:scale-95 transition transform duration-300 mr-4 flex items-center ${
+            className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
               isButtonDisabled
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-[#3667B2] hover:bg-[#0A8568]'
@@ -336,7 +336,7 @@ const SelectPresentationType: React.FC = () => {
           >
             <button
               disabled={refineButtonDisabled}
-              className={`h-[3.1rem] border px-4 rounded-lg active:scale-95 transition transform duration-300 ${
+              className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
                 refineButtonDisabled
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
@@ -353,13 +353,13 @@ const SelectPresentationType: React.FC = () => {
                 onMouseLeave={handleDialogMouseLeave}
               >
                 <p>
-                  Please upgrade to{' '}
+                  Please {' '}
                   <span>
                     <button
                       className="text-purple-600 hover:text-purple-800 hover:scale-110 active:scale-95 transition transform"
                       onClick={() => setIsPricingModalOpen(true)}
                     >
-                      Pro
+                      upgrade to Pro
                     </button>
                   </span>{' '}
                   plan to access this feature.

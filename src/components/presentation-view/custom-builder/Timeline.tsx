@@ -122,10 +122,11 @@ export default function Timeline({
           {/* Top Section: Headings */}
           <div className="flex  items-center justify-between w-full ">
             <h2 className=" md:text-lg font-semibold text-[#091220]">
-              {heading}
+              {slideType}
             </h2>
             <BackButton onClick={onBack} />
           </div>
+          <h3>{heading}</h3>
           {/* Content container with flex-grow */}
           <div ref={containerRef} className="flex-1 overflow-y-auto scrollbar-none">
             {timeline.map((point, index) => (
