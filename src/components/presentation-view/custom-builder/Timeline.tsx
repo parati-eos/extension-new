@@ -79,7 +79,7 @@ export default function Timeline({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: selectedImage ? selectedImage.name : '', // Pass image name if selected
+            image: selectedImage ? selectedImage.name : '',
             phases: phases,
           },
         },

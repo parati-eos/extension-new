@@ -37,8 +37,8 @@ const Test = () => {
     // Automatically fetch slides on component mount
     console.log('Emitting fetchSlides event...')
     socket.emit('fetchSlides', {
-      slideType: 'Product Overview',
-      formID: 'Document-1732794823300',
+      slideType: 'Financial Projections',
+      formID: 'Document-1734679552766',
     })
 
     // Cleanup when the component unmounts
@@ -51,7 +51,7 @@ const Test = () => {
   return (
     <div>
       <h1>Slide Display</h1>
-      {/* <div>
+      <div>
         {loading ? (
           <p>Loading slides...</p>
         ) : slides.length > 0 ? (
@@ -63,7 +63,7 @@ const Test = () => {
         ) : (
           <p>No slides found.</p>
         )}
-      </div> */}
+      </div>
     </div>
   )
 }

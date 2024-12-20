@@ -147,10 +147,10 @@ const SelectPresentationType: React.FC = () => {
           )
         }
       } catch (error) {
-        toast.error('Error generating ppt', {
-          position: 'top-center',
-          autoClose: 2000,
-        })
+        // toast.error('Error generating ppt', {
+        //   position: 'top-center',
+        //   autoClose: 2000,
+        // })
       }
     }
 
