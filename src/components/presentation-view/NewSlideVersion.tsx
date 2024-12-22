@@ -87,10 +87,12 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full items-center justify-center p-4">
-      <div className="absolute top-4 right-4">
-        <BackButton onClick={onBack} />
-      </div>
+  
+    <div className="relative flex flex-col h-full w-full items-center justify-center p-4">
+  {/* Back Button */}
+  <div className="hidden lg:block absolute top-4 right-4 ">
+    <BackButton onClick={onBack} />
+  </div>
       <div className="text-center">
         <h2 className="text-xl text-[#091220] font-semibold mb-3">
           Create a new slide
@@ -150,6 +152,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         </div>
       </div>
     </div>
+    
   )
 }
 

@@ -10,6 +10,7 @@ interface PricingModalProps {
   currency: string
 }
 
+
 const categories = [
   {
     title: 'Access',
@@ -45,11 +46,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
     'monthly'
   )
-
-  const plans = [
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'pro'>('pro');
+  const navigate = useNavigate()
+  const handlePlanSelection = (planId: 'free' | 'pro') => {
+    setSelectedPlan(planId);
+  };
+ const plans = [
     {
       name: 'FREE',
-      buttonText: 'Get Started for Free',
+      buttonText: selectedPlan === 'free' ? 'Get Started for Free':'Get Started for Free' ,
       description: (
         <div className="mb-[5.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
@@ -60,6 +65,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
 
       price: null,
       features: [
+       
         {
           text: 'Unlimited',
           bgColor: '#F5F7FA',
@@ -159,34 +165,32 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     },
     {
       name: 'PRO',
-      buttonText: 'Upgrade to Pro',
+      buttonText: selectedPlan === 'pro' ? 'Cancel Subscription' : 'Upgrade to Pro',
+
       description: (
-        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+        <div className="lg:mb-[2.4rem]">
+          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
           Ideal for professionals and businesses.
-        </span>
+          </span>
+        </div>
       ),
       price:
-        billingCycle === 'monthly' ? (
-          <>
-            {monthlyPlanAmount} {currency}
-            <br />
-            <span className="text-sm text-gray-500">per month</span>
-          </>
-        ) : (
-          <>
-            {yearlyPlanAmount} {currency}
-            <br />
-            <span className="text-sm text-gray-500">per year</span>
-          </>
+      billingCycle === 'monthly' ? (
+        <>
+          {monthlyPlanAmount} {currency}
+          
+          <span className="text-2xl font-bold ml-2">per month</span>
+        </>
+      ) : (
+        <>
+          {yearlyPlanAmount} {currency}
+          
+       
+          <span className="text-2xl font-bold ml-2">per year</span>
+        </>
         ),
       features: [
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-0.5 ',
-          margin: '',
-        },
+     
         {
           text: 'Unlimited',
           bgColor: '#F5F7FA',
@@ -293,7 +297,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       ],
     },
   ]
-  const navigate = useNavigate()
+
 
   return (
     <div
@@ -303,21 +307,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
       }`}
     >
-      <div className="bg-white w-[90%] max-h-[90%] overflow-y-auto rounded-lg shadow-lg p-4 sm:p-6 relative">
+      <div className="bg-white w-[90%] max-h-[90%] overflow-y-auto scrollbar-none rounded-lg shadow-lg p-4 sm:p-6 relative">
         <button
           onClick={closeModal}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-900 hover:scale-110 active:scale-95 transform transition text-lg md:text-4xl"
         >
           &times;
         </button>
-        <div>
-          <h2 className="text-gray-900 text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">
-            You are currently on FREE plan. To <br />
-            use <span className="text-[#3667B2]">{heading} </span>
-            feature, <br />
-            please upgrade to <span className="text-[#3667B2]">Pro plan.</span>
-          </h2>
-          <div className="inline-flex items-center bg-gray-200 rounded-full p-1">
+        <div className='lg:flex lg:justify-end lg:mr-12'>
+         
+          <div className="inline-flex items-center bg-gray-200 rounded-full p-1 ">
             <button
               className={`px-4 py-2 rounded-full text-sm font-medium ${
                 billingCycle === 'monthly'
@@ -343,97 +342,121 @@ export const PricingModal: React.FC<PricingModalProps> = ({
 
         <div className="bg-white w-full p-4 hidden lg:block ">
           <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
-            {/* Side Component: Categories */}
+      {/* Side Component: Categories */}
             <div className="mt-[15rem] ">
-              {categories.map((category, index) => (
-                <div key={index} className="mb-10">
-                  <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
-                    {category.title}
-                  </h2>
-                  <ul className="space-y-8 text-gray-700 ml-6">
-                    {category.features.map((feature, featureIndex) => (
-                      <li key={featureIndex}>{feature}</li>
-                    ))}
-                  </ul>
-                </div>
+        {categories.map((category, index) => (
+          <div key={index} className="mb-10">
+            <h2 className="text-[#3667B2] text-lg font-semibold mb-4">
+              {category.title}
+            </h2>
+            <ul className="space-y-8 text-gray-700 ml-6">
+              {category.features.map((feature, featureIndex) => (
+                <li key={featureIndex}>{feature}</li>
               ))}
-            </div>
+            </ul>
+          </div>
+        ))}
+      </div>
 
-            {/* Plans */}
-            {plans.map((plan, planIndex) => (
-              <div
-                key={planIndex}
-                className={`bg-white border ${
-                  planIndex === 1 ? 'border-indigo-600' : 'border-gray-200'
-                } rounded-lg shadow-lg p-6 hidden lg:block`}
-              >
-                <div className="flex flex-col items-center mb-8">
-                  <h3 className="text-indigo-600 text-lg font-semibold mb-2">
-                    {plan.name}
-                  </h3>
-                  {plan.price && (
-                    <div className="text-gray-900 text-4xl font-bold text-center mb-2">
-                      {plan.price}
-                    </div>
-                  )}
+      {/* Plans */}
+      {plans.map((plan, planIndex) => (
+        
+        <div
+          key={planIndex}
+          className={`bg-white border ${
+            selectedPlan === plan.name.toLowerCase()
+              ? 'border-[#3667B2] outline-2'
+              : planIndex === 1
+              
+             
+          } `}
+        >
+          <div className="flex flex-col items-center mb-8 ">
+            <h3 className="text-indigo-600 text-lg font-semibold mb-2">
+              {plan.name}
+            </h3>
+            {plan.price && (
+              <div className="text-gray-900 text-4xl font-bold text-center mb-2">
+                {plan.price}
+              </div>
+            )}
                   <p className="text-gray-500 font-medium text-center">
                     {plan.description}
                   </p>
-                </div>
-                <button
-                  className={`w-full font-medium py-2 px-6 ${
-                    planIndex === 0
-                  } rounded-lg ${
-                    planIndex === 1
-                      ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
-                      : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
-                  }`}
-                >
-                  <a href="/auth" target="_blank">
-                    {plan.buttonText}
-                  </a>
-                </button>
-                <ul className="mb-8 mt-4 space-y-0">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li
-                      key={featureIndex}
-                      className={`flex items-center justify-center w-full mt-6 ${feature.spacing} ${feature.margin}`}
-                      style={{
-                        backgroundColor: feature.bgColor,
-                        borderRadius: '0.375rem',
-                      }}
-                    >
-                      {feature.icon ? (
-                        <FaCheckCircle className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <span
-                          className={`${
-                            feature.text === '-' ? 'black text-lg' : 'black'
-                          }`}
-                        >
-                          {feature.text}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  // onClick={() => navigate('/auth')}
-                  className={`w-full font-medium py-2 px-6 rounded-lg ${
-                    planIndex === 1
-                      ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
-                      : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
-                  }`}
-                >
-                  <a href="/auth" target="_blank">
-                    {plan.buttonText}
-                  </a>
-                </button>
-              </div>
-            ))}
           </div>
+          <div className='p-3 justify-center'>   <button
+  className={`w-full   font-medium py-2 px-6 rounded-lg ${
+    selectedPlan === plan.name.toLowerCase()
+      ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+      : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+  } 
+  ${selectedPlan === 'free' && plan.name.toLowerCase() === 'free' 
+    ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
+    : ''} 
+  ${selectedPlan === 'pro' && plan.name.toLowerCase() === 'free' 
+    ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
+    : ''}`}
+  disabled={selectedPlan === 'free' && plan.name.toLowerCase() === 'free' || selectedPlan === 'pro' && plan.name.toLowerCase() === 'free'}
+>
+  {plan.name.toLowerCase() === 'free' 
+    ? 'Get Started for Free' 
+    : selectedPlan === 'pro' 
+    ? 'Cancel Subscription' 
+    : 'Upgrade to Pro'}
+</button>  </div>
+
+          
+          <ul className="mb-8 mt-4 space-y-0">
+            {plan.features.map((feature, featureIndex) => (
+              <li
+                key={featureIndex}
+                className={`flex items-center justify-center w-full mt-6 ${feature.spacing} ${feature.margin}`}
+                style={{
+                  backgroundColor: feature.bgColor,
+                  borderRadius: '0.375rem',
+                }}
+              >
+                {feature.icon ? (
+                  <FaCheckCircle className="h-5 w-5 text-green-500" />
+                ) : (
+                  <span
+                    className={`${
+                      feature.text === '-' ? 'black text-lg' : 'black'
+                    }`}
+                  >
+                    {feature.text}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+<div className='p-3'>
+          <button
+  className={`w-full font-medium py-2 px-6 rounded-lg ${
+    selectedPlan === plan.name.toLowerCase()
+      ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+      : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+  } 
+  ${selectedPlan === 'free' && plan.name.toLowerCase() === 'free' 
+    ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
+    : ''} 
+  ${selectedPlan === 'pro' && plan.name.toLowerCase() === 'free' 
+    ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
+    : ''}`}
+  disabled={selectedPlan === 'free' && plan.name.toLowerCase() === 'free' || selectedPlan === 'pro' && plan.name.toLowerCase() === 'free'}
+>
+  {plan.name.toLowerCase() === 'free' 
+    ? 'Get Started for Free' 
+    : selectedPlan === 'pro' 
+    ? 'Cancel Subscription' 
+    : 'Upgrade to Pro'}
+</button>
+</div>
+
         </div>
+      ))}
+    </div>
+  </div>
         {/* Mobile View */}
         <div className=" rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden  ">
           <div className="px-4 ">
@@ -520,21 +543,21 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
           <div className="px-4 ">
             <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
-            <p className="text-sm text-gray-600 font-medium mb-4">
+            <p className="text-sm text-gray-600 font-medium mb-3">
               Ideal for professionals and businesses.
             </p>
             <h3 className="text-2xl font-bold">
               {billingCycle === 'monthly' ? (
                 <>
                   {monthlyPlanAmount} {currency}
-                  <br />
-                  <span className="text-sm text-gray-500">per month</span>
+                  
+                  <span className="text-2xl md:font-thin lg:font-bold ml-2">per month</span>
                 </>
               ) : (
                 <>
                   {yearlyPlanAmount} {currency}
-                  <br />
-                  <span className="text-sm text-gray-500">per year</span>
+                  
+                  <span className="text-2xl font-bold ml-2">per year</span>
                 </>
               )}
             </h3>

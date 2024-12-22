@@ -124,13 +124,13 @@ export default function Statistics({
       ) : (
         <>
           {/* Top Section: Headings */}
-          <div className="flex  items-center justify-between w-full ">
-            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-              {slideType}
-            </h2>
-            <BackButton onClick={onBack} />
-          </div>
-          <h3>{heading}</h3>
+        <div className="flex items-center justify-between w-full">
+                    <h3>
+                      Statistics
+                    </h3>
+                    <BackButton onClick={onBack} />
+                  </div>
+                  <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
 
           {/* Content container with flex-grow */}
           <div

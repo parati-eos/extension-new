@@ -48,11 +48,12 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
       value = `https://${value}`
     }
     setLinkedinLink(value)
-
+  
     const linkedinRegex =
-      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}$/
+      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/
     setIsLinkedinValid(value === '' || linkedinRegex.test(value)) // Valid if empty or matches regex
   }
+  
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -154,18 +155,21 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center w-full space-y-2 px-2 lg:mt-0 ">
-          {isNextLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <>
-              <NextButton text="Finish" disabled={!isFormValid} />{' '}
-              <BackButton onClick={onBack} />
-            </>
-          )}
-        </div>
+       {/* Buttons */}
+<div className="flex flex-col items-center justify-center w-full space-y-2 px-2 lg:mt-0">
+  {/* Next Button or Loader */}
+  {isNextLoading ? (
+    <div className="w-full flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+    </div>
+  ) : (
+    <NextButton text="Finish" disabled={!isFormValid} />
+  )}
+
+  {/* Back Button */}
+  <BackButton onClick={onBack} />
+</div>
+
       </form>
     </div>
   )

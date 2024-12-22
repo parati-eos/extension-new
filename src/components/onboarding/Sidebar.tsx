@@ -129,7 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {/* Dotted Progress Bar */}
                     {index < sections.length - 1 &&
                       visitedSections.includes(sections[index + 1].id) && (
-                        <div className="w-1 h-8 border-l-2 border-dotted border-gray-300 mt-2"></div>
+                        <div className="w-1 h-2 border-l-2 border-dotted border-gray-300 mt-2"></div>
                       )}
                   </div>
 
