@@ -1,193 +1,103 @@
-"items": [
-        {
-            "id": "plan_PZ2WSvEsXlc3AJ",
-            "entity": "plan",
-            "interval": 1,
-            "period": "monthly",
-            "item": {
-                "id": "item_PZ2WSuRrCdDues",
-                "active": true,
-                "name": "Premium Subscription",
-                "description": "Access to premium features",
-                "amount": 50000,
-                "unit_amount": 50000,
-                "currency": "INR",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1734612354,
-                "updated_at": 1734612354
+import React, { useState, useEffect } from 'react'
+
+// Define types for slide content and page elements
+interface SlideContent {
+  pageElements: PageElement[]
+}
+
+interface PageElement {
+  image?: ImageElement
+  textBox?: TextBoxElement
+}
+
+interface ImageElement {
+  contentUrl: string
+  width: number
+  height: number
+}
+
+interface TextBoxElement {
+  text: {
+    content: string
+  }
+}
+
+interface SlideProps {
+  presentationId: string
+  slideId: string
+}
+
+const SlideComponent: React.FC<SlideProps> = ({ presentationId, slideId }) => {
+  const [slideContent, setSlideContent] = useState<SlideContent | null>(null)
+
+  useEffect(() => {
+    const fetchSlide = async () => {
+      try {
+        const response = await fetch(
+          `https://slides.googleapis.com/v1/presentations/${presentationId}/pages/${slideId}`,
+          {
+            headers: {
+              Authorization: `Bearer YOUR_ACCESS_TOKEN`,
             },
-            "notes": [],
-            "created_at": 1734612354
-        },
-        {
-            "id": "plan_PZ2VbTdN8uveTK",
-            "entity": "plan",
-            "interval": 1,
-            "period": "monthly",
-            "item": {
-                "id": "item_PZ2VbSriMQnpqE",
-                "active": true,
-                "name": "Premium Subscription",
-                "description": "Access to premium features",
-                "amount": 50000,
-                "unit_amount": 50000,
-                "currency": "INR",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1734612305,
-                "updated_at": 1734612305
-            },
-            "notes": [],
-            "created_at": 1734612305
-        },
-        {
-            "id": "plan_PT6NVx05jnyemG",
-            "entity": "plan",
-            "interval": 1,
-            "period": "yearly",
-            "item": {
-                "id": "item_PT6NVwOAVdJQsJ",
-                "active": true,
-                "name": "Pro - Annual",
-                "description": null,
-                "amount": 19900,
-                "unit_amount": 19900,
-                "currency": "USD",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1733315892,
-                "updated_at": 1733315892
-            },
-            "notes": [],
-            "created_at": 1733315892
-        },
-        {
-            "id": "plan_PT6L43FI47inU2",
-            "entity": "plan",
-            "interval": 1,
-            "period": "yearly",
-            "item": {
-                "id": "item_PT6L42PXjr2bWw",
-                "active": true,
-                "name": "Pro - Annual",
-                "description": null,
-                "amount": 999900,
-                "unit_amount": 999900,
-                "currency": "INR",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1733315752,
-                "updated_at": 1733315752
-            },
-            "notes": [],
-            "created_at": 1733315752
-        },
-        {
-            "id": "plan_PT69nEFkhlj0ei",
-            "entity": "plan",
-            "interval": 1,
-            "period": "monthly",
-            "item": {
-                "id": "item_PT69nDU0QQJAXV",
-                "active": true,
-                "name": "Pro - Monthly",
-                "description": null,
-                "amount": 1900,
-                "unit_amount": 1900,
-                "currency": "USD",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1733315112,
-                "updated_at": 1733315112
-            },
-            "notes": [],
-            "created_at": 1733315112
-        },
-        {
-            "id": "plan_PT68TxzRVAvbQ6",
-            "entity": "plan",
-            "interval": 1,
-            "period": "monthly",
-            "item": {
-                "id": "item_PT68TxHxuoxIoo",
-                "active": true,
-                "name": "Pro - Monthly",
-                "description": null,
-                "amount": 99900,
-                "unit_amount": 99900,
-                "currency": "INR",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1733315038,
-                "updated_at": 1733315038
-            },
-            "notes": {
-                "undefined": ""
-            },
-            "created_at": 1733315038
-        },
-        {
-            "id": "plan_PSHAOMfskupy3x",
-            "entity": "plan",
-            "interval": 1,
-            "period": "monthly",
-            "item": {
-                "id": "item_PSHAOLkvf4ULSQ",
-                "active": true,
-                "name": "Pro",
-                "description": null,
-                "amount": 10000,
-                "unit_amount": 10000,
-                "currency": "INR",
-                "type": "plan",
-                "unit": null,
-                "tax_inclusive": false,
-                "hsn_code": null,
-                "sac_code": null,
-                "tax_rate": null,
-                "tax_id": null,
-                "tax_group_id": null,
-                "created_at": 1733135544,
-                "updated_at": 1733135544
-            },
-            "notes": [],
-            "created_at": 1733135544
+          }
+        )
+        const data: SlideContent = await response.json()
+        setSlideContent(data)
+      } catch (error) {
+        console.error('Error fetching slide content:', error)
+      }
+    }
+
+    fetchSlide()
+  }, [presentationId, slideId])
+
+  return (
+    <div>
+      {slideContent?.pageElements.map((element, index) => {
+        if (element.image) {
+          return (
+            <img
+              key={index}
+              src={element.image.contentUrl}
+              alt="Slide Element"
+              style={{
+                width: element.image.width,
+                height: element.image.height,
+              }}
+            />
+          )
+        } else if (element.textBox) {
+          return <p key={index}>{element.textBox.text.content}</p>
         }
-    ]
+        return null
+      })}
+    </div>
+  )
+}
+
+export default SlideComponent
+
+// {
+//   /*
+//     Dynamic Content Loading: Instead of reloading the iframe, dynamically update its content using postMessage or by directly manipulating its DOM (if allowed by cross-origin policies).
+// Example:
+// javascript
+// const iframe = document.getElementById('slide-iframe');
+// iframe.contentWindow.postMessage({ slideData: newSlide }, '*');
+// Reduce iframe Reloading:
+// If the iframe must reload, ensure only the relevant parts of the content are updated (e.g., by passing parameters to the iframe's URL or using AJAX inside the iframe).
+// Ensure Efficient Rendering in the iframe:
+// Optimize the page loaded in the iframe for faster rendering (e.g., minimize scripts, lazy-load assets).
+// Leverage iframe Communication:
+// Use the postMessage API for efficient communication between the parent page and iframe.
+// Parent sends data: javascript
+// const iframe = document.getElementById('slide-iframe');
+// iframe.contentWindow.postMessage({ type: 'updateSlide', slideData: newSlide }, '*');
+// iframe listens: javascript
+// window.addEventListener('message', (event) => {
+//     if (event.data.type === 'updateSlide') {
+//         updateSlide(event.data.slideData); // Custom function to handle slide update
+//     }
+// });
+//     */
+// }

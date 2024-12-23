@@ -30,6 +30,32 @@ import { toast } from 'react-toastify'
 import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
 
+interface SlideContent {
+  pageElements: PageElement[]
+}
+
+interface PageElement {
+  image?: ImageElement
+  textBox?: TextBoxElement
+}
+
+interface ImageElement {
+  contentUrl: string
+  width: number
+  height: number
+}
+
+interface TextBoxElement {
+  text: {
+    content: string
+  }
+}
+
+interface SlideProps {
+  presentationId: string
+  slideId: string
+}
+
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
