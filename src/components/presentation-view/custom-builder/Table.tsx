@@ -225,7 +225,7 @@ export default function Table({
       ) : (
         <>
          <div className="flex items-center justify-between w-full">
-                     <h3>
+                     <h3 className='text-semibold'>
                        Table
                      </h3>
                      <BackButton onClick={onBack} />

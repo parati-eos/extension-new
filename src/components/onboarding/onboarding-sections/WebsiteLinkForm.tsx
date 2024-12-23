@@ -60,7 +60,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
   
  <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
             {/* Heading */}
-            <div className="flex flex-col items-center gap-1 mb-8">
+            <div className="flex flex-col items-center gap-1 lg:mb-8">
             <FaGlobe className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">Website Link</h1>
         <p className="text-[#5D5F61]">Provide your website link</p>
@@ -70,7 +70,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-[3.5rem] md:mt-12 lg:mb-[9.5rem] mb-32">
+        <div className="w-full mt-[3.5rem] md:mt-12 xl:mb-[7rem] lg:mb-[9.5rem] mb-32">
           <label
             htmlFor="websiteLink"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -95,7 +95,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
 
         {/* Buttons */}
        {/* Buttons */}
-<div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 ">
+<div className="flex flex-col items-center justify-center mt-1 xl:mt-0 md:mt-4 w-full space-y-2 ">
   {/* Next Button or Loader */}
   {isNextLoading ? (
     <div className="w-full flex items-center justify-center">

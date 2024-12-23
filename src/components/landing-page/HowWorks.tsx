@@ -19,7 +19,7 @@ const HowWorks: React.FC = () => {
           <div className="flex flex-col lg:flex-row items-center gap-8">
   <div className="lg:w-1/2 flex items-start gap-4">
     {/* White circular background for the number */}
-    <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-12 lg:h-12 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
+    <div className="flex-shrink-0 flex items-center justify-center w-8  h-8 lg:w-14 lg:h-14 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
       1
     </div>
     <div>
@@ -51,14 +51,14 @@ const HowWorks: React.FC = () => {
           {/* Step 2 */}
           <div className="flex flex-col lg:flex-row-reverse items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-12 lg:h-12 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-14 lg:h-14 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
       2
     </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Customizable Slide Designs
                 </h3>
-                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
+                <ul className="mt-4 text-black font-normal space-y-2 list-disc list-inside">
                   <li>
                     Instantly create a new slide with AI in a single click.
                   </li>
@@ -89,7 +89,7 @@ const HowWorks: React.FC = () => {
           {/* Step 3 */}
           <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-12 lg:h-12 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-14 lg:h-14 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
       3
     </div>
               <div>

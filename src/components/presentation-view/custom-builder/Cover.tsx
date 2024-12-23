@@ -99,7 +99,7 @@ export default function Cover({
     <div className="flex flex-col h-full w-full p-2 lg:p-4">
       {/* Header Section */}
      <div className="flex items-center justify-between w-full">
-                 <h3>
+                 <h3 className='text-semibold'>
                    Cover
                  </h3>
                  <BackButton onClick={onBack} />

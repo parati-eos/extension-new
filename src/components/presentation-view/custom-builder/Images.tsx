@@ -117,7 +117,7 @@ export default function Images({
         <>
           {/* Heading */}
           <div className="flex items-center justify-between w-full">
-            <h3>
+            <h3 className='text-semibold'>
               Images
             </h3>
             <BackButton onClick={onBack} />
@@ -126,7 +126,7 @@ export default function Images({
 
           {/* Mobile Images Input and Display Section */}
           <div className="flex flex-col lg:hidden w-full h-full md:mt-4">
-            <div className="flex items-center border justify-between border-gray-300 rounded-lg p-4">
+            <div className="flex items-center border justify-between border-gray-300 rounded-lg mt-2 lg:mt-0 p-4">
               <div className="flex items-center gap-4">
                 <FaImage className="text-4xl text-gray-500" />
                 <p className="text-gray-500 text-sm text-center">

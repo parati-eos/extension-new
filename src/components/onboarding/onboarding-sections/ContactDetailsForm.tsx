@@ -36,11 +36,27 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setContactPhone(value)
-    const phoneRegex = /^\+?[1-9]\d{9,14}$/
-    setIsPhoneValid(value === '' || phoneRegex.test(value)) // Valid if empty or matches regex
-  }
+    let value = e.target.value;
+  
+    // Remove all non-numeric characters
+    value = value.replace(/\D/g, '');
+  
+    // Prevent leading zeros
+    if (value.startsWith('0')) {
+      value = value.substring(1);
+    }
+  
+    // Limit the input to 10 digits
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+  
+    setContactPhone(value);
+  
+    // Validate the phone number (exactly 10 digits)
+    const phoneRegex = /^[1-9]\d{9}$/;
+    setIsPhoneValid(phoneRegex.test(value));
+  };
 
   const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!linkedinLink) {
@@ -83,7 +99,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   
          <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
             {/* Heading */}
-            <div className="flex flex-col items-center gap-1 mb-8">
+            <div className="flex flex-col items-center gap-1 lg:mb-8">
             <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Contact Details
@@ -127,7 +143,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             Company Phone
           </label>
           <input
-            type="text"
+            type="tel"
             id="phone"
             placeholder="Enter phone number"
             className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${

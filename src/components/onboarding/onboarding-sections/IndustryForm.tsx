@@ -93,7 +93,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
         <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between p-2 md:p-4">
             {/* Heading */}
-            <div className="flex flex-col items-center gap-1 mb-8">
+            <div className="flex flex-col items-center gap-1 lg:mb-8">
             <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Your Industry
@@ -110,85 +110,85 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         {/* Input */}
         <div
           className={` w-full  lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
-            sector === 'Other' || industry === 'Other' ? 'md:mt-2' : ''
-          } px-2`}
-        >
-          <div className="flex flex-col w-full">
-            <label
-              htmlFor="sector"
-              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-            >
-              Sector
-            </label>
-            <select
-              id="sector"
-              value={sector}
-              onChange={handleSectorChange}
-              className="mb-2 lg:p-2 p-3 border w-full rounded-xl"
-            >
-              <option value="" disabled>
-                Select sector
-              </option>
-              {Object.keys(industrySectorMap).map((sectorKey) => (
-                <option key={sectorKey} value={sectorKey}>
-                  {sectorKey}
-                </option>
-              ))}
-            </select>
-            {sector === 'Other' && (
-              <input
-                type="text"
-                placeholder="Enter your sector"
-                className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
-                value={otherSector}
-                onChange={(e) => setOtherSector(e.target.value)}
-              />
-            )}
-          </div>
+    sector === 'Other' || industry === 'Other' ? 'md:mt-2' : ''
+  } px-2`}
+>
+  <div className="flex flex-col w-full">
+    <label
+      htmlFor="sector"
+      className="mb-3 font-semibold text-[#4A4B4D] block text-left"
+    >
+      Sector
+    </label>
+    <select
+      id="sector"
+      value={sector}
+      onChange={handleSectorChange}
+      className="mb-2 lg:p-2 p-3 border w-full rounded-xl"
+    >
+      <option value="" disabled>
+        Select sector
+      </option>
+      {Object.keys(industrySectorMap).map((sectorKey) => (
+        <option key={sectorKey} value={sectorKey}>
+          {sectorKey}
+        </option>
+      ))}
+    </select>
+    {sector === 'Other' && (
+      <input
+        type="text"
+        placeholder="Enter your sector"
+        className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
+        value={otherSector}
+        onChange={(e) => setOtherSector(e.target.value)}
+      />
+    )}
+  </div>
 
-          <div className="flex flex-col w-full">
-            <label
-              htmlFor="industry"
-              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-            >
-              Industry
-            </label>
-            <select
-              id="industry"
-              value={industry}
-              onChange={handleIndustryChange}
-              className="mb-2 lg:p-2 p-3 border w-full rounded-xl"
-              disabled={!sector || sector === 'Other'}
-            >
-              {sector !== 'Other' && (
-                <option value="" disabled>
-                  Select industry
-                </option>
-              )}
-              {sector === 'Other' && (
-                <option value="" disabled>
-                  Other
-                </option>
-              )}
-              {industryOptions.map((industryOption) => (
-                <option key={industryOption} value={industryOption}>
-                  {industryOption}
-                </option>
-              ))}
-            </select>
+  <div className="flex flex-col w-full">
+    <label
+      htmlFor="industry"
+      className="mb-3 font-semibold text-[#4A4B4D] block text-left"
+    >
+      Industry
+    </label>
+    <select
+      id="industry"
+      value={industry}
+      onChange={handleIndustryChange}
+      className="mb-2 lg:p-2 p-3 border w-full rounded-xl"
+      disabled={!sector || sector === 'Other'}
+    >
+      {sector !== 'Other' && (
+        <option value="" disabled>
+          Select industry
+        </option>
+      )}
+      {sector === 'Other' && (
+        <option value="" disabled>
+          Other
+        </option>
+      )}
+      {industryOptions.map((industryOption) => (
+        <option key={industryOption} value={industryOption}>
+          {industryOption}
+        </option>
+      ))}
+    </select>
             {industry === 'Other' || sector === 'Other' ? (
-              <input
-                type="text"
-                placeholder="Enter your industry"
-                className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
-                value={otherIndustry}
-                onChange={(e) => setOtherIndustry(e.target.value)}
-              />
+      <input
+        type="text"
+        placeholder="Enter your industry"
+        className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
+        value={otherIndustry}
+        onChange={(e) => setOtherIndustry(e.target.value)}
+      />
             ) : (
               <></>
-            )}
-          </div>
-        </div>
+    )}
+  </div>
+</div>
 
         {/* Buttons */}
        {/* Buttons */}
