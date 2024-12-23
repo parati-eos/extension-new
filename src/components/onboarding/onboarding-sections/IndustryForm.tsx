@@ -92,7 +92,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   return (
     <div className="w-full h-full flex flex-col items-center justify-center mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 lg:mb-8 lg:absolute lg:top-20">
+      <div className="flex flex-col items-center gap-1 lg:absolute lg:top-20">
         <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Your Industry
@@ -104,7 +104,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex lg:p-0 p-2 flex-col items-center justify-center w-full  mx-auto lg:mt-24"
+        className="flex lg:p-0 p-2 flex-col items-center justify-center w-full  mx-auto "
       >
         {/* Input */}
         <div
