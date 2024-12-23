@@ -42,17 +42,29 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     setIsPhoneValid(value === '' || phoneRegex.test(value)) // Valid if empty or matches regex
   }
 
-  const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.trim()
-    if (!value.startsWith('http://') && !value.startsWith('https://')) {
-      value = `https://${value}`
+  const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!linkedinLink) {
+      setLinkedinLink("https://"); // Pre-fill "https://" only if input is empty
     }
-    setLinkedinLink(value)
+  };
+  
+  const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+  
+    // Allow backspace to clear the input
+    if (value === "") {
+      setLinkedinLink(""); // Allow user to completely clear input
+      return;
+    }
+  
+    
   
     const linkedinRegex =
-      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/
-    setIsLinkedinValid(value === '' || linkedinRegex.test(value)) // Valid if empty or matches regex
-  }
+      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/;
+  
+    setIsLinkedinValid(linkedinRegex.test(value)); // Validate LinkedIn URL
+    setLinkedinLink(value); // Update state
+  };
   
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,22 +80,23 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
       (linkedinLink === '' || isLinkedinValid)) // At least one filled and valid
 
   return (
-    <div className="w-full mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
-      {/* Heading */}
-      <div className="flex flex-col items-center gap-1 lg:mb-8 mb-4 md:mb-6">
-        <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
+  
+         <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
+            {/* Heading */}
+            <div className="flex flex-col items-center gap-1 mb-8">
+            <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Contact Details
         </h1>
         <p className="text-[#5D5F61]">Provide your contact details</p>
-      </div>
+            </div>
 
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Email */}
-        <div className="w-full px-2 ">
+        <div className="w-full ">
           <label
             htmlFor="email"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -145,7 +158,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               !isLinkedinValid ? 'border-red-500' : ''
             }`}
             value={linkedinLink}
-            onChange={handleLinkedinChange}
+            onFocus={handleLinkedinFocus} // Add "https://" on focus
+  onChange={handleLinkedinChange}
           />
           {!isLinkedinValid && (
             <p className="text-[#FF0000] text-sm text-left">
@@ -156,7 +170,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
         {/* Buttons */}
        {/* Buttons */}
-<div className="flex flex-col items-center justify-center w-full space-y-2 px-2 lg:mt-0">
+<div className="flex flex-col items-center justify-center w-full space-y-2 lg:mt-0">
   {/* Next Button or Loader */}
   {isNextLoading ? (
     <div className="w-full flex items-center justify-center">

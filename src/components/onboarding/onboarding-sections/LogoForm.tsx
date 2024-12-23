@@ -111,7 +111,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
 <div
   className={`flex flex-col items-center justify-center mt-[3.5rem] md:mt-7 ${
     logo !== '' ? 'md:mt-1' : ''
-  } w-full space-y-2 px-2`}
+  } w-full space-y-2 `}
 >
   {/* Next Button or Loader */}
   {isNextLoading ? (

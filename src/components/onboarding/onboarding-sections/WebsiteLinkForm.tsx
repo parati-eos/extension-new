@@ -27,16 +27,24 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
     setIsValidLink(urlRegex.test(link))
   }
 
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!websiteLink) {
+      setWebsiteLink('https://') // Pre-fill "https://" if empty
+    }
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let updatedValue = e.target.value
-    if (
-      !updatedValue.startsWith('http://') &&
-      !updatedValue.startsWith('https://')
-    ) {
-      updatedValue = `https://${updatedValue}`
+
+    // Allow backspace to completely clear the input
+    if (updatedValue === '') {
+      setWebsiteLink('') // Allow clearing the field
+      validateLink('') // Validate empty value
+      return
     }
-    setWebsiteLink(updatedValue)
-    validateLink(updatedValue)
+
+    setWebsiteLink(updatedValue) // Update website link state
+    validateLink(updatedValue) // Call validation
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,20 +55,19 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
   }
 
   return (
-    <div className="w-full lg:mt-0 mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-center md:p-4">
+    <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center ">
+      <div className="flex flex-col items-center gap-1 mb-8">
         <FaGlobe className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">Website Link</h1>
         <p className="text-[#5D5F61]">Provide your website link</p>
       </div>
-
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center flex-grow mt-2 w-full max-w-sm mx-auto"
+        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-[3.5rem] md:mt-12 px-2 lg:mb-[9.5rem] mb-32">
+        <div className="w-full mt-[3.5rem] md:mt-12 lg:mb-[9.5rem] mb-32">
           <label
             htmlFor="websiteLink"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -74,6 +81,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             className="mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
             value={websiteLink}
             onChange={handleInputChange}
+            onFocus={handleInputFocus}
           />
           {!isValidLink && websiteLink && (
             <p className="text-red-500 text-sm mt-2">
@@ -84,7 +92,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
 
         {/* Buttons */}
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 ">
           {/* Next Button or Loader */}
           {isNextLoading ? (
             <div className="w-full flex items-center justify-center">
