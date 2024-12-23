@@ -458,18 +458,27 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     </div>
   </div>
         {/* Mobile View */}
-        <div className=" rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden  ">
+        <div
+  className={`rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden mt-8 border ${
+    selectedPlan === 'free' ? 'border-[#3667B2]' : 'border-white'
+  }`}
+>
           <div className="px-4 ">
             <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
             <p className="text-sm font-medium  text-gray-600 mb-4">
               Perfect for exploring Zynth.
             </p>
             <button
-              onClick={() => navigate('/auth')}
-              className="bg-white text-[#3667B2] py-2 px-4 w-full mt-4 font-semibold rounded-lg border border-[#3667B2]"
-            >
-              Get Started for Free
-            </button>
+  onClick={() => navigate('/auth')}
+  className={`py-2 px-4 w-full mt-4 font-semibold rounded-lg border ${
+    selectedPlan === 'free' || selectedPlan === 'pro'
+      ? 'bg-gray-200 border-gray-200 text-gray-500 cursor-not-allowed'
+      : 'bg-white text-[#3667B2] border-[#3667B2]'
+  }`}
+  disabled={selectedPlan === 'free' || selectedPlan === 'pro'}
+>
+  Get Started for Free
+</button>
           </div>
 
           <div className="mt-4  ">
@@ -540,7 +549,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             </ul>
           </div>
         </div>
-        <div className=" rounded-xl ml-4 py-12 mr-4  bg-white lg:hidden mt-8 border border-[#3667B2]   ">
+        <div
+  className={`rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden mt-8 border ${
+    selectedPlan === 'pro' ? 'border-[#3667B2]' : 'border-white'
+  }`}
+>
           <div className="px-4 ">
             <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
             <p className="text-sm text-gray-600 font-medium mb-3">
@@ -561,9 +574,17 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 </>
               )}
             </h3>
-            <button className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
-              Upgrade to Pro
-            </button>
+            <button
+  className={`py-2 px-4 w-full mt-4 rounded-lg border ${
+    selectedPlan === 'free' || selectedPlan === 'pro'
+      ? 'bg-[#3667B2] text-white border-[#3667B2]'
+      : ''
+  }`}
+ 
+>
+  {selectedPlan === 'free' ? 'Upgrade to Pro' : 'Cancel Subscription'}
+</button>
+
           </div>
 
           <div className="mt-4  ">
@@ -646,9 +667,16 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               </li>
             </ul>
             <div className="px-4 py-2 ">
-              <button className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
-                Upgrade to Pro
-              </button>
+            <button
+  className={`py-2 px-4 w-full mt-4 rounded-lg border ${
+    selectedPlan === 'free' || selectedPlan === 'pro'
+      ? 'bg-[#3667B2] text-white border-[#3667B2]'
+      : ''
+  }`}
+ 
+>
+  {selectedPlan === 'free' ? 'Upgrade to Pro' : 'Cancel Subscription'}
+</button>
             </div>
           </div>
         </div>
