@@ -90,25 +90,26 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
     (industry === 'Other' && !otherIndustry) // Validate otherIndustry input
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:p-4">
-      {/* Heading */}
-      <div className="flex flex-col items-center gap-1 lg:absolute lg:top-20">
-        <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
+
+        <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between p-2 md:p-4">
+            {/* Heading */}
+            <div className="flex flex-col items-center gap-1 mb-8">
+            <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Your Industry
         </h1>
         <p className="text-[#5D5F61]">
           Provide details about sector and industry
         </p>
-      </div>
+            </div>
 
       <form
         onSubmit={handleSubmit}
-        className="flex lg:p-0 p-2 flex-col items-center justify-center w-full  mx-auto "
+        className="flex flex-col items-center justify-center flex-grow w-full  md:max-w-screen-xl mx-auto"
       >
         {/* Input */}
         <div
-          className={` w-full lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
+          className={` w-full  lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
             sector === 'Other' || industry === 'Other' ? 'md:mt-2' : ''
           } px-2`}
         >
@@ -192,7 +193,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         {/* Buttons */}
        {/* Buttons */}
 <div
-  className={`flex flex-col items-center justify-center lg:max-w-sm mt-[6.3rem] ${
+  className={`flex flex-col items-center justify-center max-w-sm mt-[6.3rem] ${
     sector === 'Other' || industry === 'Other'
       ? 'lg:mt-[14rem] mb-8 space-y-0'
       : 'lg:mt-[14.5rem]'
