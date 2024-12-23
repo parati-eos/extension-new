@@ -42,17 +42,29 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     setIsPhoneValid(value === '' || phoneRegex.test(value)) // Valid if empty or matches regex
   }
 
-  const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.trim()
-    if (!value.startsWith('http://') && !value.startsWith('https://')) {
-      value = `https://${value}`
+  const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!linkedinLink) {
+      setLinkedinLink("https://"); // Pre-fill "https://" only if input is empty
     }
-    setLinkedinLink(value)
+  };
+  
+  const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+  
+    // Allow backspace to clear the input
+    if (value === "") {
+      setLinkedinLink(""); // Allow user to completely clear input
+      return;
+    }
+  
+    
   
     const linkedinRegex =
-      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/
-    setIsLinkedinValid(value === '' || linkedinRegex.test(value)) // Valid if empty or matches regex
-  }
+      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/;
+  
+    setIsLinkedinValid(linkedinRegex.test(value)); // Validate LinkedIn URL
+    setLinkedinLink(value); // Update state
+  };
   
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -146,7 +158,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               !isLinkedinValid ? 'border-red-500' : ''
             }`}
             value={linkedinLink}
-            onChange={handleLinkedinChange}
+            onFocus={handleLinkedinFocus} // Add "https://" on focus
+  onChange={handleLinkedinChange}
           />
           {!isLinkedinValid && (
             <p className="text-[#FF0000] text-sm text-left">

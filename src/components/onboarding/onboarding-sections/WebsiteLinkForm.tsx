@@ -27,17 +27,27 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
     setIsValidLink(urlRegex.test(link))
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let updatedValue = e.target.value
-    if (
-      !updatedValue.startsWith('http://') &&
-      !updatedValue.startsWith('https://')
-    ) {
-      updatedValue = `https://${updatedValue}`
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!websiteLink) {
+      setWebsiteLink("https://"); // Pre-fill "https://" if empty
     }
-    setWebsiteLink(updatedValue)
-    validateLink(updatedValue)
-  }
+  };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let updatedValue = e.target.value;
+  
+    // Allow backspace to completely clear the input
+    if (updatedValue === "") {
+      setWebsiteLink(""); // Allow clearing the field
+      validateLink(""); // Validate empty value
+      return;
+    }
+  
+    
+  
+    setWebsiteLink(updatedValue); // Update website link state
+    validateLink(updatedValue); // Call validation
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -74,6 +84,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             className="mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
             value={websiteLink}
             onChange={handleInputChange}
+            onFocus={handleInputFocus} 
           />
           {!isValidLink && websiteLink && (
             <p className="text-red-500 text-sm mt-2">
