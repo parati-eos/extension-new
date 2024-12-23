@@ -83,18 +83,21 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 px-2">
-          {isNextLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <>
-              <NextButton disabled={!isValidLink} text={'Next'} />
-              <BackButton onClick={onBack} />
-            </>
-          )}
-        </div>
+       {/* Buttons */}
+<div className="flex flex-col items-center justify-center mt-1 md:mt-4 w-full space-y-2 px-2">
+  {/* Next Button or Loader */}
+  {isNextLoading ? (
+    <div className="w-full flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+    </div>
+  ) : (
+    <NextButton disabled={!isValidLink} text={'Next'} />
+  )}
+
+  {/* Back Button */}
+  <BackButton onClick={onBack} />
+</div>
+
       </form>
     </div>
   )

@@ -80,24 +80,22 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
             </button>
 
             {userPlan === 'free' && isDialogVisible && (
-              <div
-                className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 h-[6rem] w-[10rem] bg-gray-200 text-[#3667B2] px-3 py-1 rounded-2xl shadow-lg"
-                onMouseEnter={handleDialogMouseEnter}
-                onMouseLeave={handleDialogMouseLeave}
+            <div
+            className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+            onMouseEnter={handleDialogMouseEnter}
+            onMouseLeave={handleDialogMouseLeave}
+          >
+            <p className="text-sm text-center text-gray-800">
+              Please{' '}
+              <button
+                className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                onClick={openPricingModal}
               >
-                <p>
-                  Please 
-                  <span>
-                    <button
-                      className="text-purple-600 hover:text-purple-800 hover:scale-110 active:scale-95 transition transform"
-                      onClick={openPricingModal}
-                    >
-                      upgrade to Pro
-                    </button>
-                  </span>{' '}
-                  plan to access this feature.
-                </p>
-              </div>
+                upgrade to Pro
+              </button>{' '}
+              plan to access this feature.
+            </p>
+          </div>
             )}
           </div>
         </div>

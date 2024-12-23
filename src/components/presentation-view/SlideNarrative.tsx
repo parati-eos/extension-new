@@ -84,11 +84,11 @@ export default function SlideNarrative({
         <>
           {/* Top Section: Headings */}
           <div className="hidden lg:flex  items-center justify-between  ">
-            <h2 className="font-semibold text-[#091220]">{slideType}</h2>
+            <h2 className="font-semibold text-[#091220]">Slide Narrative</h2>
             <BackButton onClick={onBack} />
           </div>
           <h3>{heading}</h3>
-
+           
           {/* Input Section for Desktop */}
           <div className="hidden h-full w-full md:block flex-1 p-2 ">
             <div className="flex flex-col items-center justify-center h-full w-full ">

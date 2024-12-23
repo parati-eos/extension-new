@@ -224,16 +224,16 @@ export default function Table({
         </div>
       ) : (
         <>
-          <div className="flex  items-center justify-between w-full ">
-            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-              {slideType}
-            </h2>
-            <BackButton onClick={onBack} />
-          </div>
-          <h3>{heading}</h3>
+         <div className="flex items-center justify-between w-full">
+                     <h3>
+                       Table
+                     </h3>
+                     <BackButton onClick={onBack} />
+                   </div>
+                   <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
           <div
             ref={containerRef}
-            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none"
+            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-4 py-2 "
           >
             <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
               <table className="table-auto w-full ">

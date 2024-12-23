@@ -80,13 +80,13 @@ export default function Contact({
   return (
     <div className="flex flex-col p-4 h-full w-full">
       {/* Heading */}
-      <div className="flex  items-center justify-between w-full ">
-            <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-              {slideType}
-            </h2>
-            <BackButton onClick={onBack} />
-          </div>
-<h3>{heading}</h3>
+      <div className="flex items-center justify-between w-full">
+                  <h3>
+                    Contact
+                  </h3>
+                  <BackButton onClick={onBack} />
+                </div>
+                <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
 
       {/* Content Section */}
       <div className="flex-1 overflow-y-auto lg:w-[65%] scrollbar-none ">

@@ -194,32 +194,29 @@ const Pricing: React.FC = () => {
       name: 'PRO',
       buttonText: 'Sign up for Pro',
       description: (
-        <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+        <div className="mb-[2.5rem]">
+          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
           Ideal for professionals and businesses.
-        </span>
+          </span>
+        </div>
       ),
       price:
-        billingCycle === 'monthly' ? (
-          <>
-            {monthlyPlanAmount} {currency}
-            <br />
-            <span className="text-sm text-gray-500">per month</span>
-          </>
-        ) : (
-          <>
-            {yearlyPlanAmount} {currency}
-            <br />
-            <span className="text-sm text-gray-500">per year</span>
-          </>
+      billingCycle === 'monthly' ? (
+        <>
+          {monthlyPlanAmount} {currency}
+          
+          <span className="text-2xl font-bold ml-2">per month</span>
+        </>
+      ) : (
+        <>
+          {yearlyPlanAmount} {currency}
+          
+       
+          <span className="text-2xl font-bold ml-2">per year</span>
+        </>
         ),
       features: [
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-0.5 ',
-          margin: '',
-        },
+      
         {
           text: 'Unlimited',
           bgColor: '#F5F7FA',
@@ -334,34 +331,34 @@ const Pricing: React.FC = () => {
     >
       <section className="py-16 lg:min-h-[300px] lg:p-4 lg:ml-36 ml-2">
         <div className="p-2">
-          <p className="text-indigo-600 text-lg mb-2">Pricing</p>
-          <h1 className="text-gray-900 text-3xl font-bold mb-6">
-            AI slide maker for all your <br /> presentation needs.
-          </h1>
+      <p className="text-indigo-600 text-lg mb-2">Pricing</p>
+      <h1 className="text-gray-900 text-3xl font-bold mb-6">
+        AI slide maker for all your <br /> presentation needs.
+      </h1>
           <div className="inline-flex items-center bg-gray-200 rounded-full p-1">
-            <button
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                billingCycle === 'monthly'
-                  ? 'bg-white text-gray-900 font-bold'
-                  : 'bg-transparent text-gray-500'
-              }`}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Monthly billing
-            </button>
-            <button
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                billingCycle === 'annual'
-                  ? 'bg-white text-gray-900 font-bold'
-                  : 'bg-transparent text-gray-500'
-              }`}
-              onClick={() => setBillingCycle('annual')}
-            >
-              Annual billing
-            </button>
-          </div>
-        </div>
-      </section>
+      <button
+        className={`px-4 py-2 rounded-full text-sm font-medium ${
+          billingCycle === 'monthly'
+            ? 'bg-white text-gray-900 font-bold'
+            : 'bg-transparent text-gray-500'
+        }`}
+        onClick={() => setBillingCycle('monthly')}
+      >
+        Monthly billing
+      </button>
+      <button
+        className={`px-4 py-2 rounded-full text-sm font-medium ${
+          billingCycle === 'annual'
+            ? 'bg-white text-gray-900 font-bold'
+            : 'bg-transparent text-gray-500'
+        }`}
+        onClick={() => setBillingCycle('annual')}
+      >
+        Annual billing
+      </button>
+    </div>
+  </div>
+</section>
 
       <div className="bg-white w-full p-4 hidden lg:block ">
         <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
@@ -387,7 +384,7 @@ const Pricing: React.FC = () => {
               key={planIndex}
               className={`bg-white border ${
                 planIndex === 1 ? 'border-indigo-600' : 'border-gray-200'
-              } rounded-lg shadow-lg p-6 hidden lg:block`}
+              } rounded-lg shadow-lg hidden lg:block`}
             >
               <div className="flex flex-col items-center mb-8">
                 <h3 className="text-indigo-600 text-lg font-semibold mb-2">
@@ -402,7 +399,7 @@ const Pricing: React.FC = () => {
                   {plan.description}
                 </p>
               </div>
-              <button
+              <div className='p-3'> <button
                 className={`w-full font-medium py-2 px-6 ${
                   planIndex === 0
                 } rounded-lg ${
@@ -414,7 +411,8 @@ const Pricing: React.FC = () => {
                 <a href="/auth" target="_blank">
                   {plan.buttonText}
                 </a>
-              </button>
+              </button></div>
+             
               <ul className="mb-8 mt-4 space-y-0">
                 {plan.features.map((feature, featureIndex) => (
                   <li
@@ -439,7 +437,7 @@ const Pricing: React.FC = () => {
                   </li>
                 ))}
               </ul>
-
+<div className='p-3'>
               <button
                 onClick={() => navigate('/auth')}
                 className={`w-full font-medium py-2 px-6 rounded-lg ${
@@ -452,6 +450,7 @@ const Pricing: React.FC = () => {
                   {plan.buttonText}
                 </a>
               </button>
+            </div>
             </div>
           ))}
         </div>

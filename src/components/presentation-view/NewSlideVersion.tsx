@@ -96,7 +96,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full items-center justify-center p-4">
+    <div className="relative flex flex-col h-full w-full items-center justify-center p-4">
       {isLoading ? (
         <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -104,7 +104,8 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         </div>
       ) : (
         <>
-          <div className="absolute top-4 right-4">
+          {/* Back Button */}
+          <div className="hidden lg:block absolute top-4 right-4 ">
             <BackButton onClick={onBack} />
           </div>
           <div className="text-center">

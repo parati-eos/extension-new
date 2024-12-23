@@ -190,24 +190,27 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div
-          className={`flex flex-col items-center justify-center lg:max-w-sm mt-[6.3rem] ${
-            sector === 'Other' || industry === 'Other'
-              ? 'lg:mt-[14rem] mb-8 space-y-0'
-              : 'lg:mt-[14.5rem]'
-          } w-full space-y-2 `}
-        >
-          {isNextLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <>
-              <NextButton disabled={isNextButtonDisabled} text={'Next'} />
-              <BackButton onClick={onBack} />
-            </>
-          )}
-        </div>
+       {/* Buttons */}
+<div
+  className={`flex flex-col items-center justify-center lg:max-w-sm mt-[6.3rem] ${
+    sector === 'Other' || industry === 'Other'
+      ? 'lg:mt-[14rem] mb-8 space-y-0'
+      : 'lg:mt-[14.5rem]'
+  } w-full space-y-2`}
+>
+  {/* Next Button or Loader */}
+  {isNextLoading ? (
+    <div className="w-full flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+    </div>
+  ) : (
+    <NextButton disabled={isNextButtonDisabled} text={'Next'} />
+  )}
+
+  {/* Back Button */}
+  <BackButton onClick={onBack} />
+</div>
+
       </form>
     </div>
   )
