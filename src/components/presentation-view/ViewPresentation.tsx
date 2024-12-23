@@ -51,7 +51,6 @@ export default function ViewPresentation() {
   const [finalized, setFinalized] = useState(false)
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
-  const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides) // Track previous totalSlides
   const [slidesId, setSlidesId] = useState<string[]>([])
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
@@ -61,7 +60,9 @@ export default function ViewPresentation() {
   const [currency, setCurrency] = useState('')
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [hasDataBeenReceived, setHasDataBeenReceived] = useState(false)
-  const [currentSlidesData, setCurrentSlidesData] = useState<string[]>([]) // Store the latest slides data
+  const [currentSlidesData, setCurrentSlidesData] = useState<string[]>([])
+  const [prevSlidesId, setPrevSlidesId] = useState(slidesId)
+  const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -104,6 +105,7 @@ export default function ViewPresentation() {
 
   // Handle Add New Slide Version Button
   const handlePlusClick = () => {
+    setIsSlideLoading(false)
     if (!isSlideLoading) {
       if (displayMode === 'newContent') {
         console.log('Reached IF')
@@ -130,10 +132,6 @@ export default function ViewPresentation() {
     })
     setCurrentSlideIndex(0)
     setDisplayMode('slides')
-
-    setTimeout(() => {
-      setIsSlideLoading(false)
-    }, 2000)
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -147,9 +145,12 @@ export default function ViewPresentation() {
   const handleScroll = debounce(() => {
     if (!scrollContainerRef.current) return
 
+    setIsSlideLoading(true)
+
     const scrollTop = scrollContainerRef.current.scrollTop || 0
     const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
       if (!slideRef) return false
+
       const offset = slideRef.offsetTop - scrollTop
       return offset >= 0 && offset < slideRef.offsetHeight
     })
@@ -162,14 +163,6 @@ export default function ViewPresentation() {
       setDisplayMode('slides')
     }
   }, 100)
-
-  // Effect to monitor changes in totalSlides
-  useEffect(() => {
-    if (totalSlides !== prevTotalSlides) {
-      setIsSlideLoading(false) // Set loading to false only when totalSlides changes
-      setPrevTotalSlides(totalSlides) // Update the previous totalSlides
-    }
-  }, [totalSlides, prevTotalSlides])
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
@@ -194,7 +187,6 @@ export default function ViewPresentation() {
         .then((response) => {
           toast.success('Quick Generation Started')
           setDisplayMode('slides')
-          setCurrentSlideIndex(0)
         })
         .catch((error) => {
           toast.error('Error while generating slide', {
@@ -509,7 +501,7 @@ export default function ViewPresentation() {
       // Trigger the API call only if documentID is not present or is 'loading'
       const timer = setTimeout(() => {
         getDocumentId()
-      }, 20000) // delay
+      }, 22000) // delay
 
       // Cleanup the timer in case the component unmounts
       return () => clearTimeout(timer)
@@ -542,109 +534,8 @@ export default function ViewPresentation() {
   }, [authToken, orgId])
 
   // TODO: WEB SOCKET
-  // useEffect(() => {
-  //   if (outlines && outlines.length > 0) {
-  //     const socket = io(`${SOCKET_URL}`, {
-  //       transports: ['websocket'],
-  //     })
-  //     console.info('Connecting to WebSocket server...')
-
-  //     // When connected
-  //     socket.on('connect', () => {
-  //       console.info('Connected to WebSocket server', socket.id)
-  //     })
-
-  //     // FETCH slide data from the backend
-  //     let timer: NodeJS.Timeout | null = null
-
-  //     socket.on('slidesData', (newSlides) => {
-  //       if (
-  //         hasDataBeenReceived &&
-  //         JSON.stringify(currentSlidesData) ===
-  //           JSON.stringify(newSlides.map((item: any) => item.GenSlideID))
-  //       ) {
-  //         return
-  //       }
-
-  //       if (
-  //         newSlides &&
-  //         newSlides.length > 0 &&
-  //         newSlides[0].GenSlideID !== '' &&
-  //         newSlides[0].GenSlideID !== null &&
-  //         newSlides[0].SectionName === currentOutline.replace(/^\d+\.\s*/, '')
-  //       ) {
-  //         console.log('SOCKET DATA', newSlides)
-  //         setPresentationID(newSlides[0].PresentationID)
-  //         const ids = newSlides.map((item: any) => item.GenSlideID)
-  //         setSlidesId(ids)
-  //         setHasDataBeenReceived(true)
-  //         setCurrentSlidesData(ids)
-  //         setIsSlideLoading(false)
-  //         setIsNoGeneratedSlide(false)
-  //         setTotalSlides(ids.length)
-  //         // Clear any existing timer
-  //         if (timer) {
-  //           clearTimeout(timer)
-  //           timer = null
-  //         }
-  //       } else if (
-  //         newSlides &&
-  //         newSlides.length > 0 &&
-  //         newSlides[0].SectionName ===
-  //           currentOutline.replace(/^\d+\.\s*/, '') &&
-  //         (newSlides[0].GenSlideID === '' || newSlides[0].GenSlideID === null)
-  //       ) {
-  //         console.log('Listening for valid GenSlideID for 90sec...')
-  //         setHasDataBeenReceived(false)
-  //         setCurrentSlidesData([])
-  //         setIsSlideLoading(true)
-  //         setIsNoGeneratedSlide(false) // Reset this to avoid premature handling.
-  //         // Start a 90-second timer
-  //         if (!timer) {
-  //           timer = setTimeout(() => {
-  //             console.warn('No valid data received in 90 seconds')
-  //             setSlidesId([])
-  //             setTotalSlides(0)
-  //             setIsSlideLoading(false)
-  //             setIsNoGeneratedSlide(true)
-  //             timer = null // Reset the timer
-  //           }, 90000)
-  //         }
-  //       } else if (newSlides.length === 0) {
-  //         console.warn('Received empty or invalid slides data')
-  //         setSlidesId([])
-  //         setTotalSlides(0)
-  //         setIsSlideLoading(false)
-  //         setIsNoGeneratedSlide(true)
-  //         setHasDataBeenReceived(false)
-  //         setCurrentSlidesData([])
-  //       }
-  //     })
-
-  //     // Handle any error messages from the backend
-  //     socket.on('error', (error) => {
-  //       console.error('Error:', error.message)
-  //     })
-
-  //     // currentOutline.replace(/^\d+\.\s*/, '')
-  //     console.log('Outline Passed: ', currentOutline.replace(/^\d+\.\s*/, ''))
-  //     console.log('DocumentID Passed: ', documentID)
-
-  //     // Automatically fetch slides on component mount
-  //     socket.emit('fetchSlides', {
-  //       slideType: currentOutline.replace(/^\d+\.\s*/, ''),
-  //       formID: documentID,
-  //     })
-
-  //     // Cleanup when the component unmounts
-  //     return () => {
-  //       console.info('Disconnecting from WebSocket server...')
-  //       socket.disconnect()
-  //     }
-  //   }
-  // }, [currentOutline])
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const newSlidesRef = useRef([]) // Ref to store newSlides persistently
+  const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   useEffect(() => {
     if (outlines && outlines.length > 0) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
@@ -702,12 +593,14 @@ export default function ViewPresentation() {
             }, 90000)
           }
         } else if (newSlides.length <= 0) {
-          setSlidesId([])
-          setTotalSlides(0)
-          setIsSlideLoading(false)
-          setIsNoGeneratedSlide(true)
-          setHasDataBeenReceived(false)
-          setCurrentSlidesData([])
+          setTimeout(() => {
+            setSlidesId([])
+            setTotalSlides(0)
+            setIsSlideLoading(false)
+            setIsNoGeneratedSlide(true)
+            setHasDataBeenReceived(false)
+            setCurrentSlidesData([])
+          }, 4000)
         }
       })
 
@@ -730,7 +623,34 @@ export default function ViewPresentation() {
         if (timerRef.current) clearTimeout(timerRef.current)
       }
     }
-  }, [currentOutline])
+  }, [
+    currentOutline,
+    outlines,
+    documentID,
+    hasDataBeenReceived,
+    currentSlidesData,
+    SOCKET_URL,
+  ])
+
+  // Effect to monitor changes
+  useEffect(() => {
+    if (slidesId !== prevSlidesId) {
+      setIsSlideLoading(false)
+      setPrevSlidesId(slidesId)
+    }
+  }, [slidesId, prevSlidesId])
+
+  // Effect to set loader for pagination changes
+  useEffect(() => {
+    if (currentSlideIndex !== prevSlideIndex) {
+      setIsSlideLoading(true)
+      setPrevSlideIndex(currentSlideIndex)
+    }
+
+    setTimeout(() => {
+      setIsSlideLoading(false)
+    }, 2000)
+  }, [currentSlideIndex, prevSlideIndex])
 
   // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
@@ -756,7 +676,7 @@ export default function ViewPresentation() {
   }, [documentID, authToken])
   useEffect(() => {
     fetchOutlines()
-  }, [fetchOutlines])
+  }, [fetchOutlines, documentID])
 
   // Set Slide Type For Quick Generate
   useEffect(() => {
@@ -805,7 +725,9 @@ export default function ViewPresentation() {
     return () => clearTimeout(timer)
   }, [authToken])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+  const yearlyPlanId = yearlyPlan?.id
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
@@ -819,6 +741,10 @@ export default function ViewPresentation() {
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
           currency={currency}
+          yearlyPlanId={yearlyPlanId!}
+          monthlyPlanId={monthlyPlanId!}
+          authToken={authToken!}
+          orgId={orgId!}
         />
       ) : (
         <></>
@@ -855,12 +781,12 @@ export default function ViewPresentation() {
             onScroll={handleScroll}
             ref={scrollContainerRef}
           >
-            {isSlideLoading && (
+            {/* {isSlideLoading && (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 <h1>Generating Slide Please Wait...</h1>
               </div>
-            )}
+            )} */}
             {outlines.map((outline, index) => (
               <div
                 key={outline.title}
