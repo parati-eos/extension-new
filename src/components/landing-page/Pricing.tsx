@@ -58,12 +58,12 @@ const Pricing: React.FC = () => {
         )
         .then((response) => {
           if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[3])
-            setYearlyPlan(response.data.items[1])
+            setMonthlyPlan(response.data.items[5])
+            setYearlyPlan(response.data.items[3])
             setCurrency('INR')
           } else {
-            setMonthlyPlan(response.data.items[2])
-            setYearlyPlan(response.data.items[0])
+            setMonthlyPlan(response.data.items[4])
+            setYearlyPlan(response.data.items[2])
             setCurrency('USD')
           }
         })
@@ -196,27 +196,23 @@ const Pricing: React.FC = () => {
       description: (
         <div className="mb-[2.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-          Ideal for professionals and businesses.
+            Ideal for professionals and businesses.
           </span>
         </div>
       ),
       price:
-      billingCycle === 'monthly' ? (
-        <>
-          {monthlyPlanAmount} {currency}
-          
-          <span className="text-2xl font-bold ml-2">per month</span>
-        </>
-      ) : (
-        <>
-          {yearlyPlanAmount} {currency}
-          
-       
-          <span className="text-2xl font-bold ml-2">per year</span>
-        </>
+        billingCycle === 'monthly' ? (
+          <>
+            {monthlyPlanAmount} {currency}
+            <span className="text-2xl font-bold ml-2">per month</span>
+          </>
+        ) : (
+          <>
+            {yearlyPlanAmount} {currency}
+            <span className="text-2xl font-bold ml-2">per year</span>
+          </>
         ),
       features: [
-      
         {
           text: 'Unlimited',
           bgColor: '#F5F7FA',
@@ -331,34 +327,34 @@ const Pricing: React.FC = () => {
     >
       <section className="py-16 lg:min-h-[300px] lg:p-4 lg:ml-36 ml-2">
         <div className="p-2">
-      <p className="text-indigo-600 text-lg mb-2">Pricing</p>
-      <h1 className="text-gray-900 text-3xl font-bold mb-6">
-        AI slide maker for all your <br /> presentation needs.
-      </h1>
+          <p className="text-indigo-600 text-lg mb-2">Pricing</p>
+          <h1 className="text-gray-900 text-3xl font-bold mb-6">
+            AI slide maker for all your <br /> presentation needs.
+          </h1>
           <div className="inline-flex items-center bg-gray-200 rounded-full p-1">
-      <button
-        className={`px-4 py-2 rounded-full text-sm font-medium ${
-          billingCycle === 'monthly'
-            ? 'bg-white text-gray-900 font-bold'
-            : 'bg-transparent text-gray-500'
-        }`}
-        onClick={() => setBillingCycle('monthly')}
-      >
-        Monthly billing
-      </button>
-      <button
-        className={`px-4 py-2 rounded-full text-sm font-medium ${
-          billingCycle === 'annual'
-            ? 'bg-white text-gray-900 font-bold'
-            : 'bg-transparent text-gray-500'
-        }`}
-        onClick={() => setBillingCycle('annual')}
-      >
-        Annual billing
-      </button>
-    </div>
-  </div>
-</section>
+            <button
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                billingCycle === 'monthly'
+                  ? 'bg-white text-gray-900 font-bold'
+                  : 'bg-transparent text-gray-500'
+              }`}
+              onClick={() => setBillingCycle('monthly')}
+            >
+              Monthly billing
+            </button>
+            <button
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                billingCycle === 'annual'
+                  ? 'bg-white text-gray-900 font-bold'
+                  : 'bg-transparent text-gray-500'
+              }`}
+              onClick={() => setBillingCycle('annual')}
+            >
+              Annual billing
+            </button>
+          </div>
+        </div>
+      </section>
 
       <div className="bg-white w-full p-4 hidden lg:block ">
         <div className="max-w-6xl mx-auto lg:grid grid-cols-3 gap-8   ">
@@ -399,20 +395,23 @@ const Pricing: React.FC = () => {
                   {plan.description}
                 </p>
               </div>
-              <div className='p-3'> <button
-                className={`w-full font-medium py-2 px-6 ${
-                  planIndex === 0
-                } rounded-lg ${
-                  planIndex === 1
-                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
-                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
-                }`}
-              >
-                <a href="/auth" target="_blank">
-                  {plan.buttonText}
-                </a>
-              </button></div>
-             
+              <div className="p-3">
+                {' '}
+                <button
+                  className={`w-full font-medium py-2 px-6 ${
+                    planIndex === 0
+                  } rounded-lg ${
+                    planIndex === 1
+                      ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
+                      : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
+                  }`}
+                >
+                  <a href="/auth" target="_blank">
+                    {plan.buttonText}
+                  </a>
+                </button>
+              </div>
+
               <ul className="mb-8 mt-4 space-y-0">
                 {plan.features.map((feature, featureIndex) => (
                   <li
@@ -437,20 +436,20 @@ const Pricing: React.FC = () => {
                   </li>
                 ))}
               </ul>
-<div className='p-3'>
-              <button
-                onClick={() => navigate('/auth')}
-                className={`w-full font-medium py-2 px-6 rounded-lg ${
-                  planIndex === 1
-                    ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
-                    : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
-                }`}
-              >
-                <a href="/auth" target="_blank">
-                  {plan.buttonText}
-                </a>
-              </button>
-            </div>
+              <div className="p-3">
+                <button
+                  onClick={() => navigate('/auth')}
+                  className={`w-full font-medium py-2 px-6 rounded-lg ${
+                    planIndex === 1
+                      ? 'bg-[#3667B2] text-white hover:bg-indigo-700 hover:scale-105 active:scale-95 transition transform'
+                      : 'border border-[#3667B2] text-[#3667B2] hover:bg-indigo-50 hover:scale-105 active:scale-95 transition transform'
+                  }`}
+                >
+                  <a href="/auth" target="_blank">
+                    {plan.buttonText}
+                  </a>
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -559,10 +558,10 @@ const Pricing: React.FC = () => {
               </>
             )}
           </h3>
-          <button 
-          
-          onClick={() => navigate('/auth')}
-          className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]">
+          <button
+            onClick={() => navigate('/auth')}
+            className="bg-[#3667B2] text-white py-2 px-4 w-full mt-4 rounded-lg border border-[#3667B2]"
+          >
             Sign up for Pro
           </button>
         </div>
@@ -646,11 +645,11 @@ const Pricing: React.FC = () => {
             </li>
           </ul>
           <div className="px-4 py-2 ">
-            <button 
-            onClick={() => navigate('/auth')}
-            
-            className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]">
-            Sign up for Pro
+            <button
+              onClick={() => navigate('/auth')}
+              className="bg-[#3667B2] text-white py-2 font-medium w-full mt-4 rounded-lg border border-[#3667B2]"
+            >
+              Sign up for Pro
             </button>
           </div>
         </div>

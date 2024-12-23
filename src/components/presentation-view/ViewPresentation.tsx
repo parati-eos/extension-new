@@ -41,6 +41,7 @@ export default function ViewPresentation() {
   const [presentationID, setPresentationID] = useState<string>('')
   const [isDocumentIDLoading, setIsDocumentIDLoading] = useState(true)
   const [isSlideLoading, setIsSlideLoading] = useState(true)
+  const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(1)
   const [currentOutline, setCurrentOutline] = useState('')
   const [outlineType, setOutlineType] = useState('')
@@ -50,6 +51,7 @@ export default function ViewPresentation() {
   const [finalized, setFinalized] = useState(false)
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
+  const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides) // Track previous totalSlides
   const [slidesId, setSlidesId] = useState<string[]>([])
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
@@ -57,7 +59,6 @@ export default function ViewPresentation() {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
-  const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [hasDataBeenReceived, setHasDataBeenReceived] = useState(false)
   const [currentSlidesData, setCurrentSlidesData] = useState<string[]>([]) // Store the latest slides data
@@ -118,6 +119,8 @@ export default function ViewPresentation() {
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (title: string) => {
+    setIsSlideLoading(true) // Set loading to true
+
     setCurrentOutline(title)
     const slideIndex = outlines.findIndex((o) => o.title === title)
     setCurrentSlide(slideIndex)
@@ -127,6 +130,10 @@ export default function ViewPresentation() {
     })
     setCurrentSlideIndex(0)
     setDisplayMode('slides')
+
+    setTimeout(() => {
+      setIsSlideLoading(false)
+    }, 2000)
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -139,8 +146,8 @@ export default function ViewPresentation() {
   }
   const handleScroll = debounce(() => {
     if (!scrollContainerRef.current) return
-    const scrollTop = scrollContainerRef.current.scrollTop || 0
 
+    const scrollTop = scrollContainerRef.current.scrollTop || 0
     const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
       if (!slideRef) return false
       const offset = slideRef.offsetTop - scrollTop
@@ -155,6 +162,14 @@ export default function ViewPresentation() {
       setDisplayMode('slides')
     }
   }, 100)
+
+  // Effect to monitor changes in totalSlides
+  useEffect(() => {
+    if (totalSlides !== prevTotalSlides) {
+      setIsSlideLoading(false) // Set loading to false only when totalSlides changes
+      setPrevTotalSlides(totalSlides) // Update the previous totalSlides
+    }
+  }, [totalSlides, prevTotalSlides])
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
@@ -179,6 +194,7 @@ export default function ViewPresentation() {
         .then((response) => {
           toast.success('Quick Generation Started')
           setDisplayMode('slides')
+          setCurrentSlideIndex(0)
         })
         .catch((error) => {
           toast.error('Error while generating slide', {
@@ -188,9 +204,9 @@ export default function ViewPresentation() {
           setIsSlideLoading(false)
           setDisplayMode('slides')
         })
-      setTimeout(() => {
-        setIsSlideLoading(false)
-      }, 13000)
+      // setTimeout(() => {
+      //   setIsSlideLoading(false)
+      // }, 13000)
     } catch (error) {
       toast.error('Error while generating slide', {
         position: 'top-center',
@@ -202,7 +218,6 @@ export default function ViewPresentation() {
 
   // Paginate Back
   const handlePaginatePrev = () => {
-    console.log(slidesId)
     if (currentSlideIndex > 0) {
       setCurrentSlideIndex((prevIndex) => prevIndex - 1)
     }
@@ -210,8 +225,6 @@ export default function ViewPresentation() {
 
   // Paginate Next
   const handlePaginateNext = () => {
-    console.log(slidesId)
-
     if (currentSlideIndex < slidesId.length - 1) {
       setCurrentSlideIndex((prevIndex) => prevIndex + 1)
     }
@@ -224,7 +237,7 @@ export default function ViewPresentation() {
 
   // Mobile Back Button
   const onBack = () => {
-    if (displayMode === 'slideNarrative') {
+    if (displayMode === 'SlideNarrative') {
       setDisplayMode('newContent')
     } else if (displayMode === 'customBuilder') {
       setDisplayMode('newContent')
@@ -773,12 +786,12 @@ export default function ViewPresentation() {
         )
         .then((response) => {
           if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[3])
-            setYearlyPlan(response.data.items[1])
+            setMonthlyPlan(response.data.items[5])
+            setYearlyPlan(response.data.items[3])
             setCurrency('INR')
           } else {
-            setMonthlyPlan(response.data.items[2])
-            setYearlyPlan(response.data.items[0])
+            setMonthlyPlan(response.data.items[4])
+            setYearlyPlan(response.data.items[2])
             setCurrency('USD')
           }
         })
