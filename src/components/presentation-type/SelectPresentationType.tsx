@@ -246,7 +246,9 @@ const SelectPresentationType: React.FC = () => {
     return () => clearTimeout(timer)
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+  const yearlyPlanId = yearlyPlan?.id
 
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
@@ -379,6 +381,10 @@ const SelectPresentationType: React.FC = () => {
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
           currency={currency}
+          monthlyPlanId={monthlyPlanId!}
+          yearlyPlanId={yearlyPlanId!}
+          authToken={authToken!}
+          orgId={orgId!}
         />
       ) : (
         <></>

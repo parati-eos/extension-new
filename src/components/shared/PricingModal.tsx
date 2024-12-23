@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
@@ -8,6 +9,10 @@ interface PricingModalProps {
   monthlyPlanAmount: number
   yearlyPlanAmount: number
   currency: string
+  monthlyPlanId: string
+  yearlyPlanId: string
+  authToken: string
+  orgId: string
 }
 
 const categories = [
@@ -41,20 +46,22 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   monthlyPlanAmount,
   yearlyPlanAmount,
   currency,
+  yearlyPlanId,
+  monthlyPlanId,
+  authToken,
+  orgId,
 }) => {
+  const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
     'monthly'
   )
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'pro'>('pro')
   const navigate = useNavigate()
   const userPlan = sessionStorage.getItem('userPlan')
   const plans = [
     {
       name: 'FREE',
       buttonText:
-        selectedPlan === 'free'
-          ? 'Get Started for Free'
-          : 'Get Started for Free',
+        userPlan === 'free' ? 'Get Started for Free' : 'Get Started for Free',
       description: (
         <div className="mb-[5.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
@@ -294,6 +301,46 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     },
   ]
 
+  const handleUpgrade = async () => {
+    setIsLoading(true)
+    const planID = billingCycle === 'annual' ? yearlyPlanId : monthlyPlanId
+    const currentTime = Date.now() + 15 * 1000
+    const unixTime = Math.floor(currentTime / 1000)
+
+    if (userPlan === 'free') {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/create-subscription`,
+          {
+            plan_id: planID,
+            customer_id: orgId,
+            total_count: 12,
+            start_at: unixTime,
+            quantity: 1,
+            notes: {
+              note_key: 'Zynth Presentation',
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const result = await response.data
+
+        if (result.short_url) {
+          window.open(result.short_url, '_blank')
+          setIsLoading(false)
+        }
+      } catch (error) {
+        console.log(error)
+        setIsLoading(false)
+      }
+    }
+  }
+
   return (
     <div
       className={`${
@@ -357,7 +404,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <div
                 key={planIndex}
                 className={`bg-white border ${
-                  selectedPlan === plan.name.toLowerCase()
+                  userPlan === plan.name.toLowerCase()
                     ? 'border-[#3667B2] outline-2'
                     : planIndex === 1
                 } `}
@@ -377,31 +424,38 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 </div>
                 <div className="p-3 justify-center">
                   {' '}
-                  <button
-                    className={`w-full   font-medium py-2 px-6 rounded-lg ${
-                      selectedPlan === plan.name.toLowerCase()
-                        ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
-                        : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
-                    } 
+                  {isloading && plan.name !== 'FREE' ? (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={plan.name === 'PRO' ? handleUpgrade : () => {}}
+                      className={`w-full   font-medium py-2 px-6 rounded-lg ${
+                        userPlan === plan.name.toLowerCase()
+                          ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+                          : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+                      } 
   ${
-    selectedPlan === 'free' && plan.name.toLowerCase() === 'free'
+    userPlan === 'free' && plan.name.toLowerCase() === 'free'
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   } 
   ${
-    selectedPlan === 'pro' && plan.name.toLowerCase() === 'free'
+    userPlan === 'pro' && plan.name.toLowerCase() === 'free'
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
-                    disabled={
-                      (selectedPlan === 'free' &&
-                        plan.name.toLowerCase() === 'free') ||
-                      (selectedPlan === 'pro' &&
-                        plan.name.toLowerCase() === 'free')
-                    }
-                  >
-                    {plan.buttonText}
-                  </button>{' '}
+                      disabled={
+                        (userPlan === 'free' &&
+                          plan.name.toLowerCase() === 'free') ||
+                        (userPlan === 'pro' &&
+                          plan.name.toLowerCase() === 'free')
+                      }
+                    >
+                      {plan.buttonText}
+                    </button>
+                  )}{' '}
                 </div>
 
                 <ul className="mb-8 mt-4 space-y-0">
@@ -429,31 +483,38 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                   ))}
                 </ul>
                 <div className="p-3">
-                  <button
-                    className={`w-full font-medium py-2 px-6 rounded-lg ${
-                      selectedPlan === plan.name.toLowerCase()
-                        ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
-                        : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
-                    } 
+                  {isloading && plan.name !== 'FREE' ? (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={plan.name === 'PRO' ? handleUpgrade : () => {}}
+                      className={`w-full font-medium py-2 px-6 rounded-lg ${
+                        userPlan === plan.name.toLowerCase()
+                          ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+                          : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
+                      } 
   ${
-    selectedPlan === 'free' && plan.name.toLowerCase() === 'free'
+    userPlan === 'free' && plan.name.toLowerCase() === 'free'
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   } 
   ${
-    selectedPlan === 'pro' && plan.name.toLowerCase() === 'free'
+    userPlan === 'pro' && plan.name.toLowerCase() === 'free'
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
-                    disabled={
-                      (selectedPlan === 'free' &&
-                        plan.name.toLowerCase() === 'free') ||
-                      (selectedPlan === 'pro' &&
-                        plan.name.toLowerCase() === 'free')
-                    }
-                  >
-                    {plan.buttonText}
-                  </button>
+                      disabled={
+                        (userPlan === 'free' &&
+                          plan.name.toLowerCase() === 'free') ||
+                        (userPlan === 'pro' &&
+                          plan.name.toLowerCase() === 'free')
+                      }
+                    >
+                      {plan.buttonText}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -462,7 +523,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         {/* Mobile View */}
         <div
           className={`rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden mt-8 border ${
-            selectedPlan === 'free' ? 'border-[#3667B2]' : 'border-white'
+            userPlan === 'free' ? 'border-[#3667B2]' : 'border-white'
           }`}
         >
           <div className="px-4 ">
@@ -473,11 +534,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             <button
               onClick={() => navigate('/auth')}
               className={`py-2 px-4 w-full mt-4 font-semibold rounded-lg border ${
-                selectedPlan === 'free' || selectedPlan === 'pro'
+                userPlan === 'free' || userPlan === 'pro'
                   ? 'bg-gray-200 border-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-white text-[#3667B2] border-[#3667B2]'
               }`}
-              disabled={selectedPlan === 'free' || selectedPlan === 'pro'}
+              disabled={userPlan === 'free' || userPlan === 'pro'}
             >
               Get Started for Free
             </button>
@@ -553,7 +614,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         </div>
         <div
           className={`rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden mt-8 border ${
-            selectedPlan === 'pro' ? 'border-[#3667B2]' : 'border-white'
+            userPlan === 'pro' ? 'border-[#3667B2]' : 'border-white'
           }`}
         >
           <div className="px-4 ">
@@ -577,15 +638,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               )}
             </h3>
             <button
+              onClick={handleUpgrade}
               className={`py-2 px-4 w-full mt-4 rounded-lg border ${
-                selectedPlan === 'free' || selectedPlan === 'pro'
+                userPlan === 'free' || userPlan === 'pro'
                   ? 'bg-[#3667B2] text-white border-[#3667B2]'
                   : ''
               }`}
             >
-              {selectedPlan === 'free'
-                ? 'Upgrade to Pro'
-                : 'Cancel Subscription'}
+              {userPlan === 'free' ? 'Upgrade to Pro' : 'Cancel Subscription'}
             </button>
           </div>
 
@@ -670,15 +730,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             </ul>
             <div className="px-4 py-2 ">
               <button
+                onClick={handleUpgrade}
                 className={`py-2 px-4 w-full mt-4 rounded-lg border ${
-                  selectedPlan === 'free' || selectedPlan === 'pro'
+                  userPlan === 'free' || userPlan === 'pro'
                     ? 'bg-[#3667B2] text-white border-[#3667B2]'
                     : ''
                 }`}
               >
-                {selectedPlan === 'free'
-                  ? 'Upgrade to Pro'
-                  : 'Cancel Subscription'}
+                {userPlan === 'free' ? 'Upgrade to Pro' : 'Cancel Subscription'}
               </button>
             </div>
           </div>
