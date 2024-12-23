@@ -224,7 +224,7 @@ export default function ViewPresentation() {
 
   // Mobile Back Button
   const onBack = () => {
-    if (displayMode === 'slideNarrative') {
+    if (displayMode === 'SlideNarrative') {
       setDisplayMode('newContent')
     } else if (displayMode === 'customBuilder') {
       setDisplayMode('newContent')

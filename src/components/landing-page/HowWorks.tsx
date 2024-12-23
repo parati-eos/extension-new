@@ -17,48 +17,43 @@ const HowWorks: React.FC = () => {
         <div className="space-y-16">
           {/* Step 1 */}
           <div className="flex flex-col lg:flex-row items-center gap-8">
-            <div className="lg:w-1/2 flex items-start gap-4">
-              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">
-                1
-              </div>
-              <div>
-                <h3 className="text-2xl font-semibold text-gray-900">
-                  AI Presentation Maker
-                </h3>
-                <ul className="mt-4 text-black space-y-2 list-disc list-inside">
-                  <li>
-                    Generate a new presentation or refine an existing one.
-                  </li>
-                  <li>
-                    Access data-driven content sourced from across the web.
-                  </li>
-                  <li>
-                    Create AI slides built on proven presentation templates.
-                  </li>
-                </ul>
-                <button
-                  onClick={() => navigate('/auth')}
-                  className="mt-6 px-6 py-2 font-semibold bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
-                >
-                  Generate Presentation
-                </button>
-              </div>
-            </div>
-            <div className="lg:w-1/2">
-              <img
-                src={FooterImage1}
-                alt="AI Presentation Maker"
-                className="w-full rounded-lg shadow-md"
-              />
-            </div>
-          </div>
+  <div className="lg:w-1/2 flex items-start gap-4">
+    {/* White circular background for the number */}
+    <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-12 lg:h-12 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
+      1
+    </div>
+    <div>
+      <h3 className="text-2xl font-semibold text-gray-900">
+        AI Presentation Maker
+      </h3>
+      <ul className="mt-4 text-black space-y-2 list-disc list-inside">
+        <li>Generate a new presentation or refine an existing one.</li>
+        <li>Access data-driven content sourced from across the web.</li>
+        <li>Create AI slides built on proven presentation templates.</li>
+      </ul>
+      <button
+        onClick={() => navigate('/auth')}
+        className="mt-6 px-6 py-2 font-semibold bg-transparent border border-[#3667B2] text-[#3667B2] hover:text-white rounded-md hover:bg-[#3667B2] active:scale-95 active:opacity-80 transition-all duration-300"
+      >
+        Generate Presentation
+      </button>
+    </div>
+  </div>
+  <div className="lg:w-1/2">
+    <img
+      src={FooterImage1}
+      alt="AI Presentation Maker"
+      className="w-full rounded-lg shadow-md"
+    />
+  </div>
+</div>
 
           {/* Step 2 */}
           <div className="flex flex-col lg:flex-row-reverse items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">
-                2
-              </div>
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-12 lg:h-12 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
+      2
+    </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Customizable Slide Designs
@@ -94,9 +89,9 @@ const HowWorks: React.FC = () => {
           {/* Step 3 */}
           <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="lg:w-1/2 flex items-start gap-4">
-              <div className="flex-shrink-0 text-blue-600 text-5xl font-bold">
-                3
-              </div>
+            <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 lg:w-12 lg:h-12 bg-white text-blue-600 text-2xl font-bold rounded-full shadow-md">
+      3
+    </div>
               <div>
                 <h3 className="text-2xl font-semibold text-gray-900">
                   Seamless Presentation Sharing

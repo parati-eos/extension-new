@@ -120,10 +120,18 @@ const LandingPageNavbar: React.FC = () => {
             href="#sample-presentation"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
             onClick={(e) => {
-              e.preventDefault()
-              document
-                .getElementById('sample-presentation')
-                ?.scrollIntoView({ behavior: 'smooth' })
+              e.preventDefault();
+              const element = document.getElementById('sample-presentation');
+              if (element) {
+                const offset = -20; // Adjust this value to control how much higher the scroll should stop
+                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition + offset;
+            
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth',
+                });
+              }
             }}
           >
             Sample Presentation
