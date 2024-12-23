@@ -72,17 +72,22 @@ const Footer: React.FC = () => {
               <h3 className="font-bold text-gray-800 mb-4">Company</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
-                    About
-                  </a>
+                <a 
+  href="https://www.parati.in/about-us" 
+  target="_blank" 
+  rel="noopener noreferrer" 
+  className="text-gray-600 hover:underline"
+>
+  About 
+</a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://www.parati.in/impactdb"   target="_blank"  className="text-gray-600 hover:underline">
                     Impact DB
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://www.parati.in/eos" target="_blank"  className="text-gray-600 hover:underline">
                     Parati Eos
                   </a>
                 </li>
@@ -92,22 +97,22 @@ const Footer: React.FC = () => {
               <h3 className="font-bold text-gray-800 mb-4">Services</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://www.parati.in/business-strategy" target="_blank"  className="text-gray-600 hover:underline">
                     Business Strategy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://www.parati.in/investor-relations" target="_blank"  className="text-gray-600 hover:underline">
                     Investor Relations
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://www.parati.in/managed-operations" target="_blank" className="text-gray-600 hover:underline">
                     Managed Operations
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://www.parati.in/digital-transformation" target="_blank" className="text-gray-600 hover:underline">
                     Digital Transformation
                   </a>
                 </li>
@@ -117,24 +122,17 @@ const Footer: React.FC = () => {
               <h3 className="font-bold text-gray-800 mb-4">Helpful Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://https://zynth.ai/about" target="_blank" className="text-gray-600 hover:underline">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://zynth.ai/contact" className="text-gray-600 hover:underline" target="_blank">
                     Contact us
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
-                    Managed Operations
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-gray-600 hover:underline">
-                    Digital Transformation
-                  </a>
+                
                 </li>
               </ul>
             </div>
@@ -142,17 +140,17 @@ const Footer: React.FC = () => {
               <h3 className="font-bold text-gray-800 mb-4">Legal</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://zynth.ai/uploads/privacy" className="text-gray-600 hover:underline" target="_blank">
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://zynth.ai/uploads/refunds" className="text-gray-600 hover:underline" target="_blank">
                     Refunds and Cancellations
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:underline">
+                  <a href="https://zynth.ai/uploads/terms" className="text-gray-600 hover:underline" target="_blank">
                     Terms & Conditions
                   </a>
                 </li>
