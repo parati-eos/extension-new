@@ -81,7 +81,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         },
 
         {
-          text: '-',
+          text: 'Unlimited',
           bgColor: 'white',
           icon: null,
           spacing: 'py-3 ',
@@ -202,7 +202,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           margin: '',
         },
         {
-          text: '-',
+          text: 'Unlimited',
           bgColor: 'white',
           icon: null,
           spacing: 'py-3 ',

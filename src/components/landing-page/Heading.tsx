@@ -6,7 +6,9 @@ const Heading: React.FC = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-gradient-to-r from-[#EAF2FF00] to-[#99C1FF1F] w-full h-full text-center">
+    <div className="w-full h-full text-center bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]">
+  
+    
       {/* Header Section */}
       <div className="relative flex flex-col items-center justify-start pt-32 mb-14 md:mb-20">
         <h1 className="hidden md:block text-4xl font-bold text-gray-900 z-10">

@@ -37,9 +37,11 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       {/* Top Section: Headings and Back Button */}
       <div className="flex items-center justify-between w-full  ">
         <div>
-          <h2 className="hidden md:block md:text-lg font-semibold text-[#091220]">
-            Custom Builder
-          </h2>
+        <h3 className='text-semibold'>
+        Custom Builder
+                      </h3>
+         
+          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">Select the slide type you want to create.</h2>
          
         </div>
         <BackButton onClick={onBack} />
