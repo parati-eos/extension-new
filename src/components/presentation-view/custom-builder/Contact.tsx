@@ -42,6 +42,7 @@ export default function Contact({
         phone,
         linkedin,
       },
+      outlineID: `outlineID-${crypto.randomUUID()}`,
     }
 
     try {
@@ -81,12 +82,12 @@ export default function Contact({
     <div className="flex flex-col p-4 h-full w-full">
       {/* Heading */}
       <div className="flex items-center justify-between w-full">
-                  <h3 className='text-semibold'>
-                    Contact
-                  </h3>
-                  <BackButton onClick={onBack} />
-                </div>
-                <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
+        <h3 className="text-semibold">Contact</h3>
+        <BackButton onClick={onBack} />
+      </div>
+      <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
+        {heading}
+      </h2>
 
       {/* Content Section */}
       <div className="flex-1 overflow-y-auto lg:w-[65%] scrollbar-none ">
@@ -123,45 +124,44 @@ export default function Contact({
         </div>
 
         {/* Attach Image Button */}
-       
       </div>
 
       {/* Button container */}
       <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
-            {/* Use AttachImage component */}
-            <AttachImage onFileSelected={handleFileSelect} />
+        {/* Use AttachImage component */}
+        <AttachImage onFileSelected={handleFileSelect} />
 
-            {/* Generate Slide Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={isButtonDisabled}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
-                isButtonDisabled
-                  ? 'bg-gray-200 text-gray-500'
-                  : 'bg-[#3667B2] text-white'
-              }`}
-            >
-           Generate Slide
-            </button>
-          </div>
-          {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-2 gap-2  w-full ">
-            <div className="flex-1  items-center justify-center gap-2">
-              <AttachImage onFileSelected={handleFileSelect} />
-            </div>
+        {/* Generate Slide Button */}
+        <button
+          onClick={handleSubmit}
+          disabled={isButtonDisabled}
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
+            isButtonDisabled
+              ? 'bg-gray-200 text-gray-500'
+              : 'bg-[#3667B2] text-white'
+          }`}
+        >
+          Generate Slide
+        </button>
+      </div>
+      {/* Attach Image and Generate Slide Buttons for Mobile */}
+      <div className="flex lg:hidden mt-2 gap-2  w-full ">
+        <div className="flex-1  items-center justify-center gap-2">
+          <AttachImage onFileSelected={handleFileSelect} />
+        </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={isButtonDisabled}
-              className={`flex-1 py-2 rounded-md ${
-                isButtonDisabled
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white'
-              }`}
-            >
-              Generate Slide
-            </button>
-          </div>
+        <button
+          onClick={handleSubmit}
+          disabled={isButtonDisabled}
+          className={`flex-1 py-2 rounded-md ${
+            isButtonDisabled
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white'
+          }`}
+        >
+          Generate Slide
+        </button>
+      </div>
     </div>
   )
 }

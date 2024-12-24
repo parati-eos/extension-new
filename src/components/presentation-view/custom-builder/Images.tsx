@@ -82,6 +82,7 @@ export default function Images({
               slideName: heading,
               imageurl: images,
             },
+            outlineID: `outlineID-${crypto.randomUUID()}`,
           },
           {
             headers: {

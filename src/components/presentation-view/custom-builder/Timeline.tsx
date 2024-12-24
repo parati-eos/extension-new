@@ -82,6 +82,7 @@ export default function Timeline({
             image: selectedImage ? selectedImage.name : '',
             phases: phases,
           },
+          outlineID: `outlineID-${crypto.randomUUID()}`,
         },
         {
           headers: {
@@ -122,12 +123,12 @@ export default function Timeline({
         <>
           {/* Top Section: Headings */}
           <div className="flex items-center justify-between w-full">
-                      <h3 className='text-semibold'>
-                        Timeline
-                      </h3>
-                      <BackButton onClick={onBack} />
-                    </div>
-                    <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
+            <h3 className="text-semibold">Timeline</h3>
+            <BackButton onClick={onBack} />
+          </div>
+          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
+            {heading}
+          </h2>
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}

@@ -193,6 +193,7 @@ export default function People({
             slideName: heading,
             people: people,
           },
+          outlineID: `outlineID-${crypto.randomUUID()}`,
         },
         {
           headers: {
@@ -240,12 +241,12 @@ export default function People({
       ) : (
         <>
           <div className="flex items-center justify-between w-full">
-                      <h3 className='text-semibold'>
-                        People
-                      </h3>
-                      <BackButton onClick={onBack} />
-                    </div>
-                    <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
+            <h3 className="text-semibold">People</h3>
+            <BackButton onClick={onBack} />
+          </div>
+          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
+            {heading}
+          </h2>
           <div
             ref={containerRef}
             className={`flex-1 lg:px-2 overflow-y-auto scrollbar-none md:mt-1 ${

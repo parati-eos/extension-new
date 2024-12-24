@@ -69,6 +69,7 @@ export default function Cover({
             slideName: heading,
             logo,
           },
+          outlineID: `outlineID-${crypto.randomUUID()}`,
         },
         {
           headers: {
@@ -98,20 +99,20 @@ export default function Cover({
   return (
     <div className="flex flex-col h-full w-full p-2 lg:p-4">
       {/* Header Section */}
-     <div className="flex items-center justify-between w-full">
-                 <h3 className='text-semibold'>
-                   Cover
-                 </h3>
-                 <BackButton onClick={onBack} />
-               </div>
-               <div className="flex items-center ">
-  <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220] p-2">{heading}</h2>
-  <input
-    type="text"
-    placeholder="Enter your tagline"
-    className="ml-4 p-1 border border-gray-300 rounded-lg "
-  />
-</div>
+      <div className="flex items-center justify-between w-full">
+        <h3 className="text-semibold">Cover</h3>
+        <BackButton onClick={onBack} />
+      </div>
+      <div className="flex items-center ">
+        <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220] p-2">
+          {heading}
+        </h2>
+        <input
+          type="text"
+          placeholder="Enter your tagline"
+          className="ml-4 p-1 border border-gray-300 rounded-lg "
+        />
+      </div>
 
       {/* Main Content */}
       <div className="w-full h-full flex flex-col items-center justify-center">

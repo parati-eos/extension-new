@@ -180,6 +180,7 @@ export default function ViewPresentation() {
             type: outlineType,
             title: currentOutline.replace(/^\d+\.\s*/, ''),
             documentID: documentID,
+            outlineID: `outlineID-${crypto.randomUUID()}`,
           },
           {
             headers: {

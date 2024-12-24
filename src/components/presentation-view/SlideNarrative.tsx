@@ -44,6 +44,7 @@ export default function SlideNarrative({
           documentID: documentID,
           userId: sessionStorage.getItem('userEmail'),
           input: narrative,
+          outlineID: `outlineID-${crypto.randomUUID()}`,
         },
         {
           headers: {

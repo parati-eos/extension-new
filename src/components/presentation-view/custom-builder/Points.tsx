@@ -63,6 +63,7 @@ export default function Points({
             image: selectedImage ? selectedImage.name : '',
             pointers: points.filter((point) => point.trim() !== ''),
           },
+          outlineID: `outlineID-${crypto.randomUUID()}`,
         },
         {
           headers: {
@@ -102,13 +103,13 @@ export default function Points({
       ) : (
         <>
           {/* Top Section: Headings */}
-         <div className="flex items-center justify-between w-full">
-                     <h3 className='text-semibold'>
-                       Points
-                     </h3>
-                     <BackButton onClick={onBack} />
-                   </div>
-                   <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
+          <div className="flex items-center justify-between w-full">
+            <h3 className="text-semibold">Points</h3>
+            <BackButton onClick={onBack} />
+          </div>
+          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
+            {heading}
+          </h2>
           {/* Input Section with Scrolling */}
           <div
             ref={containerRef}

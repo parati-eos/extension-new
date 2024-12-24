@@ -191,6 +191,7 @@ export default function Table({
               rows7: transformRow(tableData.rows[6] || []),
               rows8: transformRow(tableData.rows[7] || []),
             },
+            outlineID: `outlineID-${crypto.randomUUID()}`,
           },
           {
             headers: {
@@ -224,13 +225,13 @@ export default function Table({
         </div>
       ) : (
         <>
-         <div className="flex items-center justify-between w-full">
-                     <h3 className='text-semibold'>
-                       Table
-                     </h3>
-                     <BackButton onClick={onBack} />
-                   </div>
-                   <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">{heading}</h2>
+          <div className="flex items-center justify-between w-full">
+            <h3 className="text-semibold">Table</h3>
+            <BackButton onClick={onBack} />
+          </div>
+          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
+            {heading}
+          </h2>
           <div
             ref={containerRef}
             className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-4 py-2 "
