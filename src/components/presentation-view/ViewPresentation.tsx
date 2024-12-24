@@ -113,6 +113,8 @@ export default function ViewPresentation() {
         setPlusClickedSlide(null)
       } else {
         console.log('Reached Else')
+        console.log(outlineType)
+
         setDisplayMode('newContent')
         setPlusClickedSlide(currentSlide)
       }
@@ -269,12 +271,6 @@ export default function ViewPresentation() {
                   isSlideLoading ? 'opacity-0' : 'opacity-100'
                 }`}
                 style={{ border: 0 }}
-                onLoadStart={() => {
-                  setIsSlideLoading(true)
-                }}
-                onLoad={() => {
-                  setIsSlideLoading(false)
-                }}
               />
             )}
             {isNoGeneratedSlide && !isSlideLoading && (
@@ -391,6 +387,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            setIsSlideLoading={setIsSlideLoading}
           />
         )
       case 'Statistics':
@@ -543,6 +540,7 @@ export default function ViewPresentation() {
   // TODO: WEB SOCKET
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
+  const newSlidesJSON = JSON.stringify(newSlidesRef.current)
   useEffect(() => {
     if (outlines && outlines.length > 0) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
@@ -575,7 +573,7 @@ export default function ViewPresentation() {
           setSlidesId(ids)
           setHasDataBeenReceived(true)
           setCurrentSlidesData(ids)
-          // setIsSlideLoading(false)
+          setIsSlideLoading(false)
           setIsNoGeneratedSlide(false)
           setTotalSlides(ids.length)
           if (timerRef.current) {
@@ -630,14 +628,7 @@ export default function ViewPresentation() {
         if (timerRef.current) clearTimeout(timerRef.current)
       }
     }
-  }, [
-    currentOutline,
-    outlines,
-    documentID,
-    hasDataBeenReceived,
-    currentSlidesData,
-    SOCKET_URL,
-  ])
+  }, [currentOutline, newSlidesJSON])
 
   // Effect to monitor changes
   useEffect(() => {
