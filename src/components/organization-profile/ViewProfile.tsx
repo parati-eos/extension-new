@@ -174,6 +174,9 @@ const ViewProfile: React.FC = () => {
                   <h2 className="text-2xl font-semibold text-gray-800 leading-relaxed">
                     {organizationData?.companyName}
                   </h2>
+                  <p className="text-gray-600 break-words">
+            {organizationData?.tagline}
+          </p>
                   <p className="text-lg text-gray-500 leading-relaxed">
                     {organizationData?.sector} • {organizationData?.industry}
                   </p>
