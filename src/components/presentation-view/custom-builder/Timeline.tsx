@@ -122,7 +122,7 @@ export default function Timeline({
         <>
           {/* Top Section: Headings */}
           <div className="flex items-center justify-between w-full">
-                      <h3>
+                      <h3 className='text-semibold'>
                         Timeline
                       </h3>
                       <BackButton onClick={onBack} />

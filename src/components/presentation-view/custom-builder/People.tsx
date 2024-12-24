@@ -240,7 +240,7 @@ export default function People({
       ) : (
         <>
           <div className="flex items-center justify-between w-full">
-                      <h3>
+                      <h3 className='text-semibold'>
                         People
                       </h3>
                       <BackButton onClick={onBack} />

@@ -92,7 +92,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
   return (
     <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between p-2 md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 mb-8">
+      <div className="flex flex-col items-center gap-1 lg:mb-8">
         <FaCity className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
           Your Industry
@@ -108,14 +108,19 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
       >
         {/* Input */}
         <div
-          className={` w-full  lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
+          className={`w-full lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
             sector === 'Other' || industry === 'Other' ? 'md:mt-2' : ''
-          } px-2`}
+          } px-2 scrollbar-none`}
+          style={{
+            maxHeight: '25vh', // Prevent container from growing beyond 70% of the viewport
+            overflowY: 'auto', // Enable vertical scrolling if content exceeds maxHeight
+            WebkitOverflowScrolling: 'touch', // Smooth scrolling for iOS
+          }}
         >
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full ">
             <label
               htmlFor="sector"
-              className="mb-3 font-semibold text-[#4A4B4D] block text-left"
+              className="mb-3 font-semibold text-[#4A4B4D] block text-left "
             >
               Sector
             </label>
@@ -175,16 +180,14 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
                 </option>
               ))}
             </select>
-            {industry === 'Other' || sector === 'Other' ? (
+            {(industry === 'Other' || sector === 'Other') && (
               <input
                 type="text"
                 placeholder="Enter your industry"
-                className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
+                className="lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] "
                 value={otherIndustry}
                 onChange={(e) => setOtherIndustry(e.target.value)}
               />
-            ) : (
-              <></>
             )}
           </div>
         </div>
@@ -192,7 +195,7 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         {/* Buttons */}
         {/* Buttons */}
         <div
-          className={`flex flex-col items-center justify-center max-w-sm mt-[6.3rem] ${
+          className={`flex flex-col items-center justify-center max-w-sm mt-12 ${
             sector === 'Other' || industry === 'Other'
               ? 'lg:mt-[14rem] mb-8 space-y-0'
               : 'lg:mt-[14.5rem]'

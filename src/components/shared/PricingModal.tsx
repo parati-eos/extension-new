@@ -349,7 +349,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
       }`}
     >
-      <div className="bg-white w-[87%] max-h-[90%] overflow-y-auto scrollbar-none rounded-lg shadow-lg p-4 sm:p-6 relative">
+      <div className="bg-white w-[87%] lg:w-[80%] max-h-[90%] overflow-y-auto scrollbar-none rounded-lg shadow-lg p-2 sm:p-6 relative">
         <button
           onClick={closeModal}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-900 hover:scale-110 active:scale-95 transform transition text-lg md:text-4xl"

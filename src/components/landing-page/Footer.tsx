@@ -122,7 +122,7 @@ const Footer: React.FC = () => {
               <h3 className="font-bold text-gray-800 mb-4">Helpful Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="https://https://zynth.ai/about" target="_blank" className="text-gray-600 hover:underline">
+                  <a href="https://zynth.ai/about" target="_blank" className="text-gray-600 hover:underline">
                     About
                   </a>
                 </li>

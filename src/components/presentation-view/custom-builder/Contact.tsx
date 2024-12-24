@@ -81,7 +81,7 @@ export default function Contact({
     <div className="flex flex-col p-4 h-full w-full">
       {/* Heading */}
       <div className="flex items-center justify-between w-full">
-                  <h3>
+                  <h3 className='text-semibold'>
                     Contact
                   </h3>
                   <BackButton onClick={onBack} />
