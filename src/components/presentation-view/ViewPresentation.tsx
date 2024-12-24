@@ -123,7 +123,6 @@ export default function ViewPresentation() {
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (title: string) => {
     setIsSlideLoading(true) // Set loading to true
-
     setCurrentOutline(title)
     const slideIndex = outlines.findIndex((o) => o.title === title)
     setCurrentSlide(slideIndex)
@@ -133,6 +132,10 @@ export default function ViewPresentation() {
     })
     setCurrentSlideIndex(0)
     setDisplayMode('slides')
+
+    setTimeout(() => {
+      setIsSlideLoading(false)
+    }, 2000)
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -145,8 +148,6 @@ export default function ViewPresentation() {
   }
   const handleScroll = debounce(() => {
     if (!scrollContainerRef.current) return
-
-    setIsSlideLoading(true)
 
     const scrollTop = scrollContainerRef.current.scrollTop || 0
     const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
