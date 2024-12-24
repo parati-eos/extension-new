@@ -636,9 +636,10 @@ export default function ViewPresentation() {
   // Effect to monitor changes
   useEffect(() => {
     if (totalSlides !== prevTotalSlides) {
-      setIsSlideLoading(false)
-      setPrevTotalSlides(totalSlides)
-      console.log('Slides ID:', slidesId)
+      setTimeout(() => {
+        setIsSlideLoading(false)
+        setPrevTotalSlides(totalSlides)
+      }, 6000)
     }
   }, [totalSlides, prevTotalSlides])
 
@@ -651,7 +652,7 @@ export default function ViewPresentation() {
 
     setTimeout(() => {
       setIsSlideLoading(false)
-    }, 2000)
+    }, 6000)
   }, [currentSlideIndex, prevSlideIndex])
 
   // Fetch Outlines
