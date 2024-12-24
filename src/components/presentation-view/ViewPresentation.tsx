@@ -134,7 +134,7 @@ export default function ViewPresentation() {
 
     setTimeout(() => {
       setIsSlideLoading(false)
-    }, 2000)
+    }, 4000)
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -269,6 +269,12 @@ export default function ViewPresentation() {
                   isSlideLoading ? 'opacity-0' : 'opacity-100'
                 }`}
                 style={{ border: 0 }}
+                onLoadStart={() => {
+                  setIsSlideLoading(true)
+                }}
+                onLoad={() => {
+                  setIsSlideLoading(false)
+                }}
               />
             )}
             {isNoGeneratedSlide && !isSlideLoading && (
@@ -569,7 +575,7 @@ export default function ViewPresentation() {
           setSlidesId(ids)
           setHasDataBeenReceived(true)
           setCurrentSlidesData(ids)
-          setIsSlideLoading(false)
+          // setIsSlideLoading(false)
           setIsNoGeneratedSlide(false)
           setTotalSlides(ids.length)
           if (timerRef.current) {

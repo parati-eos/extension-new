@@ -197,8 +197,8 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         <div
           className={`flex flex-col items-center justify-center max-w-sm mt-12 ${
             sector === 'Other' || industry === 'Other'
-              ? 'lg:mt-[14rem] mb-8 space-y-0'
-              : 'lg:mt-[14.5rem]'
+              ? 'lg:mt-[14rem] xl:mt-[6.5rem] mb-8 space-y-0'
+              : 'lg:mt-[14.5rem] xl:mt-[8.5rem]'
           } w-full space-y-2`}
         >
           {/* Next Button or Loader */}
