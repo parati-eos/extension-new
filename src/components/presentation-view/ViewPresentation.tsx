@@ -783,12 +783,12 @@ export default function ViewPresentation() {
             onScroll={handleScroll}
             ref={scrollContainerRef}
           >
-            {/* {isSlideLoading && (
+            {isSlideLoading && (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 <h1>Generating Slide Please Wait...</h1>
               </div>
-            )} */}
+            )}
             {outlines.map((outline, index) => (
               <div
                 key={outline.title}
