@@ -61,7 +61,6 @@ export default function ViewPresentation() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [hasDataBeenReceived, setHasDataBeenReceived] = useState(false)
   const [currentSlidesData, setCurrentSlidesData] = useState<string[]>([])
-  const [prevSlidesId, setPrevSlidesId] = useState(slidesId)
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
 
