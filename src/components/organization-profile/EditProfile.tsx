@@ -51,6 +51,12 @@ const EditProfile: React.FC = () => {
   const userId = sessionStorage.getItem('userEmail')
   const authToken = sessionStorage.getItem('authToken')
   const [industryOptions, setIndustryOptions] = useState<string[]>([])
+  const [validationErrors, setValidationErrors] = useState<{
+    contactPhone?: string
+    linkedinLink?: string
+    contactEmail?: string
+    websiteLink?: string
+  }>({})
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -68,9 +74,51 @@ const EditProfile: React.FC = () => {
       }
     }
   }
-
+  const [websiteLink, setWebsiteLink] = useState('')
+  const [error, setError] = useState('')
   const handleButtonClick = () => {
     document.getElementById('changeLogoInput')?.click()
+  }
+  // Independent validation functions for each field
+  const validateContactPhone = (value: string) => {
+    if (value.trim() === '') return undefined // Skip validation if input is empty
+    if (!/^[1-9]\d{9}$/.test(value)) {
+      return 'Phone number must be 10 digits.'
+    }
+    return undefined
+  }
+
+  const validateLinkedInLink = (value: string) => {
+    if (value.trim() === '') return undefined // Skip validation if input is empty
+    if (
+      !/^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/.test(
+        value
+      )
+    ) {
+      return 'Please enter a valid LinkedIn URL.'
+    }
+    return undefined
+  }
+
+  const validateContactEmail = (value: string) => {
+    if (value.trim() === '') return undefined // Skip validation if input is empty
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+      return 'Please enter a valid email address.'
+    }
+    return undefined
+  }
+
+  const validateWebsiteLink = (value: string) => {
+    if (value.trim() === '') {
+      setError('') // Clear error if input is empty
+      return
+    }
+    const websiteRegex =
+      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+    if (!websiteRegex.test(value)) {
+      return 'Please enter a valid website link'
+    }
+    return undefined
   }
 
   const handleInputChange = (
@@ -203,6 +251,29 @@ const EditProfile: React.FC = () => {
       setOtherIndustry('') // Reset otherIndustry input
     }
   }, [sector])
+  const handlevalidationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target
+
+    // Update the formData state
+    setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // Call the corresponding validation function
+    let error: string | undefined
+    if (name === 'contactPhone') error = validateContactPhone(value)
+    if (name === 'linkedinLink') error = validateLinkedInLink(value)
+    if (name === 'contactEmail') error = validateContactEmail(value)
+    if (name === 'websiteLink') error = validateWebsiteLink(value)
+
+    // Update the validationErrors state
+    setValidationErrors((prev) => ({ ...prev, [name]: error }))
+  }
+  const isButtonDisabled = () => {
+    const hasErrors = Object.values(validationErrors).some((error) => error)
+
+    return hasErrors || loading
+  }
 
   return (
     <>
@@ -304,17 +375,30 @@ const EditProfile: React.FC = () => {
               {/* Third Grid: Website Link and Industry */}
               <div className="flex flex-col gap-4">
                 <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                  <label className="block text-gray-700 text-sm font-medium mb-1">
                     Website Link
                   </label>
                   <input
                     type="text"
                     name="websiteLink"
                     value={formData.websiteLink}
-                    onChange={handleInputChange}
+                    onChange={handlevalidationChange}
                     placeholder="Enter Website Name"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className={`w-full border ${
+                      validationErrors.websiteLink
+                        ? 'border-red-500'
+                        : 'border-gray-300'
+                    } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
+                      validationErrors.websiteLink
+                        ? 'focus:ring-red-500'
+                        : 'focus:ring-blue-500'
+                    }`}
                   />
+                  {validationErrors.websiteLink && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {validationErrors.websiteLink}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-gray-700 text-sm font-medium mb-2">
@@ -371,6 +455,19 @@ const EditProfile: React.FC = () => {
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Tagline
+                  </label>
+                  <input
+                    type="text"
+                    name="tagline"
+                    value={formData.tagline}
+                    onChange={handleInputChange}
+                    placeholder="Enter Your Tagline"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
                 <div className="flex items-center gap-4 border rounded-lg p-4">
                   <img
                     src={logo && !isUploading ? logo : formData.logo}
@@ -396,28 +493,30 @@ const EditProfile: React.FC = () => {
 
               {/* First: Website Link */}
               <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Tagline
-                </label>
-                <input
-                  type="text"
-                  name="tagline"
-                  value={formData.tagline}
-                  onChange={handleInputChange}
-                  placeholder="Enter Your Tagline"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <label className="block text-gray-700 text-sm font-medium mb-2">
+                <label className="block text-gray-700 text-sm font-medium mb-1">
                   Website Link
                 </label>
                 <input
                   type="text"
                   name="websiteLink"
                   value={formData.websiteLink}
-                  onChange={handleInputChange}
+                  onChange={handlevalidationChange}
                   placeholder="Enter Website Name"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full border ${
+                    validationErrors.websiteLink
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
+                    validationErrors.websiteLink
+                      ? 'focus:ring-red-500'
+                      : 'focus:ring-blue-500'
+                  }`}
                 />
+                {validationErrors.websiteLink && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {validationErrors.websiteLink}
+                  </p>
+                )}
               </div>
 
               {/* Second: Sector */}
@@ -502,23 +601,49 @@ const EditProfile: React.FC = () => {
                   type="text"
                   name="contactPhone"
                   value={formData.contactPhone}
-                  onChange={handleInputChange}
+                  onChange={handlevalidationChange}
                   placeholder="Enter Company Phone"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  className={`w-full border ${
+                    validationErrors.contactPhone
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
+                    validationErrors.contactPhone
+                      ? 'focus:ring-red-500'
+                      : 'focus:ring-blue-500'
+                  }`}
                 />
+                {validationErrors.contactPhone && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {validationErrors.contactPhone}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-1">
-                  Company Linkedin
+                  Company LinkedIn
                 </label>
                 <input
                   type="text"
                   name="linkedinLink"
                   value={formData.linkedinLink}
-                  onChange={handleInputChange}
-                  placeholder="Enter Company Linkedin"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  onChange={handlevalidationChange}
+                  placeholder="Enter Company LinkedIn"
+                  className={`w-full border ${
+                    validationErrors.linkedinLink
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
+                    validationErrors.linkedinLink
+                      ? 'focus:ring-red-500'
+                      : 'focus:ring-blue-500'
+                  }`}
                 />
+                {validationErrors.linkedinLink && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {validationErrors.linkedinLink}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-1">
@@ -528,18 +653,35 @@ const EditProfile: React.FC = () => {
                   type="email"
                   name="contactEmail"
                   value={formData.contactEmail}
-                  onChange={handleInputChange}
+                  onChange={handlevalidationChange}
                   placeholder="Enter Company Email"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 lg:py-2  focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                  className={`w-full border ${
+                    validationErrors.contactEmail
+                      ? 'border-red-500'
+                      : 'border-gray-300'
+                  } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
+                    validationErrors.contactEmail
+                      ? 'focus:ring-red-500'
+                      : 'focus:ring-blue-500'
+                  }`}
                 />
+                {validationErrors.contactEmail && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {validationErrors.contactEmail}
+                  </p>
+                )}
               </div>
             </div>
           </div>
           <div className="flex flex-col lg:flex-row justify-end mt-4 lg:gap-x-2 p-4 border-t">
             <button
               onClick={handleUpdate}
-              disabled={loading}
-              className="px-4 py-3 lg:py-2 lg:w-[12%] rounded-lg mb-2 lg:mb-0 bg-[#3667B2] text-white hover:bg-white hover:text-[#3667B2] border hover:border-[#3667B2] active:scale-95 transition transform duration-300"
+              disabled={isButtonDisabled()}
+              className={`px-4 py-3 lg:py-2 lg:w-[12%] rounded-lg mb-2 lg:mb-0 ${
+                isButtonDisabled()
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-[#3667B2] text-white hover:bg-white hover:text-[#3667B2] border hover:border-[#3667B2]'
+              } active:scale-95 transition transform duration-300`}
             >
               {loading ? 'Updating...' : 'Update'}
             </button>

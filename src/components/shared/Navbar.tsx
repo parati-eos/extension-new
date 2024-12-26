@@ -1,7 +1,7 @@
 import { FaClock, FaPlus, FaUser } from 'react-icons/fa'
 import ZynthLogoText from '../../assets/zynth-text.png'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { PricingModal } from './PricingModal'
 import { Plan } from '../../types/pricingTypes'
 import axios from 'axios'
@@ -11,9 +11,11 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
+
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const userProfileImage = sessionStorage.getItem('userDP')
   const [currency, setCurrency] = useState<string>()
+  const userProfileRef = useRef<HTMLDivElement | null>(null) // Reference to the profile image to handle click toggles
 
   const navigate = useNavigate()
 
@@ -21,58 +23,39 @@ const Navbar = () => {
     sessionStorage.clear()
     navigate('/')
   }
-
+  const dropdownRef = useRef<HTMLDivElement | null>(null)
+  // Close dropdown when clicking outside of it
   useEffect(() => {
-    if (dropdownOpen) {
-      const timer = setTimeout(() => setDropdownOpen(false), 5000)
-      return () => clearTimeout(timer) // Cleanup the timeout
-    }
-  }, [dropdownOpen])
-
-  const authToken = sessionStorage.getItem('authToken')
-  const orgId = sessionStorage.getItem('orgId')
-
-  // API CALL TO GET PRICING DATA FOR MODAL
-  useEffect(() => {
-    const getPricingData = async () => {
-      const ipInfoResponse = await fetch(
-        'https://ipinfo.io/json?token=f0e9cf876d422e'
-      )
-      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
-
-      await axios
-        .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
-            setCurrency('INR')
-          } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
-            setCurrency('USD')
-          }
-        })
+    const handleClickOutside = (event: MouseEvent) => {
+      // Ensure dropdownRef is not null and contains the clicked target
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        userProfileRef.current &&
+        !userProfileRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false) // Close dropdown if clicked outside
+      }
     }
 
-    const timer = setTimeout(() => {
-      getPricingData()
-    }, 3000) // delay
+    // Add event listener to document
+    document.addEventListener('mousedown', handleClickOutside)
 
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer)
-  }, [])
+    // Cleanup the event listener when the component is unmounted or when dropdown state changes
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, []) // Empty dependency array ensures this effect runs once
+
+  // Mocked data; replace these with actual values from your application
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
+
+  const toggleDropdown = () => {
+    setDropdownOpen((prevState) => !prevState) // Toggle dropdown state
+  }
 
   return (
     <nav className="bg-white p-2 pt-8 lg:p-3">
@@ -113,22 +96,27 @@ const Navbar = () => {
             </span>
           </button>
           {/* User Profile Icon */}
-          {userProfileImage ? (
-            <img
-              src={userProfileImage}
-              alt="User Profile"
-              className="w-11 h-12 lg:w-11 lg:h-11 rounded-full hover:scale-105 cursor-pointer"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            />
-          ) : (
-            <FaUser
-              className="w-9 h-9 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            />
-          )}
+          <div ref={userProfileRef}>
+            {userProfileImage ? (
+              <img
+                src={userProfileImage}
+                alt="User Profile"
+                className="w-11 h-12 lg:w-11 lg:h-11 rounded-full hover:scale-105 cursor-pointer"
+                onClick={toggleDropdown} // Toggle dropdown when clicked
+              />
+            ) : (
+              <FaUser
+                className="w-9 h-9 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
+                onClick={toggleDropdown} // Toggle dropdown when clicked
+              />
+            )}
+          </div>
           {/* Dropdown */}
           {dropdownOpen && (
-            <div className="fixed top-20 lg:top-17 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32">
+            <div
+              ref={dropdownRef} // Attach the reference to the dropdown container
+              className="fixed top-20 lg:top-17 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32"
+            >
               <button
                 onClick={() => navigate('/organization-profile')}
                 className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
