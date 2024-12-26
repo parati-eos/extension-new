@@ -106,20 +106,24 @@ export default function Cover({
         <BackButton onClick={onBack} />
       </div>
       <div className="flex items-center ">
-        <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220] p-2">
+        <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220] ">
           {heading}
         </h2>
-        <input
+       
+      
+      </div>
+      <div className='py-4'>
+      <input
           type="text"
           placeholder="Enter your tagline"
-          className="ml-4 p-1 border border-gray-300 rounded-lg "
+          className=" py-1 px-2 w-[50%] border border-gray-300 rounded-lg "
         />
-      </div>
-
+</div>
       {/* Main Content */}
-      <div className="w-full h-full flex flex-col items-center justify-center">
+      <div className="w-full h-full max-w-sm mx-auto flex flex-col flex-grow items-center justify-center">
         {/* Logo Upload Section */}
-        <div className="w-full border border-gray-300 rounded-xl h-full flex flex-col justify-center items-center ">
+        <div></div>
+        <div className="border border-gray-300 rounded-xl w-full h-[60%] flex flex-col  justify-center items-center ">
           <input
             type="file"
             id="logoUploadInput"
@@ -127,12 +131,12 @@ export default function Cover({
             onChange={(e) => handleFileChange(e)}
             className="hidden"
           />
-          <div className="flex flex-col h-[60%] w-[60%] items-center justify-center">
+          <div className="flex flex-col h-[80%] w-[60%] items-center justify-center">
             {logo ? (
               <img
                 src={logo}
                 alt="Uploaded Logo"
-                className="h-72 w-72 object-contain rounded-md"
+   className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
               />
             ) : (
               <>
@@ -152,24 +156,7 @@ export default function Cover({
           </div>
         </div>
 
-        {/* Button Container */}
-        <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2 lg:mt-8 mt-2">
-          {/* Attach Image Component */}
-          <AttachImage onFileSelected={handleFileSelect} />
-
-          {/* Generate Slide Button */}
-          <button
-            onClick={handleGenerateSlide}
-            disabled={!logo}
-            className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
-              !logo
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
-            }`}
-          >
-            {isLoading ? 'Loading...' : 'Generate Slide'}
-          </button>
-        </div>
+      
         {/* Attach Image and Generate Slide Buttons for Mobile */}
         <div className="flex lg:hidden mt-2 gap-2  w-full ">
           <div className="flex-1  items-center justify-center gap-2">
@@ -189,6 +176,24 @@ export default function Cover({
           </button>
         </div>
       </div>
+        {/* Button Container */}
+        <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2  lg:mt-8 mt-2">
+          {/* Attach Image Component */}
+          <AttachImage onFileSelected={handleFileSelect} />
+
+          {/* Generate Slide Button */}
+          <button
+            onClick={handleGenerateSlide}
+            disabled={!logo}
+            className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
+              !logo
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+            }`}
+          >
+            {isLoading ? 'Loading...' : 'Generate Slide'}
+          </button>
+        </div>
     </div>
   )
 }
