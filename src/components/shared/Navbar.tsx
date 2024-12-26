@@ -11,7 +11,8 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
-
+  const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const userProfileImage = sessionStorage.getItem('userDP')
   const [currency, setCurrency] = useState<string>()
@@ -47,7 +48,43 @@ const Navbar = () => {
     }
   }, []) // Empty dependency array ensures this effect runs once
 
-  // Mocked data; replace these with actual values from your application
+  // API CALL TO GET PRICING DATA FOR MODAL
+  useEffect(() => {
+    const getPricingData = async () => {
+      const ipInfoResponse = await fetch(
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+      await axios
+        .get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (ipInfoData.country === 'IN' || 'India') {
+            setMonthlyPlan(response.data.items[5])
+            setYearlyPlan(response.data.items[3])
+            setCurrency('INR')
+          } else {
+            setMonthlyPlan(response.data.items[4])
+            setYearlyPlan(response.data.items[2])
+            setCurrency('USD')
+          }
+        })
+    }
+
+    const timer = setTimeout(() => {
+      getPricingData()
+    }, 3000) // delay
+
+    // Cleanup the timer in case the component unmounts
+    return () => clearTimeout(timer)
+  }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
