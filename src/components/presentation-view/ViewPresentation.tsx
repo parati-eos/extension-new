@@ -204,9 +204,6 @@ export default function ViewPresentation() {
           setIsSlideLoading(false)
           setDisplayMode('slides')
         })
-      // setTimeout(() => {
-      //   setIsSlideLoading(false)
-      // }, 13000)
     } catch (error) {
       toast.error('Error while generating slide', {
         position: 'top-center',
@@ -218,16 +215,25 @@ export default function ViewPresentation() {
 
   // Paginate Back
   const handlePaginatePrev = () => {
+    setIsSlideLoading(true)
     if (currentSlideIndex > 0) {
       setCurrentSlideIndex((prevIndex) => prevIndex - 1)
     }
+    setTimeout(() => {
+      setIsSlideLoading(false)
+    }, 3000)
   }
 
   // Paginate Next
   const handlePaginateNext = () => {
+    setIsSlideLoading(true)
     if (currentSlideIndex < slidesId.length - 1) {
       setCurrentSlideIndex((prevIndex) => prevIndex + 1)
     }
+
+    setTimeout(() => {
+      setIsSlideLoading(false)
+    }, 3000)
   }
 
   // Custom Builder Slide Type Select Handler
@@ -501,56 +507,41 @@ export default function ViewPresentation() {
     }
 
     const documentIDFromUrl = searchParams.get('documentID')
-    const pptNameFromUrl = searchParams.get('presentationName')
 
-    if (
-      documentIDFromUrl &&
-      documentIDFromUrl !== 'loading' &&
-      documentIDFromUrl !== 'null'
-    ) {
+    if (documentIDFromUrl && documentIDFromUrl !== 'loading') {
       // If documentID comes from URL and is valid, set it only if it hasn't been set
       setDocumentID((prev) => prev || documentIDFromUrl)
-      console.log('Document ID Set From URL', documentIDFromUrl)
-      setIsDocumentIDLoading(false)
-    } else {
-      // Trigger the API call only if documentID is not present or is 'loading' or 'null'
-      const timer = setTimeout(() => {
-        getDocumentId()
-      }, 25000) // delay
+      console.log('')
 
-      // Cleanup the timer in case the component unmounts
-      return () => clearTimeout(timer)
-    }
-
-    if (pptNameFromUrl && pptNameFromUrl !== 'null') {
-      setPptName(pptNameFromUrl)
-    }
-  }, [searchParams, authToken, orgId])
-
-  // API CALL TO GET USER SUBSCRIPTION PLAN
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        await axios
-          .get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+      // Fetch the pptName if needed
+      const getPptName = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
             {
               headers: {
                 Authorization: `Bearer ${authToken}`,
               },
             }
           )
-          .then((response) => {
-            // setUserPlan(response.data.plan_name)
-          })
-          .catch((error) => {
-            console.error('Error fetching organization data:', error)
-          })
-      } catch (error) {}
-    }
+          const result = response.data
+          setPptName(result.documentName)
+        } catch (error) {
+          console.error('Error fetching document:', error)
+        }
+      }
+      getPptName()
+      setIsDocumentIDLoading(false)
+    } else {
+      // Trigger the API call only if documentID is not present or is 'loading'
+      const timer = setTimeout(() => {
+        getDocumentId()
+      }, 23000) // delay
 
-    fetchUserPlan()
-  }, [authToken, orgId])
+      // Cleanup the timer in case the component unmounts
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, authToken, orgId])
 
   // TODO: WEB SOCKET
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -579,16 +570,17 @@ export default function ViewPresentation() {
         if (
           newSlides &&
           newSlides.length > 0 &&
-          newSlides[0].GenSlideID &&
+          (newSlides[0].GenSlideID !== '' || null) &&
           newSlides[0].SectionName === currentOutline.replace(/^\d+\.\s*/, '')
         ) {
+          console.log('Reached IF')
           console.log('SOCKET DATA', newSlides)
           setPresentationID(newSlides[0].PresentationID)
           const ids = newSlides.map((item: any) => item.GenSlideID)
           setSlidesId(ids)
           setHasDataBeenReceived(true)
-          setCurrentSlidesData(ids)
           setIsSlideLoading(false)
+          setCurrentSlidesData(ids)
           setIsNoGeneratedSlide(false)
           setTotalSlides(ids.length)
           if (timerRef.current) {
@@ -602,8 +594,19 @@ export default function ViewPresentation() {
             currentOutline.replace(/^\d+\.\s*/, '') &&
           (newSlides[0].GenSlideID === '' || newSlides[0].GenSlideID === null)
         ) {
+          console.log('Reached ELSE IF 1')
+          setIsSlideLoading(true)
           if (!timerRef.current) {
             timerRef.current = setTimeout(() => {
+              if (
+                newSlidesRef.current.some(
+                  (item) =>
+                    item.GenSlideID &&
+                    item.SectionName === currentOutline.replace(/^\d+\.\s*/, '')
+                )
+              ) {
+                return
+              }
               console.warn('No valid data received in 90 seconds')
               setSlidesId([])
               setTotalSlides(0)
@@ -613,14 +616,15 @@ export default function ViewPresentation() {
             }, 90000)
           }
         } else if (newSlides.length <= 0) {
+          setIsSlideLoading(true)
+          console.log('Reached ELSE IF 2')
           setTimeout(() => {
             setSlidesId([])
             setTotalSlides(0)
-            setIsSlideLoading(false)
             setIsNoGeneratedSlide(true)
             setHasDataBeenReceived(false)
             setCurrentSlidesData([])
-          }, 20000)
+          }, 90000)
         }
       })
 
@@ -643,17 +647,15 @@ export default function ViewPresentation() {
         if (timerRef.current) clearTimeout(timerRef.current)
       }
     }
-  }, [currentOutline, newSlidesJSON, documentID, SOCKET_URL])
+  }, [currentOutline, newSlidesJSON])
 
   // Effect to monitor changes
   useEffect(() => {
-    if (currentOutline !== '' && documentID !== null) {
-      if (totalSlides !== prevTotalSlides) {
-        setTimeout(() => {
-          setIsSlideLoading(false)
-          setPrevTotalSlides(totalSlides)
-        }, 6000)
-      }
+    if (totalSlides !== prevTotalSlides) {
+      setTimeout(() => {
+        setIsSlideLoading(false)
+        setPrevTotalSlides(totalSlides)
+      }, 6000)
     }
   }, [totalSlides, prevTotalSlides])
 
@@ -765,6 +767,7 @@ export default function ViewPresentation() {
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
+          exportButtonText="Export PDF"
         />
       ) : (
         <></>
@@ -914,10 +917,6 @@ export default function ViewPresentation() {
             isMobile: true,
           })}
         </div>
-
-        {/*  ${
-            displayMode === 'slides' ? 'mt-[10em]' : 'mt-10'
-          } */}
 
         {/* MOBILE: ACTION BUTTONS */}
         <div className={`relative flex items-center justify-between w-full`}>

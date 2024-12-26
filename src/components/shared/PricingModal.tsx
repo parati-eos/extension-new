@@ -13,6 +13,7 @@ interface PricingModalProps {
   yearlyPlanId: string
   authToken: string
   orgId: string
+  exportButtonText?: string
 }
 
 const categories = [
@@ -50,6 +51,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   monthlyPlanId,
   authToken,
   orgId,
+  exportButtonText,
 }) => {
   const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -61,7 +63,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     {
       name: 'FREE',
       buttonText:
-        userPlan === 'free' ? 'Get Started for Free' : 'Get Started for Free',
+        userPlan === 'free' && exportButtonText
+          ? `${exportButtonText}`
+          : 'Get Started for Free',
       description: (
         <div className="mb-[5.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
@@ -344,7 +348,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   return (
     <div
       className={`${
-        window.location.pathname !== '/presentation-view' &&  window.location.pathname !== '/new-presentation'
+        window.location.pathname !== '/presentation-view' &&
+        window.location.pathname !== '/new-presentation'
           ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
           : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
       }`}
@@ -540,7 +545,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               }`}
               disabled={userPlan === 'free' || userPlan === 'pro'}
             >
-              Get Started for Free
+              {exportButtonText
+                ? `${exportButtonText}`
+                : 'Get Started for Free'}
             </button>
           </div>
 
