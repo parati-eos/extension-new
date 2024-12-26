@@ -12,6 +12,7 @@ interface ContactProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Contact({
@@ -21,6 +22,7 @@ export default function Contact({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: ContactProps) {
   const [websiteLink, setWebsiteLink] = useState('')
   const [email, setEmail] = useState('')
@@ -42,7 +44,7 @@ export default function Contact({
         phone,
         linkedin,
       },
-      outlineID: `outlineID-${crypto.randomUUID()}`,
+      outlineID: outlineID,
     }
 
     try {

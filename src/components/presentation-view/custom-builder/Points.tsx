@@ -13,6 +13,7 @@ interface PointsProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Points({
@@ -22,6 +23,7 @@ export default function Points({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: PointsProps) {
   const [points, setPoints] = useState([''])
   const [isLoading, setIsLoading] = useState(false)
@@ -63,7 +65,7 @@ export default function Points({
             image: selectedImage ? selectedImage.name : '',
             pointers: points.filter((point) => point.trim() !== ''),
           },
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: outlineID,
         },
         {
           headers: {

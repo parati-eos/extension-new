@@ -49,6 +49,7 @@ export interface Outlines {
   title: string
   type: string
   _id: string
+  outlineID: string
 }
 
 export interface SidebarProps {
@@ -65,6 +66,7 @@ export interface Outline {
   title: string
   type: string
   _id: string
+  outlineID: string
 }
 
 // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

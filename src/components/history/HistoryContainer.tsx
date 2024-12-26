@@ -102,7 +102,7 @@ const HistoryContainer: React.FC = () => {
     const fetchHistoryData = async () => {
       try {
         const response = await fetch(
-          `${historyUrl}/api/v1/data/slidedisplay/history/${orgId}`,
+          `${historyUrl}/api/v1/data/slidedisplay/history/${userId}`,
           {
             method: 'GET',
             headers: {
@@ -178,12 +178,12 @@ const HistoryContainer: React.FC = () => {
         )
         .then((response) => {
           if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[3])
-            setYearlyPlan(response.data.items[1])
+            setMonthlyPlan(response.data.items[5])
+            setYearlyPlan(response.data.items[3])
             setCurrency('INR')
           } else {
-            setMonthlyPlan(response.data.items[2])
-            setYearlyPlan(response.data.items[0])
+            setMonthlyPlan(response.data.items[4])
+            setYearlyPlan(response.data.items[2])
             setCurrency('USD')
           }
         })
@@ -197,7 +197,9 @@ const HistoryContainer: React.FC = () => {
     return () => clearTimeout(timer)
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+  const yearlyPlanId = yearlyPlan?.id
 
   return (
     <>
@@ -487,6 +489,10 @@ const HistoryContainer: React.FC = () => {
               monthlyPlanAmount={monthlyPlanAmount}
               yearlyPlanAmount={yearlyPlanAmount}
               currency={currency}
+              monthlyPlanId={monthlyPlanId!}
+              yearlyPlanId={yearlyPlanId!}
+              authToken={authToken!}
+              orgId={orgId!}
             />
           ) : (
             <></>

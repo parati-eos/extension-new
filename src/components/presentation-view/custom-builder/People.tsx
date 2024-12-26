@@ -13,6 +13,7 @@ interface PeopleProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 interface IPerson {
@@ -31,6 +32,7 @@ export default function People({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: PeopleProps) {
   const [people, setPeople] = useState([
     {
@@ -193,7 +195,7 @@ export default function People({
             slideName: heading,
             people: people,
           },
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: outlineID,
         },
         {
           headers: {

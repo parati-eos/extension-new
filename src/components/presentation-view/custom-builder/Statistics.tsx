@@ -13,6 +13,7 @@ interface StatisticProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Statistics({
@@ -22,6 +23,7 @@ export default function Statistics({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: StatisticProps) {
   const [title, setTitle] = useState(['', '', '']) // Initialize with 3 empty strings
   const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
@@ -85,7 +87,7 @@ export default function Statistics({
               value: Number(description[index + 1] || 0),
             })),
           },
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: outlineID,
         },
         {
           headers: {

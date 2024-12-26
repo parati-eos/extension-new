@@ -13,6 +13,7 @@ interface ImagesProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Images({
@@ -22,6 +23,7 @@ export default function Images({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
@@ -82,7 +84,7 @@ export default function Images({
               slideName: heading,
               imageurl: images,
             },
-            outlineID: `outlineID-${crypto.randomUUID()}`,
+            outlineID: outlineID,
           },
           {
             headers: {

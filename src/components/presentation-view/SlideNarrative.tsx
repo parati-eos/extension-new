@@ -13,6 +13,7 @@ interface SlideNarrativeProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   setIsSlideLoading: React.Dispatch<React.SetStateAction<boolean>>
+  outlineID: string
 }
 
 export default function SlideNarrative({
@@ -23,6 +24,7 @@ export default function SlideNarrative({
   authToken,
   setDisplayMode,
   setIsSlideLoading,
+  outlineID,
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -44,7 +46,8 @@ export default function SlideNarrative({
           documentID: documentID,
           userId: sessionStorage.getItem('userEmail'),
           input: narrative,
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: outlineID,
+          image: selectedImage,
         },
         {
           headers: {

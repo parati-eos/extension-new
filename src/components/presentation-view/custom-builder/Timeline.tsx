@@ -13,6 +13,7 @@ interface TimelineProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Timeline({
@@ -22,6 +23,7 @@ export default function Timeline({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: TimelineProps) {
   const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
@@ -82,7 +84,7 @@ export default function Timeline({
             image: selectedImage ? selectedImage.name : '',
             phases: phases,
           },
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: outlineID,
         },
         {
           headers: {

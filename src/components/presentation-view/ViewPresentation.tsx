@@ -44,6 +44,7 @@ export default function ViewPresentation() {
   const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(1)
   const [currentOutline, setCurrentOutline] = useState('')
+  const [currentOutlineID, setCurrentOutlineID] = useState('')
   const [outlineType, setOutlineType] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
@@ -125,6 +126,7 @@ export default function ViewPresentation() {
   const handleOutlineSelect = (title: string) => {
     setIsSlideLoading(true) // Set loading to true
     setCurrentOutline(title)
+    setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!)
     const slideIndex = outlines.findIndex((o) => o.title === title)
     setCurrentSlide(slideIndex)
     slideRefs.current[slideIndex]?.scrollIntoView({
@@ -163,6 +165,7 @@ export default function ViewPresentation() {
       outlines[closestIndex]?.title !== currentOutline
     ) {
       setCurrentOutline(outlines[closestIndex]?.title)
+      setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
       setDisplayMode('slides')
     }
   }, 100)
@@ -180,7 +183,7 @@ export default function ViewPresentation() {
             type: outlineType,
             title: currentOutline.replace(/^\d+\.\s*/, ''),
             documentID: documentID,
-            outlineID: `outlineID-${crypto.randomUUID()}`,
+            outlineID: currentOutlineID,
           },
           {
             headers: {
@@ -344,6 +347,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'People':
@@ -355,6 +359,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'Table':
@@ -366,6 +371,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'Timeline':
@@ -377,6 +383,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'SlideNarrative':
@@ -389,6 +396,7 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             setIsSlideLoading={setIsSlideLoading}
+            outlineID={currentOutlineID}
           />
         )
       case 'Statistics':
@@ -400,6 +408,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'Images':
@@ -411,6 +420,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'Graphs':
@@ -422,6 +432,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'Contact':
@@ -433,6 +444,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
       case 'Cover':
@@ -444,6 +456,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
+            outlineID={currentOutlineID}
           />
         )
 
@@ -606,7 +619,7 @@ export default function ViewPresentation() {
             setIsNoGeneratedSlide(true)
             setHasDataBeenReceived(false)
             setCurrentSlidesData([])
-          }, 4000)
+          }, 8000)
         }
       })
 
@@ -667,9 +680,12 @@ export default function ViewPresentation() {
         }
       )
       const fetchedOutlines = response.data.outline
+      console.log('Fetched Outlines:', fetchedOutlines)
+
       setOutlines(fetchedOutlines)
       if (fetchedOutlines.length > 0) {
         setCurrentOutline(fetchedOutlines[0].title)
+        setCurrentOutlineID(fetchedOutlines[0].outlineID)
       }
     } catch (error) {
       console.error('Error fetching outlines:', error)
@@ -866,6 +882,9 @@ export default function ViewPresentation() {
                 outlines={outlines}
                 onSelectOutline={(outline) => {
                   setCurrentOutline(outline)
+                  setCurrentOutlineID(
+                    outlines.find((o) => o.title === outline)?.outlineID!
+                  )
                   const slideIndex = outlines.findIndex(
                     (o) => o.title === outline
                   )

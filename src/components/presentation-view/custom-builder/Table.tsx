@@ -19,6 +19,7 @@ interface TableProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Table({
@@ -28,6 +29,7 @@ export default function Table({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
@@ -191,7 +193,7 @@ export default function Table({
               rows7: transformRow(tableData.rows[6] || []),
               rows8: transformRow(tableData.rows[7] || []),
             },
-            outlineID: `outlineID-${crypto.randomUUID()}`,
+            outlineID: outlineID,
           },
           {
             headers: {

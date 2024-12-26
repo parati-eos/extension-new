@@ -14,6 +14,7 @@ interface CoverProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  outlineID: string
 }
 
 export default function Cover({
@@ -23,6 +24,7 @@ export default function Cover({
   orgId,
   authToken,
   setDisplayMode,
+  outlineID,
 }: CoverProps) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -69,7 +71,7 @@ export default function Cover({
             slideName: heading,
             logo,
           },
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID,
         },
         {
           headers: {
