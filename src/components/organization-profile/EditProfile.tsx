@@ -217,283 +217,279 @@ const EditProfile: React.FC = () => {
           <div className="border-b pb-4 mb-4">
             <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
             <div className="hidden md:grid  md:grid-cols-3 gap-6">
-  {/* First Grid: Company Name and Logo */}
-  <div className="flex flex-col gap-4">
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Company Name
-      </label>
-      <input
-        type="text"
-        name="companyName"
-        value={formData.companyName}
-        onChange={handleInputChange}
-        placeholder="Enter Company Name"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-    <div className="flex items-center gap-4 border rounded-lg p-4">
-      <img
-        src={logo && !isUploading ? logo : formData.logo}
-        alt="Organization Logo"
-        className="w-20 h-20 rounded-full"
-      />
-      <button
-        className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
-        onClick={handleButtonClick}
-      >
-        Change Logo
-      </button>
-      <input
-        type="file"
-        id="changeLogoInput"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-      {isUploading && <p>Uploading...</p>}
-    </div>
-  </div>
+              {/* First Grid: Company Name and Logo */}
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleInputChange}
+                    placeholder="Enter Company Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="flex items-center gap-4 border rounded-lg p-4">
+                  <img
+                    src={logo && !isUploading ? logo : formData.logo}
+                    alt="Organization Logo"
+                    className="w-20 h-20 rounded-full"
+                  />
+                  <button
+                    className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
+                    onClick={handleButtonClick}
+                  >
+                    Change Logo
+                  </button>
+                  <input
+                    type="file"
+                    id="changeLogoInput"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  {isUploading && <p>Uploading...</p>}
+                </div>
+              </div>
 
-  {/* Second Grid: Tagline and Sector */}
-  <div className="flex flex-col gap-4">
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Tagline
-      </label>
-      <input
-        type="text"
-        name="tagline"
-        value={formData.tagline}
-        onChange={handleInputChange}
-        placeholder="Enter Your Tagline"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Sector
-      </label>
-      <select
-        name="sector"
-        value={sector}
-        onChange={handleSectorChange}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="" disabled>
-          Select sector
-        </option>
-        {Object.keys(industrySectorMap).map((sectorKey) => (
-          <option key={sectorKey} value={sectorKey}>
-            {sectorKey}
-          </option>
-        ))}
-      </select>
-      {sector === 'Other' && (
-        <input
-          type="text"
-          placeholder="Enter Your Sector"
-          value={otherSector}
-          onChange={(e) => setOtherSector(e.target.value)}
-          className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      )}
-    </div>
-   
-  </div>
-  
+              {/* Second Grid: Tagline and Sector */}
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Tagline
+                  </label>
+                  <input
+                    type="text"
+                    name="tagline"
+                    value={formData.tagline}
+                    onChange={handleInputChange}
+                    placeholder="Enter Your Tagline"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Sector
+                  </label>
+                  <select
+                    name="sector"
+                    value={sector}
+                    onChange={handleSectorChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="" disabled>
+                      Select sector
+                    </option>
+                    {Object.keys(industrySectorMap).map((sectorKey) => (
+                      <option key={sectorKey} value={sectorKey}>
+                        {sectorKey}
+                      </option>
+                    ))}
+                  </select>
+                  {sector === 'Other' && (
+                    <input
+                      type="text"
+                      placeholder="Enter Your Sector"
+                      value={otherSector}
+                      onChange={(e) => setOtherSector(e.target.value)}
+                      className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  )}
+                </div>
+              </div>
 
-  {/* Third Grid: Website Link and Industry */}
-  <div className="flex flex-col gap-4">
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Website Link
-      </label>
-      <input
-        type="text"
-        name="websiteLink"
-        value={formData.websiteLink}
-        onChange={handleInputChange}
-        placeholder="Enter Website Name"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Industry
-      </label>
-      <select
-        name="industry"
-        value={industry}
-        onChange={handleIndustryChange}
-        disabled={!sector || sector === 'Other'}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {sector !== 'Other' && (
-          <option value="" disabled>
-            Select industry
-          </option>
-        )}
-        {sector === 'Other' && (
-          <option value="" disabled>
-            Other
-          </option>
-        )}
-        {industryOptions.map((industryOption) => (
-          <option key={industryOption} value={industryOption}>
-            {industryOption}
-          </option>
-        ))}
-      </select>
-      {(industry === 'Other' || sector === 'Other') && (
-        <input
-          type="text"
-          placeholder="Enter Your Industry"
-          value={otherIndustry}
-          onChange={(e) => setOtherIndustry(e.target.value)}
-          className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      )}
-    </div>
-  </div>
-</div>
-           
-<div className=" md:hidden grid grid-cols-1 gap-4">
-<div className="flex flex-col gap-4">
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Company Name
-      </label>
-      <input
-        type="text"
-        name="companyName"
-        value={formData.companyName}
-        onChange={handleInputChange}
-        placeholder="Enter Company Name"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-    <div className="flex items-center gap-4 border rounded-lg p-4">
-      <img
-        src={logo && !isUploading ? logo : formData.logo}
-        alt="Organization Logo"
-        className="w-20 h-20 rounded-full"
-      />
-      <button
-        className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
-        onClick={handleButtonClick}
-      >
-        Change Logo
-      </button>
-      <input
-        type="file"
-        id="changeLogoInput"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-      {isUploading && <p>Uploading...</p>}
-    </div>
-  </div>
-  
-  
+              {/* Third Grid: Website Link and Industry */}
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Website Link
+                  </label>
+                  <input
+                    type="text"
+                    name="websiteLink"
+                    value={formData.websiteLink}
+                    onChange={handleInputChange}
+                    placeholder="Enter Website Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Industry
+                  </label>
+                  <select
+                    name="industry"
+                    value={industry}
+                    onChange={handleIndustryChange}
+                    disabled={!sector || sector === 'Other'}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {sector !== 'Other' && (
+                      <option value="" disabled>
+                        Select industry
+                      </option>
+                    )}
+                    {sector === 'Other' && (
+                      <option value="" disabled>
+                        Other
+                      </option>
+                    )}
+                    {industryOptions.map((industryOption) => (
+                      <option key={industryOption} value={industryOption}>
+                        {industryOption}
+                      </option>
+                    ))}
+                  </select>
+                  {(industry === 'Other' || sector === 'Other') && (
+                    <input
+                      type="text"
+                      placeholder="Enter Your Industry"
+                      value={otherIndustry}
+                      onChange={(e) => setOtherIndustry(e.target.value)}
+                      className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
 
-    {/* First: Website Link */}
-    <div>
-    <label className="block text-gray-700 text-sm font-medium mb-2">
-        Tagline
-      </label>
-      <input
-        type="text"
-        name="tagline"
-        value={formData.tagline}
-        onChange={handleInputChange}
-        placeholder="Enter Your Tagline"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Website Link
-      </label>
-      <input
-        type="text"
-        name="websiteLink"
-        value={formData.websiteLink}
-        onChange={handleInputChange}
-        placeholder="Enter Website Name"
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
+            <div className=" md:hidden grid grid-cols-1 gap-4">
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-gray-700 text-sm font-medium mb-2">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleInputChange}
+                    placeholder="Enter Company Name"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="flex items-center gap-4 border rounded-lg p-4">
+                  <img
+                    src={logo && !isUploading ? logo : formData.logo}
+                    alt="Organization Logo"
+                    className="w-20 h-20 rounded-full"
+                  />
+                  <button
+                    className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
+                    onClick={handleButtonClick}
+                  >
+                    Change Logo
+                  </button>
+                  <input
+                    type="file"
+                    id="changeLogoInput"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  {isUploading && <p>Uploading...</p>}
+                </div>
+              </div>
 
-    {/* Second: Sector */}
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Sector
-      </label>
-      <select
-        name="sector"
-        value={sector}
-        onChange={handleSectorChange}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="" disabled>
-          Select sector
-        </option>
-        {Object.keys(industrySectorMap).map((sectorKey) => (
-          <option key={sectorKey} value={sectorKey}>
-            {sectorKey}
-          </option>
-        ))}
-      </select>
-      {sector === 'Other' && (
-        <input
-          type="text"
-          placeholder="Enter Your Sector"
-          value={otherSector}
-          onChange={(e) => setOtherSector(e.target.value)}
-          className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      )}
-    </div>
+              {/* First: Website Link */}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Tagline
+                </label>
+                <input
+                  type="text"
+                  name="tagline"
+                  value={formData.tagline}
+                  onChange={handleInputChange}
+                  placeholder="Enter Your Tagline"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Website Link
+                </label>
+                <input
+                  type="text"
+                  name="websiteLink"
+                  value={formData.websiteLink}
+                  onChange={handleInputChange}
+                  placeholder="Enter Website Name"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-    {/* Third: Industry */}
-    <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        Industry
-      </label>
-      <select
-        name="industry"
-        value={industry}
-        onChange={handleIndustryChange}
-        disabled={!sector || sector === 'Other'}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        {sector !== 'Other' && (
-          <option value="" disabled>
-            Select industry
-          </option>
-        )}
-        {sector === 'Other' && (
-          <option value="" disabled>
-            Other
-          </option>
-        )}
-        {industryOptions.map((industryOption) => (
-          <option key={industryOption} value={industryOption}>
-            {industryOption}
-          </option>
-        ))}
-      </select>
-      {(industry === 'Other' || sector === 'Other') && (
-        <input
-          type="text"
-          placeholder="Enter Your Industry"
-          value={otherIndustry}
-          onChange={(e) => setOtherIndustry(e.target.value)}
-          className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      )}
-    </div>
-  </div>
+              {/* Second: Sector */}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Sector
+                </label>
+                <select
+                  name="sector"
+                  value={sector}
+                  onChange={handleSectorChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="" disabled>
+                    Select sector
+                  </option>
+                  {Object.keys(industrySectorMap).map((sectorKey) => (
+                    <option key={sectorKey} value={sectorKey}>
+                      {sectorKey}
+                    </option>
+                  ))}
+                </select>
+                {sector === 'Other' && (
+                  <input
+                    type="text"
+                    placeholder="Enter Your Sector"
+                    value={otherSector}
+                    onChange={(e) => setOtherSector(e.target.value)}
+                    className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                )}
+              </div>
+
+              {/* Third: Industry */}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">
+                  Industry
+                </label>
+                <select
+                  name="industry"
+                  value={industry}
+                  onChange={handleIndustryChange}
+                  disabled={!sector || sector === 'Other'}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {sector !== 'Other' && (
+                    <option value="" disabled>
+                      Select industry
+                    </option>
+                  )}
+                  {sector === 'Other' && (
+                    <option value="" disabled>
+                      Other
+                    </option>
+                  )}
+                  {industryOptions.map((industryOption) => (
+                    <option key={industryOption} value={industryOption}>
+                      {industryOption}
+                    </option>
+                  ))}
+                </select>
+                {(industry === 'Other' || sector === 'Other') && (
+                  <input
+                    type="text"
+                    placeholder="Enter Your Industry"
+                    value={otherIndustry}
+                    onChange={(e) => setOtherIndustry(e.target.value)}
+                    className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                )}
+              </div>
+            </div>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Information</h3>

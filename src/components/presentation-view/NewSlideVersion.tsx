@@ -11,6 +11,7 @@ interface ButtonProps {
   userPlan: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   isLoading: boolean
+  customBuilderDisabled: boolean
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
@@ -20,6 +21,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   setDisplayMode,
   userPlan,
   isLoading,
+  customBuilderDisabled,
 }) => {
   return (
     <div className="flex flex-col  w-full h-full p-2 ">
@@ -62,11 +64,15 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                 <span className="text-xs lg:text-sm">Slide Narrative</span>
               </button>
             </div>
-            <div className="flex flex-col items-center rounded-md border border-gray-300 p-4 flex-shrink-0 w-[33%]">
+            <div
+              className={`flex flex-col items-center rounded-md border border-gray-300 ${
+                customBuilderDisabled ? 'bg-gray-200' : ''
+              } p-4 flex-shrink-0 w-[33%]`}
+            >
               <button
                 className="flex flex-col items-center justify-center "
                 onClick={handleCustomBuilderClick}
-                // disabled={userPlan === 'free'}
+                disabled={customBuilderDisabled}
               >
                 <img
                   src={CustomBuilderIcon}
@@ -90,6 +96,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   userPlan,
   setDisplayMode,
   isLoading,
+  customBuilderDisabled,
 }) => {
   const onBack = () => {
     setDisplayMode('slides')
@@ -150,12 +157,15 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               </button>
             </div>
             <div
-              className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
+              className={`flex flex-col items-center border border-gray-300 ${
+                customBuilderDisabled ? 'bg-gray-200' : ''
+              } rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0`}
               style={{ width: '30%', height: '12rem' }}
             >
               <button
                 className="flex flex-col items-center justify-center w-full h-full"
                 onClick={handleCustomBuilderClick}
+                disabled={customBuilderDisabled}
               >
                 <img
                   src={CustomBuilderIcon}

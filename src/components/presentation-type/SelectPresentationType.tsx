@@ -337,7 +337,7 @@ const SelectPresentationType: React.FC = () => {
             onMouseLeave={handleMouseLeave}
           >
             <button
-              // disabled={refineButtonDisabled}
+              disabled={refineButtonDisabled}
               onClick={() => setIsRefineModalOpen(true)}
               className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
                 refineButtonDisabled

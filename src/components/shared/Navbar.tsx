@@ -1,8 +1,8 @@
-import { FaClock, FaPlus, FaUser } from 'react-icons/fa';
-import ZynthLogoText from '../../assets/zynth-text.png';
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { PricingModal } from './PricingModal';
+import { FaClock, FaPlus, FaUser } from 'react-icons/fa'
+import ZynthLogoText from '../../assets/zynth-text.png'
+import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { PricingModal } from './PricingModal'
 import { Plan } from '../../types/pricingTypes'
 interface PricingModalProps {
   closeModal: () => void
@@ -16,34 +16,34 @@ interface PricingModalProps {
   orgId: string
 }
 const Navbar = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
-    const [yearlyPlan, setYearlyPlan] = useState<Plan>()
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const userProfileImage = sessionStorage.getItem('userDP');
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
+  const [yearlyPlan, setYearlyPlan] = useState<Plan>()
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const userProfileImage = sessionStorage.getItem('userDP')
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleLogout = () => {
-    sessionStorage.clear();
-    navigate('/');
-  };
+    sessionStorage.clear()
+    navigate('/')
+  }
 
   useEffect(() => {
     if (dropdownOpen) {
-      const timer = setTimeout(() => setDropdownOpen(false), 5000);
-      return () => clearTimeout(timer); // Cleanup the timeout
+      const timer = setTimeout(() => setDropdownOpen(false), 5000)
+      return () => clearTimeout(timer) // Cleanup the timeout
     }
-  }, [dropdownOpen]);
+  }, [dropdownOpen])
 
   // Mocked data; replace these with actual values from your application
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
-  const currency = 'INR';
-  const yearlyPlanId = 'yearly-plan-123';
-  const monthlyPlanId = 'monthly-plan-456';
-  const authToken = sessionStorage.getItem('authToken') || ''; // Replace with actual token retrieval logic
-  const orgId = sessionStorage.getItem('orgId') || ''; // Replace with actual organization ID retrieval logic
+  const currency = 'INR'
+  const yearlyPlanId = 'yearly-plan-123'
+  const monthlyPlanId = 'monthly-plan-456'
+  const authToken = sessionStorage.getItem('authToken') || '' // Replace with actual token retrieval logic
+  const orgId = sessionStorage.getItem('orgId') || '' // Replace with actual organization ID retrieval logic
 
   return (
     <nav className="bg-white p-2 pt-8 lg:p-3">
