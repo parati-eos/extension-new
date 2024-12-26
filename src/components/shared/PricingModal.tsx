@@ -81,7 +81,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         },
 
         {
-          text: 'Unlimited',
+          text: '-',
           bgColor: 'white',
           icon: null,
           spacing: 'py-3 ',
@@ -213,7 +213,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           text: '',
           bgColor: 'white',
           icon: null,
-          spacing: 'py-7 ',
+          spacing: 'py-[1.9rem] ',
           margin: '',
         },
 
@@ -344,7 +344,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   return (
     <div
       className={`${
-        window.location.pathname !== '/presentation-view'
+        window.location.pathname !== '/presentation-view' &&  window.location.pathname !== '/new-presentation'
           ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
           : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
       }`}

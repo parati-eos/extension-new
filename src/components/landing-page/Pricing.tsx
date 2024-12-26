@@ -102,7 +102,7 @@ const Pricing: React.FC = () => {
         },
 
         {
-          text: 'Unlimited',
+          text: '-',
           bgColor: 'white',
           icon: null,
           spacing: 'py-3 ',
@@ -232,7 +232,7 @@ const Pricing: React.FC = () => {
           text: '',
           bgColor: 'white',
           icon: null,
-          spacing: 'py-7 ',
+          spacing: 'py-[1.9rem] ',
           margin: '',
         },
 
