@@ -574,7 +574,7 @@ export default function ViewPresentation() {
               setIsSlideLoading(false)
               setIsNoGeneratedSlide(false)
               setTotalSlides(ids.length)
-            }, 3000)
+            }, 2000)
           } else if (
             firstSlide.SectionName === sectionName &&
             firstSlide.PresentationID &&
