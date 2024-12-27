@@ -27,47 +27,36 @@ export default function Images({
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
-  const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    replaceIndex?: number
-  ) => {
-    if (!e.target.files) return
-    const files = Array.from(e.target.files)
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setIsUploading(true) // Indicate uploading
 
-    if (replaceIndex === undefined && images.length + files.length > 4) {
-      alert('You can upload a maximum of 4 images.')
-      return
-    }
-
-    if (replaceIndex !== undefined) setReplacingIndex(replaceIndex)
-    else setIsUploading(true)
-
-    try {
-      const uploadedImages = await Promise.all(
-        files.map((file) => uploadLogoToS3(file))
-      )
-
-      if (replaceIndex !== undefined) {
+      try {
+        // Upload file to S3 and get the URL
+        console.log('File selected:', file)
+        const url = await uploadLogoToS3(file)
+        console.log('Uploaded URL:', url)
         setImages((prevImages) => {
-          const updatedImages = [...prevImages]
-          updatedImages[replaceIndex] = uploadedImages[0]
-          return updatedImages
+          const newImages = [...prevImages, url]
+          console.log('Updated images state:', newImages)
+          return newImages
         })
-      } else {
-        setImages((prevImages) => [...prevImages, ...uploadedImages])
+      } catch (error) {
+        toast.error('Error uploading logo', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsUploading(false)
       }
-    } catch (error) {
-      toast.error('Upload failed', {
-        position: 'top-center',
-        autoClose: 2000,
-      })
-    } finally {
-      setIsUploading(false)
-      setReplacingIndex(null)
     }
+  }
+
+  const handleButtonClick = () => {
+    document.getElementById('companyLogo')?.click()
   }
 
   const handleSubmit = async () => {
@@ -127,137 +116,40 @@ export default function Images({
             {heading}
           </h2>
 
-          {/* Mobile Images Input and Display Section */}
-          <div className="flex flex-col lg:hidden w-full h-full md:mt-4">
-            <div className="flex items-center border justify-between border-gray-300 rounded-lg mt-2 lg:mt-0 p-4">
-              <div className="flex items-center gap-4">
-                <FaImage className="text-4xl text-gray-500" />
-                <p className="text-gray-500 text-sm text-center">
-                  {isUploading && replacingIndex === null
-                    ? 'Uploading... Please wait'
-                    : 'Upload Image(s)'}
-                </p>
-              </div>
-              <button
-                onClick={() =>
-                  document.getElementById('mobileImageInput')?.click()
-                }
-                className="text-[#3667B2] px-4 py-2 rounded-md "
-              >
-                Upload
-              </button>
-              <input
-                type="file"
-                id="mobileImageInput"
-                className="hidden"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleFileChange(e)}
-              />
-            </div>
-
-            {/* Display Uploaded Images for Mobile */}
-            <div className="flex flex-col gap-2 mt-4">
-              {images.map((image, index) => (
-                <div key={index} className="relative w-full h-24">
-                  {/* Display uploaded image file name */}
-                  <p className="text-gray-500 text-sm">{`Uploaded ${
-                    index + 1
-                  }: ${image.split('/').pop()}`}</p>
-
-                  {/* Reupload button */}
-                  <button
-                    onClick={() =>
-                      document
-                        .getElementById(`replaceInputMobile${index}`)
-                        ?.click()
-                    }
-                    className="absolute top-1 right-1 bg-gray-800 text-white text-xs py-1 px-2 rounded-md hover:bg-gray-600"
-                  >
-                    Re-upload
-                  </button>
-
-                  {/* Hidden input for replacing the image */}
-                  <input
-                    type="file"
-                    id={`replaceInputMobile${index}`}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, index)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Large Screens Images Input and Display Section */}
-          <div className="hidden lg:flex justify-center w-full md:mt-4 lg:mt-12">
-            <div className="grid grid-cols-4 gap-4 w-full max-w-4xl">
-              {images.map((image, index) => (
-                <div key={index} className="w-full aspect-square relative">
-                  {replacingIndex === index ? (
-                    <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-                      <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                    </div>
-                  ) : null}
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                  <button
-                    onClick={() =>
-                      document.getElementById(`replaceInput${index}`)?.click()
-                    }
-                    className="absolute top-2 right-2 bg-gray-800 text-white text-xs py-1 px-2 rounded-lg hover:bg-gray-600"
-                  >
-                    Re-upload
-                  </button>
-                  <input
-                    type="file"
-                    id={`replaceInput${index}`}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, index)}
-                  />
-                </div>
-              ))}
-
-              {images.length < 4 && (
-                <div className="flex flex-col items-center justify-center w-full h-[30%] md:h-full aspect-square border border-gray-300 rounded-lg">
-                  <button
-                    onClick={() =>
-                      document.getElementById('imageInput')?.click()
-                    }
-                    className="flex md:flex-col gap-2 md:gap-0 items-center justify-center w-full h-full"
-                  >
-                    <FaImage className="text-2xl text-gray-500" />
-                    <p className="text-gray-500 text-sm md:mt-2">
-                      {isUploading && replacingIndex === null ? (
-                        <>
-                          Uploading...
-                          <br />
-                          Please wait
-                        </>
-                      ) : (
-                        <>
-                          Upload Image
-                          <br />
-                          Up to 4 images can be added
-                        </>
-                      )}
-                    </p>
-                  </button>
-                  <input
-                    type="file"
-                    id="imageInput"
-                    className="hidden"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleFileChange(e)}
-                  />
-                </div>
+          <div
+            className={`w-[90%] md:w-full border border-gray-200 mt-4 md:mt-6 ${
+              images[0] !== '' ? 'md:mt-0' : ''
+            } p-7 rounded-lg hover:scale-105`}
+          >
+            <input
+              type="file"
+              id="companyLogo"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <div className="flex flex-col items-center">
+              {images[0] ? (
+                <img
+                  src={images[0]}
+                  alt="Uploaded Logo"
+                  className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                />
+              ) : (
+                <>
+                  <FaImage className="text-gray-500 text-4xl mb-4" />
+                  <p className="text-gray-500 mb-4">
+                    {isUploading ? 'Uploading...' : 'Upload Your Logo'}
+                  </p>
+                </>
               )}
+              <button
+                type="button"
+                onClick={handleButtonClick}
+                className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white transition"
+              >
+                {images[0] ? 'Upload Again' : 'Upload Logo'}
+              </button>
             </div>
           </div>
 

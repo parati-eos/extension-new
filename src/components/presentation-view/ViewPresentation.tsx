@@ -500,10 +500,12 @@ export default function ViewPresentation() {
     }
 
     const documentIDFromUrl = searchParams.get('documentID')
+    const pptNameFromUrl = searchParams.get('presentationName')
 
     if (documentIDFromUrl && documentIDFromUrl !== 'loading') {
       // If documentID comes from URL and is valid, set it only if it hasn't been set
       setDocumentID((prev) => prev || documentIDFromUrl)
+      setPptName(pptNameFromUrl)
       console.log('')
 
       // Fetch the pptName if needed

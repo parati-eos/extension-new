@@ -86,16 +86,16 @@ function Login() {
       })
 
       const responseData = await res.json()
+      console.log('User Data:', responseData)
 
-      sessionStorage.setItem('authToken', responseData.token)
-
-      if (responseData.orgid && responseData.orgid !== '') {
+      if (responseData.orgid) {
         sessionStorage.setItem('orgId', responseData.orgid)
         navigate('/new-presentation')
-      } else {
+      } else if (!responseData.orgId) {
         sessionStorage.setItem('orgId', generatedOrgId)
         navigate('/onboarding')
       }
+      sessionStorage.setItem('authToken', responseData.token)
     } catch (error) {
       console.error('Error storing user data:', error)
     }
