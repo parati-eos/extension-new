@@ -533,7 +533,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           }`}
         >
           <div className="px-4 ">
-            <h2 className="text-2xl text-[#3667B2] font-bold mb-2">FREE</h2>
+            <h2 className="text-xl text-[#3667B2] font-bold mb-2">FREE</h2>
             <p className="text-sm font-medium  text-gray-600 mb-4">
               Perfect for exploring Zynth.
             </p>
@@ -553,7 +553,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           <div className="mt-4  ">
-            <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            <h2 className="font-medium text-[#3667B2] text-lg mb-2 px-3">
               Access
             </h2>
             <ul className="text-gray-700 ">
@@ -569,7 +569,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           <div className="mt-4">
-            <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            <h2 className="font-medium text-[#3667B2] text-lg mb-2 px-3">
               Features
             </h2>
             <ul className="text-gray-700">
@@ -603,7 +603,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           <div className="mt-4">
-            <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            <h2 className="font-medium text-[#3667B2] text-lg mb-2 px-3">
               Sharing and Exports
             </h2>
             <ul className="text-gray-700">
@@ -621,12 +621,12 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
         </div>
         <div
-          className={`rounded-xl ml-4 py-12 mr-4 bg-white lg:hidden mt-8 border ${
+          className={`rounded-xl ml-4  mr-4 bg-white lg:hidden mt-8 border ${
             userPlan === 'pro' ? 'border-[#3667B2]' : 'border-white'
           }`}
         >
           <div className="px-4 ">
-            <h2 className="text-2xl text-[#3667B2] font-bold mb-2">PRO</h2>
+            <h2 className="text-xl text-[#3667B2] font-bold mb-2">PRO</h2>
             <p className="text-sm text-gray-600 font-medium mb-3">
               Ideal for professionals and businesses.
             </p>
@@ -634,14 +634,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               {billingCycle === 'monthly' ? (
                 <>
                   {monthlyPlanAmount} {currency}
-                  <span className="text-2xl md:font-thin lg:font-bold ml-2">
+                  <span className="text-xl md:font-thin lg:font-bold ml-2">
                     per month
                   </span>
                 </>
               ) : (
                 <>
                   {yearlyPlanAmount} {currency}
-                  <span className="text-2xl font-bold ml-2">per year</span>
+                  <span className="text-xl font-bold ml-2">per year</span>
                 </>
               )}
             </h3>
@@ -658,7 +658,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           <div className="mt-4  ">
-            <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            <h2 className="font-medium text-[#3667B2] text-lg mb-2 px-3">
               Access
             </h2>
             <ul className="text-gray-700 ">
@@ -674,7 +674,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           <div className="mt-4">
-            <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            <h2 className="font-medium text-[#3667B2] text-lg mb-2 px-3">
               Features
             </h2>
             <ul className="text-gray-700">
@@ -712,7 +712,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
 
           <div className="mt-4">
-            <h2 className="font-medium text-[#3667B2] text-xl mb-2 px-3">
+            <h2 className="font-medium text-[#3667B2] text-lg mb-2 px-3">
               Sharing and Exports
             </h2>
             <ul className="text-gray-700">
@@ -736,7 +736,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 </span>
               </li>
             </ul>
-            <div className="px-4 py-2 ">
+            <div className="px-4 py-2 mb-14  ">
               <button
                 onClick={handleUpgrade}
                 className={`py-2 px-4 w-full mt-4 rounded-lg border ${
