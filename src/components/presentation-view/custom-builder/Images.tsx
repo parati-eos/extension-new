@@ -157,15 +157,13 @@ export default function Images({
             </div>
 
             {/* Display Uploaded Images for Mobile */}
-            <div className="grid grid-cols-3 gap-2 mt-4">
+            <div className="flex flex-col gap-2 mt-4">
               {images.map((image, index) => (
                 <div key={index} className="relative w-full h-24">
-                  {/* Display uploaded image */}
-                  <img
-                    src={image}
-                    alt={`Uploaded ${index + 1}`}
-                    className="w-full h-full object-cover rounded-md"
-                  />
+                  {/* Display uploaded image file name */}
+                  <p className="text-gray-500 text-sm">{`Uploaded ${
+                    index + 1
+                  }: ${image.split('/').pop()}`}</p>
 
                   {/* Reupload button */}
                   <button
@@ -194,7 +192,7 @@ export default function Images({
 
           {/* Large Screens Images Input and Display Section */}
           <div className="hidden lg:flex justify-center w-full md:mt-4 lg:mt-12">
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+            <div className="grid grid-cols-4 gap-4 w-full max-w-4xl">
               {images.map((image, index) => (
                 <div key={index} className="w-full aspect-square relative">
                   {replacingIndex === index ? (

@@ -89,7 +89,7 @@ function Login() {
       sessionStorage.setItem('orgId', generatedOrgId)
       sessionStorage.setItem('authToken', responseData.token)
 
-      if (responseData.orgId && responseData.orgId !== '') {
+      if (responseData.orgid && responseData.orgid !== '') {
         navigate('/new-presentation')
       } else {
         navigate('/onboarding')
