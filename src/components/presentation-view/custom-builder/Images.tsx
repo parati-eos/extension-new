@@ -29,36 +29,6 @@ export default function Images({
   const [isUploading, setIsUploading] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      setIsUploading(true) // Indicate uploading
-
-      try {
-        // Upload file to S3 and get the URL
-        console.log('File selected:', file)
-        const url = await uploadLogoToS3(file)
-        console.log('Uploaded URL:', url)
-        setImages((prevImages) => {
-          const newImages = [...prevImages, url]
-          console.log('Updated images state:', newImages)
-          return newImages
-        })
-      } catch (error) {
-        toast.error('Error uploading logo', {
-          position: 'top-center',
-          autoClose: 2000,
-        })
-      } finally {
-        setIsUploading(false)
-      }
-    }
-  }
-
-  const handleButtonClick = () => {
-    document.getElementById('companyLogo')?.click()
-  }
-
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
@@ -99,6 +69,30 @@ export default function Images({
     setDisplayMode('customBuilder')
   }
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      setIsUploading(true) // Indicate uploading
+
+      try {
+        // Upload file to S3 and get the URL (assuming you have a function for this)
+        const url = await uploadLogoToS3(file)
+        setImages((prevImages) => [...prevImages, url])
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsUploading(false)
+      }
+    }
+  }
+
+  const handleButtonClick = () => {
+    document.getElementById('imageUploader')?.click()
+  }
+
   return (
     <div className="flex flex-col h-full w-full p-2 lg:p-4">
       {isLoading ? (
@@ -116,41 +110,35 @@ export default function Images({
             {heading}
           </h2>
 
-          <div
-            className={`w-[90%] md:w-full border border-gray-200 mt-4 md:mt-6 ${
-              images[0] !== '' ? 'md:mt-0' : ''
-            } p-7 rounded-lg hover:scale-105`}
-          >
-            <input
-              type="file"
-              id="companyLogo"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <div className="flex flex-col items-center">
-              {images[0] ? (
+          {/* Image Upload Section */}
+          <div className="flex flex-wrap gap-4 mt-4">
+            {images.map((image, index) => (
+              <div key={index} className="w-1/4 sm:w-full">
                 <img
-                  src={images[0]}
-                  alt="Uploaded Logo"
-                  className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                  src={image}
+                  alt={`Uploaded ${index + 1}`}
+                  className="w-full h-auto"
                 />
-              ) : (
-                <>
-                  <FaImage className="text-gray-500 text-4xl mb-4" />
-                  <p className="text-gray-500 mb-4">
-                    {isUploading ? 'Uploading...' : 'Upload Your Logo'}
-                  </p>
-                </>
-              )}
-              <button
-                type="button"
-                onClick={handleButtonClick}
-                className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white transition"
-              >
-                {images[0] ? 'Upload Again' : 'Upload Logo'}
-              </button>
-            </div>
+              </div>
+            ))}
+            {images.length < 4 && (
+              <div className="w-1/4 sm:w-full flex items-center justify-center border border-gray-300 p-4 rounded-lg">
+                <input
+                  type="file"
+                  id="imageUploader"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={handleButtonClick}
+                  className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-blue-500 hover:border-none hover:text-white transition"
+                >
+                  {isUploading ? 'Uploading...' : 'Upload Image'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Genereate Slide Button for Large Screens */}
@@ -167,7 +155,6 @@ export default function Images({
               Generate Slide
             </button>
           </div>
-
           {/* Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden  mt-4 gap-2  justify-end">
             <div className="justify-end">
