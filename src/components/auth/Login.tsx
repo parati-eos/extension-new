@@ -91,6 +91,7 @@ function Login() {
 
       if (responseData.orgid && responseData.orgid !== '') {
         navigate('/new-presentation')
+        sessionStorage.setItem('orgId', responseData.orgid)
       } else {
         navigate('/onboarding')
       }
