@@ -613,16 +613,16 @@ export default function ViewPresentation() {
             })
           }
         } else {
-          console.log('Case 3: No slides received, setting 20-sec timer.')
+          console.log('Case 3: No slides received, setting 90-sec timer.')
           setIsSlideLoading(true)
           setIsNoGeneratedSlide(false)
           if (!timerRef.current) {
             timerRef.current = setTimeout(() => {
-              console.warn('No data received in 20 seconds')
+              console.warn('No data received in 90 seconds')
               setIsSlideLoading(false)
               setIsNoGeneratedSlide(true)
               timerRef.current = null
-            }, 20000)
+            }, 90000)
           }
         }
       }
