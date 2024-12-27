@@ -570,17 +570,16 @@ export default function ViewPresentation() {
         if (
           newSlides &&
           newSlides.length > 0 &&
-          (newSlides[0].GenSlideID !== '' || null) &&
+          newSlides[0].GenSlideID &&
           newSlides[0].SectionName === currentOutline.replace(/^\d+\.\s*/, '')
         ) {
-          console.log('Reached IF')
           console.log('SOCKET DATA', newSlides)
           setPresentationID(newSlides[0].PresentationID)
           const ids = newSlides.map((item: any) => item.GenSlideID)
           setSlidesId(ids)
           setHasDataBeenReceived(true)
-          setIsSlideLoading(false)
           setCurrentSlidesData(ids)
+          setIsSlideLoading(false)
           setIsNoGeneratedSlide(false)
           setTotalSlides(ids.length)
           if (timerRef.current) {
@@ -594,19 +593,8 @@ export default function ViewPresentation() {
             currentOutline.replace(/^\d+\.\s*/, '') &&
           (newSlides[0].GenSlideID === '' || newSlides[0].GenSlideID === null)
         ) {
-          console.log('Reached ELSE IF 1')
-          setIsSlideLoading(true)
           if (!timerRef.current) {
             timerRef.current = setTimeout(() => {
-              if (
-                newSlidesRef.current.some(
-                  (item) =>
-                    item.GenSlideID &&
-                    item.SectionName === currentOutline.replace(/^\d+\.\s*/, '')
-                )
-              ) {
-                return
-              }
               console.warn('No valid data received in 90 seconds')
               setSlidesId([])
               setTotalSlides(0)
@@ -616,15 +604,14 @@ export default function ViewPresentation() {
             }, 90000)
           }
         } else if (newSlides.length <= 0) {
-          setIsSlideLoading(true)
-          console.log('Reached ELSE IF 2')
           setTimeout(() => {
             setSlidesId([])
             setTotalSlides(0)
+            setIsSlideLoading(false)
             setIsNoGeneratedSlide(true)
             setHasDataBeenReceived(false)
             setCurrentSlidesData([])
-          }, 90000)
+          }, 20000)
         }
       })
 
@@ -647,7 +634,7 @@ export default function ViewPresentation() {
         if (timerRef.current) clearTimeout(timerRef.current)
       }
     }
-  }, [currentOutline, newSlidesJSON])
+  }, [currentOutline, newSlidesJSON, documentID, SOCKET_URL])
 
   // Effect to monitor changes
   useEffect(() => {
