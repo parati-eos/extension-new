@@ -125,21 +125,16 @@ export default function ViewPresentation() {
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (title: string) => {
-    setIsSlideLoading(true) // Set loading to true
     setCurrentOutline(title)
     setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!)
     const slideIndex = outlines.findIndex((o) => o.title === title)
     setCurrentSlide(slideIndex)
     slideRefs.current[slideIndex]?.scrollIntoView({
       behavior: 'smooth',
-      block: 'nearest', // Ensures the target div stays centered
+      block: 'nearest',
     })
     setCurrentSlideIndex(0)
     setDisplayMode('slides')
-
-    setTimeout(() => {
-      setIsSlideLoading(false)
-    }, 4000)
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -544,97 +539,6 @@ export default function ViewPresentation() {
   }, [searchParams, authToken, orgId])
 
   // TODO: WEB SOCKET
-  // const timerRef = useRef<NodeJS.Timeout | null>(null)
-  // const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
-  // const newSlidesJSON = JSON.stringify(newSlidesRef.current)
-  // useEffect(() => {
-  //   if (currentOutline !== '' && documentID !== null) {
-  //     const socket = io(SOCKET_URL, { transports: ['websocket'] })
-  //     console.info('Connecting to WebSocket server...')
-
-  //     socket.on('connect', () => {
-  //       console.info('Connected to WebSocket server', socket.id)
-  //     })
-
-  //     socket.on('slidesData', (newSlides) => {
-  //       newSlidesRef.current = newSlides
-
-  //       if (
-  //         hasDataBeenReceived &&
-  //         JSON.stringify(currentSlidesData) ===
-  //           JSON.stringify(newSlides.map((item: any) => item.GenSlideID))
-  //       ) {
-  //         return
-  //       }
-
-  //       if (
-  //         newSlides &&
-  //         newSlides.length > 0 &&
-  //         newSlides[0].GenSlideID &&
-  //         newSlides[0].SectionName === currentOutline.replace(/^\d+\.\s*/, '')
-  //       ) {
-  //         console.log('SOCKET DATA', newSlides)
-  //         setPresentationID(newSlides[0].PresentationID)
-  //         const ids = newSlides.map((item: any) => item.GenSlideID)
-  //         setSlidesId(ids)
-  //         setHasDataBeenReceived(true)
-  //         setCurrentSlidesData(ids)
-  //         setIsSlideLoading(false)
-  //         setIsNoGeneratedSlide(false)
-  //         setTotalSlides(ids.length)
-  //         if (timerRef.current) {
-  //           clearTimeout(timerRef.current)
-  //           timerRef.current = null
-  //         }
-  //       } else if (
-  //         newSlides &&
-  //         newSlides.length > 0 &&
-  //         newSlides[0].SectionName ===
-  //           currentOutline.replace(/^\d+\.\s*/, '') &&
-  //         (newSlides[0].GenSlideID === '' || newSlides[0].GenSlideID === null)
-  //       ) {
-  //         if (!timerRef.current) {
-  //           timerRef.current = setTimeout(() => {
-  //             console.warn('No valid data received in 90 seconds')
-  //             setSlidesId([])
-  //             setTotalSlides(0)
-  //             setIsSlideLoading(false)
-  //             setIsNoGeneratedSlide(true)
-  //             timerRef.current = null
-  //           }, 90000)
-  //         }
-  //       } else if (newSlides.length <= 0) {
-  //         setTimeout(() => {
-  //           setSlidesId([])
-  //           setTotalSlides(0)
-  //           setIsSlideLoading(false)
-  //           setIsNoGeneratedSlide(true)
-  //           setHasDataBeenReceived(false)
-  //           setCurrentSlidesData([])
-  //         }, 20000)
-  //       }
-  //     })
-
-  //     socket.on('error', (error) => {
-  //       console.error('Error:', error.message)
-  //     })
-
-  //     console.log('Outline Passed: ', currentOutline.replace(/^\d+\.\s*/, ''))
-  //     console.log('DocumentID Passed: ', documentID)
-  //     socket.emit('fetchSlides', {
-  //       slideType: currentOutline.replace(/^\d+\.\s*/, ''),
-  //       formID: documentID,
-  //     })
-
-  //     return () => {
-  //       console.info('Disconnecting from WebSocket server...')
-  //       socket.off('slidesData')
-  //       socket.off('error')
-  //       socket.disconnect()
-  //       if (timerRef.current) clearTimeout(timerRef.current)
-  //     }
-  //   }
-  // }, [currentOutline, newSlidesJSON, documentID, SOCKET_URL])
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   const newSlidesJSON = JSON.stringify(newSlidesRef.current)
@@ -660,6 +564,7 @@ export default function ViewPresentation() {
             firstSlide.GenSlideID
           ) {
             console.log('Case 1: All fields have valid data.')
+            setIsSlideLoading(true)
             const ids = newSlides.map((slide: any) => slide.GenSlideID)
             setTimeout(() => {
               setPresentationID(firstSlide.PresentationID)
