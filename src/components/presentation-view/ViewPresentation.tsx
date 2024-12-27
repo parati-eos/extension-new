@@ -60,8 +60,6 @@ export default function ViewPresentation() {
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [hasDataBeenReceived, setHasDataBeenReceived] = useState(false)
-  const [currentSlidesData, setCurrentSlidesData] = useState<string[]>([])
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
   const customBuilderDisabled = userPlan === 'free' ? true : false
@@ -569,8 +567,6 @@ export default function ViewPresentation() {
             setTimeout(() => {
               setPresentationID(firstSlide.PresentationID)
               setSlidesId(ids)
-              setHasDataBeenReceived(true)
-              setCurrentSlidesData(ids)
               setIsSlideLoading(false)
               setIsNoGeneratedSlide(false)
               setTotalSlides(ids.length)
@@ -603,8 +599,6 @@ export default function ViewPresentation() {
                 setTimeout(() => {
                   setPresentationID(validSlides[0].PresentationID)
                   setSlidesId(ids)
-                  setHasDataBeenReceived(true)
-                  setCurrentSlidesData(ids)
                   setIsSlideLoading(false)
                   setIsNoGeneratedSlide(false)
                   setTotalSlides(ids.length)
