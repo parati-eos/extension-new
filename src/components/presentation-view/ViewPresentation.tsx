@@ -577,6 +577,7 @@ export default function ViewPresentation() {
             (!firstSlide.GenSlideID || firstSlide.GenSlideID === '')
           ) {
             console.log('Case 2: GenSlideID missing, setting 90-sec timer.')
+            setIsSlideLoading(true)
             if (!timerRef.current) {
               timerRef.current = setTimeout(() => {
                 console.warn('No valid data received in 90 seconds')
@@ -602,7 +603,7 @@ export default function ViewPresentation() {
                   setIsSlideLoading(false)
                   setIsNoGeneratedSlide(false)
                   setTotalSlides(ids.length)
-                }, 3000)
+                }, 2000)
               }
             })
           }
