@@ -86,13 +86,14 @@ function Login() {
       })
 
       const responseData = await res.json()
-      sessionStorage.setItem('orgId', generatedOrgId)
+
       sessionStorage.setItem('authToken', responseData.token)
 
       if (responseData.orgid && responseData.orgid !== '') {
-        navigate('/new-presentation')
         sessionStorage.setItem('orgId', responseData.orgid)
+        navigate('/new-presentation')
       } else {
+        sessionStorage.setItem('orgId', generatedOrgId)
         navigate('/onboarding')
       }
     } catch (error) {
