@@ -106,13 +106,11 @@ export default function Cover({
         <BackButton onClick={onBack} />
       </div>
       <div className="flex items-center ">
-        <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220] ">
-          {heading}
-        </h2>
+      
        
       
       </div>
-      <div className='py-4'>
+      <div className='py-4 mt-8'>
       <input
           type="text"
           placeholder="Enter your tagline"
@@ -120,7 +118,7 @@ export default function Cover({
         />
 </div>
       {/* Main Content */}
-      <div className="w-full h-full max-w-sm mx-auto flex flex-col flex-grow items-center justify-center">
+      <div className="w-[50%] h-full   flex flex-col flex-grow items-center">
         {/* Logo Upload Section */}
         <div></div>
         <div className="border border-gray-300 rounded-xl w-full h-[60%] flex flex-col  justify-center items-center ">

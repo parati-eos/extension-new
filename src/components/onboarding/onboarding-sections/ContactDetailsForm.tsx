@@ -109,10 +109,10 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
+        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto mb-4"
       >
         {/* Email */}
-        <div className="w-full ">
+        <div className="w-full mt-4 lg:mt-0 ">
           <label
             htmlFor="email"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"

@@ -67,7 +67,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-[3.5rem] md:mt-12 xl:mb-[7rem] lg:mb-[9.5rem] mb-32">
+        <div className="w-full mt-[4.2rem] md:mt-12 xl:mb-[7rem] lg:mb-[9.5rem] ">
           <label
             htmlFor="websiteLink"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -78,7 +78,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             type="text"
             id="websiteLink"
             placeholder="Enter website link"
-            className="mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
+            className="mb-7 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
             value={websiteLink}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
@@ -92,7 +92,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
 
         {/* Buttons */}
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-1 xl:mt-0 md:mt-4 w-full space-y-2 ">
+        <div className="flex flex-col items-center justify-center  xl:mt-0 md:mt-4 w-full space-y-2 mt-[3.5rem]">
           {/* Next Button or Loader */}
           {isNextLoading ? (
             <div className="w-full flex items-center justify-center">

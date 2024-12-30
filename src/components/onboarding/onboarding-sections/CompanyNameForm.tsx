@@ -41,7 +41,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
         className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
       >
         {/* Input */}
-        <div className="w-full mt-[3.5rem] md:mt-6 px-2">
+        <div className="w-full mt-[3.5rem] md:mt-6 lg:px-2">
           <label
             htmlFor="companyName"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -59,7 +59,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-col items-center justify-center mt-[4.5rem] md:mt-[6.5rem] w-full space-y-2 px-2">
+        <div className="flex flex-col items-center justify-center mt-[4.5rem] md:mt-[6.5rem] w-full space-y-2 lg:px-2">
           {isNextLoading ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
