@@ -18,6 +18,7 @@ import { IpInfoResponse } from '../../types/authTypes'
 import { Plan } from '../../types/pricingTypes'
 import { PricingModal } from '../shared/PricingModal'
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -70,6 +71,8 @@ const SelectPresentationType: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const pricingModalHeading = 'Refine PPT'
+  // const userPlan  = useSelector((state) => state.user)
+
   const userPlan = sessionStorage.getItem('userPlan')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()

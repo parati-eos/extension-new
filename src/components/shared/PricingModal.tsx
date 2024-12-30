@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useState } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 interface PricingModalProps {
   closeModal: () => void
@@ -58,6 +59,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     'monthly'
   )
   const navigate = useNavigate()
+  // const userPlan  = useSelector((state) => state.user)
+
   const userPlan = sessionStorage.getItem('userPlan')
   const plans = [
     {

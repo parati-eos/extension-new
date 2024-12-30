@@ -29,12 +29,14 @@ import { IpInfoResponse } from '../../types/authTypes'
 import { toast } from 'react-toastify'
 import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
+import { useSelector } from 'react-redux'
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
+  // const userPlan  = useSelector((state) => state.user)
   const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null)
   const [pptName, setPptName] = useState<string | null>(null)
@@ -48,7 +50,6 @@ export default function ViewPresentation() {
   const [outlineType, setOutlineType] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
-  const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
@@ -106,18 +107,12 @@ export default function ViewPresentation() {
   // Handle Add New Slide Version Button
   const handlePlusClick = () => {
     setIsSlideLoading(false)
-    if (!isSlideLoading) {
-      if (displayMode === 'newContent') {
-        console.log('Reached IF')
-        setDisplayMode('slides')
-        setPlusClickedSlide(null)
-      } else {
-        console.log('Reached Else')
-        console.log(outlineType)
-
-        setDisplayMode('newContent')
-        setPlusClickedSlide(currentSlide)
-      }
+    if (displayMode === 'slides') {
+      console.log('Reached IF')
+      setDisplayMode('newContent')
+    } else {
+      console.log(outlineType)
+      setDisplayMode('slides')
     }
   }
 
@@ -313,7 +308,7 @@ export default function ViewPresentation() {
               customBuilderDisabled={customBuilderDisabled}
             />
           )
-        } else if (plusClickedSlide === index!) {
+        } else {
           return (
             <DesktopNewSlideVersion
               isLoading={isSlideLoading}
@@ -340,7 +335,6 @@ export default function ViewPresentation() {
             />
           )
         }
-        break
       case 'customBuilder':
         return (
           <CustomBuilderMenu
@@ -765,7 +759,9 @@ export default function ViewPresentation() {
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
-          exportButtonText="Export PDF"
+          exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${
+            currency === 'INR' ? '499' : '9'
+          }`}
         />
       ) : (
         <></>
