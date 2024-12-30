@@ -60,6 +60,7 @@ export interface SidebarProps {
   authToken: string
   fetchOutlines: () => Promise<void>
   isLoading: boolean
+  isDisabled: boolean
 }
 
 export interface Outline {

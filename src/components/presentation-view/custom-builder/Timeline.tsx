@@ -14,6 +14,7 @@ interface TimelineProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Timeline({
@@ -24,6 +25,7 @@ export default function Timeline({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: TimelineProps) {
   const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
@@ -37,11 +39,13 @@ export default function Timeline({
     setTimeline(updatedPoints)
   }
   const containerRef = useRef<HTMLDivElement | null>(null)
+
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight
     }
   }, [timeline])
+
   const handleInputDescription = (value: string, index: number) => {
     const updatedPoints = [...description]
     updatedPoints[index] = value
@@ -66,6 +70,7 @@ export default function Timeline({
     ).length < 3
 
   const handleGenerateSlide = async () => {
+    setIsSlideLoading()
     setLoading(true)
     try {
       const phases = timeline.map((point, index) => ({

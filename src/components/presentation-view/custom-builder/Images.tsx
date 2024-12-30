@@ -14,6 +14,7 @@ interface ImagesProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Images({
@@ -24,6 +25,7 @@ export default function Images({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)

@@ -20,6 +20,7 @@ interface TableProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Table({
@@ -30,6 +31,7 @@ export default function Table({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
@@ -160,6 +162,7 @@ export default function Table({
   }
 
   const handleGenerateSlide = async () => {
+    setIsSlideLoading()
     setIsLoading(true)
     try {
       await axios

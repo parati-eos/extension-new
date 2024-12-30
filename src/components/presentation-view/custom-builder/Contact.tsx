@@ -12,6 +12,7 @@ interface ContactProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Contact({
@@ -22,13 +23,14 @@ export default function Contact({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: ContactProps) {
   const [websiteLink, setWebsiteLink] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [linkedin, setLinkedin] = useState('')
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
-   const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState({
     websiteLink: '',
     email: '',
@@ -39,7 +41,10 @@ export default function Contact({
   const validateWebsiteLink = () => {
     const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
     if (websiteLink && !regex.test(websiteLink)) {
-      setErrors((prev) => ({ ...prev, websiteLink: 'Enter a valid website URL' }))
+      setErrors((prev) => ({
+        ...prev,
+        websiteLink: 'Enter a valid website URL',
+      }))
     } else {
       setErrors((prev) => ({ ...prev, websiteLink: '' }))
     }
@@ -57,29 +62,34 @@ export default function Contact({
   const validatePhone = () => {
     const regex = /^[1-9]\d{9}$/
     if (phone && !regex.test(phone)) {
-      setErrors((prev) => ({ ...prev, phone: 'Enter a valid phone number (10 digits)' }))
+      setErrors((prev) => ({
+        ...prev,
+        phone: 'Enter a valid phone number (10 digits)',
+      }))
     } else {
       setErrors((prev) => ({ ...prev, phone: '' }))
     }
   }
 
   const validateLinkedin = () => {
-    const regex = /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/
+    const regex =
+      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/
     if (linkedin && !regex.test(linkedin)) {
-      setErrors((prev) => ({ ...prev, linkedin: 'Enter a valid LinkedIn profile URL' }))
+      setErrors((prev) => ({
+        ...prev,
+        linkedin: 'Enter a valid LinkedIn profile URL',
+      }))
     } else {
       setErrors((prev) => ({ ...prev, linkedin: '' }))
     }
   }
 
-  const isButtonDisabled = !(
-    websiteLink ||
-    email ||
-    phone ||
-    linkedin
-  ) || Object.values(errors).some((error) => error !== '')
+  const isButtonDisabled =
+    !(websiteLink || email || phone || linkedin) ||
+    Object.values(errors).some((error) => error !== '')
 
   const handleSubmit = async () => {
+    setIsSlideLoading()
     validateWebsiteLink()
     validateEmail()
     validatePhone()
@@ -226,22 +236,20 @@ export default function Contact({
 
         {/* Generate Slide Button */}
         <button
-  onClick={handleSubmit}
-  disabled={isButtonDisabled}
-  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform flex items-center justify-center ${
-    isButtonDisabled
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : 'bg-[#3667B2] text-white'
-  }`}
->
-  {isLoading ? (
-    <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> // Spinner here
-  ) : (
-    'Generate Slide'
-  )}
-</button>
-
-
+          onClick={handleSubmit}
+          disabled={isButtonDisabled}
+          className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform flex items-center justify-center ${
+            isButtonDisabled
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white'
+          }`}
+        >
+          {isLoading ? (
+            <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> // Spinner here
+          ) : (
+            'Generate Slide'
+          )}
+        </button>
       </div>
       {/* Attach Image and Generate Slide Buttons for Mobile */}
       <div className="flex lg:hidden mt-2 gap-2  w-full ">
@@ -250,23 +258,21 @@ export default function Contact({
         </div>
 
         <button
-  onClick={handleSubmit}
-  disabled={isButtonDisabled}
-  className={`flex items-center justify-center flex-1 py-2 rounded-md transition-all duration-200 ${
-    isButtonDisabled
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : 'bg-[#3667B2] text-white'
-  }`}
->
-  {isLoading ? (
-    <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> // Spinner here
-  ) : (
-    'Generate Slide'
-  )}
-</button>
-
+          onClick={handleSubmit}
+          disabled={isButtonDisabled}
+          className={`flex items-center justify-center flex-1 py-2 rounded-md transition-all duration-200 ${
+            isButtonDisabled
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white'
+          }`}
+        >
+          {isLoading ? (
+            <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> // Spinner here
+          ) : (
+            'Generate Slide'
+          )}
+        </button>
       </div>
-      </div>
-  
+    </div>
   )
 }
