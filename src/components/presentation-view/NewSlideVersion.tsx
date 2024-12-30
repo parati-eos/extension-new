@@ -1,4 +1,5 @@
 import CustomBuilderIcon from '../../assets/custom-builder.svg'
+import { useState } from 'react';
 import SlideNarrativeIcon from '../../assets/Slide narrative.svg'
 import QuickGenerateIcon from '../../assets/quick generate.svg'
 import { BackButton } from './custom-builder/shared/BackButton'
@@ -12,6 +13,7 @@ interface ButtonProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   isLoading: boolean
   customBuilderDisabled: boolean
+  openPricingModal: () => void; 
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
@@ -22,7 +24,17 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   userPlan,
   isLoading,
   customBuilderDisabled,
+  openPricingModal
 }) => {
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (customBuilderDisabled) setIsDialogVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDialogVisible(false);
+  };
   return (
     <div className="flex flex-col  w-full h-full p-2 ">
       {isLoading ? (
@@ -65,9 +77,11 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
               </button>
             </div>
             <div
-              className={`flex flex-col items-center rounded-md border border-gray-300 ${
+              className={`relative flex flex-col items-center rounded-md border border-gray-300 ${
                 customBuilderDisabled ? 'bg-gray-200' : ''
               } p-4 flex-shrink-0 w-[33%]`}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <button
                 className="flex flex-col items-center justify-center "
@@ -81,6 +95,20 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                 />
                 <span className="text-xs lg:text-sm">Custom Builder</span>
               </button>
+              {isDialogVisible && (
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[8rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+                  <p className="text-xs text-center text-gray-800">
+              Please{' '}
+              <button
+                className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                onClick={openPricingModal}
+              >
+                upgrade to Pro
+              </button>{' '}
+              plan to access this feature.
+            </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -97,7 +125,18 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   setDisplayMode,
   isLoading,
   customBuilderDisabled,
+  openPricingModal,
 }) => {
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (customBuilderDisabled) setIsDialogVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDialogVisible(false);
+  };
+
   const onBack = () => {
     setDisplayMode('slides')
   }
@@ -157,10 +196,12 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               </button>
             </div>
             <div
-              className={`flex flex-col items-center border border-gray-300 ${
+              className={`relative flex flex-col items-center border border-gray-300 ${
                 customBuilderDisabled ? 'bg-gray-200' : ''
               } rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0`}
               style={{ width: '30%', height: '12rem' }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <button
                 className="flex flex-col items-center justify-center w-full h-full"
@@ -174,6 +215,20 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 />
                 <span className="text-base font-medium">Custom Builder</span>
               </button>
+              {isDialogVisible && (
+                <div className="absolute    w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+                  <p className="text-sm text-center text-gray-800">
+              Please{' '}
+              <button
+                className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                onClick={openPricingModal}
+              >
+                upgrade to Pro
+              </button>{' '}
+              plan to access this feature.
+            </p>
+                </div>
+              )}
             </div>
           </div>
         </>

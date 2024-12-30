@@ -306,6 +306,7 @@ export default function ViewPresentation() {
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
               customBuilderDisabled={customBuilderDisabled}
+              openPricingModal={() => setIsPricingModalOpen(true)}
             />
           )
         } else {
@@ -332,6 +333,7 @@ export default function ViewPresentation() {
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
               customBuilderDisabled={customBuilderDisabled}
+              openPricingModal={() => setIsPricingModalOpen(true)}
             />
           )
         }
