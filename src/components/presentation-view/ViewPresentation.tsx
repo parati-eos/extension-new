@@ -33,11 +33,11 @@ import Cover from "./custom-builder/Cover";
 import { useSelector } from "react-redux";
 
 export default function ViewPresentation() {
-  const [searchParams] = useSearchParams();
-  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL;
-  const authToken = sessionStorage.getItem("authToken");
-  const orgId = sessionStorage.getItem("orgId");
-  const userPlan = useSelector((state: any) => state.user);
+  const [searchParams] = useSearchParams()
+  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
+  const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
+  const userPlan = useSelector((state: any) => state.user.userPlan)
   // const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null);
   const [pptName, setPptName] = useState<string | null>(null);
