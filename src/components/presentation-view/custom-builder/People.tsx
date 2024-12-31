@@ -14,6 +14,7 @@ interface PeopleProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 interface IPerson {
@@ -33,6 +34,7 @@ export default function People({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: PeopleProps) {
   const [people, setPeople] = useState([
     {
@@ -53,7 +55,6 @@ export default function People({
     },
   ])
   const [isLoading, setIsLoading] = useState(false)
-
   const containerRef = useRef<HTMLDivElement | null>(null)
   const isFirstRender = useRef(true) // Tracks if it's the first render
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
@@ -183,6 +184,7 @@ export default function People({
   })()
 
   const handleGenerateSlide = async () => {
+    setIsSlideLoading()
     setIsLoading(true)
     try {
       const response = await axios.post(

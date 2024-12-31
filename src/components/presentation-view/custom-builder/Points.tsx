@@ -14,6 +14,7 @@ interface PointsProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Points({
@@ -24,6 +25,7 @@ export default function Points({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: PointsProps) {
   const [points, setPoints] = useState([''])
   const [isLoading, setIsLoading] = useState(false)
@@ -52,6 +54,7 @@ export default function Points({
   }
 
   const handleGenerateSlide = async () => {
+    setIsSlideLoading()
     setIsLoading(true)
     try {
       const response = await axios.post(

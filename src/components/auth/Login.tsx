@@ -7,9 +7,13 @@ import ContentImage from '../../assets/authContentImage.png'
 import MicrosoftIcon from '../../assets/ms-login.svg'
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import { DecodedToken, IpInfoResponse } from '../../types/authTypes'
+import { useDispatch } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 function Login() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
   const defaultAvatarUrl =
     'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true'
 
@@ -86,6 +90,7 @@ function Login() {
       })
 
       const responseData = await res.json()
+      dispatch(setUserPlan(responseData.userProfile.user_plan))
       console.log('User Data:', responseData)
 
       if (responseData.orgid) {

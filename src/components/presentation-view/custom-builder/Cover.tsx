@@ -15,6 +15,7 @@ interface CoverProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Cover({
@@ -25,12 +26,12 @@ export default function Cover({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: CoverProps) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [images, setImages] = useState<string[]>([])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -59,6 +60,7 @@ export default function Cover({
   }
 
   const handleGenerateSlide = async () => {
+    setIsSlideLoading()
     setIsLoading(true)
     try {
       const response = await axios.post(
@@ -105,22 +107,16 @@ export default function Cover({
         <h3 className="text-semibold">Cover</h3>
         <BackButton onClick={onBack} />
       </div>
-      <div className="flex items-center ">
-        <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220] ">
-          {heading}
-        </h2>
-       
-      
-      </div>
-      <div className='py-4'>
-      <input
+      <div className="flex items-center "></div>
+      <div className="py-4 mt-8">
+        <input
           type="text"
           placeholder="Enter your tagline"
           className=" py-1 px-2 w-[50%] border border-gray-300 rounded-lg "
         />
-</div>
+      </div>
       {/* Main Content */}
-      <div className="w-full h-full max-w-sm mx-auto flex flex-col flex-grow items-center justify-center">
+      <div className="w-[50%] h-full   flex flex-col flex-grow items-center">
         {/* Logo Upload Section */}
         <div></div>
         <div className="border border-gray-300 rounded-xl w-full h-[60%] flex flex-col  justify-center items-center ">
@@ -136,7 +132,7 @@ export default function Cover({
               <img
                 src={logo}
                 alt="Uploaded Logo"
-   className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
               />
             ) : (
               <>
@@ -156,7 +152,6 @@ export default function Cover({
           </div>
         </div>
 
-      
         {/* Attach Image and Generate Slide Buttons for Mobile */}
         <div className="flex lg:hidden mt-2 gap-2  w-full ">
           <div className="flex-1  items-center justify-center gap-2">
@@ -176,24 +171,24 @@ export default function Cover({
           </button>
         </div>
       </div>
-        {/* Button Container */}
-        <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2  lg:mt-8 mt-2">
-          {/* Attach Image Component */}
-          <AttachImage onFileSelected={handleFileSelect} />
+      {/* Button Container */}
+      <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2  lg:mt-8 mt-2">
+        {/* Attach Image Component */}
+        <AttachImage onFileSelected={handleFileSelect} />
 
-          {/* Generate Slide Button */}
-          <button
-            onClick={handleGenerateSlide}
-            disabled={!logo}
-            className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
-              !logo
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
-            }`}
-          >
-            {isLoading ? 'Loading...' : 'Generate Slide'}
-          </button>
-        </div>
+        {/* Generate Slide Button */}
+        <button
+          onClick={handleGenerateSlide}
+          disabled={!logo}
+          className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
+            !logo
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+          }`}
+        >
+          {isLoading ? 'Loading...' : 'Generate Slide'}
+        </button>
+      </div>
     </div>
   )
 }

@@ -12,7 +12,7 @@ interface SlideNarrativeProps {
   orgId: string
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
-  setIsSlideLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setIsSlideLoading: () => void
   outlineID: string
 }
 
@@ -35,16 +35,15 @@ export default function SlideNarrative({
   }
 
   const handleGenerateSlide = async () => {
-    setIsSlideLoading(true)
+    setIsSlideLoading()
     if (!narrative.trim()) return
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}/${slideType}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}`,
         {
           type: slideType,
           title: heading,
           documentID: documentID,
-          userId: sessionStorage.getItem('userEmail'),
           input: narrative,
           outlineID: outlineID,
           image: selectedImage,
@@ -63,7 +62,6 @@ export default function SlideNarrative({
     } catch (error) {
       toast.error('Failed to send narrative.')
       setDisplayMode('slides')
-      setIsSlideLoading(false)
     } finally {
     }
   }

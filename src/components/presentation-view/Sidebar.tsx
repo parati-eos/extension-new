@@ -13,6 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   authToken,
   fetchOutlines,
   isLoading,
+  isDisabled,
 }) => {
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
@@ -115,8 +116,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
                   {/* Circular + Icon */}
                   <button
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400"
+                    className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 disabled:opacity-20 disabled:cursor-not-allowed`}
                     onClick={() => setInputIndex(idx)}
+                    disabled={isDisabled}
                   >
                     +
                   </button>

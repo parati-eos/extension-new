@@ -11,6 +11,7 @@ interface MobileOutlineDropdownProps {
   documentID: string
   fetchOutlines: () => Promise<void>
   isLoading: boolean
+  isDisabled: boolean
 }
 
 export default function MobileOutlineModal({
@@ -20,6 +21,7 @@ export default function MobileOutlineModal({
   documentID,
   fetchOutlines,
   isLoading,
+  isDisabled,
 }: MobileOutlineDropdownProps) {
   const [isOutlinesOpen, setIsOutlinesOpen] = useState(false)
   const [isAddSlideModalOpen, setIsAddSlideModalOpen] = useState(false)
@@ -89,7 +91,8 @@ export default function MobileOutlineModal({
               </button>
               <button
                 onClick={() => setIsAddSlideModalOpen(true)}
-                className="text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline"
+                className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline disabled:opacity-50`}
+                disabled={isDisabled}
               >
                 <FaPlus />
               </button>

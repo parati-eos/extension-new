@@ -108,8 +108,8 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
       >
         {/* Input */}
         <div
-          className={`w-full lg:flex lg:justify-center lg:gap-x-4 mt-4 md:mt-8 lg:w-[70%] ${
-            sector === 'Other' || industry === 'Other' ? 'md:mt-2' : ''
+          className={`w-full lg:flex lg:justify-center lg:gap-x-4 mt-[0.5rem] lg:w-[70%] ${
+            sector === 'Other' || industry === 'Other' ? 'md:mt-8' : ''
           } px-2 scrollbar-none`}
           style={{
             maxHeight: '25vh', // Prevent container from growing beyond 70% of the viewport
@@ -197,8 +197,8 @@ const IndustryForm: React.FC<IndustryFormProps> = ({
         <div
           className={`flex flex-col items-center justify-center max-w-sm mt-12 ${
             sector === 'Other' || industry === 'Other'
-              ? 'lg:mt-[14rem] xl:mt-[6rem] mb-8 space-y-0'
-              : 'lg:mt-[14.5rem] xl:mt-[8.5rem]'
+              ? 'lg:mt-[10.7rem] xl:mt-[6.9rem] '
+              : 'lg:mt-[14.7rem] xl:mt-[10.9rem]'
           } w-full space-y-2`}
         >
           {/* Next Button or Loader */}

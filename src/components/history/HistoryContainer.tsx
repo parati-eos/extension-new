@@ -18,6 +18,7 @@ import { PricingModal } from '../shared/PricingModal'
 import { IpInfoResponse } from '../../types/authTypes'
 import { Plan } from '../../types/pricingTypes'
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -34,6 +35,8 @@ const HistoryContainer: React.FC = () => {
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
+  // const userPlan  = useSelector((state) => state.user)
+
   const userPlan = sessionStorage.getItem('userPlan')
   const [pricingModalHeading, setPricingModalHeading] = useState('')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()

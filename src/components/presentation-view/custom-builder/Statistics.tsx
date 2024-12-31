@@ -14,6 +14,7 @@ interface StatisticProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Statistics({
@@ -24,6 +25,7 @@ export default function Statistics({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: StatisticProps) {
   const [title, setTitle] = useState(['', '', '']) // Initialize with 3 empty strings
   const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
@@ -72,6 +74,7 @@ export default function Statistics({
     )
 
   const handleGenerateSlide = async () => {
+    setIsSlideLoading()
     setLoading(true)
     try {
       const response = await axios.post(
