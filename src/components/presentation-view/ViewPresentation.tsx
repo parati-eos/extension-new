@@ -29,14 +29,12 @@ import { IpInfoResponse } from '../../types/authTypes'
 import { toast } from 'react-toastify'
 import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
-import { useSelector } from 'react-redux'
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
-  // const userPlan  = useSelector((state) => state.user)
   const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null)
   const [pptName, setPptName] = useState<string | null>(null)
@@ -50,6 +48,7 @@ export default function ViewPresentation() {
   const [outlineType, setOutlineType] = useState('')
   const [outlines, setOutlines] = useState<Outline[]>([])
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides')
+  const [plusClickedSlide, setPlusClickedSlide] = useState<number | null>(null)
   const [finalized, setFinalized] = useState(false)
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
@@ -63,7 +62,7 @@ export default function ViewPresentation() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
-  const featureDisabled = userPlan === 'free' ? true : false
+  const customBuilderDisabled = userPlan === 'free' ? true : false
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -107,12 +106,18 @@ export default function ViewPresentation() {
   // Handle Add New Slide Version Button
   const handlePlusClick = () => {
     setIsSlideLoading(false)
-    if (displayMode === 'slides') {
-      console.log('Reached IF')
-      setDisplayMode('newContent')
-    } else {
-      console.log(outlineType)
-      setDisplayMode('slides')
+    if (!isSlideLoading) {
+      if (displayMode === 'newContent') {
+        console.log('Reached IF')
+        setDisplayMode('slides')
+        setPlusClickedSlide(null)
+      } else {
+        console.log('Reached Else')
+        console.log(outlineType)
+
+        setDisplayMode('newContent')
+        setPlusClickedSlide(currentSlide)
+      }
     }
   }
 
@@ -289,7 +294,7 @@ export default function ViewPresentation() {
               setDisplayMode={setDisplayMode}
               handleQuickGenerate={handleQuickGenerate}
               handleCustomBuilderClick={() => {
-                if (featureDisabled) {
+                if (customBuilderDisabled) {
                   toast.info('Upgrade to pro to access this feature')
                 } else {
                   if (currentOutline === outlines[0].title) {
@@ -305,18 +310,17 @@ export default function ViewPresentation() {
               }}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
-              customBuilderDisabled={featureDisabled}
-              openPricingModal={() => setIsPricingModalOpen(true)}
+              customBuilderDisabled={customBuilderDisabled}
             />
           )
-        } else {
+        } else if (plusClickedSlide === index!) {
           return (
             <DesktopNewSlideVersion
               isLoading={isSlideLoading}
               setDisplayMode={setDisplayMode}
               handleQuickGenerate={handleQuickGenerate}
               handleCustomBuilderClick={() => {
-                if (featureDisabled) {
+                if (customBuilderDisabled) {
                   toast.info('Upgrade to pro to access this feature')
                 } else {
                   if (currentOutline === outlines[0].title) {
@@ -332,11 +336,11 @@ export default function ViewPresentation() {
               }}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
-              customBuilderDisabled={featureDisabled}
-              openPricingModal={() => setIsPricingModalOpen(true)}
+              customBuilderDisabled={customBuilderDisabled}
             />
           )
         }
+        break
       case 'customBuilder':
         return (
           <CustomBuilderMenu
@@ -354,10 +358,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'People':
@@ -370,10 +370,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'Table':
@@ -386,10 +382,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'Timeline':
@@ -402,10 +394,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'SlideNarrative':
@@ -417,10 +405,7 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
+            setIsSlideLoading={setIsSlideLoading}
             outlineID={currentOutlineID}
           />
         )
@@ -434,10 +419,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'Images':
@@ -450,10 +431,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'Graphs':
@@ -466,10 +443,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'Contact':
@@ -482,10 +455,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
       case 'Cover':
@@ -498,10 +467,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             setDisplayMode={setDisplayMode}
             outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true)
-              setDisplayMode('slides')
-            }}
           />
         )
 
@@ -802,9 +767,7 @@ export default function ViewPresentation() {
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
-          exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${
-            currency === 'INR' ? '499' : '9'
-          }`}
+          exportButtonText="Export PDF"
         />
       ) : (
         <></>
@@ -830,7 +793,6 @@ export default function ViewPresentation() {
           authToken={authToken!}
           fetchOutlines={fetchOutlines}
           isLoading={isDocumentIDLoading}
-          isDisabled={featureDisabled}
         />
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}
@@ -939,7 +901,6 @@ export default function ViewPresentation() {
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
                 isLoading={isDocumentIDLoading}
-                isDisabled={featureDisabled}
               />
             )}
           </div>
