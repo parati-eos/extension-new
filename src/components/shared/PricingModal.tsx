@@ -61,9 +61,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     'monthly'
   )
   const navigate = useNavigate()
-  // const userPlan  = useSelector((state) => state.user)
-
-  const userPlan = sessionStorage.getItem('userPlan')
+  const userPlan = useSelector((state: any) => state.user)
+  // const userPlan = sessionStorage.getItem('userPlan')
   const plans = [
     {
       name: 'FREE',

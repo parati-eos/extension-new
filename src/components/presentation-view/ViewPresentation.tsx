@@ -37,8 +37,8 @@ export default function ViewPresentation() {
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
-  // const userPlan  = useSelector((state) => state.user)
-  const userPlan = sessionStorage.getItem('userPlan')
+  const userPlan = useSelector((state: any) => state.user)
+  // const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null)
   const [pptName, setPptName] = useState<string | null>(null)
   const [presentationID, setPresentationID] = useState<string>('')
