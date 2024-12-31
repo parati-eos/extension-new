@@ -64,6 +64,8 @@ export default function ViewPresentation() {
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
   const featureDisabled = userPlan === 'free' ? true : false
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -818,7 +820,7 @@ export default function ViewPresentation() {
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
-      <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16">
+      <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16 ">
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
           onOutlineSelect={handleOutlineSelect}
@@ -829,6 +831,7 @@ export default function ViewPresentation() {
           fetchOutlines={fetchOutlines}
           isLoading={isDocumentIDLoading}
           isDisabled={featureDisabled}
+          userPlan={userPlan}
         />
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}

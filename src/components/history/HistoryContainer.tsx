@@ -76,13 +76,7 @@ const HistoryContainer: React.FC = () => {
     )
   }
 
-  // History Item Dropdown
-  useEffect(() => {
-    if (activeDropdown !== null) {
-      const timer = setTimeout(() => setActiveDropdown(null), 8000)
-      return () => clearTimeout(timer)
-    }
-  }, [activeDropdown])
+
 
   // Handle clicks and scroll to close dropdown
   useEffect(() => {
@@ -307,9 +301,7 @@ const HistoryContainer: React.FC = () => {
                           className="text-[#8A8B8C] cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setActiveDropdown(
-                              activeDropdown === index ? null : index
-                            )
+                            setActiveDropdown((prev) => (prev === index ? null : index));
                           }}
                         />
                       </div>
@@ -352,16 +344,6 @@ const HistoryContainer: React.FC = () => {
                         <button
                           onClick={() => {
                             setIsPricingModalOpen(true)
-                            setPricingModalHeading('PDF Export')
-                          }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaFilePdf className="text-[#5D5F61]" />
-                          <span>PDF Export</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
                             setPricingModalHeading('Google Slides')
                           }}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
@@ -369,10 +351,7 @@ const HistoryContainer: React.FC = () => {
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
                         </button>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
-                          <FaTrashAlt />
-                          <span>Delete</span>
-                        </div>
+                       
                       </div>
                     )}
                   </div>
@@ -426,9 +405,7 @@ const HistoryContainer: React.FC = () => {
                         className="text-[#8A8B8C] cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setActiveDropdown(
-                            activeDropdown === index ? null : index
-                          )
+                          setActiveDropdown((prev) => (prev === index ? null : index));
                         }}
                       />
                     </div>
@@ -453,16 +430,6 @@ const HistoryContainer: React.FC = () => {
                         <button
                           onClick={() => {
                             setIsPricingModalOpen(true)
-                            setPricingModalHeading('PDF Export')
-                          }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaFilePdf className="text-[#5D5F61]" />
-                          <span>PDF Export</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
                             setPricingModalHeading('Google Slides')
                           }}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
@@ -470,10 +437,7 @@ const HistoryContainer: React.FC = () => {
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
                         </button>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
-                          <FaTrashAlt />
-                          <span>Delete</span>
-                        </div>
+                     
                       </div>
                     )}
                   </div>
