@@ -358,7 +358,7 @@ const HistoryContainer: React.FC = () => {
                 >
                   <FaFilter className="text-[#5D5F61] text-xl" />
                 </div>
-                <div className="bg-white p-2 rounded-md shadow cursor-pointer">
+                <div className="hidden bg-white p-2 rounded-md shadow cursor-pointer">
                   <FaSort className="text-[#5D5F61] text-xl" />
                 </div>
               </div>
