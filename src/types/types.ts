@@ -61,7 +61,13 @@ export interface SidebarProps {
   fetchOutlines: () => Promise<void>
   isLoading: boolean
   isDisabled: boolean
-  userPlan: string | null; // Update this to allow null
+  userPlan: string | null // Update this to allow null
+  monthlyPlanAmount: number
+  yearlyPlanAmount: number
+  currency: string
+  yearlyPlanId: string
+  monthlyPlanId: string
+  orgId: string
 }
 
 export interface Outline {

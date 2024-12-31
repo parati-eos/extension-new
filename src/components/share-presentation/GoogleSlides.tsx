@@ -9,13 +9,19 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
   const [slidesData, setSlidesData] = useState<string[][]>([])
   const [slidesId, setSlidesId] = useState<string>('')
   const [loading, setLoading] = useState<string>('true')
+  const authToken = sessionStorage.getItem('authToken')
 
   useEffect(() => {
     const fetchSlidesData = async () => {
       try {
         const serverurl = process.env.REACT_APP_BACKEND_URL
         const url = `${serverurl}/api/v1/data/slidedisplay/genSlideIDs/${formId}`
-        const response = await fetch(url)
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        })
         if (!response.ok) {
           throw new Error('Failed to fetch slides data')
         }
@@ -30,7 +36,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
       }
     }
     fetchSlidesData()
-  }, [formId])
+  }, [formId, authToken])
 
   if (loading === 'true') {
     return (

@@ -1,11 +1,10 @@
 import CustomBuilderIcon from '../../assets/custom-builder.svg'
-import { useState } from 'react';
+import { useState } from 'react'
 import SlideNarrativeIcon from '../../assets/Slide narrative.svg'
 import QuickGenerateIcon from '../../assets/quick generate.svg'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '@/src/types/presentationView'
-import { PricingModal } from '../shared/PricingModal';
-import { Plan } from '../../types/pricingTypes'
+import { PricingModal } from '../shared/PricingModal'
 
 interface ButtonProps {
   handleQuickGenerate: () => void
@@ -15,7 +14,14 @@ interface ButtonProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   isLoading: boolean
   customBuilderDisabled: boolean
-  openPricingModal: () => void; 
+  openPricingModal: () => void
+  monthlyPlanAmount: number
+  yearlyPlanAmount: number
+  currency: string
+  yearlyPlanId: string
+  monthlyPlanId: string
+  authToken: string
+  orgId: string
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
@@ -26,27 +32,25 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   userPlan,
   isLoading,
   customBuilderDisabled,
-  openPricingModal
+  openPricingModal,
+  monthlyPlanAmount,
+  yearlyPlanAmount,
+  currency,
+  yearlyPlanId,
+  monthlyPlanId,
+  authToken,
+  orgId,
 }) => {
-   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
-      const [yearlyPlan, setYearlyPlan] = useState<Plan>()
-      const authToken = sessionStorage.getItem('authToken')
-      const orgId = sessionStorage.getItem('orgId')
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
-  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
-  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
-    const [currency, setCurrency] = useState<string>()
-    const yearlyPlanId = yearlyPlan?.id
-    const monthlyPlanId = monthlyPlan?.id
-  
+
   const handleMouseEnter = () => {
-    if (customBuilderDisabled) setIsDialogVisible(true);
-  };
+    if (customBuilderDisabled) setIsDialogVisible(true)
+  }
 
   const handleMouseLeave = () => {
-    setIsDialogVisible(false);
-  };
+    setIsDialogVisible(false)
+  }
   return (
     <div className="flex flex-col  w-full h-full p-2 ">
       {isLoading ? (
@@ -110,35 +114,35 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
               {isDialogVisible && (
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[8rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                   <p className="text-xs text-center text-gray-800">
-              Please{' '}
-              <button
-                className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                onClick={() => setIsPricingModalOpen(true)}
-              >
-                upgrade to Pro
-              </button>{' '}
-              plan to access this feature.
-            </p>
+                    Please{' '}
+                    <button
+                      className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                      onClick={() => setIsPricingModalOpen(true)}
+                    >
+                      upgrade to Pro
+                    </button>{' '}
+                    plan to access this feature.
+                  </p>
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
-        {/* Pricing Modal */}
-        {isPricingModalOpen && (
-                    <PricingModal
-                      closeModal={() => setIsPricingModalOpen(false)}
-                      heading="Subscription Plans"
-                      monthlyPlanAmount={monthlyPlanAmount}
-                      yearlyPlanAmount={yearlyPlanAmount}
-                      currency={currency!}
-                      yearlyPlanId={yearlyPlanId!}
-                      monthlyPlanId={monthlyPlanId!}
-                      authToken={authToken!}
-                      orgId={orgId!}
-                    />
-                  )}
+      {/* Pricing Modal */}
+      {isPricingModalOpen && (
+        <PricingModal
+          closeModal={() => setIsPricingModalOpen(false)}
+          heading="Subscription Plans"
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency!}
+          yearlyPlanId={yearlyPlanId!}
+          monthlyPlanId={monthlyPlanId!}
+          authToken={authToken!}
+          orgId={orgId!}
+        />
+      )}
     </div>
   )
 }
@@ -152,25 +156,23 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   isLoading,
   customBuilderDisabled,
   openPricingModal,
+  monthlyPlanAmount,
+  yearlyPlanAmount,
+  currency,
+  yearlyPlanId,
+  monthlyPlanId,
+  authToken,
+  orgId,
 }) => {
-   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
-      const [yearlyPlan, setYearlyPlan] = useState<Plan>()
-      const authToken = sessionStorage.getItem('authToken')
-      const orgId = sessionStorage.getItem('orgId')
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
-  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
-  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
-  const yearlyPlanId = yearlyPlan?.id
-    const monthlyPlanId = monthlyPlan?.id
-    const [currency, setCurrency] = useState<string>()
   const handleMouseEnter = () => {
-    if (customBuilderDisabled) setIsDialogVisible(true);
-  };
+    if (customBuilderDisabled) setIsDialogVisible(true)
+  }
 
   const handleMouseLeave = () => {
-    setIsDialogVisible(false);
-  };
+    setIsDialogVisible(false)
+  }
 
   const onBack = () => {
     setDisplayMode('slides')
@@ -253,35 +255,35 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               {isDialogVisible && (
                 <div className="absolute    w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                   <p className="text-sm text-center text-gray-800">
-              Please{' '}
-              <button
-                className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                onClick={() => setIsPricingModalOpen(true)}
-              >
-                upgrade to Pro
-              </button>{' '}
-              plan to access this feature.
-            </p>
+                    Please{' '}
+                    <button
+                      className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                      onClick={() => setIsPricingModalOpen(true)}
+                    >
+                      upgrade to Pro
+                    </button>{' '}
+                    plan to access this feature.
+                  </p>
                 </div>
               )}
             </div>
           </div>
         </>
       )}
-       {/* Pricing Modal */}
-                  {isPricingModalOpen && (
-                    <PricingModal
-                      closeModal={() => setIsPricingModalOpen(false)}
-                      heading="Subscription Plans"
-                      monthlyPlanAmount={monthlyPlanAmount}
-                      yearlyPlanAmount={yearlyPlanAmount}
-                      currency={currency!}
-                      yearlyPlanId={yearlyPlanId!}
-                      monthlyPlanId={monthlyPlanId!}
-                      authToken={authToken!}
-                      orgId={orgId!}
-                    />
-                  )}
+      {/* Pricing Modal */}
+      {isPricingModalOpen && (
+        <PricingModal
+          closeModal={() => setIsPricingModalOpen(false)}
+          heading="Subscription Plans"
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency!}
+          yearlyPlanId={yearlyPlanId!}
+          monthlyPlanId={monthlyPlanId!}
+          authToken={authToken!}
+          orgId={orgId!}
+        />
+      )}
     </div>
   )
 }

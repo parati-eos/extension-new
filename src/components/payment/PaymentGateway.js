@@ -47,30 +47,30 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
     detectCurrency()
   }, [])
 
-  const verifyCoupon = async (organizationId) => {
-    try {
-      const response = await fetch(
-        'https://zynth.ai/api/razorpay/verify-coupon',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code: organizationId }),
-        }
-      )
+  // const verifyCoupon = async (organizationId) => {
+  //   try {
+  //     const response = await fetch(
+  //       'https://zynth.ai/api/razorpay/verify-coupon',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ code: organizationId }),
+  //       }
+  //     )
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`)
+  //     }
 
-      const result = await response.json()
-      return result // Return the result of the coupon verification
-    } catch (error) {
-      console.error('Error verifying coupon:', error)
-      return null // Return null in case of an error
-    }
-  }
+  //     const result = await response.json()
+  //     return result // Return the result of the coupon verification
+  //   } catch (error) {
+  //     console.error('Error verifying coupon:', error)
+  //     return null // Return null in case of an error
+  //   }
+  // }
 
   const updateOrderId = async (orderId) => {
     try {
@@ -98,16 +98,16 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
 
   const handlePayment = async () => {
     const organizationId = sessionStorage.getItem('orgId') // Fetch organization ID from local storage
-    const couponResult = await verifyCoupon(organizationId) // Verify the coupon
+    // const couponResult = await verifyCoupon(organizationId) // Verify the coupon
 
     let finalAmount = paymentData.amount // Start with the original amount
 
-    if (couponResult && couponResult.message === 'Coupon is valid') {
-      finalAmount *= couponResult.discountAmount // Apply the discount
-    } else {
-      //alert('Invalid coupon code or coupon not found. Proceeding with original amount.'); // Alert the user if the coupon is invalid
-      finalAmount = paymentData.amount // Set finalAmount to the original amount if coupon is invalid
-    }
+    // if (couponResult && couponResult.message === 'Coupon is valid') {
+    //   finalAmount *= couponResult.discountAmount // Apply the discount
+    // } else {
+    //   //alert('Invalid coupon code or coupon not found. Proceeding with original amount.'); // Alert the user if the coupon is invalid
+    //   finalAmount = paymentData.amount // Set finalAmount to the original amount if coupon is invalid
+    // }
     finalAmount = Math.round(finalAmount)
     try {
       console.log('Sending payment data to generate Razorpay order:', {
