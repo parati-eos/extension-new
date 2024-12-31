@@ -4,16 +4,24 @@ import { Outlines, SidebarProps } from '../../types/types'
 import { toast } from 'react-toastify'
 import { FaCheck, FaTimes } from 'react-icons/fa'
 import './viewpresentation.css'
+import { PricingModal } from '../shared/PricingModal'
 
 const Sidebar: React.FC<SidebarProps> = ({
   onOutlineSelect,
   selectedOutline,
   fetchedOutlines,
   documentID,
-  authToken,
   fetchOutlines,
   isLoading,
   isDisabled,
+  userPlan,
+  monthlyPlanAmount,
+  yearlyPlanAmount,
+  currency,
+  yearlyPlanId,
+  monthlyPlanId,
+  authToken,
+  orgId,
 }) => {
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
@@ -21,6 +29,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [newOutline, setNewOutline] = useState<string>('')
   const outlineRefs = useRef<(HTMLLIElement | null)[]>([])
   const [newOutlineLoading, setNewOutlineLoading] = useState(false)
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
 
   useEffect(() => {
     setOutlines(fetchedOutlines)
@@ -109,19 +119,48 @@ const Sidebar: React.FC<SidebarProps> = ({
               </button>
 
               {/* + Button Below the Title */}
+
               {hoverIndex === idx && inputIndex === null && (
-                <div className="mt-2 flex items-center justify-center space-x-4">
+                <div className="mt-2 flex items-center justify-center space-x-4 relative">
                   {/* Left Line */}
                   <div className="flex-grow h-px bg-gray-300"></div>
 
                   {/* Circular + Icon */}
-                  <button
-                    className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 disabled:opacity-20 disabled:cursor-not-allowed`}
-                    onClick={() => setInputIndex(idx)}
-                    disabled={isDisabled}
+                  <div
+                    className="relative"
+                    onMouseEnter={() => {
+                      if (isDisabled && userPlan === 'free')
+                        setIsDialogVisible(true)
+                    }}
+                    onMouseLeave={() => {
+                      if (isDisabled && userPlan === 'free')
+                        setIsDialogVisible(false)
+                    }}
                   >
-                    +
-                  </button>
+                    <button
+                      className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 disabled:opacity-20 disabled:cursor-not-allowed`}
+                      onClick={() => setInputIndex(idx)}
+                      disabled={isDisabled}
+                    >
+                      +
+                    </button>
+
+                    {/* Tooltip */}
+                    {isDialogVisible && isDisabled && userPlan === 'free' && (
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                        <p className="text-sm text-center text-gray-800">
+                          Please{' '}
+                          <button
+                            className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                            onClick={() => setIsPricingModalOpen(true)}
+                          >
+                            upgrade to Pro
+                          </button>{' '}
+                          plan to access this feature.
+                        </p>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Right Line */}
                   <div className="flex-grow h-px bg-gray-300"></div>
@@ -130,6 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </li>
 
             {/* Input for New Outline */}
+
             {inputIndex === idx && (
               <div className="mt-2 flex items-center space-x-2">
                 <div className="relative flex w-full max-w-xs">
@@ -175,6 +215,20 @@ const Sidebar: React.FC<SidebarProps> = ({
           </React.Fragment>
         ))}
       </ul>
+      {/* Pricing Modal */}
+      {isPricingModalOpen && (
+        <PricingModal
+          closeModal={() => setIsPricingModalOpen(false)}
+          heading="Subscription Plans"
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency!}
+          yearlyPlanId={yearlyPlanId!}
+          monthlyPlanId={monthlyPlanId!}
+          authToken={authToken!}
+          orgId={orgId!}
+        />
+      )}
     </div>
   )
 }

@@ -5,6 +5,7 @@ import axios from 'axios'
 import { io } from 'socket.io-client'
 import { Outline } from '../../types/types'
 import { DesktopHeading, MobileHeading } from './Heading'
+import PaymentGateway from '../payment/PaymentGateway'
 import {
   MobileNewSlideVersion,
   DesktopNewSlideVersion,
@@ -35,7 +36,8 @@ export default function ViewPresentation() {
   const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
-  const userPlan = sessionStorage.getItem('userPlan')
+  const userPlan = useSelector((state: any) => state.user)
+  // const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null)
   const [pptName, setPptName] = useState<string | null>(null)
   const [presentationID, setPresentationID] = useState<string>('')
@@ -71,8 +73,133 @@ export default function ViewPresentation() {
   }
 
   // Handle Download Button Click
-  const handleDownload = () => {
-    alert('Download functionality triggered.')
+  const handleDownload = async () => {
+    try {
+      const formId = documentID
+      if (!formId) {
+        throw new Error('Form ID not found in localStorage')
+      }
+
+      // 1. First, update the payment status
+      const updatePaymentStatus = async () => {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/appscript/updatePaymentStatus`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ FormID: formId, paymentStatus: 1 }),
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const result = await response.json()
+        console.log('Payment status updated:', result)
+      }
+
+      // Call payment status update
+      await updatePaymentStatus()
+
+      // 2. Then, call the additional API to get presentationID
+      const callAdditionalApi = async () => {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
+        )
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const result = await response.json()
+        console.log('Additional API response:', result)
+
+        const presentationID = result.PresentationID // Extract PresentationID from response
+
+        if (presentationID) {
+          // Call the second API with the extracted presentationID
+          const secondApiResponse = await fetch(
+            `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
+          )
+          const secondApiText = await secondApiResponse.text()
+          console.log('Raw second API response:', secondApiText)
+
+          try {
+            const secondApiResult = JSON.parse(secondApiText)
+            console.log('Second API parsed response:', secondApiResult)
+          } catch (jsonError) {
+            console.error(
+              'Error parsing second API response as JSON:',
+              jsonError
+            )
+          }
+        } else {
+          throw new Error('PresentationID not found in the response')
+        }
+      }
+
+      // Call additional API
+      await callAdditionalApi()
+
+      // 3. Finally, call the original slides URL API
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      console.log('Result:', result)
+
+      const url = result.PresentationURL
+      console.log('URL:', url)
+
+      if (!url || typeof url !== 'string') {
+        throw new Error('Invalid URL in response')
+      }
+      window.open(url, '_blank')
+    } catch (error) {
+      console.error('Error exporting presentation:', error)
+      alert(
+        "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
+      )
+    }
+  }
+
+  // Function to check payment status and proceed
+  const checkPaymentStatusAndProceed = async () => {
+    // try {
+    //   const response = await fetch(
+    //     `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${documentID}`
+    //   )
+
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! Status: ${response.status}`)
+    //   }
+
+    //   const data = await response.json()
+    //   console.log('API response data:', data) // Debugging line
+
+    //   if (data && data.paymentStatus === 1) {
+    //     // Payment has already been made, run handleDownload
+    //     handleDownload()
+    //   } else if (data && data.paymentStatus === 0) {
+    // Payment is not made, open the payment gateway
+    const paymentButton = document.getElementById('payment-button')
+    if (paymentButton) {
+      paymentButton.click()
+    } else {
+      console.error('Payment button not found')
+    }
+    //   } else {
+    //     alert('Unable to determine payment status.')
+    //   }
+    // } catch (error) {
+    //   console.error('Error checking payment status:', error)
+    //   alert('Error checking payment status. Please try again.')
+    // }
   }
 
   // Handle Delete Button Click
@@ -310,7 +437,15 @@ export default function ViewPresentation() {
               }}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
-              customBuilderDisabled={customBuilderDisabled}
+              customBuilderDisabled={featureDisabled}
+              openPricingModal={() => setIsPricingModalOpen(true)}
+              monthlyPlanAmount={monthlyPlanAmount}
+              yearlyPlanAmount={yearlyPlanAmount}
+              currency={currency}
+              yearlyPlanId={yearlyPlanId!}
+              monthlyPlanId={monthlyPlanId!}
+              authToken={authToken!}
+              orgId={orgId!}
             />
           )
         } else if (plusClickedSlide === index!) {
@@ -336,7 +471,15 @@ export default function ViewPresentation() {
               }}
               handleSlideNarrative={() => setDisplayMode('SlideNarrative')}
               userPlan={userPlan!}
-              customBuilderDisabled={customBuilderDisabled}
+              customBuilderDisabled={featureDisabled}
+              openPricingModal={() => setIsPricingModalOpen(true)}
+              monthlyPlanAmount={monthlyPlanAmount}
+              yearlyPlanAmount={yearlyPlanAmount}
+              currency={currency}
+              yearlyPlanId={yearlyPlanId!}
+              monthlyPlanId={monthlyPlanId!}
+              authToken={authToken!}
+              orgId={orgId!}
             />
           )
         }
@@ -569,7 +712,9 @@ export default function ViewPresentation() {
             setIsSlideLoading(true)
             const ids = newSlides.map((slide: any) => slide.GenSlideID)
             setTimeout(() => {
-              setPresentationID(firstSlide.PresentationID)
+              if (!presentationID) {
+                setPresentationID(firstSlide.PresentationID)
+              }
               setSlidesId(ids)
               setIsSlideLoading(false)
               setIsNoGeneratedSlide(false)
@@ -602,7 +747,9 @@ export default function ViewPresentation() {
                 clearTimeout(timerRef.current!)
                 timerRef.current = null
                 setTimeout(() => {
-                  setPresentationID(validSlides[0].PresentationID)
+                  if (!presentationID) {
+                    setPresentationID(firstSlide.PresentationID)
+                  }
                   setSlidesId(ids)
                   setIsSlideLoading(false)
                   setIsNoGeneratedSlide(false)
@@ -767,11 +914,19 @@ export default function ViewPresentation() {
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
-          exportButtonText="Export PDF"
+          exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${
+            currency === 'INR' ? '499' : '9'
+          }`}
+          exportHandler={checkPaymentStatusAndProceed}
         />
       ) : (
         <></>
       )}
+      <PaymentGateway
+        productinfo="Presentation Export"
+        onSuccess={handleDownload}
+        formId={documentID!}
+      />
       {/*LARGE SCREEN: HEADING*/}
       <DesktopHeading
         handleDownload={handleDownload}
@@ -783,7 +938,7 @@ export default function ViewPresentation() {
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
-      <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16">
+      <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16 ">
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
           onOutlineSelect={handleOutlineSelect}
@@ -793,6 +948,14 @@ export default function ViewPresentation() {
           authToken={authToken!}
           fetchOutlines={fetchOutlines}
           isLoading={isDocumentIDLoading}
+          isDisabled={featureDisabled}
+          userPlan={userPlan}
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency}
+          yearlyPlanId={yearlyPlanId!}
+          monthlyPlanId={monthlyPlanId!}
+          orgId={orgId!}
         />
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}

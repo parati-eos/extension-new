@@ -71,9 +71,8 @@ const SelectPresentationType: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const pricingModalHeading = 'Refine PPT'
-  // const userPlan  = useSelector((state) => state.user)
-
-  const userPlan = sessionStorage.getItem('userPlan')
+  const userPlan = useSelector((state: any) => state.user)
+  // const userPlan = sessionStorage.getItem('userPlan')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')

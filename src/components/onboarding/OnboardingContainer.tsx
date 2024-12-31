@@ -68,7 +68,7 @@ const OnboardingContainer: React.FC = () => {
             }
           )
           .then((response) => {
-            sessionStorage.setItem('userPlan', response.data.plan.plan_name)
+            // sessionStorage.setItem('userPlan', response.data.plan.plan_name)
             setIsNextLoading(false)
           })
       } else {

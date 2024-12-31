@@ -15,6 +15,7 @@ interface PricingModalProps {
   authToken: string
   orgId: string
   exportButtonText?: string
+  exportHandler?: () => void
 }
 
 const categories = [
@@ -53,15 +54,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   authToken,
   orgId,
   exportButtonText,
+  exportHandler,
 }) => {
   const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
     'monthly'
   )
   const navigate = useNavigate()
-  // const userPlan  = useSelector((state) => state.user)
-
-  const userPlan = sessionStorage.getItem('userPlan')
+  const userPlan = useSelector((state: any) => state.user)
+  // const userPlan = sessionStorage.getItem('userPlan')
   const plans = [
     {
       name: 'FREE',
@@ -353,7 +354,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       className={`${
         window.location.pathname !== '/presentation-view' &&
         window.location.pathname !== '/new-presentation' &&
-        window.location.pathname !== '/organization-profile'
+        window.location.pathname !== '/organization-profile' &&
+        window.location.pathname !== '/history'
           ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
           : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
       }`}
@@ -439,8 +441,10 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={plan.name === 'PRO' ? handleUpgrade : () => {}}
-                      className={`w-full   font-medium py-2 px-6 rounded-lg ${
+                      onClick={
+                        plan.name === 'PRO' ? handleUpgrade : exportHandler
+                      }
+                      className={`w-full font-medium py-2 px-6 rounded-lg ${
                         userPlan === plan.name.toLowerCase()
                           ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
                           : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
@@ -455,12 +459,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
-                      disabled={
-                        (userPlan === 'free' &&
-                          plan.name.toLowerCase() === 'free') ||
-                        (userPlan === 'pro' &&
-                          plan.name.toLowerCase() === 'free')
-                      }
+                      disabled={!exportButtonText}
                     >
                       {plan.buttonText}
                     </button>
@@ -498,7 +497,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={plan.name === 'PRO' ? handleUpgrade : () => {}}
+                      onClick={
+                        plan.name === 'PRO' ? handleUpgrade : exportHandler
+                      }
                       className={`w-full font-medium py-2 px-6 rounded-lg ${
                         userPlan === plan.name.toLowerCase()
                           ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
@@ -514,12 +515,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
-                      disabled={
-                        (userPlan === 'free' &&
-                          plan.name.toLowerCase() === 'free') ||
-                        (userPlan === 'pro' &&
-                          plan.name.toLowerCase() === 'free')
-                      }
+                      disabled={!exportButtonText}
                     >
                       {plan.buttonText}
                     </button>

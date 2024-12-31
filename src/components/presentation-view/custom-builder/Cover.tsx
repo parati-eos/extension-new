@@ -1,5 +1,5 @@
 import { FaImage } from 'react-icons/fa'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { DisplayMode } from '../../../types/presentationView'
@@ -33,6 +33,9 @@ export default function Cover({
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
 
+  // Ref for file input to trigger on button click
+  const logoUploadInputRef = useRef<HTMLInputElement | null>(null)
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
@@ -56,7 +59,10 @@ export default function Cover({
   }
 
   const handleButtonClick = () => {
-    document.getElementById('logoUploadInput')?.click()
+    if (logoUploadInputRef.current) {
+      logoUploadInputRef.current.value = '' // Reset the file input
+      logoUploadInputRef.current.click() // Trigger the file input click programmatically
+    }
   }
 
   const handleGenerateSlide = async () => {
@@ -112,32 +118,39 @@ export default function Cover({
         <input
           type="text"
           placeholder="Enter your tagline"
-          className=" py-1 px-2 w-[50%] border border-gray-300 rounded-lg "
+          className=" py-1 px-2 lg:w-[50%] w-full border border-gray-300 rounded-lg "
         />
       </div>
       {/* Main Content */}
-      <div className="w-[50%] h-full   flex flex-col flex-grow items-center">
+      <div className="lg:w-[50%] w-full h-full   flex flex-col flex-grow items-center">
         {/* Logo Upload Section */}
         <div></div>
-        <div className="border border-gray-300 rounded-xl w-full h-[60%] flex flex-col  justify-center items-center ">
+        <div className="border border-gray-300 rounded-xl w-full lg:h-[60%] h-[80%] flex flex-col  justify-center items-center ">
           <input
             type="file"
-            id="logoUploadInput"
+            ref={logoUploadInputRef}
             accept="image/*"
             onChange={(e) => handleFileChange(e)}
             className="hidden"
           />
-          <div className="flex flex-col h-[80%] w-[60%] items-center justify-center">
+          <div className="flex flex-col h-full w-full lg:h-[80%] lg:w-[60%]  items-center justify-center">
             {logo ? (
-              <img
-                src={logo}
-                alt="Uploaded Logo"
-                className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
-              />
+              <div className="relative">
+                <img
+                  src={logo}
+                  alt="Uploaded Logo"
+                  className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                />
+                {isUploading && (
+                  <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-500">
+                   <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
-                <FaImage className="text-gray-500 text-4xl mb-4" />
-                <p className="text-gray-500 mb-4">
+                <FaImage className="text-gray-500 text-4xl  mb-4" />
+                <p className="text-gray-500 lg:mb-4">
                   {isUploading ? 'Uploading...' : 'Upload Your Logo'}
                 </p>
               </>
@@ -150,25 +163,6 @@ export default function Cover({
               {logo ? 'Upload Again' : 'Upload Logo'}
             </button>
           </div>
-        </div>
-
-        {/* Attach Image and Generate Slide Buttons for Mobile */}
-        <div className="flex lg:hidden mt-2 gap-2  w-full ">
-          <div className="flex-1  items-center justify-center gap-2">
-            <AttachImage onFileSelected={handleFileSelect} />
-          </div>
-
-          <button
-            onClick={handleGenerateSlide}
-            disabled={!logo}
-            className={`flex-1 py-2 rounded-md ${
-              !logo
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-[#3667B2] text-white'
-            }`}
-          >
-            {isLoading ? 'Loading...' : 'Generate Slide'}
-          </button>
         </div>
       </div>
       {/* Button Container */}
@@ -184,6 +178,25 @@ export default function Cover({
             !logo
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+          }`}
+        >
+          {isLoading ? 'Loading...' : 'Generate Slide'}
+        </button>
+      </div>
+
+      {/* Attach Image and Generate Slide Buttons for Mobile */}
+      <div className="flex lg:hidden mt-2 gap-2  w-full ">
+        <div className="flex-1  items-center justify-center gap-2">
+          <AttachImage onFileSelected={handleFileSelect} />
+        </div>
+
+        <button
+          onClick={handleGenerateSlide}
+          disabled={!logo}
+          className={`flex-1 py-2 rounded-md ${
+            !logo
+              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              : 'bg-[#3667B2] text-white'
           }`}
         >
           {isLoading ? 'Loading...' : 'Generate Slide'}
