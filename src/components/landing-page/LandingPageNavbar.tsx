@@ -149,6 +149,10 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#blog"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            onClick={(e) => {
+              e.preventDefault()
+              window.open('/blog', '_blank')
+            }}
           >
             Blog
           </a>
@@ -202,7 +206,7 @@ const LandingPageNavbar: React.FC = () => {
             </li>
             <li>
               <a
-                href="#blog"
+                onClick={() => navigate('/blog')}
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
                 Blog
