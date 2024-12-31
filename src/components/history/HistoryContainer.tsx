@@ -41,9 +41,8 @@ const HistoryContainer: React.FC = () => {
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
-  // const userPlan  = useSelector((state) => state.user)
-
-  const userPlan = sessionStorage.getItem('userPlan')
+  const userPlan = useSelector((state: any) => state.user.userPlan)
+  // const userPlan = sessionStorage.getItem('userPlan')
   const [pricingModalHeading, setPricingModalHeading] = useState('')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()

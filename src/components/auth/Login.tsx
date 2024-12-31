@@ -90,7 +90,7 @@ function Login() {
       })
 
       const responseData = await res.json()
-      dispatch(setUserPlan(responseData.userProfile.user_plan))
+      dispatch(setUserPlan(responseData.plan.plan_name))
       console.log('User Data:', responseData)
 
       if (responseData.orgid) {
