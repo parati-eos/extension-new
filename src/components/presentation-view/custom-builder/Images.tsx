@@ -14,6 +14,7 @@ interface ImagesProps {
   authToken: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
+  setIsSlideLoading: () => void
 }
 
 export default function Images({
@@ -24,6 +25,7 @@ export default function Images({
   authToken,
   setDisplayMode,
   outlineID,
+  setIsSlideLoading,
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
@@ -78,6 +80,7 @@ export default function Images({
   }
 
   const handleSubmit = async () => {
+    setIsSlideLoading()
     setIsLoading(true)
     try {
       await axios.post(
@@ -171,13 +174,13 @@ export default function Images({
 
             {/* Display Uploaded Images for Mobile */}
             <div className="grid grid-cols-3 gap-2 mt-4">
-            {images.map((image, index) => (
-      <div key={index} className="relative w-full h-24">
-        {replacingIndex === index && (
-          <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
-            <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-          </div>
-        )}
+              {images.map((image, index) => (
+                <div key={index} className="relative w-full h-24">
+                  {replacingIndex === index && (
+                    <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-10">
+                      <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  )}
                   <img
                     src={image}
                     alt={`Uploaded ${index + 1}`}

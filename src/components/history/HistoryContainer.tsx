@@ -20,6 +20,11 @@ import { Plan } from '../../types/pricingTypes'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 
+function getSheetIdFromUrl(url: string) {
+  const match = url.match(/\/d\/(.+?)\/|\/open\?id=(.+?)(?:&|$)/)
+  return match ? match[1] || match[2] : null
+}
+
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -289,7 +294,9 @@ const HistoryContainer: React.FC = () => {
                     className="flex items-center p-4 py-6 relative"
                   >
                     <iframe
-                      src={item.PresentationURL}
+                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+                        item.PresentationURL
+                      )}/embed?rm=minimal&start=true&loop=true`}
                       title={item.pptName}
                       onClick={() => handleEdit(item.FormID, item.pptName)}
                       className="w-16 h-16 object-cover hover:cursor-pointer rounded-md mr-4"
@@ -352,16 +359,6 @@ const HistoryContainer: React.FC = () => {
                         <button
                           onClick={() => {
                             setIsPricingModalOpen(true)
-                            setPricingModalHeading('PDF Export')
-                          }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaFilePdf className="text-[#5D5F61]" />
-                          <span>PDF Export</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
                             setPricingModalHeading('Google Slides')
                           }}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
@@ -369,10 +366,6 @@ const HistoryContainer: React.FC = () => {
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
                         </button>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
-                          <FaTrashAlt />
-                          <span>Delete</span>
-                        </div>
                       </div>
                     )}
                   </div>
@@ -386,19 +379,18 @@ const HistoryContainer: React.FC = () => {
                     key={index}
                     className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
                   >
-                    {/* Image */}
+                    {/* Thumbnail */}
                     <iframe
-                      src={item.PresentationURL}
+                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+                        item.PresentationURL
+                      )}/embed?rm=minimal&start=true&loop=true`}
                       title={item.pptName}
                       onClick={() => handleEdit(item.FormID, item.pptName)}
-                      sandbox="allow-same-origin allow-scripts"
-                      scrolling="no"
-                      style={{ overflow: 'hidden' }}
-                      className="w-24 h-16 object-cover rounded-md"
+                      className="w-[10rem] h-[6rem] rounded-xl"
                     />
 
                     {/* Title */}
-                    <div className="text-lg font-medium text-[#091220]">
+                    <div className="text-lg font-bold pl-6 text-[#091220]">
                       {item.pptName}
                     </div>
 
@@ -407,7 +399,9 @@ const HistoryContainer: React.FC = () => {
                       <span className="font-medium text-[#5D5F61] mr-2">
                         PPT Type:
                       </span>
-                      <span className="text-[#091220]">{item.ppt_type}</span>
+                      <span className="text-[#091220] font-medium">
+                        {item.ppt_type}
+                      </span>
                     </div>
 
                     {/* Date */}
@@ -415,8 +409,15 @@ const HistoryContainer: React.FC = () => {
                       <span className="font-medium text-[#5D5F61] mr-2">
                         Date:
                       </span>
-                      <span className="text-[#091220]">
-                        {new Date(item.currentTime).toLocaleDateString()}
+                      <span className="text-[#091220] font-medium">
+                        {new Date(item.currentTime).toLocaleDateString(
+                          'en-GB',
+                          {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          }
+                        )}
                       </span>
                     </div>
 
@@ -451,29 +452,16 @@ const HistoryContainer: React.FC = () => {
                           <span>Share</span>
                         </button>
                         <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
-                            setPricingModalHeading('PDF Export')
-                          }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaFilePdf className="text-[#5D5F61]" />
-                          <span>PDF Export</span>
-                        </button>
-                        <button
+                          disabled={userPlan === 'free'}
                           onClick={() => {
                             setIsPricingModalOpen(true)
                             setPricingModalHeading('Google Slides')
                           }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
+                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer disabled:cursor-not-allowed"
                         >
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
                         </button>
-                        <div className="flex items-center gap-3 text-base text-[#5D5F61] cursor-pointer">
-                          <FaTrashAlt />
-                          <span>Delete</span>
-                        </div>
                       </div>
                     )}
                   </div>

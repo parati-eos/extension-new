@@ -602,7 +602,9 @@ export default function ViewPresentation() {
             setIsSlideLoading(true)
             const ids = newSlides.map((slide: any) => slide.GenSlideID)
             setTimeout(() => {
-              setPresentationID(firstSlide.PresentationID)
+              if (!presentationID) {
+                setPresentationID(firstSlide.PresentationID)
+              }
               setSlidesId(ids)
               setIsSlideLoading(false)
               setIsNoGeneratedSlide(false)
@@ -635,7 +637,9 @@ export default function ViewPresentation() {
                 clearTimeout(timerRef.current!)
                 timerRef.current = null
                 setTimeout(() => {
-                  setPresentationID(validSlides[0].PresentationID)
+                  if (!presentationID) {
+                    setPresentationID(firstSlide.PresentationID)
+                  }
                   setSlidesId(ids)
                   setIsSlideLoading(false)
                   setIsNoGeneratedSlide(false)
