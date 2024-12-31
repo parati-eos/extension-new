@@ -358,7 +358,10 @@ useEffect(() => {
                             setIsPricingModalOpen(true)
                             setPricingModalHeading('Google Slides')
                           }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
+                          className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+                            userPlan === 'free' ? 'cursor-not-allowed opacity-50' : ''
+                          }`}
+                          
                         >
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
