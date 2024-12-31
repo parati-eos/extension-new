@@ -695,7 +695,7 @@ const HistoryContainer: React.FC = () => {
               ></div>
 
               {/* Modal Content */}
-              <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh]">
+              <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh] overflow-y-auto scrollbar-none">
                 {/* Close Icon */}
                 <div
                   className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
