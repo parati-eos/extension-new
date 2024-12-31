@@ -3,7 +3,7 @@ import freepikbg from '../../assets/freepik.png'
 import createimage from '../../assets/image1.png'
 import evolutionimage from '../../assets/image3.png'
 import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom' 
 
 const Footer: React.FC = () => {
   const navigate = useNavigate()
@@ -163,4 +163,4 @@ const Footer: React.FC = () => {
   )
 }
 
-export default Footer
+export default Footer;
