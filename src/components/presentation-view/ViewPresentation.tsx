@@ -542,6 +542,8 @@ export default function ViewPresentation() {
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   const newSlidesJSON = JSON.stringify(newSlidesRef.current)
+
+  //socket connection
   useEffect(() => {
     if (currentOutline !== '' && documentID !== null) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
