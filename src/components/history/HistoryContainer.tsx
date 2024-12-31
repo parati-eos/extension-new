@@ -81,14 +81,6 @@ const HistoryContainer: React.FC = () => {
     )
   }
 
-  // History Item Dropdown
-  useEffect(() => {
-    if (activeDropdown !== null) {
-      const timer = setTimeout(() => setActiveDropdown(null), 8000)
-      return () => clearTimeout(timer)
-    }
-  }, [activeDropdown])
-
   // Handle clicks and scroll to close dropdown
   useEffect(() => {
     const handleOutsideClick = () =>
@@ -314,8 +306,8 @@ const HistoryContainer: React.FC = () => {
                           className="text-[#8A8B8C] cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setActiveDropdown(
-                              activeDropdown === index ? null : index
+                            setActiveDropdown((prev) =>
+                              prev === index ? null : index
                             )
                           }}
                         />
@@ -427,8 +419,8 @@ const HistoryContainer: React.FC = () => {
                         className="text-[#8A8B8C] cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation()
-                          setActiveDropdown(
-                            activeDropdown === index ? null : index
+                          setActiveDropdown((prev) =>
+                            prev === index ? null : index
                           )
                         }}
                       />
