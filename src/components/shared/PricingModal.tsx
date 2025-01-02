@@ -314,8 +314,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const handleUpgrade = async () => {
     setIsLoading(true)
     const planID = billingCycle === 'annual' ? yearlyPlanId : monthlyPlanId
-    const currentTime = Date.now() + 15 * 1000
-    const unixTime = Math.floor(currentTime / 1000)
+    const currentTime = Date.now()
+    const startAtTime = currentTime + 10 * 60 * 1000 // 10 minutes in milliseconds
+    const startAtUnix = Math.floor(startAtTime / 1000) // Convert to Unix timestamp in seconds
+
+    // Set expire_by to 1 hour (3600 seconds) after start_at
+    const expireByTime = startAtTime + 60 * 60 * 1000 // 1 hour in milliseconds
+    const expireByUnix = Math.floor(expireByTime / 1000) // Convert to Unix timestamp in seconds
 
     if (userPlan === 'free') {
       try {
@@ -325,7 +330,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             plan_id: planID,
             customer_id: orgId,
             total_count: 12,
-            start_at: unixTime,
+            start_at: startAtUnix,
+            expire_by: expireByUnix,
             quantity: 1,
             notes: {
               note_key: 'Zynth Presentation',

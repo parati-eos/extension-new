@@ -64,6 +64,9 @@ export default function ViewPresentation() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
+  const [isExportPaid, setIsExportPaid] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
+  const [showCountdown, setShowCountdown] = useState(false)
   const featureDisabled = userPlan === 'free' ? true : false
 
   // Handle Share Button Click
@@ -74,6 +77,8 @@ export default function ViewPresentation() {
 
   // Handle Download Button Click
   const handleDownload = async () => {
+    setShowCountdown(true)
+    setCountdown(8)
     try {
       const formId = documentID
       if (!formId) {
@@ -168,6 +173,23 @@ export default function ViewPresentation() {
       )
     }
   }
+
+  useEffect(() => {
+    if (countdown === null || countdown === 0) return
+
+    const timer = setInterval(() => {
+      setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(timer) // Cleanup the timer
+  }, [countdown])
+
+  useEffect(() => {
+    if (countdown === 0) {
+      setShowCountdown(false) // Hide the modal once the countdown ends
+      console.log('Download starting...')
+    }
+  }, [countdown])
 
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
@@ -898,7 +920,7 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
 
-  // API CALL TO GET PRICING DATA FOR MODAL
+  // API CALL TO GET PRICING DATA AND EXPORT PAYMENT STATUS
   useEffect(() => {
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
@@ -932,6 +954,49 @@ export default function ViewPresentation() {
       getPricingData()
     }, 3000) // delay
 
+    const checkPaymentStatusAndProceed = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const res = await response.json()
+        console.log('API response data:', res) // Debugging line
+
+        if (res && res.data.paymentStatus === 1) {
+          // Payment has already been made, run handleDownload
+          setIsExportPaid(true)
+        } else if (res && res.data.paymentStatus === 0) {
+          const paymentButton = document.getElementById('payment-button')
+          if (paymentButton) {
+            paymentButton.click()
+          } else {
+            console.error('Payment button not found')
+          }
+        } else {
+          alert('Unable to determine payment status.')
+        }
+      } catch (error) {
+        console.error('Error checking payment status:', error)
+        alert('Error checking payment status. Please try again.')
+      }
+    }
+
+    // Call the payment status check
+    if (documentID) {
+      checkPaymentStatusAndProceed()
+    }
+
+    if (userPlan !== 'free') {
+      setIsExportPaid(true)
+    }
+
     // Cleanup the timer in case the component unmounts
     return () => clearTimeout(timer)
   }, [authToken])
@@ -942,6 +1007,18 @@ export default function ViewPresentation() {
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
+      {/* Export Countdown */}
+      {showCountdown && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>
+              Payment has been done! Your download will start in {countdown}{' '}
+              seconds...
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
@@ -979,6 +1056,7 @@ export default function ViewPresentation() {
         isLoading={isDocumentIDLoading}
         userPlan={userPlan!}
         openPricingModal={() => setIsPricingModalOpen(true)}
+        exportPaid={isExportPaid}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -1084,6 +1162,7 @@ export default function ViewPresentation() {
           isLoading={isDocumentIDLoading}
           userPlan={userPlan!}
           openPricingModal={() => setIsPricingModalOpen(true)}
+          exportPaid={isExportPaid}
         />
 
         {/* MOBILE: OUTLINE Modal */}
