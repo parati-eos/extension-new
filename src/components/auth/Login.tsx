@@ -94,7 +94,6 @@ function Login() {
 
       if (responseData.orgid) {
         dispatch(setUserPlan(responseData.plan.plan_name))
-
         sessionStorage.setItem('orgId', responseData.orgid)
         navigate('/new-presentation')
       } else if (!responseData.orgId) {
