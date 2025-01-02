@@ -9,6 +9,8 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { FormData } from '../../types/onboardingTypes.ts'
 import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice.ts'
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
@@ -33,6 +35,7 @@ const OnboardingContainer: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
   const authToken = sessionStorage.getItem('authToken')
+  const dispatch = useDispatch()
 
   // Check if screen size is medium or larger to show sidebar
   useEffect(() => {
@@ -68,7 +71,7 @@ const OnboardingContainer: React.FC = () => {
             }
           )
           .then((response) => {
-            // sessionStorage.setItem('userPlan', response.data.plan.plan_name)
+            dispatch(setUserPlan(response.data.plan.plan_name))
             setIsNextLoading(false)
           })
       } else {

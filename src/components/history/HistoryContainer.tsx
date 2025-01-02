@@ -302,7 +302,7 @@ const HistoryContainer: React.FC = () => {
 
       await axios
         .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/appscripts/razorpay/plans`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
