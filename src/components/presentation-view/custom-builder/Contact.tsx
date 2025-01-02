@@ -73,7 +73,7 @@ export default function Contact({
 
   const validateLinkedin = () => {
     const regex =
-      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/
+      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]+(\/)?(\?.*)?$/
     if (linkedin && !regex.test(linkedin)) {
       setErrors((prev) => ({
         ...prev,

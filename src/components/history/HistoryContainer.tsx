@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   FaFilter,
   FaSort,
@@ -30,6 +30,7 @@ const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isSortModalOpen, setIsSortModalOpen] = useState(false) // State for sort modal
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
@@ -44,13 +45,14 @@ const HistoryContainer: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
   const userPlan = useSelector((state: any) => state.user.userPlan)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
   // const userPlan = sessionStorage.getItem('userPlan')
   const [pricingModalHeading, setPricingModalHeading] = useState('')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [documentID, setDocumentID] = useState<string | null>(null)
-
   // Handle Download Button Click
   const handleDownload = async () => {
     try {
@@ -216,9 +218,20 @@ const HistoryContainer: React.FC = () => {
 
   // Handle clicks and scroll to close dropdown
   useEffect(() => {
-    const handleOutsideClick = () =>
-      activeDropdown !== null && setActiveDropdown(null)
+    const handleOutsideClick = (e: MouseEvent) => {
+      // Close the dropdown if the click is outside of both the dropdown and tooltip
+      if (
+        activeDropdown !== null &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setActiveDropdown(null) // Close dropdown if click is outside both
+        setIsTooltipVisible(false) // Hide tooltip when dropdown closes
+      }
+    }
+
     const handleScroll = () => setActiveDropdown(null)
+    setIsTooltipVisible(false) // Hide tooltip on scroll
 
     document.addEventListener('click', handleOutsideClick)
     window.addEventListener('scroll', handleScroll)
@@ -227,7 +240,7 @@ const HistoryContainer: React.FC = () => {
       document.removeEventListener('click', handleOutsideClick)
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [activeDropdown])
+  }, [activeDropdown]) // Effect runs when activeDropdown changes
 
   // API CALL TO GET HISTORY DATA
   useEffect(() => {
@@ -531,7 +544,10 @@ const HistoryContainer: React.FC = () => {
 
                     {/* Dropdown */}
                     {activeDropdown === index && (
-                      <div className="absolute right-0 top-[50%] transform -translate-y-1/2 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+                      <div
+                        ref={dropdownRef} // Attach the ref here
+                        className="absolute right-0 top-[50%] transform -translate-y-1/2 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4"
+                      >
                         <button
                           onClick={() => handleEdit(item.FormID, item.pptName)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
@@ -546,20 +562,42 @@ const HistoryContainer: React.FC = () => {
                           <FaShareAlt className="text-[#5D5F61]" />
                           <span>Share</span>
                         </button>
-                        <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
-                            setPricingModalHeading('Google Slides')
-                          }}
-                          className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                            userPlan === 'free'
-                              ? 'cursor-not-allowed opacity-50'
-                              : ''
-                          }`}
-                        >
-                          <FaGoogleDrive className="text-[#5D5F61]" />
-                          <span>Google Slides</span>
-                        </button>
+                        <div className={`relative`}>
+                          <button
+                            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+                              userPlan === 'free'
+                                ? 'cursor-not-allowed opacity-50'
+                                : ''
+                            }`}
+                            onClick={() => {
+                              // Only show the tooltip if the button is disabled
+                              if (userPlan === 'free') {
+                                setIsTooltipVisible(true)
+                              } else {
+                                handleDownload() // Your regular function for non-free users
+                              }
+                            }}
+                          >
+                            <FaGoogleDrive className="text-[#5D5F61]" />
+                            <span>Google Slides</span>
+                          </button>
+
+                          {/* Tooltip */}
+                          {isTooltipVisible && (
+                            <div className="absolute bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center ">
+                              <p className="text-sm text-gray-800 text-center ">
+                                Please{' '}
+                                <button
+                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                                  onClick={() => setIsPricingModalOpen(true)}
+                                >
+                                  upgrade to Pro
+                                </button>{' '}
+                                to access this feature.
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
