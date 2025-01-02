@@ -1,5 +1,5 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, SetStateAction } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
@@ -33,11 +33,11 @@ import Cover from "./custom-builder/Cover";
 import { useSelector } from "react-redux";
 
 export default function ViewPresentation() {
-  const [searchParams] = useSearchParams()
-  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
-  const authToken = sessionStorage.getItem('authToken')
-  const orgId = sessionStorage.getItem('orgId')
-  const userPlan = useSelector((state: any) => state.user.userPlan)
+  const [searchParams] = useSearchParams();
+  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL;
+  const authToken = sessionStorage.getItem("authToken");
+  const orgId = sessionStorage.getItem("orgId");
+  const userPlan = useSelector((state: any) => state.user.userPlan);
   // const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null);
   const [pptName, setPptName] = useState<string | null>(null);
@@ -51,6 +51,9 @@ export default function ViewPresentation() {
   const [outlineType, setOutlineType] = useState("");
   const [outlines, setOutlines] = useState<Outline[]>([]);
   const [displayMode, setDisplayMode] = useState<DisplayMode>("slides");
+  const [displayModes, setDisplayModes] = useState<{
+    [key: string]: DisplayMode;
+  }>({});
   const [finalized, setFinalized] = useState(false);
   const slideRefs = useRef<HTMLDivElement[]>([]);
   const [totalSlides, setTotalSlides] = useState(Number);
@@ -65,6 +68,7 @@ export default function ViewPresentation() {
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides);
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex);
   const featureDisabled = userPlan === "free" ? true : false;
+  const [slidesArray, setSlidesArray] = useState<{ [key: string]: string }>({});
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -231,15 +235,12 @@ export default function ViewPresentation() {
   };
 
   // Handle Add New Slide Version Button
-  const handlePlusClick = () => {
+  const handlePlusClick = (outlineTitle: string) => {
     setIsSlideLoading(false);
-    if (displayMode === "slides") {
-      console.log("Reached IF");
-      setDisplayMode("newContent");
-    } else {
-      console.log(outlineType);
-      setDisplayMode("slides");
-    }
+    setDisplayModes((prev) => ({
+      ...prev,
+      [outlineTitle]: prev[outlineTitle] === "slides" ? "newContent" : "slides",
+    }));
   };
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
@@ -351,47 +352,66 @@ export default function ViewPresentation() {
   };
 
   // Custom Builder Slide Type Select Handler
-  const handleCustomTypeClick = (typeName: DisplayMode) => {
-    setDisplayMode(typeName);
+  const handleCustomTypeClick = (typeName: DisplayMode, outlineTitle: string) => {
+    setDisplayModes((prev) => ({
+      ...prev,
+      [outlineTitle]: typeName,
+    }));
   };
 
   // Mobile Back Button
-  const onBack = () => {
-    if (displayMode === "SlideNarrative") {
-      setDisplayMode("newContent");
-    } else if (displayMode === "customBuilder") {
-      setDisplayMode("newContent");
-    } else if (displayMode === "newContent") {
-      setDisplayMode("slides");
-    } else {
-      setDisplayMode("customBuilder");
-    }
+  const onBack = (outlineTitle: string) => {
+    setDisplayModes((prev) => {
+      const currentMode = prev[outlineTitle];
+      let newMode: DisplayMode = "slides";
+
+      if (currentMode === "SlideNarrative") {
+        newMode = "newContent";
+      } else if (currentMode === "customBuilder") {
+        newMode = "newContent";
+      } else if (currentMode === "newContent") {
+        newMode = "slides";
+      } else {
+        newMode = "customBuilder";
+      }
+
+      return {
+        ...prev,
+        [outlineTitle]: newMode,
+      };
+    });
   };
 
   // Render Slide Content
-  const renderContent = ({
+    const renderContent = ({
     displayMode,
     isMobile,
     index,
+    GenSlideID,
+    outlineTitle
   }: {
     displayMode: string;
     isMobile: boolean;
     index?: number;
+    GenSlideID: string;
+    outlineTitle: string;
   }) => {
-    switch (displayMode) {
+    const currentDisplayMode = displayModes[outlineTitle] || "slides";
+
+    switch (currentDisplayMode) {
       case "slides":
         return (
           <>
-            {isSlideLoading && !isNoGeneratedSlide && (
+            {isSlideLoading && !isNoGeneratedSlide && !GenSlideID && (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 <h1>Generating Slide Please Wait...</h1>
               </div>
             )}
-            {!isSlideLoading && !isNoGeneratedSlide && (
+            {!isSlideLoading && !isNoGeneratedSlide && GenSlideID && (
               <iframe
-                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slidesId[currentSlideIndex]}`}
-                title={`Slide ${currentSlideIndex + 1}`}
+                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${GenSlideID}`}
+                title={`Slide ${index ? index + 1 : currentSlideIndex + 1}`}
                 className={`w-full h-full pointer-events-none transition-opacity duration-500 ${
                   isSlideLoading ? "opacity-0" : "opacity-100"
                 }`}
@@ -400,255 +420,131 @@ export default function ViewPresentation() {
             )}
             {isNoGeneratedSlide && !isSlideLoading && (
               <div className="w-full h-full flex items-center justify-center">
-                <h1 className="text-red-500">
-                  Sorry! Slide Could Not Be Generated
-                </h1>
+                <h1 className="text-red-500">Sorry! Slide Could Not Be Generated</h1>
               </div>
             )}
           </>
         );
+
       case "newContent":
-        if (isMobile) {
-          return (
-            <MobileNewSlideVersion
-              isLoading={isSlideLoading}
-              setDisplayMode={setDisplayMode}
-              handleQuickGenerate={handleQuickGenerate}
-              handleCustomBuilderClick={() => {
-                if (featureDisabled) {
-                  toast.info("Upgrade to pro to access this feature");
+        const NewSlideVersion = isMobile ? MobileNewSlideVersion : DesktopNewSlideVersion;
+        return (
+          <NewSlideVersion
+            isLoading={isSlideLoading}
+            setDisplayMode={(value: SetStateAction<DisplayMode>) => {
+              const newMode = typeof value === 'function' ? value(displayModes[outlineTitle] || 'slides') : value;
+              setDisplayModes(prev => ({
+                ...prev,
+                [outlineTitle]: newMode
+              }));
+            }}
+            handleQuickGenerate={handleQuickGenerate}
+            handleCustomBuilderClick={() => {
+              if (featureDisabled) {
+                toast.info("Upgrade to pro to access this feature");
+              } else {
+                const outlineTitle = currentOutline || "";
+                if (outlineTitle === outlines[0].title) {
+                  setDisplayModes(prev => ({
+                    ...prev,
+                    [outlineTitle]: "Cover"
+                  }));
+                } else if (outlineTitle === outlines[outlines.length - 1].title) {
+                  setDisplayModes(prev => ({
+                    ...prev,
+                    [outlineTitle]: "Contact"
+                  }));
                 } else {
-                  if (currentOutline === outlines[0].title) {
-                    setDisplayMode("Cover");
-                  } else if (
-                    currentOutline === outlines[outlines.length - 1].title
-                  ) {
-                    setDisplayMode("Contact");
-                  } else {
-                    setDisplayMode("customBuilder");
-                  }
+                  setDisplayModes(prev => ({
+                    ...prev,
+                    [outlineTitle]: "customBuilder"
+                  }));
                 }
-              }}
-              handleSlideNarrative={() => setDisplayMode("SlideNarrative")}
-              userPlan={userPlan!}
-              customBuilderDisabled={featureDisabled}
-              openPricingModal={() => setIsPricingModalOpen(true)}
-              monthlyPlanAmount={monthlyPlanAmount}
-              yearlyPlanAmount={yearlyPlanAmount}
-              currency={currency}
-              yearlyPlanId={yearlyPlanId!}
-              monthlyPlanId={monthlyPlanId!}
-              authToken={authToken!}
-              orgId={orgId!}
-            />
-          );
-        } else {
-          return (
-            <DesktopNewSlideVersion
-              isLoading={isSlideLoading}
-              setDisplayMode={setDisplayMode}
-              handleQuickGenerate={handleQuickGenerate}
-              handleCustomBuilderClick={() => {
-                if (featureDisabled) {
-                  toast.info("Upgrade to pro to access this feature");
-                } else {
-                  if (currentOutline === outlines[0].title) {
-                    setDisplayMode("Cover");
-                  } else if (
-                    currentOutline === outlines[outlines.length - 1].title
-                  ) {
-                    setDisplayMode("Contact");
-                  } else {
-                    setDisplayMode("customBuilder");
-                  }
-                }
-              }}
-              handleSlideNarrative={() => setDisplayMode("SlideNarrative")}
-              userPlan={userPlan!}
-              customBuilderDisabled={featureDisabled}
-              openPricingModal={() => setIsPricingModalOpen(true)}
-              monthlyPlanAmount={monthlyPlanAmount}
-              yearlyPlanAmount={yearlyPlanAmount}
-              currency={currency}
-              yearlyPlanId={yearlyPlanId!}
-              monthlyPlanId={monthlyPlanId!}
-              authToken={authToken!}
-              orgId={orgId!}
-            />
-          );
-        }
+              }
+            }}
+            handleSlideNarrative={() => {
+              setDisplayModes(prev => ({
+                ...prev,
+                [outlineTitle]: "SlideNarrative"
+              }));
+            }}
+            userPlan={userPlan!}
+            customBuilderDisabled={featureDisabled}
+            openPricingModal={() => setIsPricingModalOpen(true)}
+            monthlyPlanAmount={monthlyPlanAmount}
+            yearlyPlanAmount={yearlyPlanAmount}
+            currency={currency}
+            yearlyPlanId={yearlyPlanId!}
+            monthlyPlanId={monthlyPlanId!}
+            authToken={authToken!}
+            orgId={orgId!}
+          />
+        );
+
       case "customBuilder":
         return (
           <CustomBuilderMenu
-            onTypeClick={handleCustomTypeClick}
-            setDisplayMode={setDisplayMode}
-          />
-        );
-      case "Points":
-        return (
-          <Points
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "People":
-        return (
-          <People
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "Table":
-        return (
-          <Table
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "Timeline":
-        return (
-          <Timeline
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "SlideNarrative":
-        return (
-          <SlideNarrative
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-            outlineID={currentOutlineID}
-          />
-        );
-      case "Statistics":
-        return (
-          <Statistics
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "Images":
-        return (
-          <Images
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "Graphs":
-        return (
-          <Graphs
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "Contact":
-        return (
-          <Contact
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
-            }}
-          />
-        );
-      case "Cover":
-        return (
-          <Cover
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
-            slideType={outlineType}
-            documentID={documentID!}
-            orgId={orgId!}
-            authToken={authToken!}
-            setDisplayMode={setDisplayMode}
-            outlineID={currentOutlineID}
-            setIsSlideLoading={() => {
-              setIsSlideLoading(true);
-              setDisplayMode("slides");
+            onTypeClick={(type) => handleCustomTypeClick(type, outlineTitle)}
+            setDisplayMode={(value: React.SetStateAction<DisplayMode>) => {
+              setDisplayModes(prev => ({
+                ...prev,
+                [outlineTitle]: typeof value === 'function' ? value(prev[outlineTitle] || 'slides') : value
+              }));
             }}
           />
         );
 
       default:
-        return null;
+        const components: Record<string, React.FC<any>> = {
+          Points,
+          People,
+          Table,
+          Timeline,
+          SlideNarrative,
+          Statistics,
+          Images,
+          Graphs,
+          Contact,
+          Cover,
+        };
+
+        const Component = components[currentDisplayMode];
+        if (!Component) return null;
+
+        return (
+          <Component
+            heading={currentOutline.replace(/^\d+\.\s*/, "")}
+            slideType={outlineType}
+            documentID={documentID!}
+            orgId={orgId!}
+            authToken={authToken!}
+            setDisplayMode={(mode: DisplayMode) => {
+              setDisplayModes(prev => ({
+                ...prev,
+                [outlineTitle]: mode
+              }));
+            }}
+            outlineID={currentOutlineID}
+            setIsSlideLoading={() => {
+              setIsSlideLoading(true);
+              setDisplayModes(prev => ({
+                ...prev,
+                [outlineTitle]: "slides"
+              }));
+            }}
+          />
+        );
     }
   };
+
+  useEffect(() => {
+    const initialModes = outlines.reduce((acc, outline) => {
+      acc[outline.title] = "slides";
+      return acc;
+    }, {} as { [key: string]: DisplayMode });
+
+    setDisplayModes(initialModes);
+  }, [outlines]);
 
   // Get DocumentID and Presentation Name
   useEffect(() => {
@@ -718,7 +614,13 @@ export default function ViewPresentation() {
   const newSlidesRef = useRef<any[]>([]); // Ref to store newSlides persistently
   const newSlidesJSON = JSON.stringify(newSlidesRef.current);
   useEffect(() => {
-    if (currentOutline !== "" && documentID !== null) {
+    if (
+      (currentOutline !== "" &&
+        documentID !== null &&
+        slidesArray[currentOutline] == null) ||
+      undefined
+    ) {
+      console.log(newSlidesJSON);
       const socket = io(SOCKET_URL, { transports: ["websocket"] });
       console.info("Connecting to WebSocket server...");
 
@@ -746,6 +648,10 @@ export default function ViewPresentation() {
                 setPresentationID(firstSlide.PresentationID);
               }
               setSlidesId(ids);
+              setSlidesArray({
+                ...slidesArray,
+                [firstSlide.SectionName]: ids[0],
+              });
               setIsSlideLoading(false);
               setIsNoGeneratedSlide(false);
               setTotalSlides(ids.length);
@@ -928,9 +834,6 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100;
   const yearlyPlanId = yearlyPlan?.id;
 
-
-  
-
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Pricing Modal */}
@@ -1006,19 +909,21 @@ export default function ViewPresentation() {
                 <h1>Generating Slide Please Wait...</h1>
               </div>
             )}
-            {/* {outlines.map((outline, index) => (
+            {outlines.map((outline, index) => (
               <div
                 key={outline.title}
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-center scroll-smooth w-full h-full mb-4"
               >
                 {renderContent({
-                  displayMode,
-                  isMobile: false,
-                  index,
+                    GenSlideID: slidesArray[outline.title],
+                    displayMode,
+                    isMobile: false,
+                    index,
+                    outlineTitle: outline.title
                 })}
               </div>
-            ))} */}
+            ))}
           </div>
 
           {/* MEDIUM LARGE SCREEN: ACTION BUTTONS */}
@@ -1026,7 +931,7 @@ export default function ViewPresentation() {
             <DesktopButtonSection
               onDelete={handleDelete}
               onFinalize={handleFinalize}
-              onNewVersion={handlePlusClick}
+              onNewVersion={() => handlePlusClick(currentOutline)}
               finalized={finalized}
               currentSlideId={slidesId[currentSlideIndex]}
             />
@@ -1110,8 +1015,10 @@ export default function ViewPresentation() {
           } w-full border border-gray-200 mt-12 mb-6`}
         >
           {renderContent({
+            GenSlideID: slidesArray[currentOutline],
             displayMode,
             isMobile: true,
+            outlineTitle: currentOutline
           })}
         </div>
 
@@ -1121,14 +1028,14 @@ export default function ViewPresentation() {
             <MobileButtonSection
               onDelete={handleDelete}
               onFinalize={handleFinalize}
-              onNewVersion={handlePlusClick}
+              onNewVersion={() => handlePlusClick(currentOutline)}
               finalized={finalized}
               currentSlideId={slidesId[currentSlideIndex]}
               displayMode={displayMode}
             />
           ) : (
             <button
-              onClick={onBack}
+              onClick={() => onBack(currentOutline)}
               className="border border-gray-300 p-2 rounded-md flex items-center"
             >
               Back
