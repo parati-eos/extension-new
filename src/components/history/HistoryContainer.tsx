@@ -466,24 +466,32 @@ const HistoryContainer: React.FC = () => {
           ) : (
             <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
               {/* Mobile/Small Screen Layout */}
-              <div className="block md:hidden">
+              <div className="grid grid-cols-1 gap-4 md:hidden">
                 {presentationsToShow?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center p-4 py-6 relative"
+                    className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8"
                   >
-                    <iframe
-                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-                        item.PresentationURL
-                      )}/embed?rm=minimal&start=true&loop=true`}
-                      title={item.pptName}
-                      onClick={() => handleEdit(item.FormID, item.pptName)}
-                      className="w-16 h-16 object-cover hover:cursor-pointer rounded-md mr-4"
-                      sandbox="allow-same-origin allow-scripts"
-                      scrolling="no"
-                      style={{ overflow: 'hidden' }}
-                    />
-                    <div className="flex-1">
+                    {/* Thumbnail Container */}
+                    <div className="relative w-[8rem] h-[6rem]">
+                      {/* Invisible clickable overlay */}
+                      <div
+                        onClick={() => handleEdit(item.FormID, item.pptName)}
+                        className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
+                      ></div>
+                      {/* Embedded Google Slides iframe */}
+                      <iframe
+                        src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+                          item.PresentationURL
+                        )}/embed?rm=minimal`}
+                        title={item.pptName}
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                        style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
+                      />
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="flex flex-col justify-between w-full">
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-medium text-[#091220]">
                           {item.pptName}
@@ -500,8 +508,9 @@ const HistoryContainer: React.FC = () => {
                           }}
                         />
                       </div>
-                      <div className="flex gap-1 text-sm mt-1">
-                        <div className="mr-4">
+
+                      <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+                        <div>
                           <span className="block mb-1 font-medium text-[#5D5F61]">
                             PPT Type
                           </span>
@@ -519,9 +528,10 @@ const HistoryContainer: React.FC = () => {
                         </div>
                       </div>
                     </div>
+
                     {/* Dropdown */}
                     {activeDropdown === index && (
-                      <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+                      <div className="absolute right-0 top-[50%] transform -translate-y-1/2 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
                         <button
                           onClick={() => handleEdit(item.FormID, item.pptName)}
                           className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
@@ -660,7 +670,7 @@ const HistoryContainer: React.FC = () => {
                             <span>Google Slides</span>
                           </button>
                           {isDialogVisible && userPlan === 'free' && (
-                            <div className="absolute bottom-full left-[45%] transform -translate-x-1/2  w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                            <div className="absolute bottom-full left-[45%] transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
                               <p className="text-sm text-center text-gray-800">
                                 Please{' '}
                                 <button
