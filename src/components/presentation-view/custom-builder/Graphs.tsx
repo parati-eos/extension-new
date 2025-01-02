@@ -128,7 +128,7 @@ export default function Graphs({
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
           {
-            type: 'graphs',
+            type: 'Graphs',
             title: heading,
             documentID: documentID,
             outlineID: outlineID,

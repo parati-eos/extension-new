@@ -545,13 +545,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               Perfect for exploring Zynth.
             </p>
             <button
-              onClick={() => navigate('/auth')}
+              onClick={exportHandler}
               className={`py-2 px-4 w-full mt-4 font-semibold rounded-lg border ${
-                userPlan === 'free' || userPlan === 'pro'
+                userPlan === 'free' && !exportButtonText
                   ? 'bg-gray-200 border-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-white text-[#3667B2] border-[#3667B2]'
               }`}
-              disabled={userPlan === 'free' || userPlan === 'pro'}
+              disabled={!exportButtonText}
             >
               {exportButtonText
                 ? `${exportButtonText}`

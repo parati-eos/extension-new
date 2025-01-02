@@ -219,15 +219,25 @@ export default function ViewPresentation() {
   // Handle Finalize Button Click
   const handleFinalize = () => {
     setFinalized(true)
-    axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
+    axios
+      .patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
+        {
+          userID: sessionStorage.getItem('userEmail'),
+          FormID: documentID,
+          PresentationID: presentationID,
+          SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
+          GenSlideID: slidesId[currentSlideIndex],
         },
-      }
-    )
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response)
+      })
   }
 
   // Handle Add New Slide Version Button
@@ -295,7 +305,7 @@ export default function ViewPresentation() {
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
           {
-            type: outlineType,
+            type: outlineType.charAt(0).toUpperCase() + outlineType.slice(1),
             title: currentOutline.replace(/^\d+\.\s*/, ''),
             documentID: documentID,
             outlineID: currentOutlineID,

@@ -41,7 +41,7 @@ export default function SlideNarrative({
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}`,
         {
-          type: slideType,
+          type: slideType.charAt(0).toUpperCase() + slideType.slice(1),
           title: heading,
           documentID: documentID,
           input: narrative,

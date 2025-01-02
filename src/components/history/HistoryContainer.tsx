@@ -580,7 +580,7 @@ const HistoryContainer: React.FC = () => {
                       )}/embed?rm=minimal&start=true&loop=true`}
                       title={item.pptName}
                       onClick={() => handleEdit(item.FormID, item.pptName)}
-                      className="w-[10rem] h-[6rem]"
+                      className="w-[9rem] h-[4.8rem]"
                     />
 
                     {/* Title */}

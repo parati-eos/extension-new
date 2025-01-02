@@ -100,7 +100,7 @@ export default function Contact({
     }
     setIsLoading(true)
     const payload = {
-      type: 'contact',
+      type: 'Contact',
       title: heading,
       documentID: documentID,
       data: {

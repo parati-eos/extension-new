@@ -61,6 +61,43 @@ const LandingPageNavbar: React.FC = () => {
     }
   }, [isScrolled])
 
+  const handleNavigation = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    targetId: string
+  ) => {
+    e.preventDefault()
+    if (
+      window.location.pathname === '/pricing' ||
+      window.location.pathname === '/blog'
+    ) {
+      navigate('/')
+      setTimeout(() => {
+        document
+          .getElementById(targetId)
+          ?.scrollIntoView({ behavior: 'smooth' })
+      }, 100) // Adjust the timeout as needed
+    } else {
+      if (targetId === 'how-it-works') {
+        document
+          .getElementById(targetId)
+          ?.scrollIntoView({ behavior: 'smooth' })
+      } else {
+        const element = document.getElementById(targetId)
+        if (element) {
+          const offset = -20 // Adjust this value to control how much higher the scroll should stop
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY
+          const offsetPosition = elementPosition + offset
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          })
+        }
+      }
+    }
+  }
+
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -107,32 +144,14 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#how-it-works"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-            onClick={(e) => {
-              e.preventDefault()
-              document
-                .getElementById('how-it-works')
-                ?.scrollIntoView({ behavior: 'smooth' })
-            }}
+            onClick={(e) => handleNavigation(e, 'how-it-works')}
           >
             How Zynth Works
           </a>
           <a
             href="#sample-presentation"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-            onClick={(e) => {
-              e.preventDefault();
-              const element = document.getElementById('sample-presentation');
-              if (element) {
-                const offset = -20; // Adjust this value to control how much higher the scroll should stop
-                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                const offsetPosition = elementPosition + offset;
-            
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth',
-                });
-              }
-            }}
+            onClick={(e) => handleNavigation(e, 'sample-presentation')}
           >
             Sample Presentation
           </a>
@@ -156,7 +175,6 @@ const LandingPageNavbar: React.FC = () => {
           >
             Blog
           </a>
-          
         </div>
 
         {/* Right Buttons */}
@@ -182,23 +200,25 @@ const LandingPageNavbar: React.FC = () => {
           <ul className="flex flex-col items-center space-y-2 p-4">
             <li>
               <a
+                onClick={(e) => handleNavigation(e, 'how-it-works')}
                 href="#how-it-works"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
-                  How Zynth Works
+                How Zynth Works
               </a>
             </li>
             <li>
               <a
+                onClick={(e) => handleNavigation(e, 'sample-presentation')}
                 href="#sample-presentation"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
-                  Sample Presentation
+                Sample Presentation
               </a>
             </li>
             <li>
               <a
-                 onClick={() => navigate('/pricing')}
+                onClick={() => navigate('/pricing')}
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
                 Pricing
@@ -223,7 +243,6 @@ const LandingPageNavbar: React.FC = () => {
                 Login
               </button>
             </li>
-         
           </ul>
         </div>
       )}
