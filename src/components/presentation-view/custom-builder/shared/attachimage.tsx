@@ -24,14 +24,23 @@ const AttachImage: React.FC<AttachImageProps> = ({ onFileSelected, buttonText = 
   const triggerFileInput = () => {
     fileInputRef.current?.click() // Programmatically trigger the file input
   }
-
+  const truncateFileName = (name: string) => {
+    // Regex to remove common image file extensions
+    const nameWithoutExtension = name.replace(/\.(jpg|jpeg|png|gif|bmp|tiff)$/i, '');
+    return nameWithoutExtension.length > 15 ? `${nameWithoutExtension.slice(0, 15)}...` : nameWithoutExtension;
+  };
+  const truncateFileNameLargeScreen = (name: string) => {
+    // Regex to remove common image file extensions
+    const nameWithoutExtension = name.replace(/\.(jpg|jpeg|png|gif|bmp|tiff)$/i, '');
+    return nameWithoutExtension;
+  };
   return (
     <div className="lg:flex lg:items-center gap-x-2">
       <div className='hidden lg:block'>
       {/* Display file name if selected */}
       {fileName && (
         <span className="text-black text-sm font-medium truncate max-w-[150px] sm:max-w-[200px] md:max-w-[250px]">
-          {fileName}
+      {truncateFileNameLargeScreen(fileName)}
         </span>
       )}
       </div>
@@ -44,7 +53,10 @@ const AttachImage: React.FC<AttachImageProps> = ({ onFileSelected, buttonText = 
         className="flex items-center justify-center py-2 border border-gray-300 rounded-md text-gray-700 bg-white w-full sm:w-full md:w-full lg:w-[180px] cursor-pointer"
       >
         <FaPaperclip />
-        <span className="ml-2">{fileName ? 'Upload Again' : buttonText}</span>
+        <span className="hidden lg:block ml-2">{fileName ? 'Upload Again' : buttonText}</span>
+        <span className="lg:hidden ml-2">
+        {fileName ? truncateFileName(fileName) : buttonText}
+        </span>
       </button>
 
       {/* Hidden file input */}
