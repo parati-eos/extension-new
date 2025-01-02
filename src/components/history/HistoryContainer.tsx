@@ -29,6 +29,7 @@ function getSheetIdFromUrl(url: string) {
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isDialogVisible, setIsDialogVisible] = useState(false)
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false); // State for sort modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
@@ -350,18 +351,71 @@ const HistoryContainer: React.FC = () => {
           <div className="flex justify-between items-center mb-7">
             <h1 className="text-2xl font-bold text-[#091220]">History</h1>
             <div className="flex gap-4">
-              {/* Filter and Sort for Small Screens */}
-              <div className="flex gap-4 lg:hidden">
-                <div
-                  className="bg-white p-2 rounded-md shadow cursor-pointer"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <FaFilter className="text-[#5D5F61] text-xl" />
-                </div>
-                <div className="hidden bg-white p-2 rounded-md shadow cursor-pointer">
-                  <FaSort className="text-[#5D5F61] text-xl" />
-                </div>
-              </div>
+           
+<div className="flex gap-4 lg:hidden">
+  <div
+    className="bg-white p-2 rounded-md shadow cursor-pointer"
+    onClick={() => setIsModalOpen(true)}
+  >
+    <FaFilter className="text-[#5D5F61] text-xl" />
+  </div>
+  <div
+    className="bg-white p-2 rounded-md shadow cursor-pointer"
+    onClick={() => setIsSortModalOpen(true)}
+  >
+    <FaSort className="text-[#5D5F61] text-xl" />
+  </div>
+</div>
+
+{/* Mobile Sort Modal */}
+{isSortModalOpen && (
+  <div className="fixed inset-0 z-50 flex justify-center items-end lg:hidden">
+    {/* Dimmed Background */}
+    <div
+      className="absolute inset-0 bg-gray-900 bg-opacity-50"
+      onClick={() => setIsSortModalOpen(false)}
+    ></div>
+
+    {/* Modal Content */}
+    <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh] overflow-y-auto scrollbar-none">
+      {/* Close Icon */}
+      <div
+        className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
+        onClick={() => setIsSortModalOpen(false)}
+      >
+        <FaTimes className="text-[#888a8f] text-lg" />
+      </div>
+      {/* Sort Options */}
+      <div className="flex flex-col gap-4">
+        <p
+          className={`text-[#091220] text-lg cursor-pointer ${
+            selectedSort === 'recent' ? 'font-semibold' : ''
+          }`}
+          onClick={() => {
+            setSelectedSort('recent');
+            setIsSortModalOpen(false);
+          }}
+        >
+          Recent First
+        </p>
+        <p
+          className={`text-[#091220] text-lg cursor-pointer ${
+            selectedSort === 'oldest' ? 'font-semibold' : ''
+          }`}
+          onClick={() => {
+            setSelectedSort('oldest');
+            setIsSortModalOpen(false);
+          }}
+        >
+          Oldest First
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
+
+    
 
               {/* Filter and Sort for Large Screens */}
               <div className="hidden lg:flex gap-4">
