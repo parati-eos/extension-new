@@ -351,67 +351,71 @@ const HistoryContainer: React.FC = () => {
           <div className="flex justify-between items-center mb-7">
             <h1 className="text-2xl font-bold text-[#091220]">History</h1>
             <div className="flex gap-4">
-              <div className="flex gap-4 lg:hidden">
-                <div
-                  className="bg-white p-2 rounded-md shadow cursor-pointer"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <FaFilter className="text-[#5D5F61] text-xl" />
-                </div>
-                <div
-                  className="bg-white p-2 rounded-md shadow cursor-pointer"
-                  onClick={() => setIsSortModalOpen(true)}
-                >
-                  <FaSort className="text-[#5D5F61] text-xl" />
-                </div>
-              </div>
+           
+<div className="flex gap-4 lg:hidden">
+  <div
+    className="bg-white p-2 rounded-md shadow cursor-pointer"
+    onClick={() => setIsModalOpen(true)}
+  >
+    <FaFilter className="text-[#5D5F61] text-xl" />
+  </div>
+  <div
+    className="bg-white p-2 rounded-md shadow cursor-pointer"
+    onClick={() => setIsSortModalOpen(true)}
+  >
+    <FaSort className="text-[#5D5F61] text-xl" />
+  </div>
+</div>
 
-              {/* Mobile Sort Modal */}
-              {isSortModalOpen && (
-                <div className="fixed inset-0 z-50 flex justify-center items-end lg:hidden">
-                  {/* Dimmed Background */}
-                  <div
-                    className="absolute inset-0 bg-gray-900 bg-opacity-50"
-                    onClick={() => setIsSortModalOpen(false)}
-                  ></div>
+{/* Mobile Sort Modal */}
+{isSortModalOpen && (
+  <div className="fixed inset-0 z-50 flex justify-center items-end lg:hidden">
+    {/* Dimmed Background */}
+    <div
+      className="absolute inset-0 bg-gray-900 bg-opacity-50"
+      onClick={() => setIsSortModalOpen(false)}
+    ></div>
 
-                  {/* Modal Content */}
-                  <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh] overflow-y-auto scrollbar-none">
-                    {/* Close Icon */}
-                    <div
-                      className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
-                      onClick={() => setIsSortModalOpen(false)}
-                    >
-                      <FaTimes className="text-[#888a8f] text-lg" />
-                    </div>
-                    {/* Sort Options */}
-                    <div className="flex flex-col gap-4">
-                      <p
-                        className={`text-[#091220] text-lg cursor-pointer ${
-                          selectedSort === 'recent' ? 'font-semibold' : ''
-                        }`}
-                        onClick={() => {
-                          setSelectedSort('recent')
-                          setIsSortModalOpen(false)
-                        }}
-                      >
-                        Recent First
-                      </p>
-                      <p
-                        className={`text-[#091220] text-lg cursor-pointer ${
-                          selectedSort === 'oldest' ? 'font-semibold' : ''
-                        }`}
-                        onClick={() => {
-                          setSelectedSort('oldest')
-                          setIsSortModalOpen(false)
-                        }}
-                      >
-                        Oldest First
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+    {/* Modal Content */}
+    <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh] overflow-y-auto scrollbar-none">
+      {/* Close Icon */}
+      <div
+        className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
+        onClick={() => setIsSortModalOpen(false)}
+      >
+        <FaTimes className="text-[#888a8f] text-lg" />
+      </div>
+      {/* Sort Options */}
+      <div className="flex flex-col gap-4">
+        <p
+          className={`text-[#091220] text-lg cursor-pointer ${
+            selectedSort === 'recent' ? 'font-semibold' : ''
+          }`}
+          onClick={() => {
+            setSelectedSort('recent');
+            setIsSortModalOpen(false);
+          }}
+        >
+          Recent First
+        </p>
+        <p
+          className={`text-[#091220] text-lg cursor-pointer ${
+            selectedSort === 'oldest' ? 'font-semibold' : ''
+          }`}
+          onClick={() => {
+            setSelectedSort('oldest');
+            setIsSortModalOpen(false);
+          }}
+        >
+          Oldest First
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
+
+    
 
               {/* Filter and Sort for Large Screens */}
               <div className="hidden lg:flex gap-4">
@@ -465,230 +469,213 @@ const HistoryContainer: React.FC = () => {
             </div>
           ) : (
             <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
-              {/* Mobile/Small Screen Layout */}
-              <div className="grid grid-cols-1 gap-4 md:hidden">
-                {presentationsToShow?.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8"
+       {/* Mobile/Small Screen Layout */}
+<div className="grid grid-cols-1 gap-4 md:hidden">
+  {presentationsToShow?.map((item, index) => (
+    <div key={index} className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8">
+      {/* Thumbnail Container */}
+      <div className="relative w-[8rem] h-[6rem]">
+        {/* Invisible clickable overlay */}
+        <div
+          onClick={() => handleEdit(item.FormID, item.pptName)}
+          className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
+        ></div>
+        {/* Embedded Google Slides iframe */}
+        <iframe
+          src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+            item.PresentationURL
+          )}/embed?rm=minimal`}
+          title={item.pptName}
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
+        />
+      </div>
+
+      {/* Content Section */}
+      <div className="flex flex-col justify-between w-full">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-medium text-[#091220]">{item.pptName}</h2>
+          {/* Ellipsis Icon */}
+          <FaEllipsisV
+            className="text-[#8A8B8C] cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveDropdown((prev) => (prev === index ? null : index));
+              setDocumentID(item.FormID);
+            }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+          <div>
+            <span className="block mb-1 font-medium text-[#5D5F61]">PPT Type</span>
+            <span className="text-[#091220]">{item.ppt_type}</span>
+          </div>
+          <div>
+            <span className="block mb-1 font-medium text-[#5D5F61]">Date</span>
+            <span className="text-[#091220]">
+              {new Date(item.currentTime).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Dropdown */}
+      {activeDropdown === index && (
+        <div className="absolute right-0 top-[50%] transform -translate-y-1/2 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+          <button
+            onClick={() => handleEdit(item.FormID, item.pptName)}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaEdit className="text-[#5D5F61]" />
+            <span>Edit</span>
+          </button>
+          <button
+            onClick={() => handleShare(item.FormID)}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaShareAlt className="text-[#5D5F61]" />
+            <span>Share</span>
+          </button>
+          <button
+            onClick={() => {
+              setIsPricingModalOpen(true);
+              setPricingModalHeading('Google Slides');
+            }}
+            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+              userPlan === 'free' ? 'cursor-not-allowed opacity-50' : ''
+            }`}
+          >
+            <FaGoogleDrive className="text-[#5D5F61]" />
+            <span>Google Slides</span>
+          </button>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
+
+
+
+
+            {/* Medium/Large Screen Layout */}
+<div className="hidden min-h-full md:block">
+  {presentationsToShow?.map((item, index) => (
+    <div
+      key={index}
+      className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
+    >
+      {/* Thumbnail Container */}
+      <div className="relative w-[12rem] h-[7rem] overflow-hidden">
+        {/* Invisible clickable overlay */}
+        <div
+          onClick={() => handleEdit(item.FormID, item.pptName)}
+          className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
+        ></div>
+        {/* Embedded Google Slides iframe */}
+        <iframe
+          src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+            item.PresentationURL
+          )}/embed?rm=minimal`}
+          title={item.pptName}
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe itself
+        />
+      </div>
+
+      {/* Title */}
+      <div className="text-lg font-bold pl-6 text-[#091220]">
+        {item.pptName}
+      </div>
+
+      {/* PPT Type */}
+      <div className="text-sm flex flex-col">
+        <span className="font-medium text-[#5D5F61] mr-2">PPT Type:</span>
+        <span className="text-[#091220] font-medium">{item.ppt_type}</span>
+      </div>
+
+      {/* Date */}
+      <div className="text-sm flex flex-col">
+        <span className="font-medium text-[#5D5F61] mr-2">Date:</span>
+        <span className="text-[#091220] font-medium">
+          {new Date(item.currentTime).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}
+        </span>
+      </div>
+
+      {/* Ellipsis Icon */}
+      <div className="flex justify-end">
+        <FaEllipsisV
+          className="text-[#8A8B8C] cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveDropdown((prev) => (prev === index ? null : index));
+            setDocumentID(item.FormID);
+          }}
+        />
+      </div>
+
+      {/* Dropdown */}
+      {activeDropdown === index && (
+        <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+          <button
+            onClick={() => handleEdit(item.FormID, item.pptName)}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaEdit className="text-[#5D5F61]" />
+            <span>Edit</span>
+          </button>
+          <button
+            onClick={() => handleShare(item.FormID)}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaShareAlt className="text-[#5D5F61]" />
+            <span>Share</span>
+          </button>
+          <div
+            className="relative"
+            onMouseEnter={() => userPlan === 'free' && setIsDialogVisible(true)}
+            onMouseLeave={() => setIsDialogVisible(false)}
+          >
+            <button
+              onClick={() => {
+                if (userPlan !== 'free') {
+                  setIsPricingModalOpen(true);
+                  setPricingModalHeading('Google Slides');
+                }
+              }}
+              className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+                userPlan === 'free' ? 'cursor-not-allowed opacity-50' : ''
+              }`}
+            >
+              <FaGoogleDrive className="text-[#5D5F61]" />
+              <span>Google Slides</span>
+            </button>
+            {isDialogVisible && userPlan === 'free' && (
+              <div className="absolute bottom-full left-[45%] transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                <p className="text-sm text-center text-gray-800">
+                  Please{' '}
+                  <button
+                    className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                    onClick={() => setIsPricingModalOpen(true)}
                   >
-                    {/* Thumbnail Container */}
-                    <div className="relative w-[8rem] h-[6rem]">
-                      {/* Invisible clickable overlay */}
-                      <div
-                        onClick={() => handleEdit(item.FormID, item.pptName)}
-                        className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
-                      ></div>
-                      {/* Embedded Google Slides iframe */}
-                      <iframe
-                        src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-                          item.PresentationURL
-                        )}/embed?rm=minimal`}
-                        title={item.pptName}
-                        className="absolute top-0 left-0 w-full h-full object-cover"
-                        style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
-                      />
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="flex flex-col justify-between w-full">
-                      <div className="flex justify-between items-center">
-                        <h2 className="text-lg font-medium text-[#091220]">
-                          {item.pptName}
-                        </h2>
-                        {/* Ellipsis Icon */}
-                        <FaEllipsisV
-                          className="text-[#8A8B8C] cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setActiveDropdown((prev) =>
-                              prev === index ? null : index
-                            )
-                            setDocumentID(item.FormID)
-                          }}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4 text-sm mt-3">
-                        <div>
-                          <span className="block mb-1 font-medium text-[#5D5F61]">
-                            PPT Type
-                          </span>
-                          <span className="text-[#091220]">
-                            {item.ppt_type}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="block mb-1 font-medium text-[#5D5F61]">
-                            Date
-                          </span>
-                          <span className="text-[#091220]">
-                            {new Date(item.currentTime).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Dropdown */}
-                    {activeDropdown === index && (
-                      <div className="absolute right-0 top-[50%] transform -translate-y-1/2 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
-                        <button
-                          onClick={() => handleEdit(item.FormID, item.pptName)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaEdit className="text-[#5D5F61]" />
-                          <span>Edit</span>
-                        </button>
-                        <button
-                          onClick={() => handleShare(item.FormID)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaShareAlt className="text-[#5D5F61]" />
-                          <span>Share</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
-                            setPricingModalHeading('Google Slides')
-                          }}
-                          className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                            userPlan === 'free'
-                              ? 'cursor-not-allowed opacity-50'
-                              : ''
-                          }`}
-                        >
-                          <FaGoogleDrive className="text-[#5D5F61]" />
-                          <span>Google Slides</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                    upgrade to Pro
+                  </button>{' '}
+                  plan to access this feature.
+                </p>
               </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
 
-              {/* Medium/Large Screen Layout */}
-              <div className="hidden min-h-full md:block">
-                {presentationsToShow?.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
-                  >
-                    {/* Thumbnail */}
-                    <iframe
-                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-                        item.PresentationURL
-                      )}/embed?rm=minimal&start=true&loop=true`}
-                      title={item.pptName}
-                      onClick={() => handleEdit(item.FormID, item.pptName)}
-                      className="w-[10rem] h-[6rem]"
-                    />
-
-                    {/* Title */}
-                    <div className="text-lg font-bold pl-6 text-[#091220]">
-                      {item.pptName}
-                    </div>
-
-                    {/* PPT Type */}
-                    <div className="text-sm flex flex-col">
-                      <span className="font-medium text-[#5D5F61] mr-2">
-                        PPT Type:
-                      </span>
-                      <span className="text-[#091220] font-medium">
-                        {item.ppt_type}
-                      </span>
-                    </div>
-
-                    {/* Date */}
-                    <div className="text-sm flex flex-col">
-                      <span className="font-medium text-[#5D5F61] mr-2">
-                        Date:
-                      </span>
-                      <span className="text-[#091220] font-medium">
-                        {new Date(item.currentTime).toLocaleDateString(
-                          'en-GB',
-                          {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                          }
-                        )}
-                      </span>
-                    </div>
-
-                    {/* Ellipsis Icon */}
-                    <div className="flex justify-end">
-                      <FaEllipsisV
-                        className="text-[#8A8B8C] cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setActiveDropdown((prev) =>
-                            prev === index ? null : index
-                          )
-                          setDocumentID(item.FormID)
-                        }}
-                      />
-                    </div>
-
-                    {/* Dropdown */}
-                    {activeDropdown === index && (
-                      <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
-                        <button
-                          onClick={() => handleEdit(item.FormID, item.pptName)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaEdit className="text-[#5D5F61]" />
-                          <span>Edit</span>
-                        </button>
-                        <button
-                          onClick={() => handleShare(item.FormID)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaShareAlt className="text-[#5D5F61]" />
-                          <span>Share</span>
-                        </button>
-                        <div
-                          className="relative"
-                          onMouseEnter={() =>
-                            userPlan === 'free' && setIsDialogVisible(true)
-                          }
-                          onMouseLeave={() => setIsDialogVisible(false)}
-                        >
-                          <button
-                            onClick={() => {
-                              if (userPlan !== 'free') {
-                                setIsPricingModalOpen(true)
-                                setPricingModalHeading('Google Slides')
-                              }
-                            }}
-                            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                              userPlan === 'free'
-                                ? 'cursor-not-allowed opacity-50'
-                                : ''
-                            }`}
-                          >
-                            <FaGoogleDrive className="text-[#5D5F61]" />
-                            <span>Google Slides</span>
-                          </button>
-                          {isDialogVisible && userPlan === 'free' && (
-                            <div className="absolute bottom-full left-[45%] transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                              <p className="text-sm text-center text-gray-800">
-                                Please{' '}
-                                <button
-                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                                  onClick={() => setIsPricingModalOpen(true)}
-                                >
-                                  upgrade to Pro
-                                </button>{' '}
-                                plan to access this feature.
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
           )}
 
