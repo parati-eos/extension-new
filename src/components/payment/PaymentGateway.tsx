@@ -4,19 +4,23 @@ import './Modal.css' // Import custom modal CSS
 // Declare Razorpay on the window object
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: any
   }
 }
 
-
 interface PaymentGatewayProps {
-  productinfo: any;
-  onSuccess: (result: any) => void;
-  formId: string;
-  authToken: string;
+  productinfo: any
+  onSuccess: (result: any) => void
+  formId: string
+  authToken: string
 }
 
-const PaymentGateway: React.FC<PaymentGatewayProps> = ({ productinfo, onSuccess, formId,authToken }) => {
+const PaymentGateway: React.FC<PaymentGatewayProps> = ({
+  productinfo,
+  onSuccess,
+  formId,
+  authToken,
+}) => {
   const [paymentData, setPaymentData] = useState({
     amount: 9, // Default amount for USD
     productinfo,
@@ -41,7 +45,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ productinfo, onSuccess,
         }
         const data = await response.json()
         const currency = data.country === 'IN' ? 'INR' : 'USD'
-        const amount = currency === 'INR' ? 499 : 9
+        const amount = currency === 'INR' ? 1 : 9
 
         setPaymentData((prevData) => ({
           ...prevData,
@@ -99,8 +103,40 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ productinfo, onSuccess,
       })
 
       const response = await fetch(
-        'http://localhost:5001/api/v1/data/payments/create-order',
-       // http://34.239.191.112:5001/api/v1/data/payments/create-magiccoupon
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
+        // http://34.239.191.112:5001/api/v1/data/payments/create-magiccoupon
+        // {
+        //   amount: finalAmount , // in paise.
+        //   currency: paymentData.currency,
+        //   receipt: "receipt#1",
+        //   line_items_total: finalAmount , // in paise.
+        //   line_items: [
+        //     {
+        //       sku: "1g234",
+        //       variant_id: "12r34",
+        //       other_product_codes: {
+        //         upc: "12r34",
+        //         ean: "123r4",
+        //         unspsc: "123s4"
+        //       },
+        //       price: finalAmount , // in paise.
+        //       offer_price: finalAmount, // in paise.
+        //       tax_amount: 0,
+        //       quantity: 1,
+        //       name: "TEST",
+        //       description: "TEST",
+        //       weight: 1700,
+        //       dimensions: {
+        //         length: 1700,
+        //         width: 1700,
+        //         height: 1700
+        //       },
+        //       image_url: "url",
+        //       product_url: "url",
+        //       notes: {}
+        //     }
+        //   ]
+        // }
 
         {
           method: 'POST',
@@ -138,11 +174,12 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ productinfo, onSuccess,
 
           try {
             const verifyResponse = await fetch(
-              'http://localhost:5001/api/v1/data/payments/verify-payment',
+              `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/verify-payment`,
               {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
+                  Authorization: `Bearer ${authToken}`,
                 },
                 body: JSON.stringify({
                   razorpay_payment_id,

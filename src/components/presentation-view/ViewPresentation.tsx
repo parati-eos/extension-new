@@ -83,13 +83,14 @@ export default function ViewPresentation() {
       // 1. First, update the payment status
       const updatePaymentStatus = async () => {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/appscript/updatePaymentStatus`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
           {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
             },
-            body: JSON.stringify({ FormID: formId, paymentStatus: 1 }),
+            body: JSON.stringify({ paymentStatus: 1 }),
           }
         )
 
@@ -105,18 +106,6 @@ export default function ViewPresentation() {
 
       // 2. Then, call the additional API to get presentationID
       const callAdditionalApi = async () => {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const result = await response.json()
-        console.log('Additional API response:', result)
-
-        const presentationID = result.PresentationID // Extract PresentationID from response
-
         if (presentationID) {
           // Call the second API with the extracted presentationID
           const secondApiResponse = await fetch(
@@ -143,9 +132,19 @@ export default function ViewPresentation() {
       await callAdditionalApi()
 
       // 3. Finally, call the original slides URL API
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
-      )
+      // const response = await fetch(
+      //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
+      // )
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`
+      console.log('Request URL:', url)
+
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -153,13 +152,15 @@ export default function ViewPresentation() {
       const result = await response.json()
       console.log('Result:', result)
 
-      const url = result.PresentationURL
-      console.log('URL:', url)
-
-      if (!url || typeof url !== 'string') {
+      const presentationUrl = result.data.PresentationURL
+      console.log('Presentation URL:', presentationUrl)
+      if (presentationUrl && typeof presentationUrl === 'string') {
+        console.log('REACHED HERE', presentationUrl)
+        window.open(presentationUrl, '_blank')
+        console.log('Presentation opened in new tab', presentationUrl)
+      } else {
         throw new Error('Invalid URL in response')
       }
-      window.open(url, '_blank')
     } catch (error) {
       console.error('Error exporting presentation:', error)
       alert(
@@ -172,7 +173,7 @@ export default function ViewPresentation() {
   const checkPaymentStatusAndProceed = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5001/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -180,10 +181,6 @@ export default function ViewPresentation() {
           },
         }
       )
-
-      // if (!response.ok) {
-      //   throw new Error(`HTTP error! Status: ${response.status}`)
-      // }
 
       const res = await response.json()
       console.log('API response data:', res) // Debugging line

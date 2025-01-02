@@ -473,12 +473,12 @@ const HistoryContainer: React.FC = () => {
                     className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8"
                   >
                     {/* Thumbnail Container */}
-                    <div className="relative w-[8rem] h-[6rem]">
+                    <div
+                      className="relative w-[8rem] h-[6rem]"
+                      onClick={() => handleEdit(item.FormID, item.pptName)}
+                    >
                       {/* Invisible clickable overlay */}
-                      <div
-                        onClick={() => handleEdit(item.FormID, item.pptName)}
-                        className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
-                      ></div>
+                      {/* <div className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"></div> */}
                       {/* Embedded Google Slides iframe */}
                       <iframe
                         src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
@@ -574,14 +574,19 @@ const HistoryContainer: React.FC = () => {
                     className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
                   >
                     {/* Thumbnail */}
-                    <iframe
-                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-                        item.PresentationURL
-                      )}/embed?rm=minimal&start=true&loop=true`}
-                      title={item.pptName}
+                    <div
                       onClick={() => handleEdit(item.FormID, item.pptName)}
-                      className="w-[9rem] h-[4.8rem]"
-                    />
+                      className="w-[9rem] h-[4.8rem] cursor-pointer"
+                    >
+                      <iframe
+                        src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+                          item.PresentationURL
+                        )}/embed?rm=minimal&start=true&loop=true`}
+                        title={item.pptName}
+                        className="w-full h-full"
+                        style={{ pointerEvents: 'none' }} // Disable pointer events on the iframe
+                      />
+                    </div>
 
                     {/* Title */}
                     <div className="text-lg font-bold pl-6 text-[#091220]">
@@ -719,6 +724,7 @@ const HistoryContainer: React.FC = () => {
             productinfo="Presentation Export"
             onSuccess={handleDownload}
             formId={documentID!}
+            authToken={authToken!}
           />
           {/* Pagination */}
           {filteredData?.length > 10 && (
