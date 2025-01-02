@@ -1,52 +1,96 @@
-import React from 'react'
-import freepikbg from '../../assets/freepik.png'
-import createimage from '../../assets/image1.png'
-import evolutionimage from '../../assets/image3.png'
+import React from "react";
+import blogimage1 from '../../assets/blogimage1.png'; 
+import blogimage2 from '../../assets/blogimage2.png'; 
+import blogimage3 from '../../assets/blogimage3.png'; 
 import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom' 
 
-const Footer: React.FC = () => {
-  const navigate = useNavigate()
+// Blog data interface
+interface Blog {
+  id: number;
+  date: string;
+  readTime: string;
+  title: string;
+  description: string;
+  views: number;
+  comments: number;
+  imageUrl: string;
+}
 
+// Sample blog data (replace with API or props as needed)
+const blogData: Blog[] = [
+  {
+    id: 1,
+    date: "Oct 24",
+    readTime: "10 min read",
+    title: "The Future of Clean Air: Are We Winning the Battle Against Pollution?",
+    description:
+      "The India’s Air Pollution Crisis in recent years, India has emerged as one of the most rapidly developing nations in the world, but with...",
+    views: 8,
+    comments: 0,
+    imageUrl: blogimage1,
+  },
+  {
+    id: 2,
+    date: "Oct 24",
+    readTime: "10 min read",
+    title: "Pitching to Impact Investors: Strategies for Communicating Social and Environmental Impact",
+    description:
+      "What is Impact Investing? Impact investing involves making investments with the dual purpose of generating positive, measurable social...",
+    views: 8,
+    comments: 0,
+    imageUrl: blogimage2,
+  },
+  {
+    id: 3,
+    date: "Oct 24",
+    readTime: "10 min read",
+    title: "The Metrics Marathon: Choosing the Right Data Points for Your Startup Pitch Deck",
+    description:
+      "Why Metrics Matters? Metrics serve as the language of business, facilitating communication between founders and investors. When pitching...",
+    views: 8,
+    comments: 0,
+    imageUrl: blogimage3,
+  },
+];
+
+const BlogCard: React.FC<{ blog: Blog }> = ({ blog }) => {
+  return (
+    <div className="flex lg:flex-row flex-col gap-6 mt-20 bg-white rounded-lg border border-white shadow-md">
+
+      
+      <img
+        src={blog.imageUrl}
+        alt={blog.title}
+        className="lg:w-1/2 h-1/2 object-cover rounded-lg"
+      />
+      <div className="flex-1 p-6">
+        <p className="text-sm text-gray-500 mb-2">
+          {blog.date} • {blog.readTime}
+        </p>
+        <h3 className="text-2xl font-semibold mb-4">{blog.title}</h3>
+        <p className="text-base text-gray-700 mb-6">{blog.description}</p>
+        <p className="text-sm text-gray-500">
+          {blog.views} views • {blog.comments} comments
+        </p>
+      </div>
+    </div>
+  );
+};
+
+
+
+
+const BlogList: React.FC = () => {
   return (
     <div>
-      {/* Blue Background Section */}
-      <div
-        className="bg-cover bg-center py-16 text-center text-white"
-        style={{ backgroundImage: `url(${freepikbg})` }}
-      >
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-semibold mb-4">Get Started with Zynth </h1>
-          <p className="text-lg mb-8 font-semibold">
-            More than a simple PowerPoint make Zynth is your personal <br></br>{' '}
-            AI presentation creator.
-          </p>
-          <button
-            onClick={() => navigate('/auth')}
-            className="bg-yellow-500 text-black font-semibold py-5 px-8 rounded-lg hover:bg-yellow-600 active:scale-95 active:opacity-80 transition-all duration-300"
-          >
-            Get Started for Free
-          </button>
-        </div>
-
-        {/* Image Section */}
-        <div className="container mx-auto px-4 py-12 ">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-            <img
-              src={createimage}
-              alt="Create or Refine Presentation"
-              className="w-full md:w-1/2 bg-white rounded-3xl"
-            />
-            <img
-              src={evolutionimage}
-              alt="Evolution of Our Path"
-              className="w-full md:w-1/2 bg-white rounded-3xl"
-            />
-          </div>
-        </div>
-      </div>
+    <div className="max-w-5xl mx-auto px-4 py-10 ">
+      {blogData.map((blog) => (
+        <BlogCard key={blog.id} blog={blog} />
+      ))}
+      
+    </div>
       {/* Footer Section */}
-      <footer className="bg-white py-12">
+      <footer className="bg-white py-12 mt-10">
         <div className="container mx-auto px-4">
           {/* Footer Logo & Text */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -160,7 +204,7 @@ const Footer: React.FC = () => {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default BlogList;

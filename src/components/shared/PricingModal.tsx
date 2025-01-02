@@ -16,6 +16,7 @@ interface PricingModalProps {
   orgId: string
   exportButtonText?: string
   exportHandler?: () => void
+  isButtonDisabled?: boolean
 }
 
 const categories = [
@@ -55,6 +56,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   orgId,
   exportButtonText,
   exportHandler,
+  isButtonDisabled,
 }) => {
   const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -450,9 +452,12 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                           : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
                       } 
   ${
-    userPlan === 'free' && plan.name.toLowerCase() === 'free'
+    userPlan === 'free' &&
+    plan.name.toLowerCase() === 'free' &&
+    !exportButtonText &&
+    !isButtonDisabled
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
-      : ''
+      : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
   } 
   ${
     userPlan === 'pro' && plan.name.toLowerCase() === 'free'
@@ -506,7 +511,10 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                           : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
                       } 
   ${
-    userPlan === 'free' && plan.name.toLowerCase() === 'free'
+    userPlan === 'free' &&
+    plan.name.toLowerCase() === 'free' &&
+    !exportButtonText &&
+    !isButtonDisabled
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   } 

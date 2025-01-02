@@ -19,6 +19,7 @@ import { IpInfoResponse } from '../../types/authTypes'
 import { Plan } from '../../types/pricingTypes'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
+import PaymentGateway from '../payment/PaymentGateway'
 
 function getSheetIdFromUrl(url: string) {
   const match = url.match(/\/d\/(.+?)\/|\/open\?id=(.+?)(?:&|$)/)
@@ -27,6 +28,7 @@ function getSheetIdFromUrl(url: string) {
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
@@ -46,6 +48,137 @@ const HistoryContainer: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
+  const [documentID, setDocumentID] = useState<string | null>(null)
+
+  // Handle Download Button Click
+  const handleDownload = async () => {
+    try {
+      const formId = documentID
+      if (!formId) {
+        throw new Error('Form ID not found in localStorage')
+      }
+
+      // 1. First, update the payment status
+      const updatePaymentStatus = async () => {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/appscript/updatePaymentStatus`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ FormID: formId, paymentStatus: 1 }),
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const result = await response.json()
+        console.log('Payment status updated:', result)
+      }
+
+      // Call payment status update
+      await updatePaymentStatus()
+
+      // 2. Then, call the additional API to get presentationID
+      const callAdditionalApi = async () => {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
+        )
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const result = await response.json()
+        console.log('Additional API response:', result)
+
+        const presentationID = result.PresentationID // Extract PresentationID from response
+
+        if (presentationID) {
+          // Call the second API with the extracted presentationID
+          const secondApiResponse = await fetch(
+            `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
+          )
+          const secondApiText = await secondApiResponse.text()
+          console.log('Raw second API response:', secondApiText)
+
+          try {
+            const secondApiResult = JSON.parse(secondApiText)
+            console.log('Second API parsed response:', secondApiResult)
+          } catch (jsonError) {
+            console.error(
+              'Error parsing second API response as JSON:',
+              jsonError
+            )
+          }
+        } else {
+          throw new Error('PresentationID not found in the response')
+        }
+      }
+
+      // Call additional API
+      await callAdditionalApi()
+
+      // 3. Finally, call the original slides URL API
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
+      )
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      console.log('Result:', result)
+
+      const url = result.PresentationURL
+      console.log('URL:', url)
+
+      if (!url || typeof url !== 'string') {
+        throw new Error('Invalid URL in response')
+      }
+      window.open(url, '_blank')
+    } catch (error) {
+      console.error('Error exporting presentation:', error)
+      alert(
+        "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
+      )
+    }
+  }
+
+  // Function to check payment status and proceed
+  const checkPaymentStatusAndProceed = async () => {
+    // try {
+    //   const response = await fetch(
+    //     `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${documentID}`
+    //   )
+
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! Status: ${response.status}`)
+    //   }
+
+    //   const data = await response.json()
+    //   console.log('API response data:', data) // Debugging line
+
+    //   if (data && data.paymentStatus === 1) {
+    //     // Payment has already been made, run handleDownload
+    //     handleDownload()
+    //   } else if (data && data.paymentStatus === 0) {
+    // Payment is not made, open the payment gateway
+    const paymentButton = document.getElementById('payment-button')
+    if (paymentButton) {
+      paymentButton.click()
+    } else {
+      console.error('Payment button not found')
+    }
+    //   } else {
+    //     alert('Unable to determine payment status.')
+    //   }
+    // } catch (error) {
+    //   console.error('Error checking payment status:', error)
+    //   alert('Error checking payment status. Please try again.')
+    // }
+  }
 
   const presentationsToShow = filteredData?.slice(
     (currentPage - 1) * 10,
@@ -195,6 +328,11 @@ const HistoryContainer: React.FC = () => {
     // Cleanup the timer in case the component unmounts
     return () => clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    // Reset the tooltip when a different dropdown is opened
+    setIsDialogVisible(false)
+  }, [activeDropdown])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
@@ -220,7 +358,7 @@ const HistoryContainer: React.FC = () => {
                 >
                   <FaFilter className="text-[#5D5F61] text-xl" />
                 </div>
-                <div className="bg-white p-2 rounded-md shadow cursor-pointer">
+                <div className="hidden bg-white p-2 rounded-md shadow cursor-pointer">
                   <FaSort className="text-[#5D5F61] text-xl" />
                 </div>
               </div>
@@ -308,6 +446,7 @@ const HistoryContainer: React.FC = () => {
                             setActiveDropdown((prev) =>
                               prev === index ? null : index
                             )
+                            setDocumentID(item.FormID)
                           }}
                         />
                       </div>
@@ -352,7 +491,11 @@ const HistoryContainer: React.FC = () => {
                             setIsPricingModalOpen(true)
                             setPricingModalHeading('Google Slides')
                           }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer"
+                          className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+                            userPlan === 'free'
+                              ? 'cursor-not-allowed opacity-50'
+                              : ''
+                          }`}
                         >
                           <FaGoogleDrive className="text-[#5D5F61]" />
                           <span>Google Slides</span>
@@ -421,6 +564,7 @@ const HistoryContainer: React.FC = () => {
                           setActiveDropdown((prev) =>
                             prev === index ? null : index
                           )
+                          setDocumentID(item.FormID)
                         }}
                       />
                     </div>
@@ -442,17 +586,44 @@ const HistoryContainer: React.FC = () => {
                           <FaShareAlt className="text-[#5D5F61]" />
                           <span>Share</span>
                         </button>
-                        <button
-                          disabled={userPlan === 'free'}
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
-                            setPricingModalHeading('Google Slides')
-                          }}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer disabled:cursor-not-allowed"
+                        <div
+                          className="relative"
+                          onMouseEnter={() =>
+                            userPlan === 'free' && setIsDialogVisible(true)
+                          }
+                          onMouseLeave={() => setIsDialogVisible(false)}
                         >
-                          <FaGoogleDrive className="text-[#5D5F61]" />
-                          <span>Google Slides</span>
-                        </button>
+                          <button
+                            onClick={() => {
+                              if (userPlan !== 'free') {
+                                setIsPricingModalOpen(true)
+                                setPricingModalHeading('Google Slides')
+                              }
+                            }}
+                            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+                              userPlan === 'free'
+                                ? 'cursor-not-allowed opacity-50'
+                                : ''
+                            }`}
+                          >
+                            <FaGoogleDrive className="text-[#5D5F61]" />
+                            <span>Google Slides</span>
+                          </button>
+                          {isDialogVisible && userPlan === 'free' && (
+                            <div className="absolute bottom-full left-[45%] transform -translate-x-1/2  w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                              <p className="text-sm text-center text-gray-800">
+                                Please{' '}
+                                <button
+                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                                  onClick={() => setIsPricingModalOpen(true)}
+                                >
+                                  upgrade to Pro
+                                </button>{' '}
+                                plan to access this feature.
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -475,11 +646,20 @@ const HistoryContainer: React.FC = () => {
               yearlyPlanId={yearlyPlanId!}
               authToken={authToken!}
               orgId={orgId!}
+              exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${
+                currency === 'INR' ? '499' : '9'
+              }`}
+              exportHandler={checkPaymentStatusAndProceed}
+              isButtonDisabled={true}
             />
           ) : (
             <></>
           )}
-
+          <PaymentGateway
+            productinfo="Presentation Export"
+            onSuccess={handleDownload}
+            formId={documentID!}
+          />
           {/* Pagination */}
           {filteredData?.length > 10 && (
             <div className="flex justify-between items-center mt-6">
@@ -515,7 +695,7 @@ const HistoryContainer: React.FC = () => {
               ></div>
 
               {/* Modal Content */}
-              <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh]">
+              <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh] overflow-y-auto scrollbar-none">
                 {/* Close Icon */}
                 <div
                   className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"

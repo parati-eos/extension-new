@@ -854,6 +854,7 @@ export default function ViewPresentation() {
             currency === "INR" ? "499" : "9"
           }`}
           exportHandler={checkPaymentStatusAndProceed}
+          isButtonDisabled={true}
         />
       ) : (
         <></>

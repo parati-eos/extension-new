@@ -14,6 +14,7 @@ import PresentationShare from './pages/PresentationShare.tsx'
 import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import Test from './test/test.tsx'
 import PricingPage from './pages/PricingPage.tsx'
+import BlogPage from './pages/BlogPage.tsx'
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/blog" element={<BlogPage />} />
           <Route
             path="/*"
             element={
