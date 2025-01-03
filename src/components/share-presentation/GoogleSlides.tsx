@@ -6,9 +6,9 @@ interface GoogleSlidesProps {
 }
 
 const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
-  const [slidesData, setSlidesData] = useState<string[][]>([])
+  const [slidesData, setSlidesData] = useState<string[]>([])
   const [presentationID, setPresentationID] = useState<string>('')
-  const [loading, setLoading] = useState<string>('true')
+  const [loading, setLoading] = useState<boolean>(true)
   const authToken = sessionStorage.getItem('authToken')
 
   useEffect(() => {
@@ -27,10 +27,8 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
         }
         const data = await response.json()
         setPresentationID(data.presentationID)
-        setSlidesData(data.genSlideID)
-        if (data.data.length >= 2) {
-          setLoading('false')
-        }
+        setSlidesData(data.genSlideIDs)
+        setLoading(false)
       } catch (error: any) {
         console.error('Error fetching slides data:', error.message)
       }
@@ -38,7 +36,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
     fetchSlidesData()
   }, [formId, authToken])
 
-  if (loading === 'true') {
+  if (loading) {
     return (
       <div className="relative top-[30vh] left-[56vh]">
         <Grid
@@ -61,13 +59,13 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
             No slides to display
           </div>
         ) : (
-          slidesData?.map((slideId, index) => (
-            <div key={slideId[index]}>
+          slidesData.map((slideId, index) => (
+            <div key={slideId}>
               <iframe
-                key={index}
-                className="h-[80vh] w-[99%] bg-black border-[2px] border-[#1f516b] pointer-events-none"
-                title="Google Slides Embed"
-                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId[index]}`}
+                className="h-[80vh] w-[100%] bg-black border-[2px] border-[#3667B2]
+                mb-2 pointer-events-none"
+                title={`Google Slide ${index + 1}`}
+                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId}`}
               ></iframe>
             </div>
           ))

@@ -65,13 +65,10 @@ export default function ViewPresentation() {
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  // const userPlan = sessionStorage.getItem('userPlan')
   const [documentID, setDocumentID] = useState<string | null>(null)
   const [pptName, setPptName] = useState<string | null>(null)
   const [presentationID, setPresentationID] = useState<string>('')
   const [isDocumentIDLoading, setIsDocumentIDLoading] = useState(true)
-  const [isSlideLoading, setIsSlideLoading] = useState(true)
-  const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(1)
   const [currentOutline, setCurrentOutline] = useState('')
   const [currentOutlineID, setCurrentOutlineID] = useState('')
@@ -100,7 +97,6 @@ export default function ViewPresentation() {
   const [slidesArray, setSlidesArray] = useState<{ [key: string]: string[] }>(
     {}
   )
-
   const [slideStates, setSlideStates] = useState<SlideStates>({})
   console.log('Slide States:', slideStates)
   const dispatch = useDispatch()
@@ -289,6 +285,7 @@ export default function ViewPresentation() {
           PresentationID: presentationID,
           SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
           GenSlideID: slidesArray[currentSlideIndex],
+          // OUTLINEID WILL BE ADDED LATER
         },
         {
           headers: {
@@ -761,10 +758,7 @@ export default function ViewPresentation() {
     }
   }, [searchParams, authToken, orgId])
 
-  // TODO: WEB SOCKET
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
-  const newSlidesJSON = JSON.stringify(newSlidesRef.current)
 
   const updateSlideState = useCallback(
     (outlineTitle: string, updates: Partial<SlideState>) => {

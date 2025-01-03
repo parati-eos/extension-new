@@ -195,7 +195,7 @@ const SelectPresentationType: React.FC = () => {
         }
       } catch (error) {
         toast.error('Error refining ppt', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
       }

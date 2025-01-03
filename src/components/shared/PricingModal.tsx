@@ -167,7 +167,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         },
 
         {
-          text: `${currency === 'INR' ? '₹499' : '$9'} Export`,
+          text: `${currency === 'INR' ? '₹499' : '$9'} per Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
@@ -308,6 +308,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   ]
 
   const handleUpgrade = async () => {
+    console.log('Upgrade to Pro')
+
     setIsLoading(true)
     const planID = billingCycle === 'annual' ? yearlyPlanId : monthlyPlanId
     const currentTime = Date.now()
@@ -448,7 +450,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                   ) : (
                     <button
                       onClick={
-                        plan.name === 'PRO' ? handleUpgrade : exportHandler
+                        plan.name !== 'FREE' ? handleUpgrade : exportHandler
                       }
                       className={`w-full font-medium py-2 px-6 rounded-lg ${
                         userPlan === plan.name.toLowerCase()
@@ -468,7 +470,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
-                      disabled={!exportButtonText}
+                      disabled={plan.name === 'FREE' && !exportButtonText}
                     >
                       {plan.buttonText}
                     </button>
@@ -527,7 +529,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
-                      disabled={!exportButtonText}
+                      disabled={plan.name === 'FREE' && !exportButtonText}
                     >
                       {plan.buttonText}
                     </button>
@@ -742,7 +744,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
                 <span className="font-medium  text-black">
-                  {currency === 'INR' ? '₹499' : '$9'} Export
+                  {currency === 'INR' ? '₹499' : '$9'} per Export
                 </span>
               </li>
             </ul>
