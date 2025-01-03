@@ -7,7 +7,7 @@ interface GoogleSlidesProps {
 
 const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
   const [slidesData, setSlidesData] = useState<string[][]>([])
-  const [slidesId, setSlidesId] = useState<string>('')
+  const [presentationID, setPresentationID] = useState<string>('')
   const [loading, setLoading] = useState<string>('true')
   const authToken = sessionStorage.getItem('authToken')
 
@@ -26,7 +26,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
           throw new Error('Failed to fetch slides data')
         }
         const data = await response.json()
-        setSlidesId(data.genSlideIDs)
+        setPresentationID(data.presentationID)
         setSlidesData(data.genSlideID)
         if (data.data.length >= 2) {
           setLoading('false')
@@ -62,12 +62,12 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
           </div>
         ) : (
           slidesData?.map((slideId, index) => (
-            <div key={slideId[0]}>
+            <div key={slideId[index]}>
               <iframe
                 key={index}
                 className="h-[80vh] w-[99%] bg-black border-[2px] border-[#1f516b] pointer-events-none"
                 title="Google Slides Embed"
-                src={`https://docs.google.com/presentation/d/${slidesId}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId[index]}`}
+                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId[index]}`}
               ></iframe>
             </div>
           ))

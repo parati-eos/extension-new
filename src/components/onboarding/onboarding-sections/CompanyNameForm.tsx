@@ -26,7 +26,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
   }
 
   return (
-    <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
+    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
       {/* Heading */}
       <div className="flex flex-col items-center gap-1 md:mb-8">
         <FaBuilding className="text-[#3667B2] text-6xl lg:text-4xl xl:text-6xl mb-2" />
