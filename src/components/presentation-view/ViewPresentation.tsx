@@ -1,54 +1,54 @@
-import { setUserPlan } from "../../redux/slices/userSlice";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { setUserPlan } from '../../redux/slices/userSlice'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import React, {
   useCallback,
   useEffect,
   useRef,
   useState,
   SetStateAction,
-} from "react";
-import { useSearchParams } from "react-router-dom";
-import axios from "axios";
-import { io } from "socket.io-client";
-import { Outline } from "../../types/types";
-import { DesktopHeading, MobileHeading } from "./Heading";
-import PaymentGateway from "../payment/PaymentGateway";
+} from 'react'
+import { useSearchParams } from 'react-router-dom'
+import axios from 'axios'
+import { io } from 'socket.io-client'
+import { Outline } from '../../types/types'
+import { DesktopHeading, MobileHeading } from './Heading'
+import PaymentGateway from '../payment/PaymentGateway'
 import {
   MobileNewSlideVersion,
   DesktopNewSlideVersion,
-} from "./NewSlideVersion";
-import Sidebar from "./Sidebar";
-import CustomBuilderMenu from "./custom-builder/CustomBuilderMenu";
-import Points from "./custom-builder/Points";
-import People from "./custom-builder/People";
-import Table from "./custom-builder/Table";
-import Timeline from "./custom-builder/Timeline";
-import Statistics from "./custom-builder/Statistics";
-import Images from "./custom-builder/Images";
-import Graphs from "./custom-builder/Graphs";
-import SlideNarrative from "./SlideNarrative";
-import MobileOutlineModal from "./MobileOutlineModal";
-import { PricingModal } from "../shared/PricingModal";
-import { DisplayMode } from "../../types/presentationView";
-import "./viewpresentation.css";
-import { DesktopButtonSection, MobileButtonSection } from "./ActionButtons";
-import { Plan } from "../../types/pricingTypes";
-import { IpInfoResponse } from "../../types/authTypes";
-import { toast } from "react-toastify";
-import Contact from "./custom-builder/Contact";
-import Cover from "./custom-builder/Cover";
-import { useDispatch, useSelector } from "react-redux";
+} from './NewSlideVersion'
+import Sidebar from './Sidebar'
+import CustomBuilderMenu from './custom-builder/CustomBuilderMenu'
+import Points from './custom-builder/Points'
+import People from './custom-builder/People'
+import Table from './custom-builder/Table'
+import Timeline from './custom-builder/Timeline'
+import Statistics from './custom-builder/Statistics'
+import Images from './custom-builder/Images'
+import Graphs from './custom-builder/Graphs'
+import SlideNarrative from './SlideNarrative'
+import MobileOutlineModal from './MobileOutlineModal'
+import { PricingModal } from '../shared/PricingModal'
+import { DisplayMode } from '../../types/presentationView'
+import './viewpresentation.css'
+import { DesktopButtonSection, MobileButtonSection } from './ActionButtons'
+import { Plan } from '../../types/pricingTypes'
+import { IpInfoResponse } from '../../types/authTypes'
+import { toast } from 'react-toastify'
+import Contact from './custom-builder/Contact'
+import Cover from './custom-builder/Cover'
+import { useDispatch, useSelector } from 'react-redux'
 
 interface SlideState {
-  isLoading: boolean;
-  isNoGeneratedSlide: boolean;
-  genSlideID: string | null;
-  retryCount: number;
-  lastUpdated: number;
+  isLoading: boolean
+  isNoGeneratedSlide: boolean
+  genSlideID: string | null
+  retryCount: number
+  lastUpdated: number
 }
 
 interface SlideStates {
-  [key: string]: SlideState;
+  [key: string]: SlideState
 }
 
 const createInitialSlideState = (): SlideState => ({
@@ -57,68 +57,68 @@ const createInitialSlideState = (): SlideState => ({
   genSlideID: null,
   retryCount: 0,
   lastUpdated: Date.now(),
-});
+})
 
 export default function ViewPresentation() {
-  const [searchParams] = useSearchParams();
-  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL;
-  const authToken = sessionStorage.getItem("authToken");
-  const orgId = sessionStorage.getItem("orgId");
-  const userPlan = useSelector((state: any) => state.user.userPlan);
+  const [searchParams] = useSearchParams()
+  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL
+  const authToken = sessionStorage.getItem('authToken')
+  const orgId = sessionStorage.getItem('orgId')
+  const userPlan = useSelector((state: any) => state.user.userPlan)
   // const userPlan = sessionStorage.getItem('userPlan')
-  const [documentID, setDocumentID] = useState<string | null>(null);
-  const [pptName, setPptName] = useState<string | null>(null);
-  const [presentationID, setPresentationID] = useState<string>("");
-  const [isDocumentIDLoading, setIsDocumentIDLoading] = useState(true);
-  const [isSlideLoading, setIsSlideLoading] = useState(true);
-  const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(1);
-  const [currentOutline, setCurrentOutline] = useState("");
-  const [currentOutlineID, setCurrentOutlineID] = useState("");
-  const [outlineType, setOutlineType] = useState("");
-  const [outlines, setOutlines] = useState<Outline[]>([]);
+  const [documentID, setDocumentID] = useState<string | null>(null)
+  const [pptName, setPptName] = useState<string | null>(null)
+  const [presentationID, setPresentationID] = useState<string>('')
+  const [isDocumentIDLoading, setIsDocumentIDLoading] = useState(true)
+  const [isSlideLoading, setIsSlideLoading] = useState(true)
+  const [isNoGeneratedSlide, setIsNoGeneratedSlide] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(1)
+  const [currentOutline, setCurrentOutline] = useState('')
+  const [currentOutlineID, setCurrentOutlineID] = useState('')
+  const [outlineType, setOutlineType] = useState('')
+  const [outlines, setOutlines] = useState<Outline[]>([])
   const [displayModes, setDisplayModes] = useState<{
-    [key: string]: DisplayMode;
-  }>({});
-  const [finalized, setFinalized] = useState(false);
-  const slideRefs = useRef<HTMLDivElement[]>([]);
-  const [totalSlides, setTotalSlides] = useState(Number);
-  const [slidesId, setSlidesId] = useState<string[]>([]);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const pricingModalHeading = "Refine PPT";
-  const [monthlyPlan, setMonthlyPlan] = useState<Plan>();
-  const [yearlyPlan, setYearlyPlan] = useState<Plan>();
-  const [currency, setCurrency] = useState("");
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides);
-  const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex);
-  const [isExportPaid, setIsExportPaid] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
-  const [showCountdown, setShowCountdown] = useState(false);
-  const featureDisabled = userPlan === "free" ? true : false;
+    [key: string]: DisplayMode
+  }>({})
+  const [finalized, setFinalized] = useState(false)
+  const slideRefs = useRef<HTMLDivElement[]>([])
+  const [totalSlides, setTotalSlides] = useState(Number)
+  const [slidesId, setSlidesId] = useState<string[]>([])
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const pricingModalHeading = 'Refine PPT'
+  const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
+  const [yearlyPlan, setYearlyPlan] = useState<Plan>()
+  const [currency, setCurrency] = useState('')
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
+  const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
+  const [isExportPaid, setIsExportPaid] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
+  const [showCountdown, setShowCountdown] = useState(false)
+  const featureDisabled = userPlan === 'free' ? true : false
   const [slidesArray, setSlidesArray] = useState<{ [key: string]: string[] }>(
     {}
-  );
+  )
 
-  const [slideStates, setSlideStates] = useState<SlideStates>({});
-  console.log("Slide States:", slideStates);
-  const dispatch = useDispatch();
+  const [slideStates, setSlideStates] = useState<SlideStates>({})
+  console.log('Slide States:', slideStates)
+  const dispatch = useDispatch()
 
   // Handle Share Button Click
   const handleShare = async () => {
-    const url = `/share?formId=${documentID}`;
-    window.open(url, "_blank"); // Opens the URL in a new tab
-  };
+    const url = `/share?formId=${documentID}`
+    window.open(url, '_blank') // Opens the URL in a new tab
+  }
 
   // Handle Download Button Click
   const handleDownload = async () => {
-    setShowCountdown(true);
-    setCountdown(8);
+    setShowCountdown(true)
+    setCountdown(8)
     try {
-      const formId = documentID;
+      const formId = documentID
       if (!formId) {
-        throw new Error("Form ID not found in localStorage");
+        throw new Error('Form ID not found in localStorage')
       }
 
       // 1. First, update the payment status
@@ -126,24 +126,24 @@ export default function ViewPresentation() {
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
           {
-            method: "PATCH",
+            method: 'PATCH',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${authToken}`,
             },
             body: JSON.stringify({ paymentStatus: 1 }),
           }
-        );
+        )
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const result = await response.json();
-        console.log("Payment status updated:", result);
-      };
+        const result = await response.json()
+        console.log('Payment status updated:', result)
+      }
 
       // Call payment status update
-      await updatePaymentStatus();
+      await updatePaymentStatus()
 
       // 2. Then, call the additional API to get presentationID
       const callAdditionalApi = async () => {
@@ -151,82 +151,82 @@ export default function ViewPresentation() {
           // Call the second API with the extracted presentationID
           const secondApiResponse = await fetch(
             `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
-          );
-          const secondApiText = await secondApiResponse.text();
-          console.log("Raw second API response:", secondApiText);
+          )
+          const secondApiText = await secondApiResponse.text()
+          console.log('Raw second API response:', secondApiText)
 
           try {
-            const secondApiResult = JSON.parse(secondApiText);
-            console.log("Second API parsed response:", secondApiResult);
+            const secondApiResult = JSON.parse(secondApiText)
+            console.log('Second API parsed response:', secondApiResult)
           } catch (jsonError) {
             console.error(
-              "Error parsing second API response as JSON:",
+              'Error parsing second API response as JSON:',
               jsonError
-            );
+            )
           }
         } else {
-          throw new Error("PresentationID not found in the response");
+          throw new Error('PresentationID not found in the response')
         }
-      };
+      }
 
       // Call additional API
-      await callAdditionalApi();
+      await callAdditionalApi()
 
       // 3. Finally, call the original slides URL API
       // const response = await fetch(
       //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
       // )
-      const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`;
-      console.log("Request URL:", url);
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`
+      console.log('Request URL:', url)
 
       const response = await fetch(url, {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${authToken}`,
         },
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const result = await response.json();
-      console.log("Result:", result);
+      const result = await response.json()
+      console.log('Result:', result)
 
-      const presentationUrl = result.data.PresentationURL;
-      console.log("Presentation URL:", presentationUrl);
-      if (presentationUrl && typeof presentationUrl === "string") {
-        console.log("REACHED HERE", presentationUrl);
-        setCountdown(0);
-        setIsExportPaid(true);
-        window.open(presentationUrl, "_blank");
-        console.log("Presentation opened in new tab", presentationUrl);
+      const presentationUrl = result.data.PresentationURL
+      console.log('Presentation URL:', presentationUrl)
+      if (presentationUrl && typeof presentationUrl === 'string') {
+        console.log('REACHED HERE', presentationUrl)
+        setCountdown(0)
+        setIsExportPaid(true)
+        window.open(presentationUrl, '_blank')
+        console.log('Presentation opened in new tab', presentationUrl)
       } else {
-        throw new Error("Invalid URL in response");
+        throw new Error('Invalid URL in response')
       }
     } catch (error) {
-      console.error("Error exporting presentation:", error);
+      console.error('Error exporting presentation:', error)
       alert(
         "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
-      );
+      )
     }
-  };
+  }
 
   useEffect(() => {
     if (countdown === null || countdown === 0) {
       if (countdown === 0) {
-        setShowCountdown(false); // Hide the modal once the countdown ends
-        console.log("Download starting...");
+        setShowCountdown(false) // Hide the modal once the countdown ends
+        console.log('Download starting...')
       }
-      return;
+      return
     }
 
     const timer = setInterval(() => {
-      setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0));
-    }, 1000);
+      setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0))
+    }, 1000)
 
-    return () => clearInterval(timer); // Cleanup the timer
-  }, [countdown]);
+    return () => clearInterval(timer) // Cleanup the timer
+  }, [countdown])
 
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
@@ -235,37 +235,37 @@ export default function ViewPresentation() {
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
         {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${authToken}`,
           },
         }
-      );
+      )
 
-      const res = await response.json();
-      console.log("API response data:", res); // Debugging line
+      const res = await response.json()
+      console.log('API response data:', res) // Debugging line
 
       if (res && res.data.paymentStatus === 1) {
         // Payment has already been made, run handleDownload
-        handleDownload();
+        handleDownload()
       } else if (res && res.data.paymentStatus === 0) {
-        const paymentButton = document.getElementById("payment-button");
+        const paymentButton = document.getElementById('payment-button')
         if (paymentButton) {
-          paymentButton.click();
+          paymentButton.click()
         } else {
-          console.error("Payment button not found");
+          console.error('Payment button not found')
         }
       } else {
-        alert("Unable to determine payment status.");
+        alert('Unable to determine payment status.')
       }
     } catch (error) {
-      console.error("Error checking payment status:", error);
-      alert("Error checking payment status. Please try again.");
+      console.error('Error checking payment status:', error)
+      alert('Error checking payment status. Please try again.')
     }
-  };
+  }
 
   // Handle Delete Button Click
   const handleDelete = () => {
-    console.log(slidesId[currentSlideIndex]);
+    console.log(slidesId[currentSlideIndex])
     axios.patch(
       `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/display/${slidesId[currentSlideIndex]}`,
       {},
@@ -274,21 +274,21 @@ export default function ViewPresentation() {
           Authorization: `Bearer ${authToken}`,
         },
       }
-    );
-  };
+    )
+  }
 
   // Handle Finalize Button Click
   const handleFinalize = () => {
-    setFinalized(true);
+    setFinalized(true)
     axios
       .patch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
         {
-          userID: sessionStorage.getItem("userEmail"),
+          userID: sessionStorage.getItem('userEmail'),
           FormID: documentID,
           PresentationID: presentationID,
-          SectionName: currentOutline.replace(/^\d+\.\s*/, ""),
-          GenSlideID: slidesId[currentSlideIndex],
+          SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
+          GenSlideID: slidesArray[currentSlideIndex],
         },
         {
           headers: {
@@ -297,9 +297,9 @@ export default function ViewPresentation() {
         }
       )
       .then((response) => {
-        console.log(response);
-      });
-  };
+        console.log(response)
+      })
+  }
 
   // Handle Add New Slide Version Button
   const handlePlusClick = (outlineTitle: string) => {
@@ -307,61 +307,61 @@ export default function ViewPresentation() {
       isLoading: false,
       isNoGeneratedSlide: false,
       lastUpdated: Date.now(),
-    });
+    })
     setDisplayModes((prev) => ({
       ...prev,
-      [outlineTitle]: prev[outlineTitle] === "slides" ? "newContent" : "slides",
-    }));
-  };
+      [outlineTitle]: prev[outlineTitle] === 'slides' ? 'newContent' : 'slides',
+    }))
+  }
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (title: string) => {
-    setCurrentOutline(title);
-    setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!);
-    const slideIndex = outlines.findIndex((o) => o.title === title);
-    setCurrentSlide(slideIndex);
+    setCurrentOutline(title)
+    setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!)
+    const slideIndex = outlines.findIndex((o) => o.title === title)
+    setCurrentSlide(slideIndex)
     slideRefs.current[slideIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-    });
-    setCurrentSlideIndex(0);
+      behavior: 'smooth',
+      block: 'nearest',
+    })
+    setCurrentSlideIndex(0)
     setDisplayModes((prev) => ({
       ...prev,
-      [currentOutline]: "slides",
-    }));
-  };
+      [currentOutline]: 'slides',
+    }))
+  }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
   const debounce = (fn: Function, delay: number) => {
-    let timer: NodeJS.Timeout;
+    let timer: NodeJS.Timeout
     return (...args: any[]) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn(...args), delay);
-    };
-  };
+      clearTimeout(timer)
+      timer = setTimeout(() => fn(...args), delay)
+    }
+  }
   const handleScroll = debounce(() => {
-    if (!scrollContainerRef.current) return;
+    if (!scrollContainerRef.current) return
     // setCurrentSlideIndex(0)
-    const scrollTop = scrollContainerRef.current.scrollTop || 0;
+    const scrollTop = scrollContainerRef.current.scrollTop || 0
     const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
-      if (!slideRef) return false;
+      if (!slideRef) return false
 
-      const offset = slideRef.offsetTop - scrollTop;
-      return offset >= 0 && offset < slideRef.offsetHeight;
-    });
+      const offset = slideRef.offsetTop - scrollTop
+      return offset >= 0 && offset < slideRef.offsetHeight
+    })
 
     if (
       closestIndex !== -1 &&
       outlines[closestIndex]?.title !== currentOutline
     ) {
-      setCurrentOutline(outlines[closestIndex]?.title);
-      setCurrentOutlineID(outlines[closestIndex]?.outlineID!);
+      setCurrentOutline(outlines[closestIndex]?.title)
+      setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
       setDisplayModes((prev) => ({
         ...prev,
-        [currentOutline]: "slides",
-      }));
+        [currentOutline]: 'slides',
+      }))
     }
-  }, 100);
+  }, 100)
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
@@ -374,7 +374,7 @@ export default function ViewPresentation() {
         isNoGeneratedSlide: false,
         lastUpdated: Date.now(),
       },
-    }));
+    }))
 
     try {
       await axios
@@ -382,7 +382,7 @@ export default function ViewPresentation() {
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
           {
             type: outlineType.charAt(0).toUpperCase() + outlineType.slice(1),
-            title: currentOutline.replace(/^\d+\.\s*/, ""),
+            title: currentOutline.replace(/^\d+\.\s*/, ''),
             documentID: documentID,
             outlineID: currentOutlineID,
           },
@@ -393,17 +393,17 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          toast.success("Quick Generation Started");
+          toast.success('Quick Generation Started')
           setDisplayModes((prev) => ({
             ...prev,
-            [currentOutline]: "slides",
-          }));
+            [currentOutline]: 'slides',
+          }))
         })
         .catch((error) => {
-          toast.error("Error while generating slide", {
-            position: "top-center",
+          toast.error('Error while generating slide', {
+            position: 'top-center',
             autoClose: 2000,
-          });
+          })
           // setIsSlideLoading(false)
           setSlideStates((prev) => ({
             ...prev,
@@ -413,15 +413,15 @@ export default function ViewPresentation() {
               isNoGeneratedSlide: true,
               lastUpdated: Date.now(),
             },
-          }));
-          setDisplayModes((prev) => ({ ...prev, [currentOutline]: "slides" }));
-        });
+          }))
+          setDisplayModes((prev) => ({ ...prev, [currentOutline]: 'slides' }))
+        })
     } catch (error) {
-      console.error("Error generating slide:", error);
-      toast.error("Error while generating slide", {
-        position: "top-center",
+      console.error('Error generating slide:', error)
+      toast.error('Error while generating slide', {
+        position: 'top-center',
         autoClose: 2000,
-      });
+      })
 
       // Reset loading state on error
       setSlideStates((prev) => ({
@@ -431,58 +431,58 @@ export default function ViewPresentation() {
           isLoading: false,
           lastUpdated: Date.now(),
         },
-      }));
+      }))
     }
-  };
+  }
 
   // Paginate Back
-const handlePaginatePrev = () => {
-  if (currentSlideIndex > 0) {
-    setCurrentSlideIndex(prev => prev - 1);
-    setSlideStates(prev => ({
-      ...prev,
-      [currentOutline]: {
-        ...prev[currentOutline],
-        isLoading: true
-      }
-    }));
-    
-    setTimeout(() => {
-      setSlideStates(prev => ({
+  const handlePaginatePrev = () => {
+    if (currentSlideIndex > 0) {
+      setCurrentSlideIndex((prev) => prev - 1)
+      setSlideStates((prev) => ({
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading: false
-        }
-      }));
-    }, 1000);
+          isLoading: true,
+        },
+      }))
+
+      setTimeout(() => {
+        setSlideStates((prev) => ({
+          ...prev,
+          [currentOutline]: {
+            ...prev[currentOutline],
+            isLoading: false,
+          },
+        }))
+      }, 1000)
+    }
   }
-};
 
   // Paginate Next
   const handlePaginateNext = () => {
-  const currentSlides = slidesArray[currentOutline];
-  if (currentSlides && currentSlideIndex < currentSlides.length - 1) {
-    setCurrentSlideIndex(prev => prev + 1);
-    setSlideStates(prev => ({
-      ...prev,
-      [currentOutline]: {
-        ...prev[currentOutline],
-        isLoading: true
-      }
-    }));
-    
-    setTimeout(() => {
-      setSlideStates(prev => ({
+    const currentSlides = slidesArray[currentOutline]
+    if (currentSlides && currentSlideIndex < currentSlides.length - 1) {
+      setCurrentSlideIndex((prev) => prev + 1)
+      setSlideStates((prev) => ({
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading: false
-        }
-      }));
-    }, 1000);
+          isLoading: true,
+        },
+      }))
+
+      setTimeout(() => {
+        setSlideStates((prev) => ({
+          ...prev,
+          [currentOutline]: {
+            ...prev[currentOutline],
+            isLoading: false,
+          },
+        }))
+      }, 1000)
+    }
   }
-};
 
   // Custom Builder Slide Type Select Handler
   const handleCustomTypeClick = (
@@ -492,31 +492,31 @@ const handlePaginatePrev = () => {
     setDisplayModes((prev) => ({
       ...prev,
       [outlineTitle]: typeName,
-    }));
-  };
+    }))
+  }
 
   // Mobile Back Button
   const onBack = (outlineTitle: string) => {
     setDisplayModes((prev) => {
-      const currentMode = prev[outlineTitle];
-      let newMode: DisplayMode = "slides";
+      const currentMode = prev[outlineTitle]
+      let newMode: DisplayMode = 'slides'
 
-      if (currentMode === "SlideNarrative") {
-        newMode = "newContent";
-      } else if (currentMode === "customBuilder") {
-        newMode = "newContent";
-      } else if (currentMode === "newContent") {
-        newMode = "slides";
+      if (currentMode === 'SlideNarrative') {
+        newMode = 'newContent'
+      } else if (currentMode === 'customBuilder') {
+        newMode = 'newContent'
+      } else if (currentMode === 'newContent') {
+        newMode = 'slides'
       } else {
-        newMode = "customBuilder";
+        newMode = 'customBuilder'
       }
 
       return {
         ...prev,
         [outlineTitle]: newMode,
-      };
-    });
-  };
+      }
+    })
+  }
 
   // Render Slide Content
   const renderContent = ({
@@ -526,55 +526,53 @@ const handlePaginatePrev = () => {
     GenSlideID,
     outlineTitle,
   }: {
-    displayMode: string;
-    isMobile: boolean;
-    index?: number;
-    GenSlideID: string;
-    outlineTitle: string;
+    displayMode: string
+    isMobile: boolean
+    index?: number
+    GenSlideID: string
+    outlineTitle: string
   }) => {
-  const currentDisplayMode = displayModes[outlineTitle];
-  const slideState = slideStates[outlineTitle] || createInitialSlideState();
-  const currentSlideId = slidesArray[outlineTitle]?.[currentSlideIndex];
+    const currentDisplayMode = displayModes[outlineTitle]
+    const slideState = slideStates[outlineTitle] || createInitialSlideState()
+    const currentSlideId = slidesArray[outlineTitle]?.[currentSlideIndex]
 
     switch (currentDisplayMode) {
-      case "slides":
+      case 'slides':
         return (
           <>
-          {slideState.isLoading ? (
-            <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-              <h1>Generating Slide Please Wait...</h1>
-            </div>
-          ) : (
-            <iframe
-              src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${currentSlideId}`}
-              title={`Slide ${index ? index + 1 : currentSlideIndex + 1}`}
-              className="w-full h-full pointer-events-none"
-              style={{ border: 0 }}
-            />
-          )}
-          {
+            {slideState.isLoading ? (
+              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
+                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                <h1>Generating Slide Please Wait...</h1>
+              </div>
+            ) : (
+              <iframe
+                src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${currentSlideId}`}
+                title={`Slide ${index ? index + 1 : currentSlideIndex + 1}`}
+                className="w-full h-full pointer-events-none"
+                style={{ border: 0 }}
+              />
+            )}
+            {}
+          </>
+        )
 
-          }
-        </>
-        );
-
-      case "newContent":
+      case 'newContent':
         const NewSlideVersion = isMobile
           ? MobileNewSlideVersion
-          : DesktopNewSlideVersion;
+          : DesktopNewSlideVersion
         return (
           <NewSlideVersion
             isLoading={slideState.isLoading}
             setDisplayMode={(value: SetStateAction<DisplayMode>) => {
               const newMode =
-                typeof value === "function"
-                  ? value(displayModes[outlineTitle] || "slides")
-                  : value;
+                typeof value === 'function'
+                  ? value(displayModes[outlineTitle] || 'slides')
+                  : value
               setDisplayModes((prev) => ({
                 ...prev,
                 [outlineTitle]: newMode,
-              }));
+              }))
             }}
             handleQuickGenerate={async () => {
               updateSlideState(outlineTitle, {
@@ -582,30 +580,30 @@ const handlePaginatePrev = () => {
                 isNoGeneratedSlide: false,
                 retryCount: 0,
                 lastUpdated: Date.now(),
-              });
-              await handleQuickGenerate();
+              })
+              await handleQuickGenerate()
             }}
             handleCustomBuilderClick={() => {
               if (featureDisabled) {
-                toast.info("Upgrade to pro to access this feature");
+                toast.info('Upgrade to pro to access this feature')
               } else {
                 const newMode =
                   outlineTitle === outlines[0].title
-                    ? "Cover"
+                    ? 'Cover'
                     : outlineTitle === outlines[outlines.length - 1].title
-                    ? "Contact"
-                    : "customBuilder";
+                    ? 'Contact'
+                    : 'customBuilder'
                 setDisplayModes((prev) => ({
                   ...prev,
                   [outlineTitle]: newMode,
-                }));
+                }))
               }
             }}
             handleSlideNarrative={() => {
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]: "SlideNarrative",
-              }));
+                [outlineTitle]: 'SlideNarrative',
+              }))
             }}
             userPlan={userPlan!}
             customBuilderDisabled={featureDisabled}
@@ -618,9 +616,9 @@ const handlePaginatePrev = () => {
             authToken={authToken!}
             orgId={orgId!}
           />
-        );
+        )
 
-      case "customBuilder":
+      case 'customBuilder':
         return (
           <CustomBuilderMenu
             onTypeClick={(type) => handleCustomTypeClick(type, outlineTitle)}
@@ -628,13 +626,13 @@ const handlePaginatePrev = () => {
               setDisplayModes((prev) => ({
                 ...prev,
                 [outlineTitle]:
-                  typeof value === "function"
-                    ? value(prev[outlineTitle] || "slides")
+                  typeof value === 'function'
+                    ? value(prev[outlineTitle] || 'slides')
                     : value,
-              }));
+              }))
             }}
           />
-        );
+        )
 
       default:
         const components: Record<string, React.FC<any>> = {
@@ -648,14 +646,14 @@ const handlePaginatePrev = () => {
           Graphs,
           Contact,
           Cover,
-        };
+        }
 
-        const Component = components[currentDisplayMode];
-        if (!Component) return null;
+        const Component = components[currentDisplayMode]
+        if (!Component) return null
 
         return (
           <Component
-            heading={currentOutline.replace(/^\d+\.\s*/, "")}
+            heading={currentOutline.replace(/^\d+\.\s*/, '')}
             slideType={outlineType}
             documentID={documentID!}
             orgId={orgId!}
@@ -664,38 +662,40 @@ const handlePaginatePrev = () => {
               setDisplayModes((prev) => ({
                 ...prev,
                 [outlineTitle]: mode,
-              }));
+              }))
             }}
             outlineID={currentOutlineID}
             setIsSlideLoading={() => {
               updateSlideState(outlineTitle, {
                 isLoading: true,
                 lastUpdated: Date.now(),
-              });
+              })
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]: "slides",
-              }));
+                [outlineTitle]: 'slides',
+              }))
             }}
           />
-        );
+        )
     }
-  };
+  }
 
-useEffect(() => {
-  const { initialStates, initialModes } = outlines.reduce(
-    (acc, outline) => {
-      acc.initialStates[outline.title] = createInitialSlideState();
-      acc.initialModes[outline.title] = "slides";
-      return acc;
-    },
-    { initialStates: {} as { [key: string]: SlideState }, initialModes: {} as { [key: string]: DisplayMode } }
-  );
+  useEffect(() => {
+    const { initialStates, initialModes } = outlines.reduce(
+      (acc, outline) => {
+        acc.initialStates[outline.title] = createInitialSlideState()
+        acc.initialModes[outline.title] = 'slides'
+        return acc
+      },
+      {
+        initialStates: {} as { [key: string]: SlideState },
+        initialModes: {} as { [key: string]: DisplayMode },
+      }
+    )
 
-  setSlideStates(initialStates);
-  setDisplayModes(initialModes);
-}, [outlines]);
-
+    setSlideStates(initialStates)
+    setDisplayModes(initialModes)
+  }, [outlines])
 
   // Get DocumentID and Presentation Name
   useEffect(() => {
@@ -708,28 +708,28 @@ useEffect(() => {
               Authorization: `Bearer ${authToken}`,
             },
           }
-        );
+        )
 
-        const result = response.data;
+        const result = response.data
         // Only update documentID if it hasn't been set yet
-        setPptName(result.documentName);
-        setDocumentID((prev) => prev || result.documentID);
-        console.log("Document ID Set From API", result.documentID);
-        setIsDocumentIDLoading(false);
+        setPptName(result.documentName)
+        setDocumentID((prev) => prev || result.documentID)
+        console.log('Document ID Set From API', result.documentID)
+        setIsDocumentIDLoading(false)
       } catch (error) {
-        console.error("Error fetching document:", error);
-        setIsDocumentIDLoading(false);
+        console.error('Error fetching document:', error)
+        setIsDocumentIDLoading(false)
       }
-    };
+    }
 
-    const documentIDFromUrl = searchParams.get("documentID");
-    const pptNameFromUrl = searchParams.get("presentationName");
+    const documentIDFromUrl = searchParams.get('documentID')
+    const pptNameFromUrl = searchParams.get('presentationName')
 
-    if (documentIDFromUrl && documentIDFromUrl !== "loading") {
+    if (documentIDFromUrl && documentIDFromUrl !== 'loading') {
       // If documentID comes from URL and is valid, set it only if it hasn't been set
-      setDocumentID((prev) => prev || documentIDFromUrl);
-      setPptName(pptNameFromUrl);
-      console.log("");
+      setDocumentID((prev) => prev || documentIDFromUrl)
+      setPptName(pptNameFromUrl)
+      console.log('')
 
       // Fetch the pptName if needed
       const getPptName = async () => {
@@ -741,30 +741,30 @@ useEffect(() => {
                 Authorization: `Bearer ${authToken}`,
               },
             }
-          );
-          const result = response.data;
-          setPptName(result.documentName);
+          )
+          const result = response.data
+          setPptName(result.documentName)
         } catch (error) {
-          console.error("Error fetching document:", error);
+          console.error('Error fetching document:', error)
         }
-      };
-      getPptName();
-      setIsDocumentIDLoading(false);
+      }
+      getPptName()
+      setIsDocumentIDLoading(false)
     } else {
       // Trigger the API call only if documentID is not present or is 'loading'
       const timer = setTimeout(() => {
-        getDocumentId();
-      }, 23000); // delay
+        getDocumentId()
+      }, 23000) // delay
 
       // Cleanup the timer in case the component unmounts
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer)
     }
-  }, [searchParams, authToken, orgId]);
+  }, [searchParams, authToken, orgId])
 
   // TODO: WEB SOCKET
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const newSlidesRef = useRef<any[]>([]); // Ref to store newSlides persistently
-  const newSlidesJSON = JSON.stringify(newSlidesRef.current);
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
+  const newSlidesJSON = JSON.stringify(newSlidesRef.current)
 
   const updateSlideState = useCallback(
     (outlineTitle: string, updates: Partial<SlideState>) => {
@@ -774,19 +774,19 @@ useEffect(() => {
           ...prev[outlineTitle],
           ...updates,
         },
-      }));
+      }))
     },
     []
-  );
+  )
 
   useEffect(() => {
     if (
-      currentOutline !== "" &&
+      currentOutline !== '' &&
       documentID !== null &&
       !slidesArray[currentOutline]
     ) {
-      const socket = io(SOCKET_URL, { transports: ["websocket"] });
-      console.info("Connecting to WebSocket server...");
+      const socket = io(SOCKET_URL, { transports: ['websocket'] })
+      console.info('Connecting to WebSocket server...')
 
       // Set initial loading state
       setSlideStates((prev) => ({
@@ -796,7 +796,7 @@ useEffect(() => {
           isLoading: true,
           lastUpdated: Date.now(),
         },
-      }));
+      }))
 
       // Clear loading state after timeout
       const timeoutId = setTimeout(() => {
@@ -807,15 +807,15 @@ useEffect(() => {
             isLoading: false,
             isNoGeneratedSlide: false,
           },
-        }));
-      }, 90000);
+        }))
+      }, 90000)
 
       const processSlides = (newSlides: any[]) => {
-        newSlidesRef.current = newSlides;
-        const sectionName = currentOutline.replace(/^\d+\.\s*/, "");
+        newSlidesRef.current = newSlides
+        const sectionName = currentOutline.replace(/^\d+\.\s*/, '')
 
         if (newSlides.length > 0) {
-          const firstSlide = newSlides[0];
+          const firstSlide = newSlides[0]
 
           if (
             firstSlide.SectionName === sectionName &&
@@ -832,45 +832,45 @@ useEffect(() => {
                 genSlideID: firstSlide.GenSlideID,
                 lastUpdated: Date.now(),
               },
-            }));
+            }))
 
             if (!presentationID) {
-              setPresentationID(firstSlide.PresentationID);
+              setPresentationID(firstSlide.PresentationID)
             }
 
-            const ids = newSlides.map((slide: any) => slide.GenSlideID);
-            setSlidesId(ids);
+            const ids = newSlides.map((slide: any) => slide.GenSlideID)
+            setSlidesId(ids)
             setSlidesArray((prev) => ({
               ...prev,
               [firstSlide.SectionName]: ids,
-            }));
+            }))
 
-            setTotalSlides(ids.length);
+            setTotalSlides(ids.length)
           }
         }
-      };
+      }
 
-      socket.on("slidesData", processSlides);
+      socket.on('slidesData', processSlides)
 
-      socket.emit("fetchSlides", {
-        slideType: currentOutline.replace(/^\d+\.\s*/, ""),
+      socket.emit('fetchSlides', {
+        slideType: currentOutline.replace(/^\d+\.\s*/, ''),
         formID: documentID,
-      });
+      })
 
       // Cleanup function
       return () => {
-        clearTimeout(timeoutId);
-        socket.off("slidesData", processSlides);
-        socket.disconnect();
-      };
+        clearTimeout(timeoutId)
+        socket.off('slidesData', processSlides)
+        socket.disconnect()
+      }
     }
-    console.log("useEffect: currentOutline, documentID, slidesArray");
-  }, [currentOutline, documentID]);
+    console.log('useEffect: currentOutline, documentID, slidesArray')
+  }, [currentOutline, documentID])
 
   useEffect(() => {
-    setCurrentSlideIndex(0);
-    setPrevSlideIndex(0);
-  }, [currentOutline]);
+    setCurrentSlideIndex(0)
+    setPrevSlideIndex(0)
+  }, [currentOutline])
 
   // Effect to monitor changes
   useEffect(() => {
@@ -881,11 +881,11 @@ useEffect(() => {
           isNoGeneratedSlide: false,
           retryCount: 0,
           lastUpdated: Date.now(),
-        });
-        setPrevTotalSlides(totalSlides);
-      }, 6000);
+        })
+        setPrevTotalSlides(totalSlides)
+      }, 6000)
     }
-  }, [totalSlides, prevTotalSlides]);
+  }, [totalSlides, prevTotalSlides])
 
   // Effect to set loader for pagination changes
   useEffect(() => {
@@ -894,9 +894,9 @@ useEffect(() => {
         isLoading: true,
         retryCount: 0,
         lastUpdated: Date.now(),
-      });
+      })
 
-      setPrevSlideIndex(currentSlideIndex);
+      setPrevSlideIndex(currentSlideIndex)
     }
 
     setTimeout(() => {
@@ -904,14 +904,14 @@ useEffect(() => {
         isLoading: false,
         retryCount: 0,
         lastUpdated: Date.now(),
-      });
-    }, 3000);
-  }, [currentSlideIndex, prevSlideIndex]);
-  console.log("Slides Array:", slidesArray);
+      })
+    }, 3000)
+  }, [currentSlideIndex, prevSlideIndex])
+  console.log('Slides Array:', slidesArray)
 
   // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
-    if (!documentID) return;
+    if (!documentID) return
 
     try {
       const response = await axios.get(
@@ -921,31 +921,31 @@ useEffect(() => {
             Authorization: `Bearer ${authToken}`,
           },
         }
-      );
-      const fetchedOutlines = response.data.outline;
-      console.log("Fetched Outlines:", fetchedOutlines);
+      )
+      const fetchedOutlines = response.data.outline
+      console.log('Fetched Outlines:', fetchedOutlines)
 
-      setOutlines(fetchedOutlines);
+      setOutlines(fetchedOutlines)
       if (fetchedOutlines.length > 0) {
-        setCurrentOutline(fetchedOutlines[0].title);
-        setCurrentOutlineID(fetchedOutlines[0].outlineID);
+        setCurrentOutline(fetchedOutlines[0].title)
+        setCurrentOutlineID(fetchedOutlines[0].outlineID)
       }
     } catch (error) {
-      console.error("Error fetching outlines:", error);
+      console.error('Error fetching outlines:', error)
     }
-  }, [documentID, authToken]);
+  }, [documentID, authToken])
   useEffect(() => {
-    fetchOutlines();
-  }, [fetchOutlines, documentID]);
+    fetchOutlines()
+  }, [fetchOutlines, documentID])
 
   // Set Slide Type For Quick Generate
   useEffect(() => {
     const matchingOutline = outlines.find(
       (outline) => outline.title === currentOutline
-    );
+    )
     // Update the outlineType state with the type of the matched object
-    setOutlineType(matchingOutline?.type || "");
-  }, [outlines, currentOutline]);
+    setOutlineType(matchingOutline?.type || '')
+  }, [outlines, currentOutline])
 
   // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
@@ -959,16 +959,16 @@ useEffect(() => {
               Authorization: `Bearer ${authToken}`,
             },
           }
-        );
-        const planName = response.data.plan.plan_name;
-        dispatch(setUserPlan(planName));
-        console.log("User Plan", userPlan);
+        )
+        const planName = response.data.plan.plan_name
+        dispatch(setUserPlan(planName))
+        console.log('User Plan', userPlan)
       } catch (error) {
-        console.error("Error fetching user plan:", error);
+        console.error('Error fetching user plan:', error)
       }
-    };
+    }
 
-    fetchUserPlan();
+    fetchUserPlan()
 
     // Function to check payment status and proceed
     const checkPaymentStatusAndProceed = async () => {
@@ -977,18 +977,18 @@ useEffect(() => {
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
           {
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${authToken}`,
             },
           }
-        );
+        )
 
-        const res = await response.json();
-        console.log("API response data:", res); // Debugging line
+        const res = await response.json()
+        console.log('API response data:', res) // Debugging line
 
         if (res && res.data.paymentStatus === 1) {
           // Payment has already been made, run handleDownload
-          setIsExportPaid(true);
+          setIsExportPaid(true)
         } else if (res && res.data.paymentStatus === 0) {
           // const paymentButton = document.getElementById('payment-button')
           // if (paymentButton) {
@@ -996,31 +996,31 @@ useEffect(() => {
           // } else {
           //   console.error('Payment button not found')
           // }
-          setIsExportPaid(false);
+          setIsExportPaid(false)
         } else {
-          alert("Unable to determine payment status.");
+          alert('Unable to determine payment status.')
         }
       } catch (error) {
-        console.error("Error checking payment status:", error);
-        alert("Error checking payment status. Please try again.");
+        console.error('Error checking payment status:', error)
+        alert('Error checking payment status. Please try again.')
       }
-    };
+    }
 
     // Call the payment status check
     if (documentID) {
-      checkPaymentStatusAndProceed();
+      checkPaymentStatusAndProceed()
     }
 
-    if (userPlan !== "free") {
-      setIsExportPaid(true);
+    if (userPlan !== 'free') {
+      setIsExportPaid(true)
     }
 
     // Get Pricing Data
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
-        "https://ipinfo.io/json?token=f0e9cf876d422e"
-      );
-      const ipInfoData: IpInfoResponse = await ipInfoResponse.json();
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
       await axios
         .get(
@@ -1032,33 +1032,33 @@ useEffect(() => {
           }
         )
         .then((response) => {
-          const country = ipInfoData!.country!;
-          console.log("Country:", country);
+          const country = ipInfoData!.country!
+          console.log('Country:', country)
 
-          if (country !== "IN" && country !== "India" && country !== "In") {
-            console.log("Reached If");
-            setMonthlyPlan(response.data.items[1]);
-            setYearlyPlan(response.data.items[0]);
-            setCurrency("USD");
+          if (country !== 'IN' && country !== 'India' && country !== 'In') {
+            console.log('Reached If')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('USD')
           } else if (
-            country === "IN" ||
-            country === "India" ||
-            country === "In"
+            country === 'IN' ||
+            country === 'India' ||
+            country === 'In'
           ) {
-            console.log("Reached Else");
-            setMonthlyPlan(response.data.items[1]);
-            setYearlyPlan(response.data.items[0]);
-            setCurrency("INR");
+            console.log('Reached Else')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
           }
-        });
-    };
+        })
+    }
 
-    getPricingData();
-  }, [documentID, authToken, dispatch, orgId, userPlan]);
-  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100;
-  const monthlyPlanId = monthlyPlan?.id;
-  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100;
-  const yearlyPlanId = yearlyPlan?.id;
+    getPricingData()
+  }, [documentID, authToken, dispatch, orgId, userPlan])
+  const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
+  const monthlyPlanId = monthlyPlan?.id
+  const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
+  const yearlyPlanId = yearlyPlan?.id
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
@@ -1067,7 +1067,7 @@ useEffect(() => {
         <div className="modal">
           <div className="modal-content">
             <p>
-              Payment has been done! Your download will start in {countdown}{" "}
+              Payment has been done! Your download will start in {countdown}{' '}
               seconds...
             </p>
           </div>
@@ -1075,10 +1075,10 @@ useEffect(() => {
       )}
 
       {/* Pricing Modal */}
-      {isPricingModalOpen && userPlan === "free" ? (
+      {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
           closeModal={() => {
-            setIsPricingModalOpen(false);
+            setIsPricingModalOpen(false)
           }}
           heading={pricingModalHeading}
           monthlyPlanAmount={monthlyPlanAmount}
@@ -1088,8 +1088,8 @@ useEffect(() => {
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
-          exportButtonText={`Export For ${currency === "INR" ? "₹" : "$"}${
-            currency === "INR" ? "499" : "9"
+          exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${
+            currency === 'INR' ? '499' : '9'
           }`}
           exportHandler={checkPaymentStatusAndProceed}
           isButtonDisabled={true}
@@ -1140,7 +1140,7 @@ useEffect(() => {
           {/* MEDIUM LARGE SCREEN: SLIDE DISPLAY BOX*/}
           <div
             className="no-scrollbar rounded-sm shadow-lg relative w-[90%] bg-white border border-gray-200 mb-2 ml-12 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
-            style={{ height: "calc(100vh - 200px)" }}
+            style={{ height: 'calc(100vh - 200px)' }}
             onScroll={handleScroll}
             ref={scrollContainerRef}
           >
@@ -1184,14 +1184,14 @@ useEffect(() => {
                 disabled={currentSlideIndex === 0}
                 className={`flex items-center hover:cursor-pointer border border-[#E1E3E5] active:scale-95 transition transform duration-300 ${
                   currentSlideIndex === 0
-                    ? "bg-gray-200 hover:cursor-default"
-                    : "bg-white"
+                    ? 'bg-gray-200 hover:cursor-default'
+                    : 'bg-white'
                 } p-2 rounded-md`}
               >
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
               <span className="text-sm">
-                Slide {currentSlideIndex + 1} of{" "}
+                Slide {currentSlideIndex + 1} of{' '}
                 {slidesArray[currentOutline]?.length || 0}
               </span>
               <button
@@ -1203,8 +1203,8 @@ useEffect(() => {
                 className={`flex items-center border hover:cursor-pointer border-[#E1E3E5] bg-white p-2 rounded-md active:scale-95 transition transform duration-300 ${
                   currentSlideIndex ===
                   (slidesArray[currentOutline]?.length ?? 0) - 1
-                    ? "text-gray-400"
-                    : "hover:text-blue-600"
+                    ? 'text-gray-400'
+                    : 'hover:text-blue-600'
                 }`}
               >
                 <FaArrowRight className="h-4 w-4 text-[#5D5F61]" />
@@ -1235,19 +1235,19 @@ useEffect(() => {
                 documentID={documentID!}
                 outlines={outlines}
                 onSelectOutline={(outline) => {
-                  setCurrentOutline(outline);
+                  setCurrentOutline(outline)
                   setCurrentOutlineID(
                     outlines.find((o) => o.title === outline)?.outlineID!
-                  );
+                  )
                   const slideIndex = outlines.findIndex(
                     (o) => o.title === outline
-                  );
-                  setCurrentSlide(slideIndex);
-                  setCurrentSlideIndex(0);
+                  )
+                  setCurrentSlide(slideIndex)
+                  setCurrentSlideIndex(0)
                   setDisplayModes((prev) => ({
                     ...prev,
-                    [currentOutline]: "slides",
-                  }));
+                    [currentOutline]: 'slides',
+                  }))
                 }}
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
@@ -1268,15 +1268,15 @@ useEffect(() => {
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
           className={`relative bg-white ${
-            displayModes[currentOutline] !== "slides"
-              ? "h-[45vh] md:h-[50vh]"
-              : "h-[30vh]"
+            displayModes[currentOutline] !== 'slides'
+              ? 'h-[45vh] md:h-[50vh]'
+              : 'h-[30vh]'
           } w-full border border-gray-200 mt-12 mb-6`}
         >
           {renderContent({
             GenSlideID: slidesArray[currentOutline]
               ? slidesArray[currentOutline][currentSlideIndex]
-              : "",
+              : '',
             displayMode: displayModes[currentOutline],
             isMobile: true,
             outlineTitle: currentOutline,
@@ -1285,7 +1285,7 @@ useEffect(() => {
 
         {/* MOBILE: ACTION BUTTONS */}
         <div className={`relative flex items-center justify-between w-full`}>
-          {displayModes[currentOutline] === "slides" ? (
+          {displayModes[currentOutline] === 'slides' ? (
             <MobileButtonSection
               onDelete={handleDelete}
               onFinalize={handleFinalize}
@@ -1312,7 +1312,7 @@ useEffect(() => {
             >
               <FaArrowLeft
                 className={`h-4 w-4 ${
-                  currentSlide === 0 ? "text-[#5D5F61]" : "text-[#091220]"
+                  currentSlide === 0 ? 'text-[#5D5F61]' : 'text-[#091220]'
                 }`}
               />
             </button>
@@ -1326,8 +1326,8 @@ useEffect(() => {
               }
               className={`flex items-center border border-gray-300 bg-white p-2 rounded-md ${
                 currentSlide === totalSlides
-                  ? "text-[#091220]"
-                  : "hover:text-blue-600"
+                  ? 'text-[#091220]'
+                  : 'hover:text-blue-600'
               }`}
             >
               <FaArrowRight className="h-4 w-4 text-[#091220]" />
@@ -1336,5 +1336,5 @@ useEffect(() => {
         </div>
       </div>
     </div>
-  );
+  )
 }
