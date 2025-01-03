@@ -3,6 +3,7 @@ import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
 import AttachImage from './shared/attachimage'
+import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 
 interface ContactProps {
   heading: string
@@ -29,8 +30,9 @@ export default function Contact({
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [linkedin, setLinkedin] = useState('')
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isImageLoading, setIsImageLoading] = useState(false)
   const [errors, setErrors] = useState({
     websiteLink: '',
     email: '',
@@ -109,6 +111,7 @@ export default function Contact({
         email,
         phone,
         linkedin,
+        image: selectedImage,
       },
       outlineID: outlineID,
     }
@@ -144,9 +147,23 @@ export default function Contact({
     }
   }
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedImage(file)
+  const handleFileSelect = async (file: File | null) => {
+    setIsImageLoading(true)
+    if (file) {
+      try {
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsImageLoading(false)
+      }
+    }
   }
+
   const onBack = () => {
     setDisplayMode('newContent')
   }

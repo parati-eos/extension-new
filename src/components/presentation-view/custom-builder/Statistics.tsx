@@ -1,10 +1,11 @@
 import axios from 'axios'
 import { useState, useRef, useEffect } from 'react'
-import { FaPaperclip, FaPlus } from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa'
 import AttachImage from './shared/attachimage'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 
 interface StatisticProps {
   heading: string
@@ -31,8 +32,9 @@ export default function Statistics({
   const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
   const [showTooltip, setShowTooltip] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isRowAdded, setIsRowAdded] = useState(false) // Flag to track new row addition
+  const [isImageLoading, setIsImageLoading] = useState(false)
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...title]
@@ -85,6 +87,7 @@ export default function Statistics({
           documentID: documentID,
           data: {
             slideName: heading,
+            image: selectedImage,
             stats: title.slice(1).map((label, index) => ({
               label,
               value: Number(description[index + 1] || 0),
@@ -113,8 +116,21 @@ export default function Statistics({
     }
   }
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedImage(file)
+  const handleFileSelect = async (file: File | null) => {
+    setIsImageLoading(true)
+    if (file) {
+      try {
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsImageLoading(false)
+      }
+    }
   }
 
   const onBack = () => {

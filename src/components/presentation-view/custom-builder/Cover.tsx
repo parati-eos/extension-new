@@ -31,7 +31,8 @@ export default function Cover({
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [isImageLoading, setIsImageLoading] = useState(false)
 
   // Ref for file input to trigger on button click
   const logoUploadInputRef = useRef<HTMLInputElement | null>(null)
@@ -54,10 +55,22 @@ export default function Cover({
     }
   }
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedImage(file)
+  const handleFileSelect = async (file: File | null) => {
+    setIsImageLoading(true)
+    if (file) {
+      try {
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsImageLoading(false)
+      }
+    }
   }
-
   const handleButtonClick = () => {
     if (logoUploadInputRef.current) {
       logoUploadInputRef.current.value = '' // Reset the file input
@@ -78,6 +91,7 @@ export default function Cover({
           data: {
             slideName: heading,
             logo,
+            image: selectedImage,
           },
           outlineID,
         },
