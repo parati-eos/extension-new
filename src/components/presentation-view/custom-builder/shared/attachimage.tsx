@@ -1,61 +1,79 @@
-import React, { useState } from 'react'
-import { FaPaperclip } from 'react-icons/fa'
+import React, { useState } from 'react';
+import { FaPaperclip } from 'react-icons/fa';
 
 interface AttachImageProps {
-  onFileSelected: (file: File | null) => void
-  buttonText?: string
+  onFileSelected: (file: File | null) => void;
+  buttonText?: string;
+  isLoading: boolean;
+  fileName: string | null; // Added to display the uploaded file name
+  uploadCompleted: boolean; // Track if the upload is complete
 }
 
-const AttachImage: React.FC<AttachImageProps> = ({ onFileSelected, buttonText = 'Attach Image' }) => {
-  const [fileName, setFileName] = useState<string | null>(null)
-  const fileInputRef = React.useRef<HTMLInputElement>(null) // Ref for file input
+const AttachImage: React.FC<AttachImageProps> = ({
+  onFileSelected,
+  buttonText = 'Attach Image',
+  isLoading,
+  fileName,
+  uploadCompleted,
+}) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null); // Ref for file input
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      setFileName(file.name)
-      onFileSelected(file)
+      const file = e.target.files[0];
+      onFileSelected(file);
     } else {
-      setFileName(null)
-      onFileSelected(null)
+      onFileSelected(null);
     }
-  }
+  };
 
   const triggerFileInput = () => {
-    fileInputRef.current?.click() // Programmatically trigger the file input
-  }
-  const truncateFileName = (name: string) => {
-    // Regex to remove common image file extensions
-    const nameWithoutExtension = name.replace(/\.(jpg|jpeg|png|gif|bmp|tiff)$/i, '');
-    return nameWithoutExtension.length > 15 ? `${nameWithoutExtension.slice(0, 15)}...` : nameWithoutExtension;
+    fileInputRef.current?.click(); // Programmatically trigger the file input
   };
-  const truncateFileNameLargeScreen = (name: string) => {
-    // Regex to remove common image file extensions
-    const nameWithoutExtension = name.replace(/\.(jpg|jpeg|png|gif|bmp|tiff)$/i, '');
-    return nameWithoutExtension;
+
+  const truncateFileName = (name: string, maxLength: number) => {
+    const nameWithoutExtension = name.replace(/\.[^/.]+$/, ''); // Remove file extension
+    return nameWithoutExtension.length > maxLength
+      ? `${nameWithoutExtension.slice(0, maxLength)}...`
+      : nameWithoutExtension;
   };
+
   return (
     <div className="lg:flex lg:items-center gap-x-2">
-      <div className='hidden lg:block'>
-      {/* Display file name if selected */}
-      {fileName && (
-        <span className="text-black text-sm font-medium truncate max-w-[150px] sm:max-w-[200px] md:max-w-[250px]">
-      {truncateFileNameLargeScreen(fileName)}
-        </span>
+      {/* Display file name for large screens */}
+      {uploadCompleted && fileName && (
+        <div className="hidden lg:block">
+          <span className="text-black text-sm font-medium truncate max-w-[250px]">
+            {truncateFileName(fileName, 30)}
+          </span>
+        </div>
       )}
-      </div>
-  
-   
+
       {/* File attachment button */}
       <button
         type="button"
         onClick={triggerFileInput} // Trigger file input click
-        className="flex items-center justify-center py-2 border border-gray-300 rounded-md text-gray-700 bg-white w-full sm:w-full md:w-full lg:w-[180px] cursor-pointer"
+        disabled={isLoading}
+        className={`flex items-center justify-center py-2 border border-gray-300 rounded-md w-full sm:w-full md:w-full lg:w-[180px] cursor-pointer ${
+          isLoading
+            ? 'bg-white text-gray-700 cursor-not-allowed'
+            : 'bg-white text-gray-700 hover:bg-gray-100'
+        }`}
       >
         <FaPaperclip />
-        <span className="hidden lg:block ml-2">{fileName ? 'Upload Again' : buttonText}</span>
+        <span className="hidden lg:block ml-2">
+          {isLoading
+            ? 'Loading...'
+            : fileName && uploadCompleted
+            ? 'Upload Again'
+            : buttonText}
+        </span>
         <span className="lg:hidden ml-2">
-        {fileName ? truncateFileName(fileName) : buttonText}
+          {isLoading
+            ? 'Loading...'
+            : fileName && uploadCompleted
+            ? truncateFileName(fileName, 15)
+            : buttonText}
         </span>
       </button>
 

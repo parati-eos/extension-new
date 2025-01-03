@@ -30,24 +30,29 @@ export default function SlideNarrative({
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null) // Track the attached image
+  const [fileName, setFileName] = useState<string | null>(null); // Track file name
+  const [uploadCompleted, setUploadCompleted] = useState(false); // Track if upload is completed
 
   const handleFileSelect = async (file: File | null) => {
-    setIsLoading(true)
+    setIsLoading(true);
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
-        setSelectedImage(url)
+        const url = await uploadLogoToS3(file);
+        setSelectedImage(url);
+        setUploadCompleted(true); // Mark upload as complete
+        setFileName(file.name); // Set file name only after upload is completed
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-center',
           autoClose: 2000,
-        })
+        });
+        setUploadCompleted(false); // Mark upload as failed
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
-  }
-
+  };
+  
   const handleGenerateSlide = async () => {
     setIsSlideLoading()
     if (!narrative.trim()) return
@@ -121,12 +126,13 @@ export default function SlideNarrative({
 
       {/* Attach Image and Generate Slide Buttons for Desktop */}
       <div className="hidden  lg:flex w-full  lg:justify-end lg:w-auto lg:gap-4">
-        {/* Attach Image Section */}
-        {isLoading ? (
-          <p>Loading</p>
-        ) : (
-          <AttachImage onFileSelected={handleFileSelect} />
-        )}
+       {/* Attach Image Section */}
+      <AttachImage 
+        onFileSelected={handleFileSelect} 
+        isLoading={isLoading} 
+        fileName={fileName} 
+        uploadCompleted={uploadCompleted}
+      />
         {/* Generate Slide Button */}
         <button
           onClick={handleGenerateSlide}
@@ -145,7 +151,12 @@ export default function SlideNarrative({
       <div className="flex lg:hidden p-2 gap-2  w-full ">
         <div className="flex-1  items-center justify-center gap-2">
           {/* Attach Image Section */}
-          <AttachImage onFileSelected={handleFileSelect} />
+          <AttachImage 
+        onFileSelected={handleFileSelect} 
+        isLoading={isLoading} 
+        fileName={fileName} 
+        uploadCompleted={uploadCompleted}
+      />
         </div>
         <button
           onClick={handleGenerateSlide}

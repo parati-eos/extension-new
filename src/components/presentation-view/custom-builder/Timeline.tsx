@@ -34,6 +34,8 @@ export default function Timeline({
   const [showTooltip, setShowTooltip] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null) // Add selected image state
   const [isLoading, setIsLoading] = useState(false)
+  const [fileName, setFileName] = useState<string | null>(null); // Track file name
+    const [uploadCompleted, setUploadCompleted] = useState(false); // Track if upload is completed
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...timeline]
@@ -115,21 +117,24 @@ export default function Timeline({
   }
 
   const handleFileSelect = async (file: File | null) => {
-    setIsLoading(true)
+    setIsLoading(true);
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
-        setSelectedImage(url)
+        const url = await uploadLogoToS3(file);
+        setSelectedImage(url);
+        setUploadCompleted(true); // Mark upload as complete
+        setFileName(file.name); // Set file name only after upload is completed
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-center',
           autoClose: 2000,
-        })
+        });
+        setUploadCompleted(false); // Mark upload as failed
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
-  }
+  };
 
   const onBack = () => {
     setDisplayMode('customBuilder')
@@ -203,7 +208,12 @@ export default function Timeline({
           {/* Attach Image and Generate Slide Large Screen Buttons */}
           <div className="hidden mt-auto gap-2 lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4">
             {/* Attach Image Section */}
-            <AttachImage onFileSelected={handleFileSelect} />
+            <AttachImage 
+        onFileSelected={handleFileSelect} 
+        isLoading={isLoading} 
+        fileName={fileName} 
+        uploadCompleted={uploadCompleted}
+      />
             <button
               onClick={(e) => {
                 if (!isGenerateDisabled) {
@@ -234,7 +244,12 @@ export default function Timeline({
           <div className="flex lg:hidden mt-2 gap-2  w-full">
             <div className="flex-1  items-center justify-center gap-2">
               {/* Attach Image Section */}
-              <AttachImage onFileSelected={handleFileSelect} />
+              <AttachImage 
+        onFileSelected={handleFileSelect} 
+        isLoading={isLoading} 
+        fileName={fileName} 
+        uploadCompleted={uploadCompleted}
+      />
             </div>
 
             <button

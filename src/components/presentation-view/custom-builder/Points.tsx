@@ -32,6 +32,8 @@ export default function Points({
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isImageLoading, setIsImageLoading] = useState(false)
+  const [fileName, setFileName] = useState<string | null>(null); // Track file name
+    const [uploadCompleted, setUploadCompleted] = useState(false); // Track if upload is completed
 
   const handleInputChange = (value: string, index: number) => {
     const updatedPoints = [...points]
@@ -55,18 +57,21 @@ export default function Points({
     setIsImageLoading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
-        setSelectedImage(url)
+        const url = await uploadLogoToS3(file);
+        setSelectedImage(url);
+        setUploadCompleted(true); // Mark upload as complete
+        setFileName(file.name); // Set file name only after upload is completed
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-center',
           autoClose: 2000,
-        })
+        });
+        setUploadCompleted(false); // Mark upload as failed
       } finally {
         setIsImageLoading(false)
       }
     }
-  }
+  };
 
   const handleGenerateSlide = async () => {
     setIsSlideLoading()
@@ -185,7 +190,12 @@ export default function Points({
           {/* Button container */}
           <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
             {/* Use AttachImage component */}
-            <AttachImage onFileSelected={handleFileSelect} />
+            <AttachImage 
+        onFileSelected={handleFileSelect} 
+        isLoading={isImageLoading} 
+        fileName={fileName} 
+        uploadCompleted={uploadCompleted}
+      />
 
             {/* Generate Slide Button */}
             <button
@@ -203,7 +213,12 @@ export default function Points({
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-2 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
-              <AttachImage onFileSelected={handleFileSelect} />
+            <AttachImage 
+        onFileSelected={handleFileSelect} 
+        isLoading={isImageLoading} 
+        fileName={fileName} 
+        uploadCompleted={uploadCompleted}
+      />
             </div>
 
             <button
