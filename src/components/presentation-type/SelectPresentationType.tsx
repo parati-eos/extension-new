@@ -214,7 +214,7 @@ const SelectPresentationType: React.FC = () => {
       ? !customTypeInput.trim()
       : !selectedType
 
-  // API CALL TO GET PRICING DATA FOR MODAL
+  // API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
   useEffect(() => {
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
@@ -232,13 +232,19 @@ const SelectPresentationType: React.FC = () => {
           }
         )
         .then((response) => {
-          console.log(ipInfoData)
-          if (ipInfoData.country !== 'IN' || 'India') {
+          const country = ipInfoData!.country!
+          console.log('Country:', country)
+
+          if (country !== 'IN' && country !== 'India' && country !== 'In') {
             console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
-          } else {
+          } else if (
+            country === 'IN' ||
+            country === 'India' ||
+            country === 'In'
+          ) {
             console.log('Reached Else')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
@@ -265,7 +271,6 @@ const SelectPresentationType: React.FC = () => {
     }
 
     fetchUserPlan()
-
     getPricingData()
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100

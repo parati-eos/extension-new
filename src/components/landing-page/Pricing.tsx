@@ -58,14 +58,19 @@ const Pricing: React.FC = () => {
           }
         )
         .then((response) => {
-          console.log(ipInfoData)
+          const country = ipInfoData!.country!
+          console.log('Country:', country)
 
-          if (ipInfoData.country !== 'IN' || 'India') {
+          if (country !== 'IN' && country !== 'India' && country !== 'In') {
             console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
-          } else {
+          } else if (
+            country === 'IN' ||
+            country === 'India' ||
+            country === 'In'
+          ) {
             console.log('Reached Else')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
@@ -75,12 +80,7 @@ const Pricing: React.FC = () => {
         })
     }
 
-    const timer = setTimeout(() => {
-      getPricingData()
-    }, 2000) // delay
-
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer)
+    getPricingData()
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100

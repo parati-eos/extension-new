@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { useState } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 interface PricingModalProps {
@@ -46,7 +45,6 @@ const categories = [
 
 export const PricingModal: React.FC<PricingModalProps> = ({
   closeModal,
-  heading,
   monthlyPlanAmount,
   yearlyPlanAmount,
   currency,
@@ -62,7 +60,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
     'monthly'
   )
-  const navigate = useNavigate()
   const userPlan = useSelector((state: any) => state.user.userPlan)
   const plans = [
     {

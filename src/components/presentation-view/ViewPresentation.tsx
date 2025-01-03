@@ -925,6 +925,7 @@ export default function ViewPresentation() {
 
   // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
+    // Get User Plan
     const fetchUserPlan = async () => {
       try {
         const response = await axios.get(
@@ -945,6 +946,7 @@ export default function ViewPresentation() {
 
     fetchUserPlan()
 
+    // Function to check payment status and proceed
     const checkPaymentStatusAndProceed = async () => {
       try {
         const response = await fetch(
@@ -989,6 +991,7 @@ export default function ViewPresentation() {
       setIsExportPaid(true)
     }
 
+    // Get Pricing Data
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
         'https://ipinfo.io/json?token=f0e9cf876d422e'
@@ -1005,12 +1008,19 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          if (ipInfoData.country !== 'IN' || 'India') {
+          const country = ipInfoData!.country!
+          console.log('Country:', country)
+
+          if (country !== 'IN' && country !== 'India' && country !== 'In') {
             console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
-          } else {
+          } else if (
+            country === 'IN' ||
+            country === 'India' ||
+            country === 'In'
+          ) {
             console.log('Reached Else')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])

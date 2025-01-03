@@ -67,7 +67,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
                 key={index}
                 className="h-[80vh] w-[99%] bg-black border-[2px] border-[#1f516b] pointer-events-none"
                 title="Google Slides Embed"
-                src={`https://docs.google.com/presentation/d/${slidesId}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId[0]}`}
+                src={`https://docs.google.com/presentation/d/${slidesId}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId[index]}`}
               ></iframe>
             </div>
           ))
