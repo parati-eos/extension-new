@@ -232,14 +232,17 @@ const SelectPresentationType: React.FC = () => {
           }
         )
         .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[1])
-            setYearlyPlan(response.data.items[0])
-            setCurrency('INR')
-          } else {
+          console.log(ipInfoData)
+          if (ipInfoData.country !== 'IN' || 'India') {
+            console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
+          } else {
+            console.log('Reached Else')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
           }
         })
     }
@@ -263,12 +266,7 @@ const SelectPresentationType: React.FC = () => {
 
     fetchUserPlan()
 
-    const timer = setTimeout(() => {
-      getPricingData()
-    }, 3000) // delay
-
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer)
+    getPricingData()
   }, [])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id

@@ -170,11 +170,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         },
 
         {
-          text: `${
-            currency === 'In' || 'IN' || 'India' || 'INR' || 'Inr'
-              ? '₹499'
-              : '$9'
-          } Export`,
+          text: `${currency === 'INR' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
@@ -359,6 +355,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       }
     }
   }
+
+  console.log('Currency', currency)
 
   return (
     <div
@@ -747,10 +745,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
                 <span className="font-medium  text-black">
-                  {currency === 'In' || 'IN' || 'India' || 'INR' || 'Inr'
-                    ? '₹499'
-                    : '$9'}{' '}
-                  Export
+                  {currency === 'INR' ? '₹499' : '$9'} Export
                 </span>
               </li>
             </ul>

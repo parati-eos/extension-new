@@ -1005,14 +1005,16 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[1])
-            setYearlyPlan(response.data.items[0])
-            setCurrency('INR')
-          } else {
+          if (ipInfoData.country !== 'IN' || 'India') {
+            console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
+          } else {
+            console.log('Reached Else')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
           }
         })
     }

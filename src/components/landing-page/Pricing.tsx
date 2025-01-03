@@ -58,14 +58,18 @@ const Pricing: React.FC = () => {
           }
         )
         .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[1])
-            setYearlyPlan(response.data.items[0])
-            setCurrency('INR')
-          } else {
+          console.log(ipInfoData)
+
+          if (ipInfoData.country !== 'IN' || 'India') {
+            console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
+          } else {
+            console.log('Reached Else')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
           }
           setIsLoading(false)
         })
@@ -184,11 +188,7 @@ const Pricing: React.FC = () => {
         },
 
         {
-          text: `${
-            currency === 'IN' || 'India' || 'In' || 'INR' || 'Inr'
-              ? '₹499'
-              : '$9'
-          } Export`,
+          text: `${currency === 'INR' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
@@ -652,10 +652,7 @@ const Pricing: React.FC = () => {
                 <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                   Google Slides Exports
                   <span className="font-medium  text-black">
-                    {currency === 'IN' || 'India' || 'In' || 'INR' || 'Inr'
-                      ? '₹499'
-                      : '$9'}{' '}
-                    Export
+                    {currency === 'INR' ? '₹499' : '$9'} Export
                   </span>
                 </li>
               </ul>
