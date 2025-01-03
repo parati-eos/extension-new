@@ -19,6 +19,8 @@ import { Plan } from '../../types/pricingTypes'
 import { PricingModal } from '../shared/PricingModal'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -73,14 +75,13 @@ const SelectPresentationType: React.FC = () => {
   const pricingModalHeading = 'Refine PPT'
   const userPlan = useSelector((state: any) => state.user.userPlan)
   console.log('User Plan', userPlan)
-  // const userPlan = sessionStorage.getItem('userPlan')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [showTooltip, setShowTooltip] = React.useState(false);
-
+  const [showTooltip, setShowTooltip] = React.useState(false)
+  const dispatch = useDispatch()
 
   const handleMouseEnter = () => {
     // Clear any existing timeout to avoid premature hiding
@@ -232,16 +233,35 @@ const SelectPresentationType: React.FC = () => {
         )
         .then((response) => {
           if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('INR')
           } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('USD')
           }
         })
     }
+
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const planName = response.data.plan.plan_name
+        dispatch(setUserPlan(planName))
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
+    }
+
+    fetchUserPlan()
 
     const timer = setTimeout(() => {
       getPricingData()
@@ -402,8 +422,8 @@ const SelectPresentationType: React.FC = () => {
           <div
             className="absolute inset-0 bg-gray-900 bg-opacity-50"
             onClick={() => {
-              setIsModalOpen(false); // Close the modal
-              setShowTooltip(false); // Hide the tooltip
+              setIsModalOpen(false) // Close the modal
+              setShowTooltip(false) // Hide the tooltip
             }}
           ></div>
 
@@ -413,8 +433,8 @@ const SelectPresentationType: React.FC = () => {
             <div
               className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
               onClick={() => {
-                setIsModalOpen(false); // Close the modal
-                setShowTooltip(false); // Hide the tooltip
+                setIsModalOpen(false) // Close the modal
+                setShowTooltip(false) // Hide the tooltip
               }}
             >
               <FaTimes className="text-[#888a8f] text-lg" />
@@ -428,34 +448,32 @@ const SelectPresentationType: React.FC = () => {
                 Generate Presentation
               </button>
               <button
-  onClick={() => setShowTooltip((prev) => !prev)} // Toggle tooltip visibility
-  className="relative bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
->
-  Refine Presentation
-  {/* Tooltip */}
-  {showTooltip && (
-    <div 
-      className="absolute bottom-full   left-1/2 transform -translate-x-1/2 bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center z-50"
-    >
-      <p className="text-sm text-gray-800 text-center">
-        Please{' '}
-        <button
-          className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-          onClick={() => setIsPricingModalOpen(true)}
-        >
-          upgrade to Pro
-        </button>{' '}
-        to access this feature.
-      </p>
-    </div>
-  )}
-</button>
+                onClick={() => setShowTooltip((prev) => !prev)} // Toggle tooltip visibility
+                className="relative bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
+              >
+                Refine Presentation
+                {/* Tooltip */}
+                {showTooltip && (
+                  <div className="absolute bottom-full   left-1/2 transform -translate-x-1/2 bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center z-50">
+                    <p className="text-sm text-gray-800 text-center">
+                      Please{' '}
+                      <button
+                        className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                        onClick={() => setIsPricingModalOpen(true)}
+                      >
+                        upgrade to Pro
+                      </button>{' '}
+                      to access this feature.
+                    </p>
+                  </div>
+                )}
+              </button>
 
               <button
                 className=" text-[#5D5F61] py-2 px-4 rounded-lg"
                 onClick={() => {
-                  setIsModalOpen(false); // Close the modal
-                  setShowTooltip(false); // Hide the tooltip
+                  setIsModalOpen(false) // Close the modal
+                  setShowTooltip(false) // Hide the tooltip
                 }}
               >
                 Cancel

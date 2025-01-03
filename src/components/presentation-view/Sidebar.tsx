@@ -52,8 +52,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [selectedOutline, outlines])
 
   const handleAddOutline = async (index: number) => {
+    console.log('Adding Outline')
+
     setNewOutlineLoading(true)
-    if (!newOutline.trim()) return
+    if (!newOutline.trim()) {
+      console.log('New outline is empty')
+      setNewOutlineLoading(false)
+      return
+    }
     const updatedOutline = { title: newOutline }
 
     try {
@@ -83,10 +89,12 @@ const Sidebar: React.FC<SidebarProps> = ({
       setInputIndex(null)
       setNewOutline('')
     } catch (error) {
+      console.error('Error adding outline:', error)
       toast.error('Error adding outline', {
         position: 'top-center',
         autoClose: 2000,
       })
+      setNewOutlineLoading(false)
     }
   }
 

@@ -30,7 +30,8 @@ import { IpInfoResponse } from '../../types/authTypes'
 import { toast } from 'react-toastify'
 import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
@@ -68,6 +69,7 @@ export default function ViewPresentation() {
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showCountdown, setShowCountdown] = useState(false)
   const featureDisabled = userPlan === 'free' ? true : false
+  const dispatch = useDispatch()
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -161,6 +163,8 @@ export default function ViewPresentation() {
       console.log('Presentation URL:', presentationUrl)
       if (presentationUrl && typeof presentationUrl === 'string') {
         console.log('REACHED HERE', presentationUrl)
+        setCountdown(0)
+        setIsExportPaid(true)
         window.open(presentationUrl, '_blank')
         console.log('Presentation opened in new tab', presentationUrl)
       } else {
@@ -175,20 +179,19 @@ export default function ViewPresentation() {
   }
 
   useEffect(() => {
-    if (countdown === null || countdown === 0) return
+    if (countdown === null || countdown === 0) {
+      if (countdown === 0) {
+        setShowCountdown(false) // Hide the modal once the countdown ends
+        console.log('Download starting...')
+      }
+      return
+    }
 
     const timer = setInterval(() => {
       setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0))
     }, 1000)
 
     return () => clearInterval(timer) // Cleanup the timer
-  }, [countdown])
-
-  useEffect(() => {
-    if (countdown === 0) {
-      setShowCountdown(false) // Hide the modal once the countdown ends
-      console.log('Download starting...')
-    }
   }, [countdown])
 
   // Function to check payment status and proceed
@@ -920,39 +923,27 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
 
-  // API CALL TO GET PRICING DATA AND EXPORT PAYMENT STATUS
+  // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
-    const getPricingData = async () => {
-      const ipInfoResponse = await fetch(
-        'https://ipinfo.io/json?token=f0e9cf876d422e'
-      )
-      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
-
-      await axios
-        .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/appscripts/razorpay/plans`,
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
           }
         )
-        .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
-            setCurrency('INR')
-          } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
-            setCurrency('USD')
-          }
-        })
+        const planName = response.data.plan.plan_name
+        dispatch(setUserPlan(planName))
+        console.log('User Plan', userPlan)
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
     }
 
-    const timer = setTimeout(() => {
-      getPricingData()
-    }, 3000) // delay
+    fetchUserPlan()
 
     const checkPaymentStatusAndProceed = async () => {
       try {
@@ -973,12 +964,13 @@ export default function ViewPresentation() {
           // Payment has already been made, run handleDownload
           setIsExportPaid(true)
         } else if (res && res.data.paymentStatus === 0) {
-          const paymentButton = document.getElementById('payment-button')
-          if (paymentButton) {
-            paymentButton.click()
-          } else {
-            console.error('Payment button not found')
-          }
+          // const paymentButton = document.getElementById('payment-button')
+          // if (paymentButton) {
+          //   paymentButton.click()
+          // } else {
+          //   console.error('Payment button not found')
+          // }
+          setIsExportPaid(false)
         } else {
           alert('Unable to determine payment status.')
         }
@@ -997,9 +989,36 @@ export default function ViewPresentation() {
       setIsExportPaid(true)
     }
 
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer)
-  }, [authToken])
+    const getPricingData = async () => {
+      const ipInfoResponse = await fetch(
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
+      )
+      const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
+
+      await axios
+        .get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/appscripts/razorpay/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (ipInfoData.country === 'IN' || 'India') {
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
+          } else {
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('USD')
+          }
+        })
+    }
+
+    getPricingData()
+  }, [documentID, authToken, dispatch, orgId, userPlan])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100

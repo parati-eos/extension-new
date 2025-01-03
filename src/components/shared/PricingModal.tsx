@@ -64,7 +64,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   )
   const navigate = useNavigate()
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  // const userPlan = sessionStorage.getItem('userPlan')
   const plans = [
     {
       name: 'FREE',
@@ -171,7 +170,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         },
 
         {
-          text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
+          text: `${
+            currency === 'In' || 'IN' || 'India' || 'INR' || 'Inr'
+              ? '₹499'
+              : '$9'
+          } Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
@@ -744,12 +747,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
                 <span className="font-medium  text-black">
-                  {currency === 'IN' || 'India' ? '₹499' : '$9'} Export
-                  {currency === 'IN' || ''}
+                  {currency === 'In' || 'IN' || 'India' || 'INR' || 'Inr'
+                    ? '₹499'
+                    : '$9'}{' '}
+                  Export
                 </span>
               </li>
             </ul>
-            <div className="px-4 py-2 mb-14  ">
+            <div className="px-4 py-2 mb-14">
               <button
                 onClick={handleUpgrade}
                 className={`py-2 px-4 w-full mt-4 rounded-lg border ${

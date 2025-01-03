@@ -9,9 +9,7 @@ import {
   FaTimes,
   FaEdit,
   FaShareAlt,
-  FaFilePdf,
   FaGoogleDrive,
-  FaTrashAlt,
 } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { PricingModal } from '../shared/PricingModal'
@@ -20,6 +18,8 @@ import { Plan } from '../../types/pricingTypes'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import PaymentGateway from '../payment/PaymentGateway'
+import { useDispatch } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 function getSheetIdFromUrl(url: string) {
   const match = url.match(/\/d\/(.+?)\/|\/open\?id=(.+?)(?:&|$)/)
@@ -46,13 +46,13 @@ const HistoryContainer: React.FC = () => {
   const navigate = useNavigate()
   const userPlan = useSelector((state: any) => state.user.userPlan)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  // const userPlan = sessionStorage.getItem('userPlan')
   const [pricingModalHeading, setPricingModalHeading] = useState('')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [documentID, setDocumentID] = useState<string | null>(null)
+  const dispatch = useDispatch()
+
   // Handle Download Button Click
   const handleDownload = async () => {
     try {
@@ -324,16 +324,35 @@ const HistoryContainer: React.FC = () => {
         )
         .then((response) => {
           if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('INR')
           } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('USD')
           }
         })
     }
+
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const planName = response.data.plan.plan_name
+        dispatch(setUserPlan(planName))
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
+    }
+
+    fetchUserPlan()
 
     const timer = setTimeout(() => {
       getPricingData()
@@ -486,12 +505,11 @@ const HistoryContainer: React.FC = () => {
                     className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8"
                   >
                     {/* Thumbnail Container */}
+                    {/* Invisible clickable overlay */}
                     <div
                       className="relative w-[8rem] h-[6rem]"
                       onClick={() => handleEdit(item.FormID, item.pptName)}
                     >
-                      {/* Invisible clickable overlay */}
-                      {/* <div className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"></div> */}
                       {/* Embedded Google Slides iframe */}
                       <iframe
                         src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
