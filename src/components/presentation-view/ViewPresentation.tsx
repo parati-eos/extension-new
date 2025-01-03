@@ -1218,7 +1218,9 @@ export default function ViewPresentation() {
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
                 isLoading={isDocumentIDLoading}
-                isDisabled={featureDisabled}
+                // isDisabled={featureDisabled}
+                userPlan={userPlan}
+              
               />
             )}
           </div>

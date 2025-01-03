@@ -1,14 +1,16 @@
-import React from 'react'
-import Landingpageimage from '../../assets/tailwind.config.png'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import LandingpageImage from '../../assets/tailwind.config.png';
+import { useNavigate } from 'react-router-dom';
 
 const Heading: React.FC = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeModal = () => {
+    setIsModalOpen(false); // Ensure this function correctly updates the state
+  };
 
   return (
-    <div className="w-full h-full text-center bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]">
-  
-    
+    <div className="w-full h-full text-center bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa] relative">
       {/* Header Section */}
       <div className="relative flex flex-col items-center justify-start pt-32 mb-14 md:mb-20">
         <h1 className="hidden md:block text-4xl font-bold text-gray-900 z-10">
@@ -39,7 +41,10 @@ const Heading: React.FC = () => {
           >
             Get Started for Free
           </button>
-          <button className="px-11 py-3 font-semibold text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 active:scale-95 active:bg-blue-100 transition transform duration-300">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-11 py-3 font-semibold text-[#091220] border border-[#5D5F61] rounded-md hover:bg-blue-50 active:scale-95 active:bg-blue-100 transition transform duration-300"
+          >
             Watch Demo
           </button>
         </div>
@@ -59,7 +64,7 @@ const Heading: React.FC = () => {
         />
         <div className="relative max-w-6xl mx-auto">
           <img
-            src={Landingpageimage}
+            src={LandingpageImage}
             alt="Zynth Slide Example"
             className="w-full object-cover"
             style={{
@@ -68,6 +73,27 @@ const Heading: React.FC = () => {
           />
         </div>
       </div>
+
+        {/* Modal */}
+        {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-lg w-[90%] md:w-[60%] lg:w-[50%] h-[40%] lg:h-[90%] relative flex items-center justify-center">
+            <button
+              onClick={closeModal} // Close modal function
+              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl font-bold"
+            >
+              &times;
+            </button>
+            <video controls className="w-full h-full rounded-md object-contain">
+              <source
+                src="https://d2zu6flr7wd65l.cloudfront.net/uploads/New+Zynth+Product+Demo+Video+01.mp4"
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
