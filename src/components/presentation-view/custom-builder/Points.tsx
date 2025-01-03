@@ -60,7 +60,7 @@ export default function Points({
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/points`,
         {
-          type: 'points',
+          type: 'Points',
           title: heading,
           documentID: documentID,
           data: {

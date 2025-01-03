@@ -86,7 +86,7 @@ export default function Images({
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
         {
-          type: 'images',
+          type: 'Images',
           title: heading,
           documentID: documentID,
           data: {

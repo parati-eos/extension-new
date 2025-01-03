@@ -67,12 +67,12 @@ const Navbar = () => {
         )
         .then((response) => {
           if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('INR')
           } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('USD')
           }
         })

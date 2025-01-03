@@ -30,7 +30,8 @@ import { IpInfoResponse } from '../../types/authTypes'
 import { toast } from 'react-toastify'
 import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams()
@@ -64,7 +65,11 @@ export default function ViewPresentation() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides)
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex)
+  const [isExportPaid, setIsExportPaid] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
+  const [showCountdown, setShowCountdown] = useState(false)
   const featureDisabled = userPlan === 'free' ? true : false
+  const dispatch = useDispatch()
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -74,6 +79,8 @@ export default function ViewPresentation() {
 
   // Handle Download Button Click
   const handleDownload = async () => {
+    setShowCountdown(true)
+    setCountdown(8)
     try {
       const formId = documentID
       if (!formId) {
@@ -83,13 +90,14 @@ export default function ViewPresentation() {
       // 1. First, update the payment status
       const updatePaymentStatus = async () => {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/appscript/updatePaymentStatus`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
           {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
             },
-            body: JSON.stringify({ FormID: formId, paymentStatus: 1 }),
+            body: JSON.stringify({ paymentStatus: 1 }),
           }
         )
 
@@ -105,18 +113,6 @@ export default function ViewPresentation() {
 
       // 2. Then, call the additional API to get presentationID
       const callAdditionalApi = async () => {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const result = await response.json()
-        console.log('Additional API response:', result)
-
-        const presentationID = result.PresentationID // Extract PresentationID from response
-
         if (presentationID) {
           // Call the second API with the extracted presentationID
           const secondApiResponse = await fetch(
@@ -143,9 +139,19 @@ export default function ViewPresentation() {
       await callAdditionalApi()
 
       // 3. Finally, call the original slides URL API
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
-      )
+      // const response = await fetch(
+      //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
+      // )
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`
+      console.log('Request URL:', url)
+
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -153,13 +159,17 @@ export default function ViewPresentation() {
       const result = await response.json()
       console.log('Result:', result)
 
-      const url = result.PresentationURL
-      console.log('URL:', url)
-
-      if (!url || typeof url !== 'string') {
+      const presentationUrl = result.data.PresentationURL
+      console.log('Presentation URL:', presentationUrl)
+      if (presentationUrl && typeof presentationUrl === 'string') {
+        console.log('REACHED HERE', presentationUrl)
+        setCountdown(0)
+        setIsExportPaid(true)
+        window.open(presentationUrl, '_blank')
+        console.log('Presentation opened in new tab', presentationUrl)
+      } else {
         throw new Error('Invalid URL in response')
       }
-      window.open(url, '_blank')
     } catch (error) {
       console.error('Error exporting presentation:', error)
       alert(
@@ -168,38 +178,55 @@ export default function ViewPresentation() {
     }
   }
 
+  useEffect(() => {
+    if (countdown === null || countdown === 0) {
+      if (countdown === 0) {
+        setShowCountdown(false) // Hide the modal once the countdown ends
+        console.log('Download starting...')
+      }
+      return
+    }
+
+    const timer = setInterval(() => {
+      setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(timer) // Cleanup the timer
+  }, [countdown])
+
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
-    // try {
-    //   const response = await fetch(
-    //     `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${documentID}`
-    //   )
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
 
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! Status: ${response.status}`)
-    //   }
+      const res = await response.json()
+      console.log('API response data:', res) // Debugging line
 
-    //   const data = await response.json()
-    //   console.log('API response data:', data) // Debugging line
-
-    //   if (data && data.paymentStatus === 1) {
-    //     // Payment has already been made, run handleDownload
-    //     handleDownload()
-    //   } else if (data && data.paymentStatus === 0) {
-    // Payment is not made, open the payment gateway
-    const paymentButton = document.getElementById('payment-button')
-    if (paymentButton) {
-      paymentButton.click()
-    } else {
-      console.error('Payment button not found')
+      if (res && res.data.paymentStatus === 1) {
+        // Payment has already been made, run handleDownload
+        handleDownload()
+      } else if (res && res.data.paymentStatus === 0) {
+        const paymentButton = document.getElementById('payment-button')
+        if (paymentButton) {
+          paymentButton.click()
+        } else {
+          console.error('Payment button not found')
+        }
+      } else {
+        alert('Unable to determine payment status.')
+      }
+    } catch (error) {
+      console.error('Error checking payment status:', error)
+      alert('Error checking payment status. Please try again.')
     }
-    //   } else {
-    //     alert('Unable to determine payment status.')
-    //   }
-    // } catch (error) {
-    //   console.error('Error checking payment status:', error)
-    //   alert('Error checking payment status. Please try again.')
-    // }
   }
 
   // Handle Delete Button Click
@@ -219,15 +246,25 @@ export default function ViewPresentation() {
   // Handle Finalize Button Click
   const handleFinalize = () => {
     setFinalized(true)
-    axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
+    axios
+      .patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
+        {
+          userID: sessionStorage.getItem('userEmail'),
+          FormID: documentID,
+          PresentationID: presentationID,
+          SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
+          GenSlideID: slidesId[currentSlideIndex],
         },
-      }
-    )
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response)
+      })
   }
 
   // Handle Add New Slide Version Button
@@ -295,7 +332,7 @@ export default function ViewPresentation() {
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
           {
-            type: outlineType,
+            type: outlineType.charAt(0).toUpperCase() + outlineType.slice(1),
             title: currentOutline.replace(/^\d+\.\s*/, ''),
             documentID: documentID,
             outlineID: currentOutlineID,
@@ -886,8 +923,72 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutline])
 
-  // API CALL TO GET PRICING DATA FOR MODAL
+  // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const planName = response.data.plan.plan_name
+        dispatch(setUserPlan(planName))
+        console.log('User Plan', userPlan)
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
+    }
+
+    fetchUserPlan()
+
+    const checkPaymentStatusAndProceed = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const res = await response.json()
+        console.log('API response data:', res) // Debugging line
+
+        if (res && res.data.paymentStatus === 1) {
+          // Payment has already been made, run handleDownload
+          setIsExportPaid(true)
+        } else if (res && res.data.paymentStatus === 0) {
+          // const paymentButton = document.getElementById('payment-button')
+          // if (paymentButton) {
+          //   paymentButton.click()
+          // } else {
+          //   console.error('Payment button not found')
+          // }
+          setIsExportPaid(false)
+        } else {
+          alert('Unable to determine payment status.')
+        }
+      } catch (error) {
+        console.error('Error checking payment status:', error)
+        alert('Error checking payment status. Please try again.')
+      }
+    }
+
+    // Call the payment status check
+    if (documentID) {
+      checkPaymentStatusAndProceed()
+    }
+
+    if (userPlan !== 'free') {
+      setIsExportPaid(true)
+    }
+
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
         'https://ipinfo.io/json?token=f0e9cf876d422e'
@@ -904,25 +1005,22 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
-            setCurrency('INR')
-          } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
+          if (ipInfoData.country !== 'IN' || 'India') {
+            console.log('Reached If')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('USD')
+          } else {
+            console.log('Reached Else')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
           }
         })
     }
 
-    const timer = setTimeout(() => {
-      getPricingData()
-    }, 3000) // delay
-
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer)
-  }, [authToken])
+    getPricingData()
+  }, [documentID, authToken, dispatch, orgId, userPlan])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
@@ -930,6 +1028,18 @@ export default function ViewPresentation() {
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
+      {/* Export Countdown */}
+      {showCountdown && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>
+              Payment has been done! Your download will start in {countdown}{' '}
+              seconds...
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
@@ -957,6 +1067,7 @@ export default function ViewPresentation() {
         productinfo="Presentation Export"
         onSuccess={handleDownload}
         formId={documentID!}
+        authToken={authToken!}
       />
       {/*LARGE SCREEN: HEADING*/}
       <DesktopHeading
@@ -966,6 +1077,7 @@ export default function ViewPresentation() {
         isLoading={isDocumentIDLoading}
         userPlan={userPlan!}
         openPricingModal={() => setIsPricingModalOpen(true)}
+        exportPaid={isExportPaid}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -1071,6 +1183,7 @@ export default function ViewPresentation() {
           isLoading={isDocumentIDLoading}
           userPlan={userPlan!}
           openPricingModal={() => setIsPricingModalOpen(true)}
+          exportPaid={isExportPaid}
         />
 
         {/* MOBILE: OUTLINE Modal */}

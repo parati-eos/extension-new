@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Modal.css' // Import custom modal CSS
+// Declare Razorpay on the window object
+declare global {
+  interface Window {
+    Razorpay: any
+  }
+}
 
-const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
+interface PaymentGatewayProps {
+  productinfo: any
+  onSuccess: (result: any) => void
+  formId: string
+  authToken: string
+}
+
+const PaymentGateway: React.FC<PaymentGatewayProps> = ({
+  productinfo,
+  onSuccess,
+  formId,
+  authToken,
+}) => {
   const [paymentData, setPaymentData] = useState({
     amount: 9, // Default amount for USD
     productinfo,
@@ -12,7 +30,7 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
     currency: 'USD',
   })
 
-  const [countdown, setCountdown] = useState(null) // State to hold countdown value
+  const [countdown, setCountdown] = useState<number | null>(null) // State to hold countdown value
   const [showModal, setShowModal] = useState(false) // State to control modal visibility
   const navigate = useNavigate()
 
@@ -27,7 +45,7 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
         }
         const data = await response.json()
         const currency = data.country === 'IN' ? 'INR' : 'USD'
-        const amount = currency === 'INR' ? 499 : 9
+        const amount = currency === 'INR' ? 1 : 9
 
         setPaymentData((prevData) => ({
           ...prevData,
@@ -47,16 +65,16 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
     detectCurrency()
   }, [])
 
-  // const verifyCoupon = async (organizationId) => {
+  // const updateOrderId = async (orderId:string) => {
   //   try {
   //     const response = await fetch(
-  //       'https://zynth.ai/api/razorpay/verify-coupon',
+  //       `https://zynth.ai/api/slides/update-order/${formId}`,
   //       {
-  //         method: 'POST',
+  //         method: 'PATCH',
   //         headers: {
   //           'Content-Type': 'application/json',
   //         },
-  //         body: JSON.stringify({ code: organizationId }),
+  //         body: JSON.stringify({ order_id: orderId }),
   //       }
   //     )
 
@@ -65,36 +83,11 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
   //     }
 
   //     const result = await response.json()
-  //     return result // Return the result of the coupon verification
+  //     console.log('Order ID updated successfully:', result)
   //   } catch (error) {
-  //     console.error('Error verifying coupon:', error)
-  //     return null // Return null in case of an error
+  //     console.error('Error updating order ID:', error)
   //   }
   // }
-
-  const updateOrderId = async (orderId) => {
-    try {
-      const response = await fetch(
-        `https://zynth.ai/api/slides/update-order/${formId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ order_id: orderId }),
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const result = await response.json()
-      console.log('Order ID updated successfully:', result)
-    } catch (error) {
-      console.error('Error updating order ID:', error)
-    }
-  }
 
   const handlePayment = async () => {
     const organizationId = sessionStorage.getItem('orgId') // Fetch organization ID from local storage
@@ -102,12 +95,6 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
 
     let finalAmount = paymentData.amount // Start with the original amount
 
-    // if (couponResult && couponResult.message === 'Coupon is valid') {
-    //   finalAmount *= couponResult.discountAmount // Apply the discount
-    // } else {
-    //   //alert('Invalid coupon code or coupon not found. Proceeding with original amount.'); // Alert the user if the coupon is invalid
-    //   finalAmount = paymentData.amount // Set finalAmount to the original amount if coupon is invalid
-    // }
     finalAmount = Math.round(finalAmount)
     try {
       console.log('Sending payment data to generate Razorpay order:', {
@@ -116,15 +103,47 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
       })
 
       const response = await fetch(
-        'https://zynth.ai/api/razorpay/create-order',
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
+        // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-magiccoupon`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify({
             amount: finalAmount,
             currency: paymentData.currency,
+            // amount: finalAmount, // in paise.
+            // currency: paymentData.currency,
+            // receipt: 'receipt#1',
+            // line_items_total: finalAmount, // in paise.
+            // line_items: [
+            //   {
+            //     sku: '1g234',
+            //     variant_id: '12r34',
+            //     other_product_codes: {
+            //       upc: '12r34',
+            //       ean: '123r4',
+            //       unspsc: '123s4',
+            //     },
+            //     price: finalAmount, // in paise.
+            //     offer_price: finalAmount, // in paise.
+            //     tax_amount: 0,
+            //     quantity: 1,
+            //     name: 'TEST',
+            //     description: 'TEST',
+            //     weight: 1700,
+            //     dimensions: {
+            //       length: 1700,
+            //       width: 1700,
+            //       height: 1700,
+            //     },
+            //     image_url: 'url',
+            //     product_url: 'url',
+            //     notes: {},
+            //   },
+            // ],
           }),
         }
       )
@@ -137,7 +156,7 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
       const { id: order_id, amount, currency } = result
 
       // Update the order ID
-      await updateOrderId(order_id)
+      //await updateOrderId(order_id)
 
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
@@ -146,17 +165,18 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
         name: 'Zynth',
         description: 'Purchase of presentation',
         order_id,
-        handler: async function (response) {
+        handler: async function (response: any) {
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
             response
 
           try {
             const verifyResponse = await fetch(
-              'https://zynth.ai/api/razorpay/verify-payment',
+              `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/verify-payment`,
               {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
+                  Authorization: `Bearer ${authToken}`,
                 },
                 body: JSON.stringify({
                   razorpay_payment_id,
@@ -202,7 +222,7 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
       console.error('Error processing payment:', error)
       alert(
         'SORRY!\nWe were unable to process your payment\nError Reason: ' +
-          error.message
+          (error as Error).message
       )
     }
   }
@@ -211,7 +231,7 @@ const PaymentGateway = ({ productinfo, onSuccess, formId }) => {
     if (countdown === null || countdown === 0) return
 
     const timer = setInterval(() => {
-      setCountdown((prevCount) => prevCount - 1)
+      setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0))
     }, 1000)
 
     return () => clearInterval(timer) // Cleanup the timer

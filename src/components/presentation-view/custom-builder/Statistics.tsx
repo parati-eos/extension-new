@@ -80,7 +80,7 @@ export default function Statistics({
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/statistics`,
         {
-          type: 'statistics',
+          type: 'Statistics',
           title: heading,
           documentID: documentID,
           data: {

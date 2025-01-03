@@ -64,7 +64,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   )
   const navigate = useNavigate()
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  // const userPlan = sessionStorage.getItem('userPlan')
   const plans = [
     {
       name: 'FREE',
@@ -171,7 +170,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         },
 
         {
-          text: `${currency === 'IN' || 'India' ? '₹499' : '$9'} Export`,
+          text: `${currency === 'INR' ? '₹499' : '$9'} Export`,
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4',
@@ -314,8 +313,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const handleUpgrade = async () => {
     setIsLoading(true)
     const planID = billingCycle === 'annual' ? yearlyPlanId : monthlyPlanId
-    const currentTime = Date.now() + 15 * 1000
-    const unixTime = Math.floor(currentTime / 1000)
+    const currentTime = Date.now()
+    const startAtTime = currentTime + 10 * 60 * 1000 // 10 minutes in milliseconds
+    const startAtUnix = Math.floor(startAtTime / 1000) // Convert to Unix timestamp in seconds
+
+    // Set expire_by to 1 hour (3600 seconds) after start_at
+    const expireByTime = startAtTime + 60 * 60 * 1000 // 1 hour in milliseconds
+    const expireByUnix = Math.floor(expireByTime / 1000) // Convert to Unix timestamp in seconds
 
     if (userPlan === 'free') {
       try {
@@ -325,7 +329,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             plan_id: planID,
             customer_id: orgId,
             total_count: 12,
-            start_at: unixTime,
+            start_at: startAtUnix,
+            expire_by: expireByUnix,
             quantity: 1,
             notes: {
               note_key: 'Zynth Presentation',
@@ -350,6 +355,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       }
     }
   }
+
+  console.log('Currency', currency)
 
   return (
     <div
@@ -738,12 +745,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
                 <span className="font-medium  text-black">
-                  {currency === 'IN' || 'India' ? '₹499' : '$9'} Export
-                  {currency === 'IN' || ''}
+                  {currency === 'INR' ? '₹499' : '$9'} Export
                 </span>
               </li>
             </ul>
-            <div className="px-4 py-2 mb-14  ">
+            <div className="px-4 py-2 mb-14">
               <button
                 onClick={handleUpgrade}
                 className={`py-2 px-4 w-full mt-4 rounded-lg border ${
