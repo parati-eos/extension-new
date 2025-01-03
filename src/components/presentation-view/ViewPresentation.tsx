@@ -1218,9 +1218,14 @@ export default function ViewPresentation() {
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
                 isLoading={isDocumentIDLoading}
-                // isDisabled={featureDisabled}
                 userPlan={userPlan}
-              
+                monthlyPlanAmount={monthlyPlanAmount}
+                yearlyPlanAmount={yearlyPlanAmount}
+                currency={currency}
+                yearlyPlanId={yearlyPlanId!}
+                monthlyPlanId={monthlyPlanId!}
+                orgId={orgId!}
+                authToken={authToken!}
               />
             )}
           </div>
