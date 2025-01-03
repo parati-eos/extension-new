@@ -45,7 +45,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
 
   const handleMouseEnter = () => {
-    if (customBuilderDisabled) setIsDialogVisible(true)
+    if (userPlan === 'free') setIsDialogVisible(true)
   }
 
   const handleMouseLeave = () => {
@@ -94,7 +94,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
             </div>
             <div
               className={`relative flex flex-col items-center rounded-md border border-gray-300 ${
-                customBuilderDisabled ? 'bg-gray-200' : ''
+                userPlan === 'free' ? 'bg-gray-200' : ''
               } p-4 flex-shrink-0 w-[33%]`}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -102,7 +102,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
               <button
                 className="flex flex-col items-center justify-center "
                 onClick={handleCustomBuilderClick}
-                disabled={customBuilderDisabled}
+                disabled={userPlan === 'free'}
               >
                 <img
                   src={CustomBuilderIcon}
@@ -167,7 +167,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const handleMouseEnter = () => {
-    if (customBuilderDisabled) setIsDialogVisible(true)
+    if (userPlan === 'free') setIsDialogVisible(true)
   }
 
   const handleMouseLeave = () => {
@@ -234,7 +234,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
             </div>
             <div
               className={`relative flex flex-col items-center border border-gray-300 ${
-                customBuilderDisabled ? 'bg-gray-200' : ''
+                userPlan === 'free' ? 'bg-gray-200' : ''
               } rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0`}
               style={{ width: '30%', height: '12rem' }}
               onMouseEnter={handleMouseEnter}
@@ -243,7 +243,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               <button
                 className="flex flex-col items-center justify-center w-full h-full"
                 onClick={handleCustomBuilderClick}
-                disabled={customBuilderDisabled}
+                disabled={userPlan === 'free'}
               >
                 <img
                   src={CustomBuilderIcon}

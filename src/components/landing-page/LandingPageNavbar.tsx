@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 
 const LandingPageNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isNavbarVisible, setIsNavbarVisible] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation(); // Track the current path
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,6 +61,44 @@ const LandingPageNavbar: React.FC = () => {
       clearTimeout(inactivityTimer) // Clean up timer when component unmounts
     }
   }, [isScrolled])
+  const isActive = (path: string) => location.pathname === path;
+
+  const handleNavigation = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    targetId: string
+  ) => {
+    e.preventDefault()
+    if (
+      window.location.pathname === '/pricing' ||
+      window.location.pathname === '/blog'
+    ) {
+      navigate('/')
+      setTimeout(() => {
+        document
+          .getElementById(targetId)
+          ?.scrollIntoView({ behavior: 'smooth' })
+      }, 100) // Adjust the timeout as needed
+    } else {
+      if (targetId === 'how-it-works') {
+        document
+          .getElementById(targetId)
+          ?.scrollIntoView({ behavior: 'smooth' })
+      } else {
+        const element = document.getElementById(targetId)
+        if (element) {
+          const offset = -20 // Adjust this value to control how much higher the scroll should stop
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY
+          const offsetPosition = elementPosition + offset
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          })
+        }
+      }
+    }
+  }
 
   return (
     <nav
@@ -107,38 +146,22 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#how-it-works"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-            onClick={(e) => {
-              e.preventDefault()
-              document
-                .getElementById('how-it-works')
-                ?.scrollIntoView({ behavior: 'smooth' })
-            }}
+            onClick={(e) => handleNavigation(e, 'how-it-works')}
           >
             How Zynth Works
           </a>
           <a
             href="#sample-presentation"
             className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-            onClick={(e) => {
-              e.preventDefault();
-              const element = document.getElementById('sample-presentation');
-              if (element) {
-                const offset = -20; // Adjust this value to control how much higher the scroll should stop
-                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                const offsetPosition = elementPosition + offset;
-            
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth',
-                });
-              }
-            }}
+            onClick={(e) => handleNavigation(e, 'sample-presentation')}
           >
             Sample Presentation
           </a>
           <a
             href="#pricing"
-            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            className={`${
+              isActive('/pricing') ? 'text-blue-600' : 'text-[#5D5F61]'
+            } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => {
               e.preventDefault()
               window.open('/pricing', '_blank')
@@ -148,7 +171,9 @@ const LandingPageNavbar: React.FC = () => {
           </a>
           <a
             href="#blog"
-            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            className={`${
+              isActive('/blog') ? 'text-blue-600' : 'text-[#5D5F61]'
+            } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => {
               e.preventDefault()
               window.open('/blog', '_blank')
@@ -156,7 +181,6 @@ const LandingPageNavbar: React.FC = () => {
           >
             Blog
           </a>
-          
         </div>
 
         {/* Right Buttons */}
@@ -182,24 +206,28 @@ const LandingPageNavbar: React.FC = () => {
           <ul className="flex flex-col items-center space-y-2 p-4">
             <li>
               <a
+                onClick={(e) => handleNavigation(e, 'how-it-works')}
                 href="#how-it-works"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
-                  How Zynth Works
+                How Zynth Works
               </a>
             </li>
             <li>
               <a
+                onClick={(e) => handleNavigation(e, 'sample-presentation')}
                 href="#sample-presentation"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
-                  Sample Presentation
+                Sample Presentation
               </a>
             </li>
             <li>
               <a
                  onClick={() => navigate('/pricing')}
-                className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+                 className={`${
+                  isActive('/pricing') ? 'text-blue-600' : 'text-[#5D5F61]'
+                } hover:text-blue-600 transition-colors duration-200`}
               >
                 Pricing
               </a>
@@ -207,7 +235,9 @@ const LandingPageNavbar: React.FC = () => {
             <li>
               <a
                 onClick={() => navigate('/blog')}
-                className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+                className={`${
+                  isActive('/blog') ? 'text-blue-600' : 'text-[#5D5F61]'
+                } hover:text-blue-600 transition-colors duration-200`}
               >
                 Blog
               </a>
@@ -223,7 +253,6 @@ const LandingPageNavbar: React.FC = () => {
                 Login
               </button>
             </li>
-         
           </ul>
         </div>
       )}

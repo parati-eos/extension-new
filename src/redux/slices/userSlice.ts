@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  userPlan: 'free',
+  userPlan: '',
 }
 
 export const userSlice = createSlice({

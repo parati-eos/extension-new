@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   FaFilter,
   FaSort,
@@ -9,9 +9,7 @@ import {
   FaTimes,
   FaEdit,
   FaShareAlt,
-  FaFilePdf,
   FaGoogleDrive,
-  FaTrashAlt,
 } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { PricingModal } from '../shared/PricingModal'
@@ -20,6 +18,8 @@ import { Plan } from '../../types/pricingTypes'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import PaymentGateway from '../payment/PaymentGateway'
+import { useDispatch } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 function getSheetIdFromUrl(url: string) {
   const match = url.match(/\/d\/(.+?)\/|\/open\?id=(.+?)(?:&|$)/)
@@ -29,6 +29,8 @@ function getSheetIdFromUrl(url: string) {
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isDialogVisible, setIsDialogVisible] = useState(false)
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false) // State for sort modal
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
@@ -43,12 +45,13 @@ const HistoryContainer: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const navigate = useNavigate()
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  // const userPlan = sessionStorage.getItem('userPlan')
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const [pricingModalHeading, setPricingModalHeading] = useState('')
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [documentID, setDocumentID] = useState<string | null>(null)
+  const dispatch = useDispatch()
 
   // Handle Download Button Click
   const handleDownload = async () => {
@@ -185,26 +188,10 @@ const HistoryContainer: React.FC = () => {
     currentPage * 10
   )
 
-  const handleShare = (documentID: string) => {
-    const uniqueShareableUrl = `/share?formId=${documentID}`
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: 'Share Presentation',
-          text: 'Check out this presentation',
-          url: uniqueShareableUrl,
-        })
-        .then(() => console.log('Shared successfully'))
-        .catch((error) => console.error('Share failed: ', error))
-    } else if (navigator.clipboard && navigator.platform.includes('Mac')) {
-      navigator.clipboard
-        .writeText(uniqueShareableUrl)
-        .then(() => alert('URL copied to clipboard'))
-        .catch((error) => console.error('Copy failed: ', error))
-    } else {
-      alert('Sharing is not supported on this device/browser.')
-    }
+ // Handle Share Button Click
+  const handleShare = async () => {
+    const url = `/share?formId=${documentID}`
+    window.open(url, '_blank') // Opens the URL in a new tab
   }
 
   const handleEdit = (documentID: string, name: string) => {
@@ -215,9 +202,20 @@ const HistoryContainer: React.FC = () => {
 
   // Handle clicks and scroll to close dropdown
   useEffect(() => {
-    const handleOutsideClick = () =>
-      activeDropdown !== null && setActiveDropdown(null)
+    const handleOutsideClick = (e: MouseEvent) => {
+      // Close the dropdown if the click is outside of both the dropdown and tooltip
+      if (
+        activeDropdown !== null &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setActiveDropdown(null) // Close dropdown if click is outside both
+        setIsTooltipVisible(false) // Hide tooltip when dropdown closes
+      }
+    }
+
     const handleScroll = () => setActiveDropdown(null)
+    setIsTooltipVisible(false) // Hide tooltip on scroll
 
     document.addEventListener('click', handleOutsideClick)
     window.addEventListener('scroll', handleScroll)
@@ -226,7 +224,7 @@ const HistoryContainer: React.FC = () => {
       document.removeEventListener('click', handleOutsideClick)
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [activeDropdown])
+  }, [activeDropdown]) // Effect runs when activeDropdown changes
 
   // API CALL TO GET HISTORY DATA
   useEffect(() => {
@@ -291,7 +289,7 @@ const HistoryContainer: React.FC = () => {
     setFilteredData(updatedData)
   }, [selectedFilter, selectedSort, historyData])
 
-  // API CALL TO GET PRICING DATA FOR MODAL
+  // API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
   useEffect(() => {
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
@@ -301,7 +299,7 @@ const HistoryContainer: React.FC = () => {
 
       await axios
         .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/appscripts/razorpay/plans`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -309,34 +307,56 @@ const HistoryContainer: React.FC = () => {
           }
         )
         .then((response) => {
-          if (ipInfoData.country === 'IN' || 'India') {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
-            setCurrency('INR')
-          } else {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
+          const country = ipInfoData!.country!
+          console.log('Country:', country)
+
+          if (country !== 'IN' && country !== 'India' && country !== 'In') {
+            console.log('Reached If')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('USD')
+          } else if (
+            country === 'IN' ||
+            country === 'India' ||
+            country === 'In'
+          ) {
+            console.log('Reached Else')
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
+            setCurrency('INR')
           }
         })
     }
 
-    const timer = setTimeout(() => {
-      getPricingData()
-    }, 3000) // delay
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const planName = response.data.plan.plan_name
+        dispatch(setUserPlan(planName))
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
+    }
 
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer)
+    fetchUserPlan()
+    getPricingData()
   }, [])
-
-  useEffect(() => {
-    // Reset the tooltip when a different dropdown is opened
-    setIsDialogVisible(false)
-  }, [activeDropdown])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
+
+  // Reset the tooltip when a different dropdown is opened
+  useEffect(() => {
+    setIsDialogVisible(false)
+  }, [activeDropdown])
 
   return (
     <>
@@ -350,7 +370,6 @@ const HistoryContainer: React.FC = () => {
           <div className="flex justify-between items-center mb-7">
             <h1 className="text-2xl font-bold text-[#091220]">History</h1>
             <div className="flex gap-4">
-              {/* Filter and Sort for Small Screens */}
               <div className="flex gap-4 lg:hidden">
                 <div
                   className="bg-white p-2 rounded-md shadow cursor-pointer"
@@ -358,10 +377,60 @@ const HistoryContainer: React.FC = () => {
                 >
                   <FaFilter className="text-[#5D5F61] text-xl" />
                 </div>
-                <div className="hidden bg-white p-2 rounded-md shadow cursor-pointer">
+                <div
+                  className="bg-white p-2 rounded-md shadow cursor-pointer"
+                  onClick={() => setIsSortModalOpen(true)}
+                >
                   <FaSort className="text-[#5D5F61] text-xl" />
                 </div>
               </div>
+
+              {/* Mobile Sort Modal */}
+              {isSortModalOpen && (
+                <div className="fixed inset-0 z-50 flex justify-center items-end lg:hidden">
+                  {/* Dimmed Background */}
+                  <div
+                    className="absolute inset-0 bg-gray-900 bg-opacity-50"
+                    onClick={() => setIsSortModalOpen(false)}
+                  ></div>
+
+                  {/* Modal Content */}
+                  <div className="relative bg-white w-full rounded-t-lg shadow-lg px-4 pb-4 pt-6 h-[30vh] overflow-y-auto scrollbar-none">
+                    {/* Close Icon */}
+                    <div
+                      className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
+                      onClick={() => setIsSortModalOpen(false)}
+                    >
+                      <FaTimes className="text-[#888a8f] text-lg" />
+                    </div>
+                    {/* Sort Options */}
+                    <div className="flex flex-col gap-4">
+                      <p
+                        className={`text-[#091220] text-lg cursor-pointer ${
+                          selectedSort === 'recent' ? 'font-semibold' : ''
+                        }`}
+                        onClick={() => {
+                          setSelectedSort('recent')
+                          setIsSortModalOpen(false)
+                        }}
+                      >
+                        Recent First
+                      </p>
+                      <p
+                        className={`text-[#091220] text-lg cursor-pointer ${
+                          selectedSort === 'oldest' ? 'font-semibold' : ''
+                        }`}
+                        onClick={() => {
+                          setSelectedSort('oldest')
+                          setIsSortModalOpen(false)
+                        }}
+                      >
+                        Oldest First
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Filter and Sort for Large Screens */}
               <div className="hidden lg:flex gap-4">
@@ -415,25 +484,31 @@ const HistoryContainer: React.FC = () => {
             </div>
           ) : (
             <div className="bg-white mt-10 lg:mt-0 shadow-sm rounded-xl mb-2">
-              {/* Mobile/Small Screen Layout */}
-              <div className="block md:hidden">
-                {presentationsToShow?.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center p-4 py-6 relative"
-                  >
-                    <iframe
-                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-                        item.PresentationURL
-                      )}/embed?rm=minimal&start=true&loop=true`}
-                      title={item.pptName}
-                      onClick={() => handleEdit(item.FormID, item.pptName)}
-                      className="w-16 h-16 object-cover hover:cursor-pointer rounded-md mr-4"
-                      sandbox="allow-same-origin allow-scripts"
-                      scrolling="no"
-                      style={{ overflow: 'hidden' }}
-                    />
-                    <div className="flex-1">
+       {/* Mobile/Small Screen Layout */}
+<div className="grid grid-cols-1 gap-4 md:hidden">
+  {presentationsToShow?.map((item, index) => (
+    <div key={index} className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8">
+    {/* Thumbnail Container */}
+<div className="relative w-[8rem] h-[6rem]">
+  {/* Invisible clickable overlay */}
+  <div
+    onClick={() => handleEdit(item.FormID, item.pptName)}
+    className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
+  ></div>
+  {/* Embedded Google Slides iframe */}
+  <iframe
+    src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+      item.PresentationURL
+    )}/embed?rm=minimal&start=false`}
+    title={item.pptName}
+    className="absolute top-0 left-0 w-full h-full object-cover"
+    style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
+  />
+</div>
+
+
+                    {/* Content Section */}
+                    <div className="flex flex-col justify-between w-full">
                       <div className="flex justify-between items-center">
                         <h2 className="text-lg font-medium text-[#091220]">
                           {item.pptName}
@@ -450,8 +525,9 @@ const HistoryContainer: React.FC = () => {
                           }}
                         />
                       </div>
-                      <div className="flex gap-1 text-sm mt-1">
-                        <div className="mr-4">
+
+                      <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+                        <div>
                           <span className="block mb-1 font-medium text-[#5D5F61]">
                             PPT Type
                           </span>
@@ -469,59 +545,98 @@ const HistoryContainer: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    {/* Dropdown */}
-                    {activeDropdown === index && (
-                      <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
-                        <button
-                          onClick={() => handleEdit(item.FormID, item.pptName)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaEdit className="text-[#5D5F61]" />
-                          <span>Edit</span>
-                        </button>
-                        <button
-                          onClick={() => handleShare(item.FormID)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaShareAlt className="text-[#5D5F61]" />
-                          <span>Share</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsPricingModalOpen(true)
-                            setPricingModalHeading('Google Slides')
-                          }}
-                          className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                            userPlan === 'free'
-                              ? 'cursor-not-allowed opacity-50'
-                              : ''
-                          }`}
-                        >
-                          <FaGoogleDrive className="text-[#5D5F61]" />
-                          <span>Google Slides</span>
-                        </button>
+
+      {/* Dropdown */}
+      {activeDropdown === index && (
+        <div 
+        
+        ref={dropdownRef}  // Attach the ref here
+        className="absolute right-0 top-[50%] transform -translate-y-1/2 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+          <button
+            onClick={() => handleEdit(item.FormID, item.pptName)}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaEdit className="text-[#5D5F61]" />
+            <span>Edit</span>
+          </button>
+          <button
+            onClick={() => handleShare()}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaShareAlt className="text-[#5D5F61]" />
+            <span>Share</span>
+          </button>
+          <div
+  className={`relative`}
+
+>
+  <button
+
+    className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+      userPlan === 'free' ? 'cursor-not-allowed opacity-50' : ''
+    }`}
+    onClick={() => {
+      // Only show the tooltip if the button is disabled
+      if (userPlan === 'free') {
+        setIsTooltipVisible(true);
+      } else {
+        handleDownload();  // Your regular function for non-free users
+      }
+    }}
+  
+  >
+    <FaGoogleDrive className="text-[#5D5F61]" />
+    <span>Google Slides</span>
+  </button>
+
+                          {/* Tooltip */}
+                          {isTooltipVisible && (
+                            <div className="absolute bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center ">
+                              <p className="text-sm text-gray-800 text-center ">
+                                Please{' '}
+                                <button
+                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                                  onClick={() => setIsPricingModalOpen(true)}
+                                >
+                                  upgrade to Pro
+                                </button>{' '}
+                                to access this feature.
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
                 ))}
               </div>
 
-              {/* Medium/Large Screen Layout */}
-              <div className="hidden min-h-full md:block">
-                {presentationsToShow?.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
-                  >
-                    {/* Thumbnail */}
-                    <iframe
-                      src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-                        item.PresentationURL
-                      )}/embed?rm=minimal&start=true&loop=true`}
-                      title={item.pptName}
-                      onClick={() => handleEdit(item.FormID, item.pptName)}
-                      className="w-[10rem] h-[6rem] rounded-xl"
-                    />
+            {/* Medium/Large Screen Layout */}
+<div className="hidden min-h-full md:block">
+  {presentationsToShow?.map((item, index) => (
+    <div
+      key={index}
+      className="grid grid-cols-[auto,1fr,1fr,1fr,auto] items-center p-4 py-6 relative gap-x-4 lg:gap-x-6"
+    >
+      {/* Thumbnail Container */}
+      <div className="relative w-[12rem] h-[7rem] overflow-hidden">
+        {/* Invisible clickable overlay */}
+        <div
+          onClick={() => handleEdit(item.FormID, item.pptName)}
+          className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
+        ></div>
+
+       {/* Embedded Google Slides iframe */}
+<iframe
+  src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+    item.PresentationURL
+  )}/embed?rm=minimal&slide=id.p&start=false`}
+  title={item.pptName}
+  className="absolute top-0 left-0 w-full h-full object-cover"
+  style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
+/>
+
+      </div>
 
                     {/* Title */}
                     <div className="text-lg font-bold pl-6 text-[#091220]">
@@ -569,66 +684,63 @@ const HistoryContainer: React.FC = () => {
                       />
                     </div>
 
-                    {/* Dropdown */}
-                    {activeDropdown === index && (
-                      <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
-                        <button
-                          onClick={() => handleEdit(item.FormID, item.pptName)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaEdit className="text-[#5D5F61]" />
-                          <span>Edit</span>
-                        </button>
-                        <button
-                          onClick={() => handleShare(item.FormID)}
-                          className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
-                        >
-                          <FaShareAlt className="text-[#5D5F61]" />
-                          <span>Share</span>
-                        </button>
-                        <div
-                          className="relative"
-                          onMouseEnter={() =>
-                            userPlan === 'free' && setIsDialogVisible(true)
-                          }
-                          onMouseLeave={() => setIsDialogVisible(false)}
-                        >
-                          <button
-                            onClick={() => {
-                              if (userPlan !== 'free') {
-                                setIsPricingModalOpen(true)
-                                setPricingModalHeading('Google Slides')
-                              }
-                            }}
-                            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                              userPlan === 'free'
-                                ? 'cursor-not-allowed opacity-50'
-                                : ''
-                            }`}
-                          >
-                            <FaGoogleDrive className="text-[#5D5F61]" />
-                            <span>Google Slides</span>
-                          </button>
-                          {isDialogVisible && userPlan === 'free' && (
-                            <div className="absolute bottom-full left-[45%] transform -translate-x-1/2  w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                              <p className="text-sm text-center text-gray-800">
-                                Please{' '}
-                                <button
-                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                                  onClick={() => setIsPricingModalOpen(true)}
-                                >
-                                  upgrade to Pro
-                                </button>{' '}
-                                plan to access this feature.
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+      {/* Dropdown */}
+      {activeDropdown === index && (
+        <div className="absolute right-0 top-[50%] mt-2 w-40 bg-white rounded-lg shadow-lg z-50 p-4">
+          <button
+            onClick={() => handleEdit(item.FormID, item.pptName)}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaEdit className="text-[#5D5F61]" />
+            <span>Edit</span>
+          </button>
+          <button
+            onClick={() => handleShare()}
+            className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
+          >
+            <FaShareAlt className="text-[#5D5F61]" />
+            <span>Share</span>
+          </button>
+          <div
+            className="relative"
+            onMouseEnter={() => userPlan === 'free' && setIsDialogVisible(true)}
+            onMouseLeave={() => setIsDialogVisible(false)}
+          >
+            <button
+              onClick={() => {
+                if (userPlan !== 'free') {
+                  setIsPricingModalOpen(true);
+                  setPricingModalHeading('Google Slides');
+                }
+              }}
+              className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
+                userPlan === 'free' ? 'cursor-not-allowed opacity-50' : ''
+              }`}
+            >
+              <FaGoogleDrive className="text-[#5D5F61]" />
+              <span>Google Slides</span>
+            </button>
+            {isDialogVisible && userPlan === 'free' && (
+              <div className="absolute bottom-full left-[45%] transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                <p className="text-sm text-center text-gray-800">
+                  Please{' '}
+                  <button
+                    className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                    onClick={() => setIsPricingModalOpen(true)}
+                  >
+                    upgrade to Pro
+                  </button>{' '}
+                  plan to access this feature.
+                </p>
               </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
             </div>
           )}
 
@@ -659,6 +771,7 @@ const HistoryContainer: React.FC = () => {
             productinfo="Presentation Export"
             onSuccess={handleDownload}
             formId={documentID!}
+            authToken={authToken!}
           />
           {/* Pagination */}
           {filteredData?.length > 10 && (

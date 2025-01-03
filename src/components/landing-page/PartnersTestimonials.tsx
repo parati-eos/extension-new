@@ -10,16 +10,16 @@ type Testimonial = {
 const PartnersTestimonials: React.FC = () => {
   const testimonials: Testimonial[] = [
     {
-      text: 'It’s great to have a tool that enables people who aren’t designers to be designers. With minimal effort, our design team can help others do their jobs really well.',
-      author: 'Gabriel MacSweeney',
+      text: "The pitch deck created through Zynth app is excellent, providing a clear and professional presentation of our ideas. The design is visually appealing and the content flows smoothly, effectively conveying our message. We're very happy with the outcome and confident it will make a strong impact",
+      author: 'Hitesh Mittal, Founder, HITECH ENVIRO ENGINEERS & CONSULTANTS PVT. LTD',
     },
     {
-      text: 'I can create my style guide with custom fonts, and edit templates quickly and way more effectively than with PowerPoint or Keynote.',
-      author: 'Stephanie McSwiney',
+      text: 'This tool is exceptionally powerful. I was struggling to navigate the process of creating a compelling pitch deck and felt uncertain about the next steps. Discovering this solution was a turning point—it provided a beautifully designed pitch deck for my company, offering clarity and confidence in presenting our vision',
+      author: 'Dr Akoisana Singh',
     },
     {
-      text: 'When we share a presentation via a link, we can see the stats on who opened it. It’s a great way of collaborating with clients.',
-      author: 'Brando Vasquez',
+      text: 'The tool delivers excellent output, creating a well-structured and visually appealing pitch deck. It was a seamless experience and a great value for my company.',
+      author: 'Anthony Crosato',
     },
   ]
 

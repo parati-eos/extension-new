@@ -90,10 +90,10 @@ function Login() {
       })
 
       const responseData = await res.json()
-      dispatch(setUserPlan(responseData.plan.plan_name))
       console.log('User Data:', responseData)
 
       if (responseData.orgid) {
+        dispatch(setUserPlan(responseData.plan.plan_name))
         sessionStorage.setItem('orgId', responseData.orgid)
         navigate('/new-presentation')
       } else if (!responseData.orgId) {

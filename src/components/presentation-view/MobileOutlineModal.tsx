@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaTimes, FaPlus, FaChevronDown } from 'react-icons/fa'
 import { Outlines } from '../../types/types'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { PricingModal } from '../shared/PricingModal'
 
 interface MobileOutlineDropdownProps {
   outlines: Outlines[]
@@ -11,7 +12,14 @@ interface MobileOutlineDropdownProps {
   documentID: string
   fetchOutlines: () => Promise<void>
   isLoading: boolean
-  isDisabled: boolean
+  userPlan: string // Plan types
+  monthlyPlanAmount: number
+  yearlyPlanAmount: number
+  currency: string
+  yearlyPlanId: string
+  monthlyPlanId: string
+  authToken: string
+  orgId: string
 }
 
 export default function MobileOutlineModal({
@@ -21,13 +29,37 @@ export default function MobileOutlineModal({
   documentID,
   fetchOutlines,
   isLoading,
-  isDisabled,
+  userPlan,
+  monthlyPlanAmount,
+  yearlyPlanAmount,
+  currency,
+  yearlyPlanId,
+  monthlyPlanId,
+  orgId,
 }: MobileOutlineDropdownProps) {
   const [isOutlinesOpen, setIsOutlinesOpen] = useState(false)
   const [isAddSlideModalOpen, setIsAddSlideModalOpen] = useState(false)
   const [newSlideTitle, setNewSlideTitle] = useState('')
   const [newSlidePosition, setNewSlidePosition] = useState('')
+  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const buttonRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsDialogVisible(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleAddSlide = async () => {
     if (newSlideTitle && newSlidePosition) {
@@ -89,13 +121,39 @@ export default function MobileOutlineModal({
               >
                 Back
               </button>
-              <button
-                onClick={() => setIsAddSlideModalOpen(true)}
-                className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline disabled:opacity-50`}
-                disabled={isDisabled}
-              >
-                <FaPlus />
-              </button>
+              {/* Add Slide Button with Tooltip */}
+              <div ref={buttonRef} className="relative inline-block">
+                <button
+                  className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline ${
+                    userPlan === 'free' ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  onClick={() => {
+                    if (userPlan === 'free') {
+                      setIsDialogVisible(!isDialogVisible)
+                    } else {
+                      setIsAddSlideModalOpen(true)
+                    }
+                  }}
+                >
+                  <FaPlus />
+                </button>
+
+                {/* Tooltip */}
+                {isDialogVisible && userPlan === 'free' && (
+                  <div className="absolute top-full transform -translate-x-[78%] w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                    <p className="text-sm text-center text-gray-800">
+                      Please{' '}
+                      <button
+                        className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                        onClick={() => setIsPricingModalOpen(true)}
+                      >
+                        upgrade to Pro
+                      </button>{' '}
+                      plan to access this feature.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -168,6 +226,20 @@ export default function MobileOutlineModal({
             </button>
           </div>
         </div>
+      )}
+      {/* Pricing Modal */}
+      {isPricingModalOpen && (
+        <PricingModal
+          closeModal={() => setIsPricingModalOpen(false)}
+          heading="Subscription Plans"
+          monthlyPlanAmount={monthlyPlanAmount}
+          yearlyPlanAmount={yearlyPlanAmount}
+          currency={currency!}
+          yearlyPlanId={yearlyPlanId!}
+          monthlyPlanId={monthlyPlanId!}
+          authToken={authToken!}
+          orgId={orgId!}
+        />
       )}
     </div>
   )

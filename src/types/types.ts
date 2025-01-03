@@ -43,6 +43,7 @@ export interface HeadingProps {
   isLoading: boolean
   userPlan: string
   openPricingModal: () => void
+  exportPaid: boolean
 }
 
 export interface Outlines {

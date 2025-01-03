@@ -72,7 +72,7 @@ export default function Cover({
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/cover`,
         {
-          type: 'cover',
+          type: 'Cover',
           title: heading,
           documentID,
           data: {
@@ -143,7 +143,7 @@ export default function Cover({
                 />
                 {isUploading && (
                   <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-500">
-                   <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                   </div>
                 )}
               </div>

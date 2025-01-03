@@ -1,6 +1,6 @@
 import { FaDownload, FaShare } from 'react-icons/fa'
 import { HeadingProps } from '../../types/types'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export const DesktopHeading: React.FC<HeadingProps> = ({
   handleShare,
@@ -9,6 +9,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
   isLoading,
   userPlan,
   openPricingModal,
+  exportPaid,
 }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -21,6 +22,10 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
 
     // Show the dialog box
     setIsDialogVisible(true)
+
+    if (exportPaid) {
+      setIsDialogVisible(false)
+    }
   }
 
   const handleMouseLeave = () => {
@@ -70,7 +75,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
           >
             <button
               onClick={handleDownload}
-              disabled={userPlan === 'free'}
+              disabled={userPlan === 'free' && !exportPaid}
               className={`text-[#5D5F61] gap-2 ${
                 userPlan !== 'free' && 'hover:text-[#3667B2]'
               } border border-[#E1E3E5] bg-white disabled:bg-gray-300 p-2 py-1 rounded-md flex items-center active:scale-95 transition transform duration-300`}
@@ -80,22 +85,22 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
             </button>
 
             {userPlan === 'free' && isDialogVisible && (
-            <div
-            className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
-            onMouseEnter={handleDialogMouseEnter}
-            onMouseLeave={handleDialogMouseLeave}
-          >
-            <p className="text-sm text-center text-gray-800">
-              Please{' '}
-              <button
-                className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                onClick={openPricingModal}
+              <div
+                className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+                onMouseEnter={handleDialogMouseEnter}
+                onMouseLeave={handleDialogMouseLeave}
               >
-                upgrade to Pro
-              </button>{' '}
-              plan to access this feature.
-            </p>
-          </div>
+                <p className="text-sm text-center text-gray-800">
+                  Please{' '}
+                  <button
+                    className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                    onClick={openPricingModal}
+                  >
+                    upgrade to Pro
+                  </button>{' '}
+                  plan to access this feature.
+                </p>
+              </div>
             )}
           </div>
         </div>
@@ -111,7 +116,33 @@ export const MobileHeading: React.FC<HeadingProps> = ({
   isLoading,
   userPlan,
   openPricingModal,
+  exportPaid,
 }) => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
+  const tooltipRef = useRef<HTMLDivElement | null>(null) // Ref for the tooltip
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if the click is outside both the button and tooltip
+      if (
+        buttonRef.current &&
+        tooltipRef.current &&
+        !buttonRef.current.contains(event.target as Node) &&
+        !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setIsTooltipVisible(false) // Hide the tooltip if click is outside
+      }
+    }
+
+    // Add event listener to document to listen for clicks outside
+    document.addEventListener('mousedown', handleClickOutside)
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
     <div className="flex items-center justify-between gap-2 mt-6 mb-5">
       <h1 className="text-2xl font-semibold flex-1 mr-4 break-words">
@@ -123,12 +154,44 @@ export const MobileHeading: React.FC<HeadingProps> = ({
         {pptName}
       </h1>
       <div className="flex gap-2">
-        <button
-          onClick={openPricingModal}
-          className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
-        >
-          <FaDownload className="h-4 w-4" />
-        </button>
+        <div className="relative">
+          {/* Button */}
+          <button
+            ref={buttonRef}
+            onClick={() => {
+              if (userPlan === 'free' && !exportPaid) {
+                setIsTooltipVisible((prev) => !prev) // Toggle tooltip visibility if user is on 'free' plan
+              } else {
+                setIsTooltipVisible(false) // Hide tooltip if user is not on 'free' plan
+                handleDownload()
+                // Call handleDownload if user is not on 'free' plan
+              }
+            }}
+            className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
+          >
+            <FaDownload className="h-4 w-4" />
+          </button>
+
+          {/* Tooltip */}
+          {isTooltipVisible && (
+            <div
+              ref={tooltipRef}
+              className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[8rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center"
+            >
+              <p className="text-sm text-gray-800 text-center">
+                Please{' '}
+                <button
+                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                  onClick={openPricingModal}
+                >
+                  upgrade to Pro
+                </button>{' '}
+                to access this feature.
+              </p>
+            </div>
+          )}
+        </div>
+
         <button
           onClick={handleShare}
           disabled={userPlan === 'free'}

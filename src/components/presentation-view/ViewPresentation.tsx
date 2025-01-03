@@ -1,3 +1,4 @@
+import { setUserPlan } from "../../redux/slices/userSlice";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import React, {
   useCallback,
@@ -36,7 +37,7 @@ import { IpInfoResponse } from "../../types/authTypes";
 import { toast } from "react-toastify";
 import Contact from "./custom-builder/Contact";
 import Cover from "./custom-builder/Cover";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface SlideState {
   isLoading: boolean;
@@ -57,33 +58,6 @@ const createInitialSlideState = (): SlideState => ({
   retryCount: 0,
   lastUpdated: Date.now(),
 });
-
-const useSlideStateManager = () => {
-  const [slideStates, setSlideStates] = useState<SlideStates>({});
-
-  const updateSlideState = useCallback(
-    (outlineTitle: string, updates: Partial<SlideState>) => {
-      setSlideStates((prev) => ({
-        ...prev,
-        [outlineTitle]: {
-          ...prev[outlineTitle],
-          ...updates,
-        },
-      }));
-    },
-    []
-  );
-
-  const initializeSlideStates = useCallback((outlines: Outline[]) => {
-    const initialStates = outlines.reduce((acc, outline) => {
-      acc[outline.title] = createInitialSlideState();
-      return acc;
-    }, {} as SlideStates);
-    setSlideStates(initialStates);
-  }, []);
-
-  return { slideStates, updateSlideState, initializeSlideStates };
-};
 
 export default function ViewPresentation() {
   const [searchParams] = useSearchParams();
@@ -119,6 +93,9 @@ export default function ViewPresentation() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [prevTotalSlides, setPrevTotalSlides] = useState(totalSlides);
   const [prevSlideIndex, setPrevSlideIndex] = useState(currentSlideIndex);
+  const [isExportPaid, setIsExportPaid] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [showCountdown, setShowCountdown] = useState(false);
   const featureDisabled = userPlan === "free" ? true : false;
   const [slidesArray, setSlidesArray] = useState<{ [key: string]: string[] }>(
     {}
@@ -126,6 +103,7 @@ export default function ViewPresentation() {
 
   const [slideStates, setSlideStates] = useState<SlideStates>({});
   console.log("Slide States:", slideStates);
+  const dispatch = useDispatch();
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -135,6 +113,8 @@ export default function ViewPresentation() {
 
   // Handle Download Button Click
   const handleDownload = async () => {
+    setShowCountdown(true);
+    setCountdown(8);
     try {
       const formId = documentID;
       if (!formId) {
@@ -144,13 +124,14 @@ export default function ViewPresentation() {
       // 1. First, update the payment status
       const updatePaymentStatus = async () => {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/appscript/updatePaymentStatus`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
           {
-            method: "POST",
+            method: "PATCH",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
             },
-            body: JSON.stringify({ FormID: formId, paymentStatus: 1 }),
+            body: JSON.stringify({ paymentStatus: 1 }),
           }
         );
 
@@ -166,18 +147,6 @@ export default function ViewPresentation() {
 
       // 2. Then, call the additional API to get presentationID
       const callAdditionalApi = async () => {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log("Additional API response:", result);
-
-        const presentationID = result.PresentationID; // Extract PresentationID from response
-
         if (presentationID) {
           // Call the second API with the extracted presentationID
           const secondApiResponse = await fetch(
@@ -204,9 +173,19 @@ export default function ViewPresentation() {
       await callAdditionalApi();
 
       // 3. Finally, call the original slides URL API
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
-      );
+      // const response = await fetch(
+      //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
+      // )
+      const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`;
+      console.log("Request URL:", url);
+
+      const response = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -214,13 +193,17 @@ export default function ViewPresentation() {
       const result = await response.json();
       console.log("Result:", result);
 
-      const url = result.PresentationURL;
-      console.log("URL:", url);
-
-      if (!url || typeof url !== "string") {
+      const presentationUrl = result.data.PresentationURL;
+      console.log("Presentation URL:", presentationUrl);
+      if (presentationUrl && typeof presentationUrl === "string") {
+        console.log("REACHED HERE", presentationUrl);
+        setCountdown(0);
+        setIsExportPaid(true);
+        window.open(presentationUrl, "_blank");
+        console.log("Presentation opened in new tab", presentationUrl);
+      } else {
         throw new Error("Invalid URL in response");
       }
-      window.open(url, "_blank");
     } catch (error) {
       console.error("Error exporting presentation:", error);
       alert(
@@ -229,38 +212,55 @@ export default function ViewPresentation() {
     }
   };
 
+  useEffect(() => {
+    if (countdown === null || countdown === 0) {
+      if (countdown === 0) {
+        setShowCountdown(false); // Hide the modal once the countdown ends
+        console.log("Download starting...");
+      }
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setCountdown((prevCount) => (prevCount !== null ? prevCount - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timer); // Cleanup the timer
+  }, [countdown]);
+
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
-    // try {
-    //   const response = await fetch(
-    //     `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${documentID}`
-    //   )
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! Status: ${response.status}`)
-    //   }
+      const res = await response.json();
+      console.log("API response data:", res); // Debugging line
 
-    //   const data = await response.json()
-    //   console.log('API response data:', data) // Debugging line
-
-    //   if (data && data.paymentStatus === 1) {
-    //     // Payment has already been made, run handleDownload
-    //     handleDownload()
-    //   } else if (data && data.paymentStatus === 0) {
-    // Payment is not made, open the payment gateway
-    const paymentButton = document.getElementById("payment-button");
-    if (paymentButton) {
-      paymentButton.click();
-    } else {
-      console.error("Payment button not found");
+      if (res && res.data.paymentStatus === 1) {
+        // Payment has already been made, run handleDownload
+        handleDownload();
+      } else if (res && res.data.paymentStatus === 0) {
+        const paymentButton = document.getElementById("payment-button");
+        if (paymentButton) {
+          paymentButton.click();
+        } else {
+          console.error("Payment button not found");
+        }
+      } else {
+        alert("Unable to determine payment status.");
+      }
+    } catch (error) {
+      console.error("Error checking payment status:", error);
+      alert("Error checking payment status. Please try again.");
     }
-    //   } else {
-    //     alert('Unable to determine payment status.')
-    //   }
-    // } catch (error) {
-    //   console.error('Error checking payment status:', error)
-    //   alert('Error checking payment status. Please try again.')
-    // }
   };
 
   // Handle Delete Button Click
@@ -280,15 +280,25 @@ export default function ViewPresentation() {
   // Handle Finalize Button Click
   const handleFinalize = () => {
     setFinalized(true);
-    axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
+    axios
+      .patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
+        {
+          userID: sessionStorage.getItem("userEmail"),
+          FormID: documentID,
+          PresentationID: presentationID,
+          SectionName: currentOutline.replace(/^\d+\.\s*/, ""),
+          GenSlideID: slidesId[currentSlideIndex],
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      });
   };
 
   // Handle Add New Slide Version Button
@@ -367,26 +377,45 @@ export default function ViewPresentation() {
     }));
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
-        {
-          type: outlineType,
-          title: currentOutline.replace(/^\d+\.\s*/, ""),
-          documentID: documentID,
-          outlineID: currentOutlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
+      await axios
+        .post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
+          {
+            type: outlineType.charAt(0).toUpperCase() + outlineType.slice(1),
+            title: currentOutline.replace(/^\d+\.\s*/, ""),
+            documentID: documentID,
+            outlineID: currentOutlineID,
           },
-        }
-      );
-
-      toast.success("Quick Generation Started");
-      setDisplayModes((prev) => ({
-        ...prev,
-        [currentOutline]: "slides",
-      }));
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          toast.success("Quick Generation Started");
+          setDisplayModes((prev) => ({
+            ...prev,
+            [currentOutline]: "slides",
+          }));
+        })
+        .catch((error) => {
+          toast.error("Error while generating slide", {
+            position: "top-center",
+            autoClose: 2000,
+          });
+          // setIsSlideLoading(false)
+          setSlideStates((prev) => ({
+            ...prev,
+            [currentOutline]: {
+              ...prev[currentOutline],
+              isLoading: false,
+              isNoGeneratedSlide: true,
+              lastUpdated: Date.now(),
+            },
+          }));
+          setDisplayModes((prev) => ({ ...prev, [currentOutline]: "slides" }));
+        });
     } catch (error) {
       console.error("Error generating slide:", error);
       toast.error("Error while generating slide", {
@@ -407,62 +436,53 @@ export default function ViewPresentation() {
   };
 
   // Paginate Back
-  const handlePaginatePrev = () => {
-    if (currentSlideIndex > 0) {
-      // Set loading state before changing slide
-      setSlideStates((prev) => ({
+const handlePaginatePrev = () => {
+  if (currentSlideIndex > 0) {
+    setCurrentSlideIndex(prev => prev - 1);
+    setSlideStates(prev => ({
+      ...prev,
+      [currentOutline]: {
+        ...prev[currentOutline],
+        isLoading: true
+      }
+    }));
+    
+    setTimeout(() => {
+      setSlideStates(prev => ({
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading: true,
-          lastUpdated: Date.now(),
-        },
+          isLoading: false
+        }
       }));
-
-      setCurrentSlideIndex((prevIndex) => prevIndex - 1);
-
-      // Reset loading state after a delay
-      setTimeout(() => {
-        setSlideStates((prev) => ({
-          ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
-            isLoading: false,
-            lastUpdated: Date.now(),
-          },
-        }));
-      }, 3000);
-    }
-  };
+    }, 1000);
+  }
+};
 
   // Paginate Next
   const handlePaginateNext = () => {
-    if (currentSlideIndex < slidesId.length - 1) {
-      // Set loading state before changing slide
-      setSlideStates((prev) => ({
+  const currentSlides = slidesArray[currentOutline];
+  if (currentSlides && currentSlideIndex < currentSlides.length - 1) {
+    setCurrentSlideIndex(prev => prev + 1);
+    setSlideStates(prev => ({
+      ...prev,
+      [currentOutline]: {
+        ...prev[currentOutline],
+        isLoading: true
+      }
+    }));
+    
+    setTimeout(() => {
+      setSlideStates(prev => ({
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading: true,
-          lastUpdated: Date.now(),
-        },
+          isLoading: false
+        }
       }));
-
-      setCurrentSlideIndex((prevIndex) => prevIndex + 1);
-
-      // Reset loading state after a delay
-      setTimeout(() => {
-        setSlideStates((prev) => ({
-          ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
-            isLoading: false,
-            lastUpdated: Date.now(),
-          },
-        }));
-      }, 3000);
-    }
-  };
+    }, 1000);
+  }
+};
 
   // Custom Builder Slide Type Select Handler
   const handleCustomTypeClick = (
@@ -512,100 +532,31 @@ export default function ViewPresentation() {
     GenSlideID: string;
     outlineTitle: string;
   }) => {
-    const currentDisplayMode = displayModes[outlineTitle] || "slides";
-    const slideState = slideStates[outlineTitle] || {
-      isLoading: true,
-      isNoGeneratedSlide: false,
-      genSlideID: null,
-      retryCount: 0,
-      lastUpdated: Date.now(),
-    };
-
-    // Helper function to determine if we should show loading state
-    const shouldShowLoading = () => {
-      return (
-        slideStates[currentOutline]?.isLoading &&
-        !slideState.isNoGeneratedSlide &&
-        !slideState.genSlideID &&
-        Date.now() - slideState.lastUpdated < 90000 // 90 second timeout
-      );
-    };
-
-    // Helper function to determine if we should show error state
-    const shouldShowError = () => {
-      return (
-        slideState.isNoGeneratedSlide ||
-        (slideStates[currentOutline]?.isLoading &&
-          Date.now() - slideState.lastUpdated >= 90000)
-      );
-    };
+  const currentDisplayMode = displayModes[outlineTitle];
+  const slideState = slideStates[outlineTitle] || createInitialSlideState();
+  const currentSlideId = slidesArray[outlineTitle]?.[currentSlideIndex];
 
     switch (currentDisplayMode) {
       case "slides":
         return (
-<>
-  {shouldShowLoading() ? (
-    <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
-      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-      <h1>Generating Slide Please Wait...</h1>
-      {slideState.retryCount > 0 && (
-        <p className="text-sm text-gray-500">
-          Retry attempt {slideState.retryCount}/3...
-        </p>
-      )}
-    </div>
-  ) : slideState.genSlideID ? (
-    <iframe
-      src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slideState.genSlideID}`}
-      title={`Slide ${index ? index + 1 : currentSlideIndex + 1}`}
-      className={`w-full h-full pointer-events-none transition-opacity duration-500 ${
-        slideState.isLoading ? "opacity-0" : "opacity-100"
-      }`}
-      style={{ border: 0 }}
-      onLoad={() => {
-        // Update slide state when iframe loads successfully
-        updateSlideState(outlineTitle, {
-          isLoading: false,
-          isNoGeneratedSlide: false
-        });
-      }}
-      onError={() => {
-        // Handle iframe load errors
-        if (slideState.retryCount < 3) {
-          updateSlideState(outlineTitle, {
-            retryCount: slideState.retryCount + 1,
-            lastUpdated: Date.now()
-          });
-        } else {
-          updateSlideState(outlineTitle, {
-            isNoGeneratedSlide: true,
-            isLoading: false
-          });
-        }
-      }}
-    />
-  ) : shouldShowError() ? (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      <h1 className="text-red-500">Sorry! Slide Could Not Be Generated</h1>
-      <button
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        onClick={() => {
-          // Reset state and trigger regeneration
-          updateSlideState(outlineTitle, {
-            isLoading: true,
-            isNoGeneratedSlide: false,
-            retryCount: 0,
-            lastUpdated: Date.now()
-          });
-          handleQuickGenerate();
-        }}
-      >
-        Retry Generation
-      </button>
-    </div>
-  ) : null}
-</>
+          <>
+          {slideState.isLoading ? (
+            <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              <h1>Generating Slide Please Wait...</h1>
+            </div>
+          ) : (
+            <iframe
+              src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${currentSlideId}`}
+              title={`Slide ${index ? index + 1 : currentSlideIndex + 1}`}
+              className="w-full h-full pointer-events-none"
+              style={{ border: 0 }}
+            />
+          )}
+          {
 
+          }
+        </>
         );
 
       case "newContent":
@@ -731,23 +682,20 @@ export default function ViewPresentation() {
     }
   };
 
-  useEffect(() => {
-    const initialStates = outlines.reduce((acc, outline) => {
-      acc[outline.title] = createInitialSlideState();
+useEffect(() => {
+  const { initialStates, initialModes } = outlines.reduce(
+    (acc, outline) => {
+      acc.initialStates[outline.title] = createInitialSlideState();
+      acc.initialModes[outline.title] = "slides";
       return acc;
-    }, {} as { [key: string]: SlideState });
+    },
+    { initialStates: {} as { [key: string]: SlideState }, initialModes: {} as { [key: string]: DisplayMode } }
+  );
 
-    setSlideStates(initialStates);
-  }, [outlines]);
+  setSlideStates(initialStates);
+  setDisplayModes(initialModes);
+}, [outlines]);
 
-  useEffect(() => {
-    const initialModes = outlines.reduce((acc, outline) => {
-      acc[outline.title] = "slides";
-      return acc;
-    }, {} as { [key: string]: DisplayMode });
-
-    setDisplayModes(initialModes);
-  }, [outlines]);
 
   // Get DocumentID and Presentation Name
   useEffect(() => {
@@ -835,7 +783,7 @@ export default function ViewPresentation() {
     if (
       currentOutline !== "" &&
       documentID !== null &&
-      !slidesArray[currentOutline]?.[currentSlideIndex]
+      !slidesArray[currentOutline]
     ) {
       const socket = io(SOCKET_URL, { transports: ["websocket"] });
       console.info("Connecting to WebSocket server...");
@@ -857,7 +805,7 @@ export default function ViewPresentation() {
           [currentOutline]: {
             ...prev[currentOutline],
             isLoading: false,
-            isNoGeneratedSlide: true,
+            isNoGeneratedSlide: false,
           },
         }));
       }, 90000);
@@ -916,10 +864,12 @@ export default function ViewPresentation() {
         socket.disconnect();
       };
     }
+    console.log("useEffect: currentOutline, documentID, slidesArray");
   }, [currentOutline, documentID]);
 
   useEffect(() => {
     setCurrentSlideIndex(0);
+    setPrevSlideIndex(0);
   }, [currentOutline]);
 
   // Effect to monitor changes
@@ -997,8 +947,75 @@ export default function ViewPresentation() {
     setOutlineType(matchingOutline?.type || "");
   }, [outlines, currentOutline]);
 
-  // API CALL TO GET PRICING DATA FOR MODAL
+  // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
+    // Get User Plan
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        const planName = response.data.plan.plan_name;
+        dispatch(setUserPlan(planName));
+        console.log("User Plan", userPlan);
+      } catch (error) {
+        console.error("Error fetching user plan:", error);
+      }
+    };
+
+    fetchUserPlan();
+
+    // Function to check payment status and proceed
+    const checkPaymentStatusAndProceed = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+
+        const res = await response.json();
+        console.log("API response data:", res); // Debugging line
+
+        if (res && res.data.paymentStatus === 1) {
+          // Payment has already been made, run handleDownload
+          setIsExportPaid(true);
+        } else if (res && res.data.paymentStatus === 0) {
+          // const paymentButton = document.getElementById('payment-button')
+          // if (paymentButton) {
+          //   paymentButton.click()
+          // } else {
+          //   console.error('Payment button not found')
+          // }
+          setIsExportPaid(false);
+        } else {
+          alert("Unable to determine payment status.");
+        }
+      } catch (error) {
+        console.error("Error checking payment status:", error);
+        alert("Error checking payment status. Please try again.");
+      }
+    };
+
+    // Call the payment status check
+    if (documentID) {
+      checkPaymentStatusAndProceed();
+    }
+
+    if (userPlan !== "free") {
+      setIsExportPaid(true);
+    }
+
+    // Get Pricing Data
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
         "https://ipinfo.io/json?token=f0e9cf876d422e"
@@ -1007,7 +1024,7 @@ export default function ViewPresentation() {
 
       await axios
         .get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/plans`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/appscripts/razorpay/plans`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -1015,34 +1032,48 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          if (ipInfoData.country === "IN" || "India") {
-            setMonthlyPlan(response.data.items[5]);
-            setYearlyPlan(response.data.items[3]);
-            setCurrency("INR");
-          } else {
-            setMonthlyPlan(response.data.items[4]);
-            setYearlyPlan(response.data.items[2]);
+          const country = ipInfoData!.country!;
+          console.log("Country:", country);
+
+          if (country !== "IN" && country !== "India" && country !== "In") {
+            console.log("Reached If");
+            setMonthlyPlan(response.data.items[1]);
+            setYearlyPlan(response.data.items[0]);
             setCurrency("USD");
+          } else if (
+            country === "IN" ||
+            country === "India" ||
+            country === "In"
+          ) {
+            console.log("Reached Else");
+            setMonthlyPlan(response.data.items[1]);
+            setYearlyPlan(response.data.items[0]);
+            setCurrency("INR");
           }
         });
     };
 
-    const timer = setTimeout(() => {
-      getPricingData();
-    }, 3000); // delay
-
-    // Cleanup the timer in case the component unmounts
-    return () => clearTimeout(timer);
-  }, [authToken]);
+    getPricingData();
+  }, [documentID, authToken, dispatch, orgId, userPlan]);
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100;
   const monthlyPlanId = monthlyPlan?.id;
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100;
   const yearlyPlanId = yearlyPlan?.id;
-  const GenSlideID=slidesArray[currentOutline] ? slidesArray[currentOutline][currentSlideIndex] : ''
-  console.log("Current SLide Id",currentSlideIndex,slidesArray[currentOutline],slidesArray[currentOutline] ? slidesArray[currentOutline][currentSlideIndex] : '')
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
+      {/* Export Countdown */}
+      {showCountdown && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>
+              Payment has been done! Your download will start in {countdown}{" "}
+              seconds...
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === "free" ? (
         <PricingModal
@@ -1070,6 +1101,7 @@ export default function ViewPresentation() {
         productinfo="Presentation Export"
         onSuccess={handleDownload}
         formId={documentID!}
+        authToken={authToken!}
       />
       {/*LARGE SCREEN: HEADING*/}
       <DesktopHeading
@@ -1079,6 +1111,7 @@ export default function ViewPresentation() {
         isLoading={isDocumentIDLoading}
         userPlan={userPlan!}
         openPricingModal={() => setIsPricingModalOpen(true)}
+        exportPaid={isExportPaid}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -1123,10 +1156,8 @@ export default function ViewPresentation() {
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-center scroll-smooth w-full h-full mb-4"
               >
-                
-                {
-                renderContent({
-                  GenSlideID: GenSlideID,
+                {renderContent({
+                  GenSlideID: slidesArray[outline.title]?.[currentSlideIndex],
                   displayMode: displayModes[outline.title],
                   isMobile: false,
                   index,
@@ -1143,7 +1174,7 @@ export default function ViewPresentation() {
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
               finalized={finalized}
-              currentSlideId={slidesId[currentSlideIndex]}
+              currentSlideId={slidesArray[currentOutline]?.[currentSlideIndex]}
             />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
@@ -1160,13 +1191,18 @@ export default function ViewPresentation() {
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
               <span className="text-sm">
-                Slide {currentSlideIndex + 1} of {slidesArray[currentOutline]?.length}
+                Slide {currentSlideIndex + 1} of{" "}
+                {slidesArray[currentOutline]?.length || 0}
               </span>
               <button
                 onClick={handlePaginateNext}
-                disabled={currentSlideIndex === slidesId.length - 1}
+                disabled={
+                  currentSlideIndex ===
+                  (slidesArray[currentOutline]?.length ?? 0) - 1
+                }
                 className={`flex items-center border hover:cursor-pointer border-[#E1E3E5] bg-white p-2 rounded-md active:scale-95 transition transform duration-300 ${
-                  currentSlideIndex === slidesId.length - 1
+                  currentSlideIndex ===
+                  (slidesArray[currentOutline]?.length ?? 0) - 1
                     ? "text-gray-400"
                     : "hover:text-blue-600"
                 }`}
@@ -1188,6 +1224,7 @@ export default function ViewPresentation() {
           isLoading={isDocumentIDLoading}
           userPlan={userPlan!}
           openPricingModal={() => setIsPricingModalOpen(true)}
+          exportPaid={isExportPaid}
         />
 
         {/* MOBILE: OUTLINE Modal */}
@@ -1215,7 +1252,14 @@ export default function ViewPresentation() {
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
                 isLoading={isDocumentIDLoading}
-                isDisabled={featureDisabled}
+                userPlan={userPlan}
+                monthlyPlanAmount={monthlyPlanAmount}
+                yearlyPlanAmount={yearlyPlanAmount}
+                currency={currency}
+                yearlyPlanId={yearlyPlanId!}
+                monthlyPlanId={monthlyPlanId!}
+                orgId={orgId!}
+                authToken={authToken!}
               />
             )}
           </div>
@@ -1230,7 +1274,9 @@ export default function ViewPresentation() {
           } w-full border border-gray-200 mt-12 mb-6`}
         >
           {renderContent({
-            GenSlideID: slidesArray[currentOutline] ? slidesArray[currentOutline][currentSlideIndex] : '',
+            GenSlideID: slidesArray[currentOutline]
+              ? slidesArray[currentOutline][currentSlideIndex]
+              : "",
             displayMode: displayModes[currentOutline],
             isMobile: true,
             outlineTitle: currentOutline,
@@ -1271,19 +1317,20 @@ export default function ViewPresentation() {
               />
             </button>
             <span className="text-sm text-[#5D5F61]">
-              Slide {currentSlideIndex + 1} of{" "}
-              {}
+              Slide {currentSlideIndex + 1} of {}
             </span>
             <button
               onClick={handlePaginateNext}
-              disabled={currentSlideIndex === slidesId.length - 1}
+              disabled={
+                currentSlideIndex === slidesArray[currentOutline]?.length - 1
+              }
               className={`flex items-center border border-gray-300 bg-white p-2 rounded-md ${
                 currentSlide === totalSlides
                   ? "text-[#091220]"
                   : "hover:text-blue-600"
               }`}
             >
-              <FaArrowRight className="h-4 w-4 text-[#091220]"/>
+              <FaArrowRight className="h-4 w-4 text-[#091220]" />
             </button>
           </div>
         </div>
