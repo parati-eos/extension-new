@@ -549,17 +549,17 @@ const SelectPresentationType: React.FC = () => {
             </div>
             {/* Refine Button */}
             <div className="items-center justify-center">
-  <button
-    onClick={handleRefinePPT}
-    className={`flex items-center justify-center w-full mt-4 h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
-      file
-        ? 'bg-[#3667B2] text-white'
-        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-    }`}
-    disabled={!file}
-  >
-    <span>Refine Presentation</span>
-  </button>
+            <button
+  onClick={handleRefinePPT}
+  style={{ backgroundColor: file ? '#3667B2' : 'white' }}
+  className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
+    file ? 'text-white' : 'cursor-not-allowed'
+  }`}
+  disabled={!file}
+>
+  <span>Refine Presentation</span>
+</button>
+
 </div>
 
             {/* Cancel Button */}
