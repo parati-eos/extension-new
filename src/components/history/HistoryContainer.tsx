@@ -571,13 +571,13 @@ const HistoryContainer: React.FC = () => {
                         <div className={`relative`}>
                           <button
                             className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                              userPlan === 'free'
+                              userPlan === 'free' && item.paymentStatus===0
                                 ? 'cursor-not-allowed opacity-50'
                                 : ''
                             }`}
                             onClick={() => {
                               // Only show the tooltip if the button is disabled
-                              if (userPlan === 'free') {
+                              if (userPlan === 'free' && item.paymentStatus===0) {
                                 setIsTooltipVisible(true)
                               } else {
                                 handleDownload() // Your regular function for non-free users
