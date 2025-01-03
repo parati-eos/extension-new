@@ -835,7 +835,7 @@ export default function ViewPresentation() {
     if (
       currentOutline !== "" &&
       documentID !== null &&
-      !slidesArray[currentOutline]
+      !slidesArray[currentOutline]?.[currentSlideIndex]
     ) {
       const socket = io(SOCKET_URL, { transports: ["websocket"] });
       console.info("Connecting to WebSocket server...");
@@ -917,6 +917,10 @@ export default function ViewPresentation() {
       };
     }
   }, [currentOutline, documentID]);
+
+  useEffect(() => {
+    setCurrentSlideIndex(0);
+  }, [currentOutline]);
 
   // Effect to monitor changes
   useEffect(() => {
@@ -1034,6 +1038,8 @@ export default function ViewPresentation() {
   const monthlyPlanId = monthlyPlan?.id;
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100;
   const yearlyPlanId = yearlyPlan?.id;
+  const GenSlideID=slidesArray[currentOutline] ? slidesArray[currentOutline][currentSlideIndex] : ''
+  console.log("Current SLide Id",currentSlideIndex,slidesArray[currentOutline],slidesArray[currentOutline] ? slidesArray[currentOutline][currentSlideIndex] : '')
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
@@ -1117,8 +1123,10 @@ export default function ViewPresentation() {
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-center scroll-smooth w-full h-full mb-4"
               >
-                {renderContent({
-                  GenSlideID: slidesArray[outline.title]?.[currentSlideIndex],
+                
+                {
+                renderContent({
+                  GenSlideID: GenSlideID,
                   displayMode: displayModes[outline.title],
                   isMobile: false,
                   index,
@@ -1152,7 +1160,7 @@ export default function ViewPresentation() {
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
               <span className="text-sm">
-                Slide {currentSlideIndex + 1} of {slidesId.length}
+                Slide {currentSlideIndex + 1} of {slidesArray[currentOutline]?.length}
               </span>
               <button
                 onClick={handlePaginateNext}
@@ -1222,7 +1230,7 @@ export default function ViewPresentation() {
           } w-full border border-gray-200 mt-12 mb-6`}
         >
           {renderContent({
-            GenSlideID: slidesArray[currentOutline]?.[currentSlideIndex],
+            GenSlideID: slidesArray[currentOutline] ? slidesArray[currentOutline][currentSlideIndex] : '',
             displayMode: displayModes[currentOutline],
             isMobile: true,
             outlineTitle: currentOutline,
