@@ -1,7 +1,7 @@
 import React from 'react'
 import freepikbg from '../../assets/freepik.png'
-import createimage from '../../assets/image1.png'
-import evolutionimage from '../../assets/image3.png'
+import createimage from '../../assets/zynthworks1.png'
+import evolutionimage from '../../assets/image4.png'
 import zynthtext from '../../assets/zynth-text.png'
 import { useNavigate } from 'react-router-dom' 
 

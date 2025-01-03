@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LandingpageImage from '../../assets/tailwind.config.png';
 import { useNavigate } from 'react-router-dom';
 
 const Heading: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const closeModal = () => {
-    setIsModalOpen(false); // Ensure this function correctly updates the state
+  const closeModal = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop event bubbling
+    setIsModalOpen(false);
+  };
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Play the video when the modal is opened
+  useEffect(() => {
+    if (isModalOpen && videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.error("Video play failed:", error);
+      });
+    }
+  }, [isModalOpen]);
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent click events on the modal from closing it
   };
 
   return (
@@ -74,17 +88,25 @@ const Heading: React.FC = () => {
         </div>
       </div>
 
-        {/* Modal */}
-        {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-[90%] md:w-[60%] lg:w-[50%] h-[40%] lg:h-[90%] relative flex items-center justify-center">
+          {/* Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          onClick={() => setIsModalOpen(false)} // Close modal on outside click
+        >
+          <div
+            className="bg-white rounded-lg shadow-lg w-[90%] md:w-[60%] lg:w-[40%] h-[60%] relative flex items-center justify-center"
+            onClick={stopPropagation} // Prevent event bubbling to the backdrop
+          >
             <button
-              onClick={closeModal} // Close modal function
-              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl font-bold"
+         onClick={(e) => closeModal(e)} // Ensure the event is passed properly
+              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl font-bold z-50"
             >
               &times;
             </button>
-            <video controls className="w-full h-full rounded-md object-contain">
+            <video
+          ref={videoRef}
+            controls className="w-full h-full rounded-md object-contain z-10">
               <source
                 src="https://d2zu6flr7wd65l.cloudfront.net/uploads/New+Zynth+Product+Demo+Video+01.mp4"
                 type="video/mp4"
