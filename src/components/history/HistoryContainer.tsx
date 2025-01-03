@@ -188,26 +188,10 @@ const HistoryContainer: React.FC = () => {
     currentPage * 10
   )
 
-  const handleShare = (documentID: string) => {
-    const uniqueShareableUrl = `/share?formId=${documentID}`
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: 'Share Presentation',
-          text: 'Check out this presentation',
-          url: uniqueShareableUrl,
-        })
-        .then(() => console.log('Shared successfully'))
-        .catch((error) => console.error('Share failed: ', error))
-    } else if (navigator.clipboard && navigator.platform.includes('Mac')) {
-      navigator.clipboard
-        .writeText(uniqueShareableUrl)
-        .then(() => alert('URL copied to clipboard'))
-        .catch((error) => console.error('Copy failed: ', error))
-    } else {
-      alert('Sharing is not supported on this device/browser.')
-    }
+ // Handle Share Button Click
+  const handleShare = async () => {
+    const url = `/share?formId=${documentID}`
+    window.open(url, '_blank') // Opens the URL in a new tab
   }
 
   const handleEdit = (documentID: string, name: string) => {
@@ -488,23 +472,24 @@ const HistoryContainer: React.FC = () => {
 <div className="grid grid-cols-1 gap-4 md:hidden">
   {presentationsToShow?.map((item, index) => (
     <div key={index} className="grid grid-cols-[auto,1fr] items-center p-4 relative gap-8">
-      {/* Thumbnail Container */}
-      <div className="relative w-[8rem] h-[6rem]">
-        {/* Invisible clickable overlay */}
-        <div
-          onClick={() => handleEdit(item.FormID, item.pptName)}
-          className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
-        ></div>
-        {/* Embedded Google Slides iframe */}
-        <iframe
-          src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-            item.PresentationURL
-          )}/embed?rm=minimal`}
-          title={item.pptName}
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
-        />
-      </div>
+    {/* Thumbnail Container */}
+<div className="relative w-[8rem] h-[6rem]">
+  {/* Invisible clickable overlay */}
+  <div
+    onClick={() => handleEdit(item.FormID, item.pptName)}
+    className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
+  ></div>
+  {/* Embedded Google Slides iframe */}
+  <iframe
+    src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+      item.PresentationURL
+    )}/embed?rm=minimal&start=false`}
+    title={item.pptName}
+    className="absolute top-0 left-0 w-full h-full object-cover"
+    style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
+  />
+</div>
+
 
       {/* Content Section */}
       <div className="flex flex-col justify-between w-full">
@@ -549,7 +534,7 @@ const HistoryContainer: React.FC = () => {
             <span>Edit</span>
           </button>
           <button
-            onClick={() => handleShare(item.FormID)}
+            onClick={() => handleShare()}
             className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
           >
             <FaShareAlt className="text-[#5D5F61]" />
@@ -620,15 +605,17 @@ const HistoryContainer: React.FC = () => {
           onClick={() => handleEdit(item.FormID, item.pptName)}
           className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
         ></div>
-        {/* Embedded Google Slides iframe */}
-        <iframe
-          src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
-            item.PresentationURL
-          )}/embed?rm=minimal`}
-          title={item.pptName}
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe itself
-        />
+
+       {/* Embedded Google Slides iframe */}
+<iframe
+  src={`https://docs.google.com/presentation/d/${getSheetIdFromUrl(
+    item.PresentationURL
+  )}/embed?rm=minimal&slide=id.p&start=false`}
+  title={item.pptName}
+  className="absolute top-0 left-0 w-full h-full object-cover"
+  style={{ border: 'none', pointerEvents: 'none' }} // Disable pointer events on the iframe
+/>
+
       </div>
 
       {/* Title */}
@@ -677,7 +664,7 @@ const HistoryContainer: React.FC = () => {
             <span>Edit</span>
           </button>
           <button
-            onClick={() => handleShare(item.FormID)}
+            onClick={() => handleShare()}
             className="flex items-center gap-3 text-base text-[#5D5F61] mb-3 cursor-pointer"
           >
             <FaShareAlt className="text-[#5D5F61]" />

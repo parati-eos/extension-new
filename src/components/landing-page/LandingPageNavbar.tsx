@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 
 const LandingPageNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isNavbarVisible, setIsNavbarVisible] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation(); // Track the current path
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,6 +61,7 @@ const LandingPageNavbar: React.FC = () => {
       clearTimeout(inactivityTimer) // Clean up timer when component unmounts
     }
   }, [isScrolled])
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav
@@ -138,7 +140,9 @@ const LandingPageNavbar: React.FC = () => {
           </a>
           <a
             href="#pricing"
-            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            className={`${
+              isActive('/pricing') ? 'text-blue-600' : 'text-[#5D5F61]'
+            } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => {
               e.preventDefault()
               window.open('/pricing', '_blank')
@@ -148,7 +152,9 @@ const LandingPageNavbar: React.FC = () => {
           </a>
           <a
             href="#blog"
-            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            className={`${
+              isActive('/blog') ? 'text-blue-600' : 'text-[#5D5F61]'
+            } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => {
               e.preventDefault()
               window.open('/blog', '_blank')
@@ -199,7 +205,9 @@ const LandingPageNavbar: React.FC = () => {
             <li>
               <a
                  onClick={() => navigate('/pricing')}
-                className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+                 className={`${
+                  isActive('/pricing') ? 'text-blue-600' : 'text-[#5D5F61]'
+                } hover:text-blue-600 transition-colors duration-200`}
               >
                 Pricing
               </a>
@@ -207,7 +215,9 @@ const LandingPageNavbar: React.FC = () => {
             <li>
               <a
                 onClick={() => navigate('/blog')}
-                className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+                className={`${
+                  isActive('/blog') ? 'text-blue-600' : 'text-[#5D5F61]'
+                } hover:text-blue-600 transition-colors duration-200`}
               >
                 Blog
               </a>
