@@ -56,7 +56,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
   }
 
   return (
-    <div className="w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
+    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
       {/* Heading */}
       <div className="flex flex-col items-center gap-1 lg:mb-8">
         <FaBullseye className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
