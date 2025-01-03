@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
-import { FaPaperclip, FaPlus } from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 
 interface TimelineProps {
   heading: string
@@ -31,7 +32,8 @@ export default function Timeline({
   const [description, setDescription] = useState([''])
   const [loading, setLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null) // Add selected image state
+  const [selectedImage, setSelectedImage] = useState<string | null>(null) // Add selected image state
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...timeline]
@@ -86,7 +88,7 @@ export default function Timeline({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: selectedImage ? selectedImage.name : '',
+            image: selectedImage,
             phases: phases,
           },
           outlineID: outlineID,
@@ -112,8 +114,21 @@ export default function Timeline({
     }
   }
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedImage(file)
+  const handleFileSelect = async (file: File | null) => {
+    setIsLoading(true)
+    if (file) {
+      try {
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
   }
 
   const onBack = () => {

@@ -5,6 +5,7 @@ import AttachImage from '../../presentation-view/custom-builder/shared/attachima
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 
 interface PointsProps {
   heading: string
@@ -29,7 +30,8 @@ export default function Points({
 }: PointsProps) {
   const [points, setPoints] = useState([''])
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [isImageLoading, setIsImageLoading] = useState(false)
 
   const handleInputChange = (value: string, index: number) => {
     const updatedPoints = [...points]
@@ -49,8 +51,21 @@ export default function Points({
     }
   }
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedImage(file)
+  const handleFileSelect = async (file: File | null) => {
+    setIsImageLoading(true)
+    if (file) {
+      try {
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsImageLoading(false)
+      }
+    }
   }
 
   const handleGenerateSlide = async () => {
@@ -65,7 +80,7 @@ export default function Points({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: selectedImage ? selectedImage.name : '',
+            image: selectedImage,
             pointers: points.filter((point) => point.trim() !== ''),
           },
           outlineID: outlineID,

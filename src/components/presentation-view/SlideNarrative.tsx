@@ -4,6 +4,7 @@ import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { toast } from 'react-toastify'
+import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 
 interface SlideNarrativeProps {
   heading: string
@@ -28,10 +29,23 @@ export default function SlideNarrative({
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null) // Track the attached image
+  const [selectedImage, setSelectedImage] = useState<string | null>(null) // Track the attached image
 
-  const handleFileSelect = (file: File | null) => {
-    setSelectedImage(file)
+  const handleFileSelect = async (file: File | null) => {
+    setIsLoading(true)
+    if (file) {
+      try {
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+      } catch (error) {
+        toast.error('Error uploading image', {
+          position: 'top-center',
+          autoClose: 2000,
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
   }
 
   const handleGenerateSlide = async () => {
@@ -106,10 +120,13 @@ export default function SlideNarrative({
       </div>
 
       {/* Attach Image and Generate Slide Buttons for Desktop */}
-      <div className="hidden  lg:flex w-full   lg:justify-end lg:w-auto lg:gap-4">
+      <div className="hidden  lg:flex w-full  lg:justify-end lg:w-auto lg:gap-4">
         {/* Attach Image Section */}
-        <AttachImage onFileSelected={handleFileSelect} />
-
+        {isLoading ? (
+          <p>Loading</p>
+        ) : (
+          <AttachImage onFileSelected={handleFileSelect} />
+        )}
         {/* Generate Slide Button */}
         <button
           onClick={handleGenerateSlide}
