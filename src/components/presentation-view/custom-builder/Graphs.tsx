@@ -4,7 +4,9 @@ import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
-
+type Row = {
+  [key: string]: string // Index signature allows any string key
+}
 interface GraphProps {
   heading: string
   slideType: string
@@ -30,12 +32,19 @@ export default function Graphs({
     'chartSelection' | 'inputScreen'
   >('chartSelection')
   const [selectedChart, setSelectedChart] = useState<string | null>(null)
-  const [rows, setRows] = useState([{ label: '', services: '', series3: '' }])
+  const [rows, setRows] = useState<Row[]>([
+    { label: '', services: '', series3: '' },
+  ])
   const [series, setSeries] = useState(1)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [isAddRowDisabled, setIsAddRowDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const tableRef = useRef<HTMLDivElement | null>(null)
+  const [columns, setColumns] = useState<string[]>([
+    'Series 1',
+    'Series 2',
+    'Series 3',
+  ])
 
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
@@ -120,11 +129,13 @@ export default function Graphs({
     setIsSlideLoading()
     setIsLoading(true)
     try {
-      const seriesData = rows.map((row) => ({
-        key: [row.services, row.series3].filter(Boolean), // Keys are derived from rows
-        value: row.label, // Values are derived from the row label
-      }))
-
+      const seriesData = columns.map((column, index) => {
+        const key = index === 0 ? 'label' : `series${index}` // Use series1, series2, series3 dynamically
+        return {
+          key: column, // Column name will act as the label for the series
+          value: rows.map((row) => row[key] || ''),
+        }
+      })
       await axios
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
@@ -220,45 +231,41 @@ export default function Graphs({
                 <table className="table-auto border-collapse  w-full">
                   <thead>
                     <tr className="bg-[#F5F7FA]">
-                      <th className="px-2 py-2 text-left lg:px-4">
-                        <input
-                          type="text"
-                          placeholder="Series 1"
-                          className=" lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
-                        />
-                      </th>
-                      <th className="px-2 lg:px-4 py-2 text-left">
-                        <input
-                          type="text"
-                          placeholder="Series 2"
-                          className="lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
-                        />
-                      </th>
-                      {Array.from({ length: series - 1 }).map((_, index) => (
-                        <th key={index} className="px-4 py-2 text-left">
+                      {columns.slice(0, 2).map((col, index) => (
+                        <th key={index} className="px-2 py-2 text-left lg:px-4">
                           <input
                             type="text"
-                            placeholder={`Series ${index + 3}`}
+                            value={col} // Display current column value
+                            onChange={(e) => {
+                              const updatedColumns = [...columns]
+                              updatedColumns[index] = e.target.value // Update column value
+                              setColumns(updatedColumns)
+                            }}
+                            placeholder={`Series ${index + 1}`} // Dynamic placeholder for first two series
                             className="lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
                           />
                         </th>
                       ))}
-                      {series < (selectedChart === 'Pie' ? 1 : 2) && (
-                        <th className="py-2">
-                          <button
-                            onClick={addSeries}
-                            className="flex items-center px-4 lg:px-4 lg:py-2 bg-[#F5F7FA] text-black font-medium transition rounded-md"
-                          >
-                            <FaPlus className="mr-2" />
-                            <span className="hidden sm:inline">
-                              Add New Series
-                            </span>
-                            <span className="sm:hidden">Add</span>
-                          </button>
+
+                      {/* For additional series columns (Series 3 and beyond) */}
+                      {Array.from({ length: series - 2 }).map((_, index) => (
+                        <th key={index + 2} className="px-4 py-2 text-left">
+                          <input
+                            type="text"
+                            value={columns[index + 2] || ''} // Ensure each series field is linked to the columns state
+                            onChange={(e) => {
+                              const updatedColumns = [...columns]
+                              updatedColumns[index + 2] = e.target.value // Update the corresponding extra series column
+                              setColumns(updatedColumns)
+                            }}
+                            placeholder={`Series ${index + 3}`} // Placeholder for additional series
+                            className="lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
+                          />
                         </th>
-                      )}
+                      ))}
                     </tr>
                   </thead>
+
                   <tbody>
                     {rows.map((row, rowIndex) => (
                       <tr key={rowIndex}>
