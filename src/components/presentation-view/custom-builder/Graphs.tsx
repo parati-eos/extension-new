@@ -120,10 +120,10 @@ export default function Graphs({
     setIsLoading(true)
     try {
       const seriesData = rows.map((row) => ({
-        key: row.label,
-        value: [row.services, row.series3].filter(Boolean),
-      }))
-
+        key: [row.services, row.series3].filter(Boolean), // Keys are derived from rows
+        value: row.label, // Values are derived from the row label
+      }));
+  
       await axios
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,

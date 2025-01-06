@@ -77,46 +77,47 @@ export default function Statistics({
       (point, index) => point.trim() === '' || description[index].trim() === ''
     )
 
-  const handleGenerateSlide = async () => {
-    setIsSlideLoading()
-    setLoading(true)
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/statistics`,
-        {
-          type: 'Statistics',
-          title: heading,
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            image: selectedImage,
-            stats: title.slice(1).map((label, index) => ({
-              label,
-              value: Number(description[index + 1] || 0),
-            })),
+    const handleGenerateSlide = async () => {
+      setIsSlideLoading();
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/statistics`,
+          {
+            type: 'Statistics',
+            title: heading,
+            documentID: documentID,
+            data: {
+              slideName: heading,
+              image: selectedImage,
+              stats: title.map((label, index) => ({
+                label,
+                value: Number(description[index] || 0), // Adjusted to include all rows
+              })),
+            },
+            outlineID: outlineID,
           },
-          outlineID: outlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-
-      console.log('PATCH Response:', response.data)
-      toast.success('Data submitted successfully')
-      setDisplayMode('slides')
-    } catch (error) {
-      toast.error('Error generating slide', {
-        position: 'top-center',
-        autoClose: 2000,
-      })
-      toast.error('Failed to generate slide.')
-    } finally {
-      setLoading(false)
-    }
-  }
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+    
+        console.log('PATCH Response:', response.data);
+        toast.success('Data submitted successfully');
+        setDisplayMode('slides');
+      } catch (error) {
+        toast.error('Error generating slide', {
+          position: 'top-center',
+          autoClose: 2000,
+        });
+        toast.error('Failed to generate slide.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
 
   const handleFileSelect = async (file: File | null) => {
     setIsImageLoading(true);
