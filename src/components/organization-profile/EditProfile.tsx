@@ -186,7 +186,10 @@ const EditProfile: React.FC = () => {
       navigate('/organization-profile')
     } catch (error) {
       console.error('Failed to update profile', error)
-      toast.error('Failed to update profile. Please try again.')
+      toast.error('Failed to update profile. Please try again.', {
+        position: 'top-right',
+        autoClose: 2000,
+      })
     } finally {
       setLoading(false)
     }

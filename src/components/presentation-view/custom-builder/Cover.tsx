@@ -105,7 +105,7 @@ export default function Cover({
           },
         }
       )
-      toast.success('Slide generated successfully!', {
+      toast.success('Slide generation started', {
         position: 'top-right',
         autoClose: 2000,
       })

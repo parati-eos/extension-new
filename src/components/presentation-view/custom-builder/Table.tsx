@@ -205,7 +205,10 @@ export default function Table({
           }
         )
         .then((response) => {
-          toast.success('Data successfully sent to the server!')
+          toast.success('Data successfully sent to the server!', {
+            position: 'top-right',
+            autoClose: 2000,
+          })
           setIsLoading(false)
           setDisplayMode('slides')
         })
@@ -214,7 +217,10 @@ export default function Table({
         position: 'top-right',
         autoClose: 2000,
       })
-      toast.error('Failed to send data.')
+      toast.error('Failed to send data.', {
+        position: 'top-right',
+        autoClose: 2000,
+      })
     }
   }
 

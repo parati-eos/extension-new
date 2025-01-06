@@ -4,9 +4,7 @@ import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
-type Row = {
-  [key: string]: string // Index signature allows any string key
-}
+
 interface GraphProps {
   heading: string
   slideType: string
@@ -32,19 +30,13 @@ export default function Graphs({
     'chartSelection' | 'inputScreen'
   >('chartSelection')
   const [selectedChart, setSelectedChart] = useState<string | null>(null)
-  const [rows, setRows] = useState<Row[]>([
-    { label: '', services: '', series3: '' },
-  ])
+  const [rows, setRows] = useState([{ label: '', services: '', series3: '' }])
   const [series, setSeries] = useState(1)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
   const [isAddRowDisabled, setIsAddRowDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const tableRef = useRef<HTMLDivElement | null>(null)
-  const [columns, setColumns] = useState<string[]>([
-    'Series 1',
-    'Series 2',
-    'Series 3',
-  ])
+  const [headers, setHeaders] = useState<string[]>(['Series 1', 'Series 2'])
 
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
@@ -93,6 +85,7 @@ export default function Graphs({
     const maxSeries = selectedChart === 'Pie' ? 1 : 2
     if (series < maxSeries) {
       setSeries(series + 1)
+      setHeaders([...headers, `Series ${series + 2}`])
     } else {
       alert(
         `Maximum of ${maxSeries} series allowed for ${selectedChart} charts.`
@@ -114,6 +107,13 @@ export default function Graphs({
     setRows(updatedRows)
   }
 
+  const handleHeaderChange = (index: number, value: string) => {
+    const updatedHeaders = headers.map((header, i) =>
+      i === index ? value : header
+    )
+    setHeaders(updatedHeaders)
+  }
+
   const validateData = () => {
     const isRowValid = rows.every((row) => row.label && row.services)
     setIsAddRowDisabled(!isRowValid)
@@ -129,13 +129,19 @@ export default function Graphs({
     setIsSlideLoading()
     setIsLoading(true)
     try {
-      const seriesData = columns.map((column, index) => {
-        const key = index === 0 ? 'label' : `series${index}` // Use series1, series2, series3 dynamically
-        return {
-          key: column, // Column name will act as the label for the series
-          value: rows.map((row) => row[key] || ''),
+      const seriesData: { key: string; value: string[] }[] = []
+
+      // Transform rows into series data
+      headers.forEach((header, index) => {
+        const key = header
+        const values = rows.map(
+          (row) => row[Object.keys(row)[index] as keyof typeof row]
+        )
+        if (values.some((value) => value !== '')) {
+          seriesData.push({ key, value: values })
         }
       })
+
       await axios
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
@@ -159,7 +165,7 @@ export default function Graphs({
           }
         )
         .then((response) => {
-          toast.success('Images submitted successfully!', {
+          toast.success('Data submitted successfully!', {
             position: 'top-right',
             autoClose: 2000,
           })
@@ -231,41 +237,35 @@ export default function Graphs({
                 <table className="table-auto border-collapse  w-full">
                   <thead>
                     <tr className="bg-[#F5F7FA]">
-                      {columns.slice(0, 2).map((col, index) => (
+                      {headers.map((header, index) => (
                         <th key={index} className="px-2 py-2 text-left lg:px-4">
                           <input
                             type="text"
-                            value={col} // Display current column value
-                            onChange={(e) => {
-                              const updatedColumns = [...columns]
-                              updatedColumns[index] = e.target.value // Update column value
-                              setColumns(updatedColumns)
-                            }}
-                            placeholder={`Series ${index + 1}`} // Dynamic placeholder for first two series
-                            className="lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
+                            value={header}
+                            placeholder={`Series ${index + 1}`}
+                            onChange={(e) =>
+                              handleHeaderChange(index, e.target.value)
+                            }
+                            className=" lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
                           />
                         </th>
                       ))}
-
-                      {/* For additional series columns (Series 3 and beyond) */}
-                      {Array.from({ length: series - 2 }).map((_, index) => (
-                        <th key={index + 2} className="px-4 py-2 text-left">
-                          <input
-                            type="text"
-                            value={columns[index + 2] || ''} // Ensure each series field is linked to the columns state
-                            onChange={(e) => {
-                              const updatedColumns = [...columns]
-                              updatedColumns[index + 2] = e.target.value // Update the corresponding extra series column
-                              setColumns(updatedColumns)
-                            }}
-                            placeholder={`Series ${index + 3}`} // Placeholder for additional series
-                            className="lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
-                          />
+                      {series < (selectedChart === 'Pie' ? 1 : 2) && (
+                        <th className="py-2">
+                          <button
+                            onClick={addSeries}
+                            className="flex items-center px-4 lg:px-4 lg:py-2 bg-[#F5F7FA] text-black font-medium transition rounded-md"
+                          >
+                            <FaPlus className="mr-2" />
+                            <span className="hidden sm:inline">
+                              Add New Series
+                            </span>
+                            <span className="sm:hidden">Add</span>
+                          </button>
                         </th>
-                      ))}
+                      )}
                     </tr>
                   </thead>
-
                   <tbody>
                     {rows.map((row, rowIndex) => (
                       <tr key={rowIndex}>

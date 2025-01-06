@@ -312,8 +312,14 @@ export default function ViewPresentation() {
         setFinalizedSlides((prevFinalizedSlides) => {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
-          // Update the value of currentOutline to slideId if it is already present
-          updatedFinalizedSlides[currentOutline] = slideId
+          // Check if currentOutline is already present and its value is the same as slideId
+          if (updatedFinalizedSlides[currentOutline] === slideId) {
+            // Remove the value but keep the key
+            updatedFinalizedSlides[currentOutline] = ''
+          } else {
+            // Update the value of currentOutline to slideId
+            updatedFinalizedSlides[currentOutline] = slideId
+          }
 
           return updatedFinalizedSlides
         })
@@ -417,7 +423,10 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          toast.success('Quick Generation Started')
+          toast.success('Quick Generation Started', {
+            position: 'top-right',
+            autoClose: 2000,
+          })
           setDisplayModes((prev) => ({
             ...prev,
             [currentOutline]: 'slides',
@@ -543,10 +552,8 @@ export default function ViewPresentation() {
 
   // Render Slide Content
   const renderContent = ({
-    displayMode,
     isMobile,
     index,
-    GenSlideID,
     outlineTitle,
   }: {
     displayMode: string
@@ -608,7 +615,10 @@ export default function ViewPresentation() {
             }}
             handleCustomBuilderClick={() => {
               if (featureDisabled) {
-                toast.info('Upgrade to pro to access this feature')
+                toast.info('Upgrade to pro to access this feature', {
+                  position: 'top-right',
+                  autoClose: 2000,
+                })
               } else {
                 const newMode =
                   outlineTitle === outlines[0].title
@@ -799,6 +809,7 @@ export default function ViewPresentation() {
     []
   )
 
+  // WEB SOCKET
   useEffect(() => {
     if (
       currentOutline !== '' &&

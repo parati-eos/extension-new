@@ -120,7 +120,10 @@ const SelectPresentationType: React.FC = () => {
       if (uploadedFile.type === 'application/pdf') {
         setFile(uploadedFile)
       } else {
-        toast.info('Please upload a valid PDF')
+        toast.info('Please upload a valid PDF', {
+          position: 'top-right',
+          autoClose: 2000,
+        })
       }
     }
   }
@@ -153,10 +156,10 @@ const SelectPresentationType: React.FC = () => {
           )
         }
       } catch (error) {
-        // toast.error('Error generating ppt', {
-        //   position: 'top-right',
-        //   autoClose: 2000,
-        // })
+        toast.error('Error generating ppt', {
+          position: 'top-right',
+          autoClose: 2000,
+        })
       }
     }
 
@@ -166,7 +169,10 @@ const SelectPresentationType: React.FC = () => {
   const handleRefinePPT = () => {
     const refinePPT = async () => {
       if (!file) {
-        toast.info('Please upload a PDF to refine')
+        toast.info('Please upload a PDF to refine', {
+          position: 'top-right',
+          autoClose: 2000,
+        })
         return
       }
 

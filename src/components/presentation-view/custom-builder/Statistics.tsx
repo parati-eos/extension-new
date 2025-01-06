@@ -105,14 +105,20 @@ export default function Statistics({
       )
 
       console.log('PATCH Response:', response.data)
-      toast.success('Data submitted successfully')
+      toast.success('Data submitted successfully', {
+        position: 'top-right',
+        autoClose: 2000,
+      })
       setDisplayMode('slides')
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-right',
         autoClose: 2000,
       })
-      toast.error('Failed to generate slide.')
+      toast.error('Failed to generate slide.', {
+        position: 'top-right',
+        autoClose: 2000,
+      })
     } finally {
       setLoading(false)
     }

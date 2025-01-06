@@ -81,7 +81,10 @@ export default function MobileOutlineModal({
       const result = response.data
       if (result.type && result.title) {
         setIsAddSlideModalOpen(false)
-        toast.success('Outline Added')
+        toast.success('Outline Added', {
+          position: 'top-right',
+          autoClose: 2000,
+        })
         fetchOutlines()
       }
     }

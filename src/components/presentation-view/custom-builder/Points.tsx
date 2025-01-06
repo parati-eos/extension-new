@@ -97,7 +97,10 @@ export default function Points({
         }
       )
       if (response.status === 200) {
-        toast.success('Data successfully sent to the server!')
+        toast.success('Data successfully sent to the server!', {
+          position: 'top-right',
+          autoClose: 2000,
+        })
       }
       console.log('Server response:', response.data)
       setDisplayMode('slides')
@@ -106,7 +109,10 @@ export default function Points({
         position: 'top-right',
         autoClose: 2000,
       })
-      toast.error('Failed to send data.')
+      toast.error('Failed to send data.', {
+        position: 'top-right',
+        autoClose: 2000,
+      })
     } finally {
       setIsLoading(false)
     }
