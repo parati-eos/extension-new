@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { FaPaperclip } from 'react-icons/fa';
+import React from 'react'
+import { FaPaperclip } from 'react-icons/fa'
 
 interface AttachImageProps {
-  onFileSelected: (file: File | null) => void;
-  buttonText?: string;
-  isLoading: boolean;
-  fileName: string | null; // Added to display the uploaded file name
-  uploadCompleted: boolean; // Track if the upload is complete
+  onFileSelected: (file: File | null) => void
+  buttonText?: string
+  isLoading: boolean
+  fileName: string | null // Added to display the uploaded file name
+  uploadCompleted: boolean // Track if the upload is complete
 }
 
 const AttachImage: React.FC<AttachImageProps> = ({
@@ -16,27 +16,27 @@ const AttachImage: React.FC<AttachImageProps> = ({
   fileName,
   uploadCompleted,
 }) => {
-  const fileInputRef = React.useRef<HTMLInputElement>(null); // Ref for file input
+  const fileInputRef = React.useRef<HTMLInputElement>(null) // Ref for file input
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      onFileSelected(file);
+      const file = e.target.files[0]
+      onFileSelected(file)
     } else {
-      onFileSelected(null);
+      onFileSelected(null)
     }
-  };
+  }
 
   const triggerFileInput = () => {
-    fileInputRef.current?.click(); // Programmatically trigger the file input
-  };
+    fileInputRef.current?.click() // Programmatically trigger the file input
+  }
 
   const truncateFileName = (name: string, maxLength: number) => {
-    const nameWithoutExtension = name.replace(/\.[^/.]+$/, ''); // Remove file extension
+    const nameWithoutExtension = name.replace(/\.[^/.]+$/, '') // Remove file extension
     return nameWithoutExtension.length > maxLength
       ? `${nameWithoutExtension.slice(0, maxLength)}...`
-      : nameWithoutExtension;
-  };
+      : nameWithoutExtension
+  }
 
   return (
     <div className="lg:flex lg:items-center gap-x-2">

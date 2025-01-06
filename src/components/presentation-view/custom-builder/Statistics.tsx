@@ -35,8 +35,8 @@ export default function Statistics({
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isRowAdded, setIsRowAdded] = useState(false) // Flag to track new row addition
   const [isImageLoading, setIsImageLoading] = useState(false)
-   const [fileName, setFileName] = useState<string | null>(null); // Track file name
-    const [uploadCompleted, setUploadCompleted] = useState(false); // Track if upload is completed
+  const [fileName, setFileName] = useState<string | null>(null) // Track file name
+  const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...title]
@@ -119,24 +119,24 @@ export default function Statistics({
   }
 
   const handleFileSelect = async (file: File | null) => {
-    setIsImageLoading(true);
+    setIsImageLoading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file);
-        setSelectedImage(url);
-        setUploadCompleted(true); // Mark upload as complete
-        setFileName(file.name); // Set file name only after upload is completed
+        const url = await uploadLogoToS3(file)
+        setSelectedImage(url)
+        setUploadCompleted(true) // Mark upload as complete
+        setFileName(file.name) // Set file name only after upload is completed
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-center',
           autoClose: 2000,
-        });
-        setUploadCompleted(false); // Mark upload as failed
+        })
+        setUploadCompleted(false) // Mark upload as failed
       } finally {
-        setIsImageLoading(false);
+        setIsImageLoading(false)
       }
     }
-  };
+  }
 
   const onBack = () => {
     setDisplayMode('customBuilder')
@@ -208,12 +208,12 @@ export default function Statistics({
           </div>
 
           <div className="hidden  lg:flex w-full   lg:justify-end lg:w-auto lg:gap-4">
-          <AttachImage 
-        onFileSelected={handleFileSelect} 
-        isLoading={isImageLoading} 
-        fileName={fileName} 
-        uploadCompleted={uploadCompleted}
-      />
+            <AttachImage
+              onFileSelected={handleFileSelect}
+              isLoading={isImageLoading}
+              fileName={fileName}
+              uploadCompleted={uploadCompleted}
+            />
             <div className="hidden lg:flex w-full lg:justify-end lg:w-auto lg:gap-4">
               <div className="flex-1 relative">
                 <button
@@ -251,12 +251,12 @@ export default function Statistics({
           <div className="flex lg:hidden mt-4 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
               {/* Attach Image Section */}
-              <AttachImage 
-        onFileSelected={handleFileSelect} 
-        isLoading={isImageLoading} 
-        fileName={fileName} 
-        uploadCompleted={uploadCompleted}
-      />
+              <AttachImage
+                onFileSelected={handleFileSelect}
+                isLoading={isImageLoading}
+                fileName={fileName}
+                uploadCompleted={uploadCompleted}
+              />
             </div>
 
             <div className="flex-1 relative">
