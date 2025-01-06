@@ -33,6 +33,8 @@ export default function Cover({
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isImageLoading, setIsImageLoading] = useState(false)
+  const [fileName, setFileName] = useState('')
+  const [uploadCompleted, setUploadCompleted] = useState(false)
 
   // Ref for file input to trigger on button click
   const logoUploadInputRef = useRef<HTMLInputElement | null>(null)
@@ -44,6 +46,8 @@ export default function Cover({
       try {
         const url = await uploadLogoToS3(file)
         setLogo(url)
+        setUploadCompleted(true)
+        setFileName(file.name)
       } catch (error) {
         toast.error('Error uploading logo', {
           position: 'top-right',

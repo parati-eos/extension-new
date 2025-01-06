@@ -120,7 +120,7 @@ const SelectPresentationType: React.FC = () => {
       if (uploadedFile.type === 'application/pdf') {
         setFile(uploadedFile)
       } else {
-        alert('Please upload a valid PDF file.')
+        toast.info('Please upload a valid PDF')
       }
     }
   }
@@ -166,7 +166,7 @@ const SelectPresentationType: React.FC = () => {
   const handleRefinePPT = () => {
     const refinePPT = async () => {
       if (!file) {
-        alert('Please upload a PDF file to refine the presentation.')
+        toast.info('Please upload a PDF to refine')
         return
       }
 

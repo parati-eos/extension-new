@@ -169,7 +169,7 @@ export default function Table({
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/table`,
           {
-            type: 'Table',
+            type: 'Tables',
             title: heading,
             documentID: documentID,
             data: {

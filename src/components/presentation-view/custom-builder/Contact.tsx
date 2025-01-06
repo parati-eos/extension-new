@@ -33,6 +33,8 @@ export default function Contact({
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isImageLoading, setIsImageLoading] = useState(false)
+  const [fileName, setFileName] = useState('')
+  const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [errors, setErrors] = useState({
     websiteLink: '',
     email: '',
@@ -153,6 +155,8 @@ export default function Contact({
       try {
         const url = await uploadLogoToS3(file)
         setSelectedImage(url)
+        setFileName(file.name)
+        setUploadCompleted(true)
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
@@ -249,7 +253,12 @@ export default function Contact({
       {/* Button container */}
       <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
         {/* Use AttachImage component */}
-        <AttachImage onFileSelected={handleFileSelect} />
+        <AttachImage
+          onFileSelected={handleFileSelect}
+          isLoading={isLoading}
+          fileName={fileName}
+          uploadCompleted={uploadCompleted}
+        />
 
         {/* Generate Slide Button */}
         <button

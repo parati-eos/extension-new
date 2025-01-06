@@ -77,7 +77,6 @@ export default function ViewPresentation() {
   const [displayModes, setDisplayModes] = useState<{
     [key: string]: DisplayMode
   }>({})
-  const [finalized, setFinalized] = useState(false)
   const slideRefs = useRef<HTMLDivElement[]>([])
   const [totalSlides, setTotalSlides] = useState(Number)
   const [slidesId, setSlidesId] = useState<string[]>([])
@@ -98,6 +97,9 @@ export default function ViewPresentation() {
     {}
   )
   const [slideStates, setSlideStates] = useState<SlideStates>({})
+  const [finalizedSlides, setFinalizedSlides] = useState<{
+    [key: string]: string
+  }>({})
   console.log('Slide States:', slideStates)
   const dispatch = useDispatch()
 
@@ -261,21 +263,33 @@ export default function ViewPresentation() {
 
   // Handle Delete Button Click
   const handleDelete = () => {
-    console.log(slidesId[currentSlideIndex])
-    axios.patch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/display/${slidesId[currentSlideIndex]}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    )
+    axios
+      .patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/display/${slidesArray[currentOutline]?.[currentSlideIndex]}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response)
+        setSlidesArray((prevSlidesArray) => {
+          const updatedSlidesArray = { ...prevSlidesArray }
+          const updatedSlides = updatedSlidesArray[currentOutline].filter(
+            (_, index) => index !== currentSlideIndex
+          )
+          updatedSlidesArray[currentOutline] = updatedSlides
+          return updatedSlidesArray
+        })
+      })
   }
 
   // Handle Finalize Button Click
   const handleFinalize = () => {
-    setFinalized(true)
+    const slideId = slidesArray[currentOutline]?.[currentSlideIndex]
+
     axios
       .patch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
@@ -284,7 +298,7 @@ export default function ViewPresentation() {
           FormID: documentID,
           PresentationID: presentationID,
           SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
-          GenSlideID: slidesArray[currentSlideIndex],
+          GenSlideID: slideId,
           // OUTLINEID WILL BE ADDED LATER
         },
         {
@@ -295,6 +309,22 @@ export default function ViewPresentation() {
       )
       .then((response) => {
         console.log(response)
+        setFinalizedSlides((prevFinalizedSlides) => {
+          const updatedFinalizedSlides = { ...prevFinalizedSlides }
+
+          if (updatedFinalizedSlides[currentOutline]) {
+            // If currentOutline is already present, remove it
+            delete updatedFinalizedSlides[currentOutline]
+          } else {
+            // If currentOutline is not present, add it
+            updatedFinalizedSlides[currentOutline] = slideId
+          }
+
+          return updatedFinalizedSlides
+        })
+      })
+      .catch((error) => {
+        console.log('Error finalizing the slide')
       })
   }
 
@@ -1169,7 +1199,10 @@ export default function ViewPresentation() {
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
-              finalized={finalized}
+              finalized={
+                finalizedSlides[currentOutline] ===
+                slidesArray[currentOutline]?.[currentSlideIndex]
+              }
               currentSlideId={slidesArray[currentOutline]?.[currentSlideIndex]}
             />
 
@@ -1286,7 +1319,10 @@ export default function ViewPresentation() {
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
-              finalized={finalized}
+              finalized={
+                finalizedSlides[currentOutline] ===
+                slidesArray[currentOutline]?.[currentSlideIndex]
+              }
               currentSlideId={slidesId[currentSlideIndex]}
               displayMode={displayModes[currentOutline]}
             />

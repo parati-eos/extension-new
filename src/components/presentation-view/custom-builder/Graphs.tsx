@@ -66,7 +66,7 @@ export default function Graphs({
     if (rows.length < 10) {
       setRows([...rows, { label: '', services: '', series3: '' }])
     } else {
-      alert('Maximum of 10 rows can be added.')
+      toast.info('Maximum 10 rows can be added')
     }
   }
 

@@ -308,8 +308,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   ]
 
   const handleUpgrade = async () => {
-    console.log('Upgrade to Pro')
-
     setIsLoading(true)
     const planID = billingCycle === 'annual' ? yearlyPlanId : monthlyPlanId
     const currentTime = Date.now()
@@ -352,6 +350,28 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         console.log(error)
         setIsLoading(false)
       }
+    }
+  }
+
+  const handleCancel = async () => {
+    console.log('Cancel Clicked')
+
+    setIsLoading(true)
+
+    if (userPlan !== 'free') {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/cancel-subscription`,
+          {
+            subscription_id: '',
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+      } catch (error) {}
     }
   }
 
@@ -449,9 +469,18 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={
-                        plan.name !== 'FREE' ? handleUpgrade : exportHandler
-                      }
+                      onClick={() => {
+                        if (plan.name !== 'FREE' && userPlan === 'free') {
+                          handleUpgrade()
+                        } else if (
+                          plan.name !== 'FREE' &&
+                          userPlan !== 'free'
+                        ) {
+                          handleCancel()
+                        } else {
+                          exportHandler && exportHandler()
+                        }
+                      }}
                       className={`w-full font-medium py-2 px-6 rounded-lg ${
                         userPlan === plan.name.toLowerCase()
                           ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
@@ -508,9 +537,15 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={
-                        plan.name === 'PRO' ? handleUpgrade : exportHandler
-                      }
+                      onClick={() => {
+                        if (plan.name === 'PRO' && userPlan === 'free') {
+                          handleUpgrade()
+                        } else if (plan.name === 'PRO' && userPlan !== 'free') {
+                          handleCancel()
+                        } else {
+                          exportHandler && exportHandler()
+                        }
+                      }}
                       className={`w-full font-medium py-2 px-6 rounded-lg ${
                         userPlan === plan.name.toLowerCase()
                           ? 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
@@ -659,7 +694,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               )}
             </h3>
             <button
-              onClick={handleUpgrade}
+              onClick={userPlan === 'free' ? handleUpgrade : handleCancel}
               className={`py-2 px-4 w-full mt-4 rounded-lg border ${
                 userPlan === 'free' || userPlan === 'pro'
                   ? 'bg-[#3667B2] text-white border-[#3667B2]'
@@ -750,7 +785,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             </ul>
             <div className="px-4 py-2 mb-14">
               <button
-                onClick={handleUpgrade}
+                onClick={userPlan === 'free' ? handleUpgrade : handleCancel}
                 className={`py-2 px-4 w-full mt-4 rounded-lg border ${
                   userPlan === 'free' || userPlan === 'pro'
                     ? 'bg-[#3667B2] text-white border-[#3667B2]'

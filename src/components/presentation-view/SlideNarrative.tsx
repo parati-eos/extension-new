@@ -78,6 +78,9 @@ export default function SlideNarrative({
         setNarrative('')
         setDisplayMode('slides')
       }
+      if (response) {
+        toast.success('Slide Generation Started')
+      }
     } catch (error) {
       toast.error('Failed to send narrative.')
       setDisplayMode('slides')
