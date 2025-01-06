@@ -255,7 +255,7 @@ export default function Contact({
         {/* Use AttachImage component */}
         <AttachImage
           onFileSelected={handleFileSelect}
-          isLoading={isLoading}
+          isLoading={isImageLoading}
           fileName={fileName}
           uploadCompleted={uploadCompleted}
         />
@@ -282,7 +282,7 @@ export default function Contact({
         <div className="flex-1  items-center justify-center gap-2">
           <AttachImage
             onFileSelected={handleFileSelect}
-            isLoading={isLoading}
+            isLoading={isImageLoading}
             fileName={fileName}
             uploadCompleted={uploadCompleted}
           />

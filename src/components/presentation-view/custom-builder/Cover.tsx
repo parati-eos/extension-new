@@ -40,38 +40,38 @@ export default function Cover({
   const logoUploadInputRef = useRef<HTMLInputElement | null>(null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsImageLoading(true)
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
-      setIsUploading(true)
       try {
         const url = await uploadLogoToS3(file)
         setLogo(url)
-        setUploadCompleted(true)
-        setFileName(file.name)
       } catch (error) {
         toast.error('Error uploading logo', {
           position: 'top-right',
           autoClose: 2000,
         })
       } finally {
-        setIsUploading(false)
+        setIsImageLoading(false)
       }
     }
   }
 
   const handleFileSelect = async (file: File | null) => {
-    setIsImageLoading(true)
+    setIsUploading(true)
     if (file) {
       try {
         const url = await uploadLogoToS3(file)
         setSelectedImage(url)
+        setUploadCompleted(true)
+        setFileName(file.name)
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
           autoClose: 2000,
         })
       } finally {
-        setIsImageLoading(false)
+        setIsUploading(false)
       }
     }
   }
@@ -159,7 +159,7 @@ export default function Cover({
                   alt="Uploaded Logo"
                   className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
                 />
-                {isUploading && (
+                {isImageLoading && (
                   <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-500">
                     <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                   </div>
@@ -169,7 +169,7 @@ export default function Cover({
               <>
                 <FaImage className="text-gray-500 text-4xl  mb-4" />
                 <p className="text-gray-500 lg:mb-4">
-                  {isUploading ? 'Uploading...' : 'Upload Your Logo'}
+                  {isImageLoading ? 'Uploading...' : 'Upload Your Logo'}
                 </p>
               </>
             )}
@@ -188,7 +188,7 @@ export default function Cover({
         {/* Attach Image Component */}
         <AttachImage
           onFileSelected={handleFileSelect}
-          isLoading={isLoading}
+          isLoading={isUploading}
           fileName={fileName}
           uploadCompleted={uploadCompleted}
         />
@@ -212,7 +212,7 @@ export default function Cover({
         <div className="flex-1  items-center justify-center gap-2">
           <AttachImage
             onFileSelected={handleFileSelect}
-            isLoading={isLoading}
+            isLoading={isUploading}
             fileName={fileName}
             uploadCompleted={uploadCompleted}
           />
