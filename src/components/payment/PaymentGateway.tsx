@@ -63,29 +63,29 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     detectCurrency()
   }, [])
 
-  // const updateOrderId = async (orderId:string) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://zynth.ai/api/slides/update-order/${formId}`,
-  //       {
-  //         method: 'PATCH',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ order_id: orderId }),
-  //       }
-  //     )
+  const updateOrderId = async (orderId: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${formId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ order_id: orderId }),
+        }
+      )
 
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${response.status}`)
-  //     }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
-  //     const result = await response.json()
-  //     console.log('Order ID updated successfully:', result)
-  //   } catch (error) {
-  //     console.error('Error updating order ID:', error)
-  //   }
-  // }
+      const result = await response.json()
+      console.log('Order ID updated successfully:', result)
+    } catch (error) {
+      console.error('Error updating order ID:', error)
+    }
+  }
 
   const handlePayment = async () => {
     // const couponResult = await verifyCoupon(organizationId) // Verify the coupon
@@ -153,7 +153,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       const { id: order_id, amount, currency } = result
 
       // Update the order ID
-      //await updateOrderId(order_id)
+      await updateOrderId(order_id)
 
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
