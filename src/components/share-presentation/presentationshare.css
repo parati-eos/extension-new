@@ -74,12 +74,12 @@
   overflow-x: hidden;
 }
 .presentationshareContainer {
-  background-color: black;
+  background-color: white;
 }
 
 .presentationshare-view-slides::-webkit-scrollbar {
   width: 12px;
-  background-color: black;
+  background-color: white;
   border-radius: 4cqb; /* Adjust as needed */
 }
 .presentationshare-view-slides::-webkit-scrollbar-thumb {
