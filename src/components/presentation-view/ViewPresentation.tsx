@@ -292,7 +292,7 @@ export default function ViewPresentation() {
 
     axios
       .patch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slidesId[currentSlideIndex]}/${documentID}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}`,
         {
           userID: sessionStorage.getItem('userEmail'),
           FormID: documentID,
@@ -312,13 +312,8 @@ export default function ViewPresentation() {
         setFinalizedSlides((prevFinalizedSlides) => {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
-          if (updatedFinalizedSlides[currentOutline]) {
-            // If currentOutline is already present, remove it
-            delete updatedFinalizedSlides[currentOutline]
-          } else {
-            // If currentOutline is not present, add it
-            updatedFinalizedSlides[currentOutline] = slideId
-          }
+          // Update the value of currentOutline to slideId if it is already present
+          updatedFinalizedSlides[currentOutline] = slideId
 
           return updatedFinalizedSlides
         })
