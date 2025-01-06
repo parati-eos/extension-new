@@ -46,7 +46,7 @@ export default function Cover({
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
       } finally {
@@ -63,7 +63,7 @@ export default function Cover({
         setSelectedImage(url)
       } catch (error) {
         toast.error('Error uploading image', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
       } finally {
@@ -102,13 +102,13 @@ export default function Cover({
         }
       )
       toast.success('Slide generated successfully!', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
       console.log(response.data)
     } catch (error) {
       toast.error('Error while generating slide', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
     } finally {
@@ -182,7 +182,12 @@ export default function Cover({
       {/* Button Container */}
       <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2  lg:mt-8 mt-2">
         {/* Attach Image Component */}
-        <AttachImage onFileSelected={handleFileSelect} />
+        <AttachImage
+          onFileSelected={handleFileSelect}
+          isLoading={isLoading}
+          fileName={fileName}
+          uploadCompleted={uploadCompleted}
+        />
 
         {/* Generate Slide Button */}
         <button
@@ -201,7 +206,12 @@ export default function Cover({
       {/* Attach Image and Generate Slide Buttons for Mobile */}
       <div className="flex lg:hidden mt-2 gap-2  w-full ">
         <div className="flex-1  items-center justify-center gap-2">
-          <AttachImage onFileSelected={handleFileSelect} />
+          <AttachImage
+            onFileSelected={handleFileSelect}
+            isLoading={isLoading}
+            fileName={fileName}
+            uploadCompleted={uploadCompleted}
+          />
         </div>
 
         <button

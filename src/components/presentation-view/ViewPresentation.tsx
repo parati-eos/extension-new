@@ -400,7 +400,7 @@ export default function ViewPresentation() {
         })
         .catch((error) => {
           toast.error('Error while generating slide', {
-            position: 'top-center',
+            position: 'top-right',
             autoClose: 2000,
           })
           // setIsSlideLoading(false)
@@ -418,7 +418,7 @@ export default function ViewPresentation() {
     } catch (error) {
       console.error('Error generating slide:', error)
       toast.error('Error while generating slide', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
 

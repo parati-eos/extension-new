@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import './Modal.css' // Import custom modal CSS
 // Declare Razorpay on the window object
 declare global {
@@ -32,7 +31,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 
   const [countdown, setCountdown] = useState<number | null>(null) // State to hold countdown value
   const [showModal, setShowModal] = useState(false) // State to control modal visibility
-  const navigate = useNavigate()
 
   useEffect(() => {
     const detectCurrency = async () => {
@@ -90,7 +88,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   // }
 
   const handlePayment = async () => {
-    const organizationId = sessionStorage.getItem('orgId') // Fetch organization ID from local storage
     // const couponResult = await verifyCoupon(organizationId) // Verify the coupon
 
     let finalAmount = paymentData.amount // Start with the original amount

@@ -255,7 +255,7 @@ const HistoryContainer: React.FC = () => {
         setIsLoading(false)
       } catch (error) {
         toast.error('Error fetching history data', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
         setIsLoading(false) // Stop loading in case of an error

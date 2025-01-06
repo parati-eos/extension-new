@@ -35,7 +35,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
       } finally {

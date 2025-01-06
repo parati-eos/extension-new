@@ -134,12 +134,12 @@ export default function Contact({
       }
 
       toast.success('Contact details submitted successfully', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
     } catch (error) {
       toast.error('Error while submitting data', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
     } finally {
@@ -155,7 +155,7 @@ export default function Contact({
         setSelectedImage(url)
       } catch (error) {
         toast.error('Error uploading image', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
       } finally {
@@ -271,7 +271,12 @@ export default function Contact({
       {/* Attach Image and Generate Slide Buttons for Mobile */}
       <div className="flex lg:hidden mt-2 gap-2  w-full ">
         <div className="flex-1  items-center justify-center gap-2">
-          <AttachImage onFileSelected={handleFileSelect} />
+          <AttachImage
+            onFileSelected={handleFileSelect}
+            isLoading={isLoading}
+            fileName={fileName}
+            uploadCompleted={uploadCompleted}
+          />
         </div>
 
         <button

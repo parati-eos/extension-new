@@ -132,7 +132,7 @@ export default function People({
       })
     } catch (error) {
       toast.error('Error uploading image', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
       setPeople((prevPeople) => {
@@ -211,7 +211,7 @@ export default function People({
       console.log('Server response:', response.data)
     } catch (error) {
       toast.error('Error sending data', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
       toast.error('Failed to send data.')

@@ -3,6 +3,7 @@ import { FaPlus, FaChartPie, FaChartLine, FaChartBar } from 'react-icons/fa'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
+import { toast } from 'react-toastify'
 
 interface GraphProps {
   heading: string
@@ -122,8 +123,8 @@ export default function Graphs({
       const seriesData = rows.map((row) => ({
         key: [row.services, row.series3].filter(Boolean), // Keys are derived from rows
         value: row.label, // Values are derived from the row label
-      }));
-  
+      }))
+
       await axios
         .post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
@@ -147,7 +148,10 @@ export default function Graphs({
           }
         )
         .then((response) => {
-          alert('Submitted successfully!')
+          toast.success('Images submitted successfully!', {
+            position: 'top-right',
+            autoClose: 2000,
+          })
           setIsLoading(false)
           setDisplayMode('slides')
         })

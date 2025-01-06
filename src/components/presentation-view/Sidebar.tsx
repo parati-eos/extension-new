@@ -80,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       const result = response.data
       if (result.title && result.type) {
         toast.success('Outline Successfully Added', {
-          position: 'top-center',
+          position: 'top-right',
           autoClose: 2000,
         })
         fetchOutlines()
@@ -91,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     } catch (error) {
       console.error('Error adding outline:', error)
       toast.error('Error adding outline', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
       setNewOutlineLoading(false)

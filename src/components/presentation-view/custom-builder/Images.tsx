@@ -67,7 +67,7 @@ export default function Images({
       }
     } catch (error) {
       toast.error('Upload failed', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
     } finally {
@@ -102,13 +102,13 @@ export default function Images({
         }
       )
       toast.success('Images submitted successfully!', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
       setDisplayMode('slides')
     } catch (error) {
       toast.error('Submit failed', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
     } finally {
@@ -284,14 +284,13 @@ export default function Images({
               Generate Slide
             </button>
           </div>
-           {/* Generate Slide Buttons for Mobile */}
+          {/* Generate Slide Buttons for Mobile */}
 
-           <div className="flex lg:hidden  gap-2 justify-end  ">
+          <div className="flex lg:hidden  gap-2 justify-end  ">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
-                     onClick={handleSubmit}
-                  
+                  onClick={handleSubmit}
                   className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
                     images.length
                       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
@@ -300,8 +299,6 @@ export default function Images({
                 >
                   Generate Slide
                 </button>
-
-            
               </div>
             </div>
           </div>

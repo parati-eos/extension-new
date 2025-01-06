@@ -154,7 +154,7 @@ const SelectPresentationType: React.FC = () => {
         }
       } catch (error) {
         // toast.error('Error generating ppt', {
-        //   position: 'top-center',
+        //   position: 'top-right',
         //   autoClose: 2000,
         // })
       }
@@ -444,54 +444,52 @@ const SelectPresentationType: React.FC = () => {
             </div>
             {/* Buttons */}
             <div className="flex flex-col gap-4">
-  <button
-    onClick={handleGenerate}
-    className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
-  >
-    Generate Presentation
-  </button>
+              <button
+                onClick={handleGenerate}
+                className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
+              >
+                Generate Presentation
+              </button>
 
-  <button
-  
-    onClick={() => {
-      if (userPlan === 'pro') {
-        setIsRefineModalOpen(true); // Open refine modal
-      } else if (userPlan === 'free') {
-        setShowTooltip(true); // Show tooltip
-      }
-    }}
-    className="relative bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
-    onMouseLeave={() => setShowTooltip(false)} // Hide tooltip when mouse leaves
-  >
-    Refine Presentation
-    {/* Tooltip */}
-    {showTooltip && refineButtonDisabled && userPlan === 'free' && (
-      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center z-50">
-        <p className="text-sm text-gray-800 text-center">
-          Please{' '}
-          <button
-            className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-            onClick={() => setIsPricingModalOpen(true)}
-          >
-            upgrade to Pro
-          </button>{' '}
-          to access this feature.
-        </p>
-      </div>
-    )}
-  </button>
+              <button
+                onClick={() => {
+                  if (userPlan === 'pro') {
+                    setIsRefineModalOpen(true) // Open refine modal
+                  } else if (userPlan === 'free') {
+                    setShowTooltip(true) // Show tooltip
+                  }
+                }}
+                className="relative bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
+                onMouseLeave={() => setShowTooltip(false)} // Hide tooltip when mouse leaves
+              >
+                Refine Presentation
+                {/* Tooltip */}
+                {showTooltip && refineButtonDisabled && userPlan === 'free' && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center z-50">
+                    <p className="text-sm text-gray-800 text-center">
+                      Please{' '}
+                      <button
+                        className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                        onClick={() => setIsPricingModalOpen(true)}
+                      >
+                        upgrade to Pro
+                      </button>{' '}
+                      to access this feature.
+                    </p>
+                  </div>
+                )}
+              </button>
 
-  <button
-    className="text-[#5D5F61] py-2 px-4 rounded-lg"
-    onClick={() => {
-      setIsModalOpen(false); // Close the modal
-      setShowTooltip(false); // Hide the tooltip
-    }}
-  >
-    Cancel
-  </button>
-</div>
-
+              <button
+                className="text-[#5D5F61] py-2 px-4 rounded-lg"
+                onClick={() => {
+                  setIsModalOpen(false) // Close the modal
+                  setShowTooltip(false) // Hide the tooltip
+                }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -549,18 +547,17 @@ const SelectPresentationType: React.FC = () => {
             </div>
             {/* Refine Button */}
             <div className="items-center justify-center">
-            <button
-  onClick={handleRefinePPT}
-  style={{ backgroundColor: file ? '#3667B2' : 'white' }}
-  className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
-    file ? 'text-white' : 'cursor-not-allowed'
-  }`}
-  disabled={!file}
->
-  <span>Refine Presentation</span>
-</button>
-
-</div>
+              <button
+                onClick={handleRefinePPT}
+                style={{ backgroundColor: file ? '#3667B2' : 'white' }}
+                className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
+                  file ? 'text-white' : 'cursor-not-allowed'
+                }`}
+                disabled={!file}
+              >
+                <span>Refine Presentation</span>
+              </button>
+            </div>
 
             {/* Cancel Button */}
             <button

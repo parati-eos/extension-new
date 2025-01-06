@@ -211,7 +211,7 @@ export default function Table({
         })
     } catch (error) {
       toast.error('Error sending data', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
       toast.error('Failed to send data.')

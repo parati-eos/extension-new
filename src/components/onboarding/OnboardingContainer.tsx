@@ -89,7 +89,7 @@ const OnboardingContainer: React.FC = () => {
       setIsNextLoading(false)
     } catch (error) {
       toast.error('Error submitting form data', {
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 2000,
       })
     }
