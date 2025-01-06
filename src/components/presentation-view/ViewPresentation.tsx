@@ -428,7 +428,6 @@ export default function ViewPresentation() {
             position: 'top-right',
             autoClose: 2000,
           })
-          // setIsSlideLoading(false)
           setSlideStates((prev) => ({
             ...prev,
             [currentOutline]: {
