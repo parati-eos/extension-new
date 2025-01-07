@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice'
 import uploadLogoToS3 from '../../utils/uploadLogoToS3'
-
+import GuidedTour from '../onboarding/shared/GuidedTour'
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
     { id: 1, label: 'Product', icon: <FaBox className="text-[#3667B2]" /> },
@@ -62,7 +62,10 @@ const SelectPresentationType: React.FC = () => {
       icon: <FaEllipsisH className="text-[#3667B2]" />,
     },
   ]
+  const [tourActive, setTourActive] = useState(false);
 
+  const startTour = () => setTourActive(true);
+  const stopTour = () => setTourActive(false);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRefineModalOpen, setIsRefineModalOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -365,8 +368,11 @@ const SelectPresentationType: React.FC = () => {
 
       {/* Generate Buttons for medium and large screens */}
       {selectedType && (
-        <div className="hidden lg:flex w-max justify-center mt-4 ml-16">
-          <button
+        <div 
+
+        className="hidden lg:flex w-max justify-center mt-4 ml-16">
+          <button        id="generate-presentation" // Add this ID for targeting
+
             onClick={handleGenerate}
             disabled={isButtonDisabled}
             className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
@@ -374,6 +380,7 @@ const SelectPresentationType: React.FC = () => {
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-[#3667B2] hover:bg-[#0A8568]'
             }`}
+            
           >
             Generate Presentation
           </button>
@@ -383,6 +390,7 @@ const SelectPresentationType: React.FC = () => {
             onMouseLeave={handleMouseLeave}
           >
             <button
+              id="refine-presentation" // Add this ID for targeting
               disabled={refineButtonDisabled}
               onClick={() => setIsRefineModalOpen(true)}
               className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
@@ -608,6 +616,8 @@ const SelectPresentationType: React.FC = () => {
           </div>
         </div>
       )}
+       <GuidedTour/>
+
     </div>
   )
 }

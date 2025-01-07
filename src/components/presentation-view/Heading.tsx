@@ -1,6 +1,7 @@
 import { FaDownload, FaShare } from 'react-icons/fa'
 import { HeadingProps } from '../../types/types'
 import { useEffect, useRef, useState } from 'react'
+import GuidedTour from '../onboarding/shared/GuidedTour'
 
 export const DesktopHeading: React.FC<HeadingProps> = ({
   handleShare,
@@ -62,6 +63,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
         </h1>
         <div className="flex gap-2">
           <button
+          id='share'
             onClick={handleShare}
             className="text-[#5D5F61] gap-2 hover:text-[#3667B2] border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center active:scale-95 transition transform duration-300"
           >
@@ -74,6 +76,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
             onMouseLeave={handleMouseLeave}
           >
             <button
+            id='export'
               onClick={handleDownload}
               disabled={userPlan === 'free' && !exportPaid}
               className={`text-[#5D5F61] gap-2 ${
@@ -105,6 +108,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
           </div>
         </div>
       </div>
+      <GuidedTour/>
     </div>
   )
 }
@@ -200,6 +204,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
           <FaShare className="h-4 w-4" />
         </button>
       </div>
+   
     </div>
   )
 }

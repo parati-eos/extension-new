@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { FaCheck, FaTimes } from 'react-icons/fa'
 import './viewpresentation.css'
 import { PricingModal } from '../shared/PricingModal'
+import GuidedTour from '../onboarding/shared/GuidedTour'
 
 const Sidebar: React.FC<SidebarProps> = ({
   onOutlineSelect,
@@ -152,6 +153,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                   >
                     <button
+                    id="outline"
                       className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 disabled:opacity-20 disabled:cursor-not-allowed`}
                       onClick={() => setInputIndex(idx)}
                       disabled={isDisabled}
@@ -185,7 +187,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             {/* Input for New Outline */}
 
             {inputIndex === idx && (
-              <div className="mt-2 flex items-center space-x-2">
+              <div 
+              id="new-outline"
+              className="mt-2 flex items-center space-x-2">
                 <div className="relative flex w-full max-w-xs">
                   <input
                     type="text"
@@ -243,6 +247,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           orgId={orgId!}
         />
       )}
+        <GuidedTour/>
     </div>
   )
 }
