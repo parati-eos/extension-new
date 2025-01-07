@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { FaLink } from "react-icons/fa";
 import Joyride, { Step, Placement, STATUS } from "react-joyride";
 
 const GuidedTour: React.FC = () => {
   const [run, setRun] = useState(false); 
   const [steps, setSteps] = useState<Step[]>([]);
-  const [key, setKey] = useState(0); // Force re-render of Joyride when updated
+
 
   useEffect(() => {
     const tourSteps: Step[] = [
@@ -130,23 +131,22 @@ const GuidedTour: React.FC = () => {
     const hasVisited = localStorage.getItem("hasVisited");
     if (!hasVisited) {
       setRun(true); // Start the tour
-      localStorage.setItem("hasVisited", "true");
-      setKey((prev) => prev + 1); // Re-render Joyride
+   
+     
     }
   }, []);
 
- const handleCallback = (data: any) => {
-  const { status, action } = data;
+const handleCallback = (data: any) => {
+    const { status, action } = data;
 
-  // End the tour on FINISHED, SKIPPED, or CLOSE actions
-  if (
-    status === STATUS.FINISHED ||
-    status === STATUS.SKIPPED ||
-    action === "close"
-  ) {
-    setRun(false);
-  }
-};
+    if (status === STATUS.FINISHED) {
+      // Set localStorage only after completing the tour
+      localStorage.setItem("hasVisited", "true");
+      setRun(false);
+    } else if (status === STATUS.SKIPPED || action === "close") {
+      setRun(false); // Stop the tour if skipped or closed
+    }
+  };
 
 
   return (
@@ -154,7 +154,6 @@ const GuidedTour: React.FC = () => {
       {/* Joyride Component */}
       <Joyride
         steps={steps}
-        key={key} // Force re-render when key changes
         continuous={true}
         scrollToFirstStep={true}
         showSkipButton={true}

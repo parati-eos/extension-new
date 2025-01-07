@@ -7,8 +7,12 @@ import { Plan } from '../../types/pricingTypes'
 import axios from 'axios'
 import { IpInfoResponse } from '../../types/authTypes'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+interface NavbarProps {
+  showHistoryId?: boolean; // Add a prop to control the "history" ID
+  showOrganizationProfileId?: boolean; // Add a prop to control the "organization-profile" ID
+}
 
-const Navbar = () => {
+const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
@@ -131,7 +135,7 @@ const Navbar = () => {
             </span>
           </button>
           <button
-          id='history'
+      id={showHistoryId ? 'history' : undefined} // Conditionally apply the ID
             onClick={() => navigate('/history')}
             className="bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
           >
@@ -145,7 +149,7 @@ const Navbar = () => {
           </button>
           {/* User Profile Icon */}
           <div 
-          id='organization-profile'
+          id={showOrganizationProfileId? 'organization-profile' : undefined} // Conditionally apply the ID
           ref={userProfileRef}>
             {userProfileImage ? (
               <img
