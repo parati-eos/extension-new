@@ -17,18 +17,8 @@ interface PeopleProps {
   setIsSlideLoading: () => void
 }
 
-interface IPerson {
-  name: string
-  image: string
-  designation: string
-  company: string
-  description: string
-  loading: boolean // Added loading state to each person
-}
-
 export default function People({
   heading,
-  slideType,
   documentID,
   orgId,
   authToken,

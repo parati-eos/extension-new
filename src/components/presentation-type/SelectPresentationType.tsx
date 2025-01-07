@@ -21,6 +21,7 @@ import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice'
+import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -68,6 +69,8 @@ const SelectPresentationType: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRefineModalOpen, setIsRefineModalOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  const [pdfLink, setPdfLink] = useState('')
+  const [pdfUploading, setPDFUploading] = useState(false)
   const [selectedType, setSelectedType] = useState<number | null>(null)
   const [customTypeInput, setCustomTypeInput] = useState<string>('')
   const navigate = useNavigate()
@@ -84,6 +87,7 @@ const SelectPresentationType: React.FC = () => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showTooltip, setShowTooltip] = React.useState(false)
+  const [refineLoading, setRefineLoading] = useState(false)
   const dispatch = useDispatch()
 
   const handleMouseEnter = () => {
@@ -117,11 +121,17 @@ const SelectPresentationType: React.FC = () => {
     }, 6000)
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPDFUploading(true)
     if (event.target.files && event.target.files[0]) {
       const uploadedFile = event.target.files[0]
       if (uploadedFile.type === 'application/pdf') {
         setFile(uploadedFile)
+        const pdfLink = await uploadLogoToS3(uploadedFile)
+        setPdfLink(pdfLink)
+        setPDFUploading(false)
       } else {
         toast.info('Please upload a valid PDF', {
           position: 'top-right',
@@ -179,27 +189,29 @@ const SelectPresentationType: React.FC = () => {
         return
       }
 
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('type', selectedTypeName || '')
-      formData.append('orgId', orgId || '')
+      setRefineLoading(true)
 
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
-          formData,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/refineppt/${orgId}/${selectedTypeName}`,
+          {
+            pdfLink: pdfLink,
+          },
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
-              'Content-Type': 'multipart/form-data',
             },
           }
         )
 
         const result = await response.data
-        if (result.documentID && result.documentID !== '') {
+        if (
+          result.documentData.documentID &&
+          result.documentData.documentID !== ''
+        ) {
+          setRefineLoading(false)
           navigate(
-            `/presentation-view/?documentID=${result.documentID}/?presentationName=${result.presentationName}/?slideType=${selectedTypeName}`
+            `/presentation-view?documentID=${result.documentData.documentID}&presentationName=${result.documentData.documentName}`
           )
         }
       } catch (error) {
@@ -533,7 +545,12 @@ const SelectPresentationType: React.FC = () => {
             </p>
             {/* Upload Button */}
             <div className="mt-4 md:mt-8">
-              {file ? (
+              {pdfUploading && (
+                <div className="flex items-center justify-center h-[3.1rem] mt-2 bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
+                  <span>Uploading...</span>
+                </div>
+              )}
+              {file && !pdfUploading && (
                 <div className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
                   <span className="text-[#5D5F61] truncate">{file.name}</span>
                   <button
@@ -543,7 +560,8 @@ const SelectPresentationType: React.FC = () => {
                     <FaTimes />
                   </button>
                 </div>
-              ) : (
+              )}{' '}
+              {!file && (
                 <label className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl cursor-pointer">
                   <FaUpload className="mr-2 text-[#5D5F61]" />
                   <span>Upload Presentation</span>
@@ -557,18 +575,26 @@ const SelectPresentationType: React.FC = () => {
               )}
             </div>
             {/* Refine Button */}
-            <div className="items-center justify-center">
-              <button
-                onClick={handleRefinePPT}
-                style={{ backgroundColor: file ? '#3667B2' : 'white' }}
-                className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
-                  file ? 'text-white' : 'cursor-not-allowed'
-                }`}
-                disabled={!file}
-              >
-                <span>Refine Presentation</span>
-              </button>
-            </div>
+            {!refineLoading && (
+              <div className="items-center justify-center">
+                <button
+                  onClick={handleRefinePPT}
+                  style={{ backgroundColor: file ? '#3667B2' : 'white' }}
+                  className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
+                    file ? 'text-white' : 'cursor-not-allowed'
+                  }`}
+                  disabled={!file}
+                >
+                  <span>Refine Presentation</span>
+                </button>
+              </div>
+            )}
+
+            {refineLoading && (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            )}
 
             {/* Cancel Button */}
             <button

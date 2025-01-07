@@ -51,6 +51,7 @@ const HistoryContainer: React.FC = () => {
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [documentID, setDocumentID] = useState<string | null>(null)
+  const [paid, setIsPaid] = useState(false)
   const dispatch = useDispatch()
 
   // Handle Download Button Click
@@ -61,71 +62,80 @@ const HistoryContainer: React.FC = () => {
         throw new Error('Form ID not found in localStorage')
       }
 
-      // 1. First, update the payment status
-      const updatePaymentStatus = async () => {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/appscript/updatePaymentStatus`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ FormID: formId, paymentStatus: 1 }),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const result = await response.json()
-        console.log('Payment status updated:', result)
-      }
-
-      // Call payment status update
-      await updatePaymentStatus()
-
-      // 2. Then, call the additional API to get presentationID
-      const callAdditionalApi = async () => {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const result = await response.json()
-        console.log('Additional API response:', result)
-
-        const presentationID = result.PresentationID // Extract PresentationID from response
-
-        if (presentationID) {
-          // Call the second API with the extracted presentationID
-          const secondApiResponse = await fetch(
-            `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
+      if (!paid) {
+        // 1. First, update the payment status
+        const updatePaymentStatus = async () => {
+          const response = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
+            {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({ paymentStatus: 1 }),
+            }
           )
-          const secondApiText = await secondApiResponse.text()
-          console.log('Raw second API response:', secondApiText)
 
-          try {
-            const secondApiResult = JSON.parse(secondApiText)
-            console.log('Second API parsed response:', secondApiResult)
-          } catch (jsonError) {
-            console.error(
-              'Error parsing second API response as JSON:',
-              jsonError
-            )
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
           }
-        } else {
-          throw new Error('PresentationID not found in the response')
+          const result = await response.json()
+          console.log('Payment status updated:', result)
         }
-      }
 
-      // Call additional API
-      await callAdditionalApi()
+        // Call payment status update
+        await updatePaymentStatus()
+
+        // 2. Then, call the additional API to get presentationID
+        const callAdditionalApi = async () => {
+          const response = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/slides/presentation?formId=${formId}`
+          )
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          const result = await response.json()
+          console.log('Additional API response:', result)
+
+          const presentationID = result.PresentationID // Extract PresentationID from response
+
+          if (presentationID) {
+            // Call the second API with the extracted presentationID
+            const secondApiResponse = await fetch(
+              `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
+            )
+            const secondApiText = await secondApiResponse.text()
+            console.log('Raw second API response:', secondApiText)
+
+            try {
+              const secondApiResult = JSON.parse(secondApiText)
+              console.log('Second API parsed response:', secondApiResult)
+            } catch (jsonError) {
+              console.error(
+                'Error parsing second API response as JSON:',
+                jsonError
+              )
+            }
+          } else {
+            throw new Error('PresentationID not found in the response')
+          }
+        }
+
+        // Call additional API
+        await callAdditionalApi()
+      }
 
       // 3. Finally, call the original slides URL API
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
       )
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -134,7 +144,7 @@ const HistoryContainer: React.FC = () => {
       const result = await response.json()
       console.log('Result:', result)
 
-      const url = result.PresentationURL
+      const url = result.data.PresentationURL
       console.log('URL:', url)
 
       if (!url || typeof url !== 'string') {
@@ -523,6 +533,9 @@ const HistoryContainer: React.FC = () => {
                             setActiveDropdown((prev) =>
                               prev === index ? null : index
                             )
+                            if (item.paymentStatus !== 0) {
+                              setIsPaid(true)
+                            }
                             setDocumentID(item.FormID)
                           }}
                         />
@@ -680,6 +693,9 @@ const HistoryContainer: React.FC = () => {
                           setActiveDropdown((prev) =>
                             prev === index ? null : index
                           )
+                          if (item.paymentStatus !== 0) {
+                            setIsPaid(true)
+                          }
                           setDocumentID(item.FormID)
                         }}
                       />
