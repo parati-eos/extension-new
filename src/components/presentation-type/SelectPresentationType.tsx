@@ -77,7 +77,6 @@ const SelectPresentationType: React.FC = () => {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const pricingModalHeading = 'Refine PPT'
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  console.log('User Plan', userPlan)
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
@@ -216,6 +215,7 @@ const SelectPresentationType: React.FC = () => {
           position: 'top-right',
           autoClose: 2000,
         })
+        setRefineLoading(false)
       }
     }
 
@@ -550,7 +550,10 @@ const SelectPresentationType: React.FC = () => {
                   <span className="text-[#5D5F61] truncate">{file.name}</span>
                   <button
                     className="text-[#8A8B8C] ml-2"
-                    onClick={() => setFile(null)}
+                    onClick={() => {
+                      setFile(null)
+                      setPdfLink('')
+                    }}
                   >
                     <FaTimes />
                   </button>
@@ -574,11 +577,15 @@ const SelectPresentationType: React.FC = () => {
               <div className="items-center justify-center">
                 <button
                   onClick={handleRefinePPT}
-                  style={{ backgroundColor: file ? '#3667B2' : 'white' }}
+                  style={{
+                    backgroundColor: pdfLink ? '#3667B2' : 'white',
+                  }}
                   className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
-                    file ? 'text-white' : 'cursor-not-allowed'
+                    !refineLoading && pdfLink
+                      ? 'text-white'
+                      : 'cursor-not-allowed'
                   }`}
-                  disabled={!file}
+                  disabled={refineLoading && !pdfLink}
                 >
                   <span>Refine Presentation</span>
                 </button>
@@ -586,7 +593,7 @@ const SelectPresentationType: React.FC = () => {
             )}
 
             {refineLoading && (
-              <div className="w-full h-full flex items-center justify-center">
+              <div className="w-full h-full flex items-center justify-center mt-4">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
               </div>
             )}

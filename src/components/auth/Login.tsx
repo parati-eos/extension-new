@@ -90,15 +90,14 @@ function Login() {
       })
 
       const responseData = await res.json()
-      console.log('User Data:', responseData)
 
-      if (responseData.orgid) {
+      if (responseData.orgid && (responseData.plan !== null || '')) {
         if (responseData.plan.plan_name) {
           dispatch(setUserPlan(responseData.plan.plan_name))
         }
         sessionStorage.setItem('orgId', responseData.orgid)
         navigate('/new-presentation')
-      } else if (!responseData.orgId) {
+      } else if (!responseData.orgId || responseData.plan === null || '') {
         sessionStorage.setItem('orgId', generatedOrgId)
         navigate('/onboarding')
       }

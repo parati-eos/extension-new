@@ -100,7 +100,6 @@ export default function ViewPresentation() {
   const [finalizedSlides, setFinalizedSlides] = useState<{
     [key: string]: string
   }>({})
-  console.log('Slide States:', slideStates)
   const dispatch = useDispatch()
 
   // Handle Share Button Click
@@ -148,8 +147,6 @@ export default function ViewPresentation() {
       //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
       // )
       const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`
-      console.log('Request URL:', url)
-
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
@@ -162,16 +159,11 @@ export default function ViewPresentation() {
       }
 
       const result = await response.json()
-      console.log('Result:', result)
-
       const presentationUrl = result.data.PresentationURL
-      console.log('Presentation URL:', presentationUrl)
       if (presentationUrl && typeof presentationUrl === 'string') {
-        console.log('REACHED HERE', presentationUrl)
         setCountdown(0)
         setIsExportPaid(true)
         window.open(presentationUrl, '_blank')
-        console.log('Presentation opened in new tab', presentationUrl)
       } else {
         throw new Error('Invalid URL in response')
       }
@@ -213,8 +205,6 @@ export default function ViewPresentation() {
       )
 
       const res = await response.json()
-      console.log('API response data:', res) // Debugging line
-
       if (res && res.data.paymentStatus === 1) {
         // Payment has already been made, run handleDownload
         handleDownload()
@@ -247,13 +237,19 @@ export default function ViewPresentation() {
         }
       )
       .then((response) => {
-        console.log(response)
         setSlidesArray((prevSlidesArray) => {
           const updatedSlidesArray = { ...prevSlidesArray }
           const updatedSlides = updatedSlidesArray[currentOutline].filter(
             (_, index) => index !== currentSlideIndex
           )
           updatedSlidesArray[currentOutline] = updatedSlides
+          // Check if the updatedSlides array is empty
+          if (updatedSlides.length === 0) {
+            setDisplayModes((prev) => ({
+              ...prev,
+              [currentOutline]: 'newContent',
+            }))
+          }
           return updatedSlidesArray
         })
       })
@@ -281,7 +277,6 @@ export default function ViewPresentation() {
         }
       )
       .then((response) => {
-        console.log(response)
         setFinalizedSlides((prevFinalizedSlides) => {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
@@ -328,7 +323,7 @@ export default function ViewPresentation() {
     setCurrentSlideIndex(0)
     setDisplayModes((prev) => ({
       ...prev,
-      [currentOutline]: 'slides',
+      [currentOutline]: prev[currentOutline] || 'slides',
     }))
   }
 
@@ -359,7 +354,7 @@ export default function ViewPresentation() {
       setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
       setDisplayModes((prev) => ({
         ...prev,
-        [currentOutline]: 'slides',
+        [currentOutline]: prev[currentOutline] || 'slides',
       }))
     }
   }, 100)
@@ -548,15 +543,20 @@ export default function ViewPresentation() {
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 <h1>Generating Slide Please Wait...</h1>
               </div>
-            ) : (
+            ) : slideState.isNoGeneratedSlide ? (
+              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
+                <h1 className="text-red-600">
+                  Sorry! Slide could not be generated.
+                </h1>
+              </div>
+            ) : slideState.genSlideID ? (
               <iframe
                 src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${currentSlideId}`}
                 title={`Slide ${index ? index + 1 : currentSlideIndex + 1}`}
                 className="w-full h-full pointer-events-none"
                 style={{ border: 0 }}
               />
-            )}
-            {}
+            ) : null}
           </>
         )
 
@@ -720,7 +720,6 @@ export default function ViewPresentation() {
         // Only update documentID if it hasn't been set yet
         setPptName(result.documentName)
         setDocumentID((prev) => prev || result.documentID)
-        console.log('Document ID Set From API', result.documentID)
         setIsDocumentIDLoading(false)
       } catch (error) {
         console.error('Error fetching document:', error)
@@ -735,7 +734,6 @@ export default function ViewPresentation() {
       // If documentID comes from URL and is valid, set it only if it hasn't been set
       setDocumentID((prev) => prev || documentIDFromUrl)
       setPptName(pptNameFromUrl)
-      console.log('')
 
       // Fetch the pptName if needed
       const getPptName = async () => {
@@ -828,7 +826,7 @@ export default function ViewPresentation() {
           if (
             firstSlide.SectionName === sectionName &&
             firstSlide.PresentationID &&
-            firstSlide.GenSlideID
+            (firstSlide.GenSlideID !== null || '')
           ) {
             // Update state with successful response
             setSlideStates((prev) => ({
@@ -873,7 +871,6 @@ export default function ViewPresentation() {
         socket.disconnect()
       }
     }
-    console.log('useEffect: currentOutline, documentID, slidesArray')
   }, [currentOutline, documentID])
 
   useEffect(() => {
@@ -971,7 +968,6 @@ export default function ViewPresentation() {
         )
         const planName = response.data.plan.plan_name
         dispatch(setUserPlan(planName))
-        console.log('User Plan', userPlan)
       } catch (error) {
         console.error('Error fetching user plan:', error)
       }
@@ -993,8 +989,6 @@ export default function ViewPresentation() {
         )
 
         const res = await response.json()
-        console.log('API response data:', res) // Debugging line
-
         if (res && res.data.paymentStatus === 1) {
           // Payment has already been made, run handleDownload
           setIsExportPaid(true)
@@ -1042,10 +1036,8 @@ export default function ViewPresentation() {
         )
         .then((response) => {
           const country = ipInfoData!.country!
-          console.log('Country:', country)
 
           if (country !== 'IN' && country !== 'India' && country !== 'In') {
-            console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
@@ -1054,7 +1046,6 @@ export default function ViewPresentation() {
             country === 'India' ||
             country === 'In'
           ) {
-            console.log('Reached Else')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('INR')
@@ -1203,8 +1194,11 @@ export default function ViewPresentation() {
                 <FaArrowLeft className="h-4 w-4 text-[#5D5F61]" />
               </button>
               <span className="text-sm">
-                Slide {currentSlideIndex + 1} of{' '}
-                {slidesArray[currentOutline]?.length || 0}
+                Slide{' '}
+                {slidesArray[currentOutline]?.length > 0
+                  ? currentSlideIndex + 1
+                  : 0}{' '}
+                of {slidesArray[currentOutline]?.length || 0}
               </span>
               <button
                 onClick={handlePaginateNext}
