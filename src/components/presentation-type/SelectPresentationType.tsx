@@ -368,9 +368,11 @@ const SelectPresentationType: React.FC = () => {
 
       {/* Generate Buttons for medium and large screens */}
       {selectedType && (
-        <div className="hidden lg:flex w-max justify-center mt-4 ml-16">
-          <button
-           id="generate-presentation" // Add this ID for targeting
+        <div 
+
+        className="hidden lg:flex w-max justify-center mt-4 ml-16">
+          <button        id="generate-presentation" // Add this ID for targeting
+
             onClick={handleGenerate}
             disabled={isButtonDisabled}
             className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
@@ -388,6 +390,7 @@ const SelectPresentationType: React.FC = () => {
             onMouseLeave={handleMouseLeave}
           >
             <button
+              id="refine-presentation" // Add this ID for targeting
               disabled={refineButtonDisabled}
               onClick={() => setIsRefineModalOpen(true)}
               className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
@@ -606,9 +609,7 @@ const SelectPresentationType: React.FC = () => {
           </div>
         </div>
       )}
-       <GuidedTour active={tourActive} />
-       <button onClick={startTour}>Start Tour</button>
-      <button onClick={stopTour}>Stop Tour</button>
+       <GuidedTour/>
 
     </div>
   )

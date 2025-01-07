@@ -38,6 +38,7 @@ import { toast } from 'react-toastify'
 import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
 import { useDispatch, useSelector } from 'react-redux'
+import GuidedTour from '../onboarding/shared/GuidedTour'
 
 interface SlideState {
   isLoading: boolean
@@ -1192,6 +1193,7 @@ export default function ViewPresentation() {
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
             <div className="flex items-center gap-2 mr-14">
               <button
+              id='arrows'
                 onClick={handlePaginatePrev}
                 disabled={currentSlideIndex === 0}
                 className={`flex items-center hover:cursor-pointer border border-[#E1E3E5] active:scale-95 transition transform duration-300 ${
@@ -1350,6 +1352,7 @@ export default function ViewPresentation() {
           </div>
         </div>
       </div>
+      <GuidedTour/>
     </div>
   )
 }

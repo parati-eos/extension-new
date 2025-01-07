@@ -6,6 +6,7 @@ import { PricingModal } from './PricingModal'
 import { Plan } from '../../types/pricingTypes'
 import axios from 'axios'
 import { IpInfoResponse } from '../../types/authTypes'
+import GuidedTour from '../onboarding/shared/GuidedTour'
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -130,6 +131,7 @@ const Navbar = () => {
             </span>
           </button>
           <button
+          id='history'
             onClick={() => navigate('/history')}
             className="bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
           >
@@ -142,7 +144,9 @@ const Navbar = () => {
             </span>
           </button>
           {/* User Profile Icon */}
-          <div ref={userProfileRef}>
+          <div 
+          id='organization-profile'
+          ref={userProfileRef}>
             {userProfileImage ? (
               <img
                 src={userProfileImage}
@@ -203,6 +207,7 @@ const Navbar = () => {
           orgId={orgId!}
         />
       )}
+            <GuidedTour/>
     </nav>
   )
 }

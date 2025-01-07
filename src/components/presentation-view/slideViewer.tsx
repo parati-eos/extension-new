@@ -1,3 +1,5 @@
+import GuidedTour from "../onboarding/shared/GuidedTour"
+
 const createInitialSlideState = (): SlideState => ({
   isLoading: true,
   isNoGeneratedSlide: false,
@@ -848,8 +850,11 @@ export default function ViewPresentation() {
             />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
-            <div className="flex items-center gap-2 mr-14">
+            <div 
+        
+            className="flex items-center gap-2 mr-14">
               <button
+             
                 onClick={handlePaginatePrev}
                 disabled={currentSlideIndex === 0}
                 className={`flex items-center hover:cursor-pointer border border-[#E1E3E5] active:scale-95 transition transform duration-300 ${
@@ -980,9 +985,11 @@ export default function ViewPresentation() {
             >
               <FaArrowRight className="h-4 w-4 text-[#091220]" />
             </button>
+    
           </div>
         </div>
       </div>
+
     </div>
   )
 }
