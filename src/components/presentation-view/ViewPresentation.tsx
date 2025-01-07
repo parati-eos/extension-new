@@ -1334,7 +1334,8 @@ export default function ViewPresentation() {
               />
             </button>
             <span className="text-sm text-[#5D5F61]">
-              Slide {currentSlideIndex + 1} of {}
+            Slide {currentSlideIndex + 1} of{' '}
+                {slidesArray[currentOutline]?.length || 0}
             </span>
             <button
               onClick={handlePaginateNext}
