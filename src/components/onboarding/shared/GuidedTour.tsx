@@ -1,101 +1,160 @@
-import React, { useState, useMemo } from "react";
-import Joyride, { CallBackProps, Placement, STATUS, } from "react-joyride";
+import React, { useState, useEffect } from "react";
+import Joyride, { Step, Placement, STATUS } from "react-joyride";
 
-interface GuidedTourProps {}
+const GuidedTour: React.FC = () => {
+  const [run, setRun] = useState(true); 
+  const [steps, setSteps] = useState<Step[]>([]);
+  const [key, setKey] = useState(0); // Force re-render of Joyride when updated
 
-const GuidedTour: React.FC<GuidedTourProps> = () => {
-  const [run, setRun] = useState(false);
-
-  const steps = useMemo(() => {
-    const rawSteps = [
+  useEffect(() => {
+    const tourSteps: Step[] = [
       {
         target: "#generate-presentation",
-        content: "Click here to generate a new presentation.",
+    
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 1 of 2</strong> <br />
+            Click here to generate a new presentation.
+          </div>
+        ),
         placement: "bottom" as Placement,
       },
       {
         target: "#refine-presentation",
-        content: "Alternatively, upload an existing document to convert it into a newly written and designed presentation.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 2 of 2</strong> <br />
+            Alternatively, upload an existing document to convert it into a newly written and designed presentation.
+          </div>
+        ),
         placement: "bottom" as Placement,
       },
       {
         target: "#outline",
-        content: "Add new sections to the outline to generate new slides.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 1 of 9</strong> <br />
+            Add new sections to the outline to generate new slides.
+          </div>
+        ),
         placement: "bottom" as Placement,
       },
       {
         target: "#new-outline",
-        content: "Generate a new slide version for the selected section in the outline.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 2 of 9</strong> <br />
+            Generate a new slide version for the selected section in the outline
+          </div>
+        ),
         placement: "bottom" as Placement,
       },
       {
         target: "#arrows",
-        content: "Navigate between different slide versions of the same section.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 3 of 9</strong> <br />
+            Navigate between different slide versions of the same section
+          </div>
+        ),
         placement: "top" as Placement,
       },
       {
         target: "#finalize",
-        content: "Finalize the selected slide version to add it to the final presentation. Only one slide version can be finalized within a section.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 4 of 9</strong> <br />
+            Finalize the selected slide version to add it to the final presentation. Only one slide version can be finalized within a section.
+          </div>
+        ),
         placement: "top" as Placement,
       },
       {
         target: "#delete",
-        content: "Delete the selected slide version from the presentation.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 5 of 9</strong> <br />
+            Delete the selected slide version from the presentation.
+          </div>
+        ),
         placement: "top" as Placement,
       },
       {
         target: "#share",
-        content: "Share the presentation as a weblink. Only finalized slide versions are added to the final presentation link.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 6 of 9</strong> <br />
+            Share the presentation as a weblink. Only finalized slide versions are added to the final presentation link.
+          </div>
+        ),
         placement: "top" as Placement,
       },
       {
         target: "#export",
-        content: "Export the presentation to Google Slides to make further edits. All slide versions are exported.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 7 of 9</strong> <br />
+            Export the presentation to Google Slides to make further edits. All slide versions are exported.
+          </div>
+        ),
         placement: "top" as Placement,
       },
       {
         target: "#history",
-        content: "Access history to view or edit past presentations.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 8 of 9</strong> <br />
+            Access history to view or edit past presentations.
+          </div>
+        ),
         placement: "top" as Placement,
       },
       {
         target: "#organization-profile",
-        content: "Access organization profile, subscription plans, and other account details here.",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 9 of 9</strong> <br />
+            Access organization profile, subscription plans, and other account details here
+          </div>
+        ),
         placement: "top" as Placement,
       },
     ];
-  
-    // Add step number dynamically with step indication on top
-    return rawSteps.map((step, index) => ({
-      ...step,
-      content: (
-        <div>
-          <div style={{ marginBottom: "10px", fontSize: "12px", color: "black" ,fontWeight:'bold'}}>
-            Step {index + 1} of {rawSteps.length}
-          </div>
-          <div>{step.content}</div>
-        </div>
-      ),
-    }));
-  }, []);
-  
 
-  const handleCallback = (data: CallBackProps) => {
-    const { status } = data;
-    if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
-      setRun(false); // Stop the tour when finished or skipped
+    // Filter steps to include only those with valid DOM elements
+    const filteredSteps = tourSteps.filter((step) => {
+      return typeof step.target === "string" && document.querySelector(step.target);
+    });
+
+    setSteps(filteredSteps);
+    const hasVisited = localStorage.getItem("hasVisited");
+    if (!hasVisited) {
+      setRun(true); // Start the tour
+      localStorage.setItem("hasVisited", "true");
+      setKey((prev) => prev + 1); // Re-render Joyride
     }
-  };
+  }, []);
 
-  const startTour = () => {
-    setRun(true); // Start the tour
-  };
+ const handleCallback = (data: any) => {
+  const { status, action } = data;
+
+  // End the tour on FINISHED, SKIPPED, or CLOSE actions
+  if (
+    status === STATUS.FINISHED ||
+    status === STATUS.SKIPPED ||
+    action === "close"
+  ) {
+    setRun(false);
+  }
+};
+
 
   return (
     <div>
       {/* Joyride Component */}
       <Joyride
         steps={steps}
+        key={key} // Force re-render when key changes
         continuous={true}
         scrollToFirstStep={true}
         showSkipButton={true}
@@ -117,7 +176,6 @@ const GuidedTour: React.FC<GuidedTourProps> = () => {
           },
           buttonBack: {
             color: "white", // Blue text for Back button
-            
           },
         }}
         locale={{
@@ -125,27 +183,6 @@ const GuidedTour: React.FC<GuidedTourProps> = () => {
           skip: "Skip",
         }}
       />
-
-      {/* Start Tour Button */}
-      <button
-        id="start-tour-button"
-        onClick={startTour}
-        style={{
-          position: "fixed",
-          bottom: "80px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "10px 20px",
-          backgroundColor: "#3667B2",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontWeight: "bold",
-        }}
-      >
-        Start Tour
-      </button>
     </div>
   );
 };
