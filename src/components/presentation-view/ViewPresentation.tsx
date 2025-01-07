@@ -39,6 +39,11 @@ import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
 import { useDispatch, useSelector } from 'react-redux'
 
+interface GenSlideState {
+  isDisplay: boolean
+  isSelected: boolean
+}
+
 interface SlideState {
   isLoading: boolean
   isNoGeneratedSlide: boolean
@@ -96,6 +101,9 @@ export default function ViewPresentation() {
   const [slidesArray, setSlidesArray] = useState<{ [key: string]: string[] }>(
     {}
   )
+  const [isNewSlideLoading, setIsNewSlideLoading] = useState<{
+    [key: string]: boolean
+  }>({})
   const [slideStates, setSlideStates] = useState<SlideStates>({})
   const [finalizedSlides, setFinalizedSlides] = useState<{
     [key: string]: string
@@ -325,6 +333,10 @@ export default function ViewPresentation() {
       ...prev,
       [currentOutline]: prev[currentOutline] || 'slides',
     }))
+    setIsNewSlideLoading((prev) => ({
+      ...prev,
+      [currentOutline]: prev[currentOutline],
+    }))
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -546,7 +558,8 @@ export default function ViewPresentation() {
             ) : slideState.isNoGeneratedSlide ? (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
                 <h1 className="text-red-600">
-                  Sorry! Slide could not be generated.
+                  Sorry! Slide could not be generated. Try generating New
+                  Version of the slide.
                 </h1>
               </div>
             ) : slideState.genSlideID ? (
@@ -767,8 +780,6 @@ export default function ViewPresentation() {
     }
   }, [searchParams, authToken, orgId])
 
-  const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
-
   const updateSlideState = useCallback(
     (outlineTitle: string, updates: Partial<SlideState>) => {
       setSlideStates((prev) => ({
@@ -782,7 +793,8 @@ export default function ViewPresentation() {
     []
   )
 
-  // WEB SOCKET
+  const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
+  // TODO: WEB SOCKET
   useEffect(() => {
     if (
       currentOutline !== '' &&
@@ -802,7 +814,7 @@ export default function ViewPresentation() {
         },
       }))
 
-      // Clear loading state after timeout
+      // Clear loading state and set error screen after timeout if no data received after 90sec
       const timeoutId = setTimeout(() => {
         setSlideStates((prev) => ({
           ...prev,
@@ -852,8 +864,15 @@ export default function ViewPresentation() {
             }))
 
             setTotalSlides(ids.length)
+            // Update finalizedSlides state
+            const selectedSlide = newSlides.find((slide: any) => slide.selected)
+            if (selectedSlide) {
+              setFinalizedSlides((prev) => ({
+                ...prev,
+                [currentOutline]: selectedSlide.GenSlideID,
+              }))
+            }
           }
-        } else {
         }
       }
 
@@ -913,7 +932,6 @@ export default function ViewPresentation() {
       })
     }, 3000)
   }, [currentSlideIndex, prevSlideIndex])
-  console.log('Slides Array:', slidesArray)
 
   // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
@@ -1060,6 +1078,9 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
 
+  console.log('slidesArray: ', slidesArray)
+  console.log('slidesState: ', slideStates)
+
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Export Countdown */}
@@ -1118,6 +1139,7 @@ export default function ViewPresentation() {
       <div className="hidden lg:flex lg:flex-row lg:w-full lg:pt-16 ">
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
+          isNewSlideLoading={isNewSlideLoading}
           onOutlineSelect={handleOutlineSelect}
           selectedOutline={currentOutline!}
           fetchedOutlines={outlines!}
@@ -1197,7 +1219,7 @@ export default function ViewPresentation() {
                 Slide{' '}
                 {slidesArray[currentOutline]?.length > 0
                   ? currentSlideIndex + 1
-                  : 0}{' '}
+                  : '0'}{' '}
                 of {slidesArray[currentOutline]?.length || 0}
               </span>
               <button

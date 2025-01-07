@@ -22,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   monthlyPlanId,
   authToken,
   orgId,
+  isNewSlideLoading,
 }) => {
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
@@ -117,13 +118,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               {/* Outline Title */}
               <button
                 onClick={() => onOutlineSelect(outline.title)}
-                className={`block w-full max-w-xs font-normal text-left p-2 rounded-lg ${
+                className={`w-full max-w-xs font-normal text-left p-2 rounded-lg flex justify-between ${
                   selectedOutline === outline.title
                     ? 'bg-blue-50 text-[#3667B2]'
                     : 'hover:bg-gray-200 text-gray-600'
                 }`}
               >
-                {`${idx + 1}. ${outline.title}`}
+                <span>{`${idx + 1}. ${outline.title}`}</span>
+                {isNewSlideLoading[outline.title] && (
+                  <div className="flex items-center justify-center ml-2 mt-1">
+                    <div className="w-4 h-4  border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                )}
               </button>
 
               {/* + Button Below the Title */}

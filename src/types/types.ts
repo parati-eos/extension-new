@@ -69,6 +69,9 @@ export interface SidebarProps {
   yearlyPlanId: string
   monthlyPlanId: string
   orgId: string
+  isNewSlideLoading: {
+    [key: string]: boolean
+  }
 }
 
 export interface Outline {
