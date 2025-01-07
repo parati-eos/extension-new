@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Joyride, { Step, Placement, STATUS } from "react-joyride";
 
 const GuidedTour: React.FC = () => {
-  const [run, setRun] = useState(true); 
+  const [run, setRun] = useState(false); 
   const [steps, setSteps] = useState<Step[]>([]);
   const [key, setKey] = useState(0); // Force re-render of Joyride when updated
 
