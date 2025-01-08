@@ -339,7 +339,10 @@ export default function ViewPresentation() {
     setCurrentSlideIndex(0)
     setDisplayModes((prev) => ({
       ...prev,
-      [currentOutline]: prev[currentOutline] || 'slides',
+      [currentOutline]:
+        slidesArray[currentOutline]?.length > 0
+          ? 'slides'
+          : prev[currentOutline] || 'slides',
     }))
     setIsNewSlideLoading((prev) => ({
       ...prev,
@@ -911,7 +914,7 @@ export default function ViewPresentation() {
           }
           return prev
         })
-      }, 90000)
+      }, 120000)
 
       const processSlides = (newSlides: any[]) => {
         console.log('Socket Data', newSlides)
