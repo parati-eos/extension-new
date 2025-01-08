@@ -31,6 +31,22 @@ export default function Images({
   const [isUploading, setIsUploading] = useState(false)
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const transformData = (imageUrls: string[]) => {
+    const headers: Record<string, string> = {}; // Initialize an empty object for dynamic headers
+  
+    imageUrls.forEach((url, index) => {
+      const parts = url.split('/'); // Split the URL by '/'
+      const filename = parts[parts.length - 1].split('.')[0]; // Extract filename without the extension
+      headers[`header${index + 1}`] = filename; // Dynamically create header keys (header1, header2, etc.)
+    });
+  
+    // Return the headers along with the original image URLs
+    return {
+      ...headers, // Spread the dynamically created headers
+      imageurl: imageUrls, // Keep the original image URLs as 'imageurl'
+    };
+  };
+  
 
   // Refs for file inputs
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -83,18 +99,24 @@ export default function Images({
     setIsSlideLoading()
     setIsLoading(true)
     try {
+      // Create the transformed payload
+      const transformedHeaders = transformData(images); // Assuming images are the URLs
+      const payload = {
+        type: 'Images',
+        documentID: documentID,
+        data: {
+          slideName: heading,
+          ...transformedHeaders, // Spread the dynamic headers here
+          title: heading,
+          imageurl: images, // Pass the original image URLs
+        },
+        outlineID: outlineID,
+      };
+  
+      // Send the request
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
-        {
-          type: 'Images',
-          title: heading,
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            imageurl: images,
-          },
-          outlineID: outlineID,
-        },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -104,8 +126,8 @@ export default function Images({
       toast.success('Images submitted successfully!', {
         position: 'top-right',
         autoClose: 2000,
-      })
-      setDisplayMode('slides')
+      });
+      setDisplayMode('slides');
     } catch (error) {
       toast.error('Submit failed', {
         position: 'top-right',

@@ -170,10 +170,11 @@ export default function Table({
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/table`,
           {
             type: 'Table',
-            title: heading,
+            
             documentID: documentID,
             data: {
               slideName: heading,
+              title: heading,
               rowHeader1: tableData.rowHeaders[0] || '',
               rowHeader2: tableData.rowHeaders[1] || '',
               rowHeader3: tableData.rowHeaders[2] || '',

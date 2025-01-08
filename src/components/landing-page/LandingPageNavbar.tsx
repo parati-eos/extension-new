@@ -6,6 +6,7 @@ const LandingPageNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isNavbarVisible, setIsNavbarVisible] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeLink, setActiveLink] = useState<string>('') // Track active link
   const navigate = useNavigate()
   const location = useLocation(); // Track the current path
 
@@ -62,44 +63,27 @@ const LandingPageNavbar: React.FC = () => {
     }
   }, [isScrolled])
   const isActive = (path: string) => location.pathname === path;
-
   const handleNavigation = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     targetId: string
   ) => {
     e.preventDefault()
-    if (
-      window.location.pathname === '/pricing' ||
-      window.location.pathname === '/blog'
-    ) {
+    setActiveLink(targetId) // Set the clicked link as active
+    if (location.pathname === '/pricing' || location.pathname === '/blog') {
       navigate('/')
       setTimeout(() => {
-        document
-          .getElementById(targetId)
-          ?.scrollIntoView({ behavior: 'smooth' })
-      }, 100) // Adjust the timeout as needed
+        document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
     } else {
-      if (targetId === 'how-it-works') {
-        document
-          .getElementById(targetId)
-          ?.scrollIntoView({ behavior: 'smooth' })
-      } else {
-        const element = document.getElementById(targetId)
-        if (element) {
-          const offset = -20 // Adjust this value to control how much higher the scroll should stop
-          const elementPosition =
-            element.getBoundingClientRect().top + window.scrollY
-          const offsetPosition = elementPosition + offset
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth',
-          })
-        }
+      const element = document.getElementById(targetId)
+      if (element) {
+        const offset = -20
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY
+        const offsetPosition = elementPosition + offset
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
       }
     }
   }
-
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -143,16 +127,20 @@ const LandingPageNavbar: React.FC = () => {
 
         {/* Desktop Center Links */}
         <div className="hidden lg:flex space-x-10 items-center">
-          <a
+        <a
             href="#how-it-works"
-            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            className={`${
+              activeLink === 'how-it-works' ? 'text-blue-600' : 'text-[#5D5F61]'
+            } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => handleNavigation(e, 'how-it-works')}
           >
             How Zynth Works
           </a>
           <a
             href="#sample-presentation"
-            className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+            className={`${
+              activeLink === 'sample-presentation' ? 'text-blue-600' : 'text-[#5D5F61]'
+            } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => handleNavigation(e, 'sample-presentation')}
           >
             Sample Presentation
