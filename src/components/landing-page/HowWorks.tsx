@@ -8,9 +8,9 @@ const HowWorks: React.FC = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-[#F0F6FF]" id="how-it-works">
+    <div className="bg-[#F0F6FF]">
       {/* How Zynth Works Section */}
-      <section className="py-16 px-4 lg:px-24">
+      <section  id="how-it-works" className="py-16 px-4 lg:px-24">
         <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
           How Zynth Works?
         </h2>
