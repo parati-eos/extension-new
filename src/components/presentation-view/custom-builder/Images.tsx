@@ -34,18 +34,24 @@ export default function Images({
   const transformData = (imageUrls: string[]) => {
     const headers: Record<string, string> = {}; // Initialize an empty object for dynamic headers
   
+    // Loop through the image URLs and extract filenames to use as headers
     imageUrls.forEach((url, index) => {
       const parts = url.split('/'); // Split the URL by '/'
-      const filename = parts[parts.length - 1].split('.')[0]; // Extract filename without the extension
-      headers[`header${index + 1}`] = filename; // Dynamically create header keys (header1, header2, etc.)
+      const filenameWithExtension = parts[parts.length - 1]; // Get the last part (filename.extension)
+      
+      // Remove the number prefix (if present) and get the filename without extension
+      const filenameWithoutNumber = filenameWithExtension.replace(/^\d+_/, '').split('.')[0]; // Remove leading number followed by underscore
+  
+      headers[`header${index + 1}`] = filenameWithoutNumber; // Dynamically create header keys (header1, header2, etc.)
     });
   
     // Return the headers along with the original image URLs
     return {
       ...headers, // Spread the dynamically created headers
-      imageurl: imageUrls, // Keep the original image URLs as 'imageurl'
+      imageurl: imageUrls, // Keep the original URLs in 'imageurl'
     };
   };
+  
   
 
   // Refs for file inputs
