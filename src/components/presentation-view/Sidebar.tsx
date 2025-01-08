@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Outlines, SidebarProps } from '../../types/types'
 import { toast } from 'react-toastify'
-import { FaCheck, FaTimes } from 'react-icons/fa'
+import { FaCheck, FaExclamation, FaTimes } from 'react-icons/fa'
 import './viewpresentation.css'
 import { PricingModal } from '../shared/PricingModal'
 import GuidedTour from '../onboarding/shared/GuidedTour'
@@ -10,6 +10,7 @@ import GuidedTour from '../onboarding/shared/GuidedTour'
 const Sidebar: React.FC<SidebarProps> = ({
   onOutlineSelect,
   selectedOutline,
+  newSlideGenerated,
   fetchedOutlines,
   documentID,
   fetchOutlines,
@@ -128,7 +129,21 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <span>{`${idx + 1}. ${outline.title}`}</span>
                 {isNewSlideLoading[outline.title] && (
                   <div className="flex items-center justify-center ml-2 mt-1">
-                    <div className="w-6 h-6 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    <div className="w-5 h-5 border-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                )}
+                {newSlideGenerated[outline.title] === 'Yes' && (
+                  <div className="flex items-center justify-center ml-2 mt-1">
+                    <div className="w-5 h-5">
+                      <FaCheck className="text-green-600" />
+                    </div>
+                  </div>
+                )}
+                {newSlideGenerated[outline.title] === 'No' && (
+                  <div className="flex items-center justify-center ml-2 mt-1">
+                    <div className="w-5 h-5">
+                      <FaExclamation className="text-red-700" />
+                    </div>
                   </div>
                 )}
               </button>

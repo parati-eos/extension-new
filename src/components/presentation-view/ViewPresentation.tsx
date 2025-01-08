@@ -105,6 +105,9 @@ export default function ViewPresentation() {
   const [finalizedSlides, setFinalizedSlides] = useState<{
     [key: string]: string
   }>({})
+  const [newSlideGenerated, setNewSlideGenerated] = useState<{
+    [key: string]: string
+  }>({})
   const dispatch = useDispatch()
 
   // Handle Share Button Click
@@ -498,7 +501,7 @@ export default function ViewPresentation() {
             isLoading: false,
           },
         }))
-      }, 1000)
+      }, 300)
     }
   }
 
@@ -523,7 +526,7 @@ export default function ViewPresentation() {
             isLoading: false,
           },
         }))
-      }, 1000)
+      }, 300)
     }
   }
 
@@ -883,6 +886,10 @@ export default function ViewPresentation() {
 
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
+            setNewSlideGenerated((prev) => ({
+              ...prev,
+              [currentOutline]: 'No',
+            }))
             toast.error(`Slide Not Generated`)
             return {
               ...prev,
@@ -907,19 +914,6 @@ export default function ViewPresentation() {
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
-            if (slidesArray[currentOutline]?.length < newSlides.length) {
-              setIsNewSlideLoading((prev) => {
-                if (prev[currentOutline]) {
-                  toast.success(`Slide Generated`)
-                  return {
-                    ...prev,
-                    [currentOutline]: false,
-                  }
-                }
-                return prev
-              })
-            }
-
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
@@ -959,14 +953,17 @@ export default function ViewPresentation() {
             }
 
             // Check if newSlides array has only one object and its display key is false
-            if (newSlides.length === 1 && !newSlides[0].display) {
+            // or if there are more than one items and all have display set to false
+            if (
+              (newSlides.length === 1 && !newSlides[0].display) ||
+              (newSlides.length > 1 &&
+                newSlides.every((slide) => !slide.display))
+            ) {
               setDisplayModes((prev) => ({
                 ...prev,
                 [currentOutline]: 'newContent',
               }))
-              if (slidesArray[currentOutline]?.length === 0) {
-                setNewVersionBackDisabled(true)
-              }
+              setNewVersionBackDisabled(true)
             }
           }
         }
@@ -1006,6 +1003,30 @@ export default function ViewPresentation() {
         })
         setPrevTotalSlides(totalSlides)
       }, 6000)
+
+      setIsNewSlideLoading((prev) => {
+        if (prev[currentOutline]) {
+          setNewSlideGenerated((prev) => ({
+            ...prev,
+            [currentOutline]: 'Yes',
+          }))
+          toast.success(`Slide Generated`)
+          return {
+            ...prev,
+            [currentOutline]: false,
+          }
+        }
+        return prev
+      })
+      if (
+        slidesArray[currentOutline] &&
+        slidesArray[currentOutline].length >= 1
+      ) {
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]: 'slides',
+        }))
+      }
     }
   }, [totalSlides, prevTotalSlides])
 
@@ -1236,6 +1257,7 @@ export default function ViewPresentation() {
         {/*MEDIUM LARGE SCREEN: SIDEBAR*/}
         <Sidebar
           isNewSlideLoading={isNewSlideLoading}
+          newSlideGenerated={newSlideGenerated}
           onOutlineSelect={handleOutlineSelect}
           selectedOutline={currentOutline!}
           fetchedOutlines={outlines!}
