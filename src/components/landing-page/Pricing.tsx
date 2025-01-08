@@ -339,7 +339,6 @@ const Pricing: React.FC = () => {
         >
           <section className="py-16 lg:min-h-[300px] lg:p-4 lg:ml-36 ml-2">
             <div className="p-2">
-              <p className="text-indigo-600 text-lg mb-2">Pricing</p>
               <h1 className="text-gray-900 text-3xl font-bold mb-6">
                 AI slide maker for all your <br /> presentation needs.
               </h1>

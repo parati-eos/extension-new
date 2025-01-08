@@ -183,9 +183,7 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
               >
                 Subscription Plans
               </button>
-              <button className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap">
-                Billing and Invoice
-              </button>
+              
               <button
                 className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
                 onClick={handleLogout}
