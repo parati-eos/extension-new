@@ -1,16 +1,63 @@
-import React, { useState, useEffect } from "react";
-import { FaLink } from "react-icons/fa";
+import React, { useState } from "react";
 import Joyride, { Step, Placement, STATUS } from "react-joyride";
 
 const GuidedTour: React.FC = () => {
-  const [run, setRun] = useState(false); 
-  const [steps, setSteps] = useState<Step[]>([]);
-
-
-  useEffect(() => {
-    const tourSteps: Step[] = [
-     
-      {disableBeacon:true,
+  const hasVisited = localStorage.getItem("hasVisited") === "true";
+  const [run, setRun] = useState(!hasVisited); // Start the tour if not visited
+  const [steps] = useState<Step[]>(
+    [
+      {
+        disableBeacon: true,
+        target: "#arrows",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 3 of 9</strong> <br />
+            Navigate between different slide versions of the same section
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
+        target: "#finalize",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 4 of 9</strong> <br />
+            Finalize the selected slide version to add it to the final presentation. Only one slide version can be finalized within a section.
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
+        target: "#delete",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 5 of 9</strong> <br />
+            Delete the selected slide version from the presentation.
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
+        target: "#share",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 6 of 9</strong> <br />
+            Share the presentation as a weblink. Only finalized slide versions are added to the final presentation link.
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
+        target: "#export",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 7 of 9</strong> <br />
+            Export the presentation to Google Slides to make further edits. All slide versions are exported.
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
         target: "#history",
         content: (
           <div style={{ textAlign: "center" }}>
@@ -20,7 +67,7 @@ const GuidedTour: React.FC = () => {
         ),
         placement: "top" as Placement,
       },
-      {disableBeacon:true,
+      {
         target: "#organization-profile",
         content: (
           <div style={{ textAlign: "center" }}>
@@ -30,23 +77,13 @@ const GuidedTour: React.FC = () => {
         ),
         placement: "top" as Placement,
       },
-    ];
+    ].filter(
+      (step) =>
+        typeof step.target === "string" && document.querySelector(step.target)
+    ) // Filter valid DOM elements
+  );
 
-    // Filter steps to include only those with valid DOM elements
-    const filteredSteps = tourSteps.filter((step) => {
-      return typeof step.target === "string" && document.querySelector(step.target);
-    });
-
-    setSteps(filteredSteps);
-    const hasVisited = localStorage.getItem("hasVisited");
-    if (!hasVisited) {
-      setRun(true); // Start the tour
-   
-     
-    }
-  }, []);
-
-const handleCallback = (data: any) => {
+  const handleCallback = (data: any) => {
     const { status, action } = data;
 
     if (status === STATUS.FINISHED) {
@@ -57,7 +94,6 @@ const handleCallback = (data: any) => {
       setRun(false); // Stop the tour if skipped or closed
     }
   };
-
 
   return (
     <div>
