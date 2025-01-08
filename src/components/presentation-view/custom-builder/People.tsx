@@ -185,7 +185,6 @@ export default function People({
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
         {
           type: 'People',
-
           documentID: documentID,
           data: {
             slideName: heading,
@@ -209,10 +208,6 @@ export default function People({
       console.log('Server response:', response.data)
     } catch (error) {
       toast.error('Error sending data', {
-        position: 'top-right',
-        autoClose: 2000,
-      })
-      toast.error('Failed to send data.', {
         position: 'top-right',
         autoClose: 2000,
       })

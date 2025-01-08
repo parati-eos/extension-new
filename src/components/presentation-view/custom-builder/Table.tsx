@@ -164,61 +164,68 @@ export default function Table({
   const handleGenerateSlide = async () => {
     setIsSlideLoading()
     setIsLoading(true)
+    const tablePayload = {
+      rowHeader1: tableData.rowHeaders[0] || '',
+      rowHeader2: tableData.rowHeaders[1] || '',
+      rowHeader3: tableData.rowHeaders[2] || '',
+      rowHeader4: tableData.rowHeaders[3] || '',
+      rowHeader5: tableData.rowHeaders[4] || '',
+      rowHeader6: tableData.rowHeaders[5] || '',
+      rowHeader7: tableData.rowHeaders[6] || '',
+      rowHeader8: tableData.rowHeaders[7] || '',
+      columnHeader1: tableData.columnHeaders[0] || '',
+      columnHeader2: tableData.columnHeaders[1] || '',
+      columnHeader3: tableData.columnHeaders[2] || '',
+      columnHeader4: tableData.columnHeaders[3] || '',
+      columnHeader5: tableData.columnHeaders[4] || '',
+      rows1: transformRow(tableData.rows[0] || []),
+      rows2: transformRow(tableData.rows[1] || []),
+      rows3: transformRow(tableData.rows[2] || []),
+      rows4: transformRow(tableData.rows[3] || []),
+      rows5: transformRow(tableData.rows[4] || []),
+      rows6: transformRow(tableData.rows[5] || []),
+      rows7: transformRow(tableData.rows[6] || []),
+      rows8: transformRow(tableData.rows[7] || []),
+    }
+
+    // Filter out empty fields and empty rows
+    const filteredTablePayload = Object.fromEntries(
+      Object.entries(tablePayload).filter(([key, value]) => {
+        if (typeof value === 'object' && value !== null) {
+          return Object.values(value).some((attr) => attr !== '')
+        }
+        return value !== ''
+      })
+    )
+
     try {
-      await axios
-        .post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/table`,
-          {
-            type: 'Table',
-            
-            documentID: documentID,
-            data: {
-              slideName: heading,
-              title: heading,
-              rowHeader1: tableData.rowHeaders[0] || '',
-              rowHeader2: tableData.rowHeaders[1] || '',
-              rowHeader3: tableData.rowHeaders[2] || '',
-              rowHeader4: tableData.rowHeaders[3] || '',
-              rowHeader5: tableData.rowHeaders[4] || '',
-              rowHeader6: tableData.rowHeaders[5] || '',
-              rowHeader7: tableData.rowHeaders[6] || '',
-              rowHeader8: tableData.rowHeaders[7] || '',
-              columnHeader1: tableData.columnHeaders[0] || '',
-              columnHeader2: tableData.columnHeaders[1] || '',
-              columnHeader3: tableData.columnHeaders[2] || '',
-              columnHeader4: tableData.columnHeaders[3] || '',
-              columnHeader5: tableData.columnHeaders[4] || '',
-              rows1: transformRow(tableData.rows[0] || []),
-              rows2: transformRow(tableData.rows[1] || []),
-              rows3: transformRow(tableData.rows[2] || []),
-              rows4: transformRow(tableData.rows[3] || []),
-              rows5: transformRow(tableData.rows[4] || []),
-              rows6: transformRow(tableData.rows[5] || []),
-              rows7: transformRow(tableData.rows[6] || []),
-              rows8: transformRow(tableData.rows[7] || []),
-            },
-            outlineID: outlineID,
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/tables`,
+        {
+          type: 'Tables',
+          documentID: documentID,
+          outlineID: outlineID,
+          data: {
+            slideName: heading,
+            title: heading,
+            ...filteredTablePayload,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        .then((response) => {
-          toast.success('Data successfully sent to the server!', {
-            position: 'top-right',
-            autoClose: 2000,
-          })
-          setIsLoading(false)
-          setDisplayMode('slides')
-        })
-    } catch (error) {
-      toast.error('Error sending data', {
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      console.log(response)
+      toast.success('Data successfully sent to the server!', {
         position: 'top-right',
         autoClose: 2000,
       })
-      toast.error('Failed to send data.', {
+      setIsLoading(false)
+      setDisplayMode('slides')
+    } catch (error) {
+      toast.error('Error sending data', {
         position: 'top-right',
         autoClose: 2000,
       })

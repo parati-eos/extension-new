@@ -108,6 +108,9 @@ export default function ViewPresentation() {
   const [newSlideGenerated, setNewSlideGenerated] = useState<{
     [key: string]: string
   }>({})
+  const [newGeneratingSlideNumbers, setNewGeneratingSlideNumbers] = useState<{
+    [key: string]: number
+  }>({})
   const dispatch = useDispatch()
 
   // Handle Share Button Click
@@ -342,6 +345,11 @@ export default function ViewPresentation() {
       ...prev,
       [currentOutline]: prev[currentOutline],
     }))
+
+    setNewSlideGenerated((prev) => ({
+      ...prev,
+      [title]: prev[title] && '',
+    }))
   }
 
   // MEDIUM LARGE SCREENS: Slide Scroll
@@ -373,11 +381,19 @@ export default function ViewPresentation() {
         ...prev,
         [currentOutline]: prev[currentOutline] || 'slides',
       }))
+      setNewSlideGenerated((prev) => ({
+        ...prev,
+        [currentOutline]: prev[currentOutline] && '',
+      }))
     }
   }, 100)
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
+    setNewGeneratingSlideNumbers((prev) => ({
+      ...prev,
+      [currentOutline]: slidesArray[currentOutline]?.length,
+    }))
     // Set loading state at the start
     setSlideStates((prev) => {
       const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
@@ -849,22 +865,19 @@ export default function ViewPresentation() {
   // TODO: WEB SOCKET
   useEffect(() => {
     console.log('OutlineID Passed to Socket: ', currentOutlineID)
-    if (
-      currentOutline !== '' &&
-      documentID !== null &&
-      !slidesArray[currentOutline]
-    ) {
+    if (currentOutline !== '' && documentID !== null) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
       console.info('Connecting to WebSocket server...')
 
       // Set initial loading state
       setSlideStates((prev) => {
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
+        const hasSlidesData = slidesArray[currentOutline]?.length > 0
         return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading: isNoGeneratedSlide === false,
+            isLoading: isNoGeneratedSlide === false && !hasSlidesData,
             lastUpdated: Date.now(),
           },
         }
