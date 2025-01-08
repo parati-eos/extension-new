@@ -181,10 +181,11 @@ export default function People({
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
         {
           type: 'People',
-          title: heading,
+         
           documentID: documentID,
           data: {
             slideName: heading,
+            title: heading,
             people: people,
           },
           outlineID: outlineID,
