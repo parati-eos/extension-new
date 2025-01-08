@@ -1,94 +1,133 @@
-import React, { useState, useEffect } from 'react'
-import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate,useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import zynthtext from '../../assets/zynth-text.png';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LandingPageNavbar: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isNavbarVisible, setIsNavbarVisible] = useState(true)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeLink, setActiveLink] = useState<string>('') // Track active link
-  const navigate = useNavigate()
-  const location = useLocation(); // Track the current path
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null); // Track active section
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true) // Navbar hides when scrolled down
-      } else {
-        setIsScrolled(false) // Navbar visible when at the top
-      }
-      resetInactivityTimer() // Reset inactivity timer on scroll
-    }
+      setIsScrolled(window.scrollY > 0);
+      resetInactivityTimer();
+    };
 
     const handleMouseMove = () => {
-      resetInactivityTimer() // Reset inactivity timer on mouse move
-    }
+      resetInactivityTimer();
+    };
 
-    // Inactivity timer function
-    let inactivityTimer: NodeJS.Timeout
+    let inactivityTimer: NodeJS.Timeout;
     const startInactivityTimer = () => {
       inactivityTimer = setTimeout(() => {
         if (isScrolled) {
-          // Only hide when scrolled down
-          setIsNavbarVisible(false) // Hide navbar after inactivity
+          setIsNavbarVisible(false);
         }
-      }, 1000) // 1 second of inactivity
-    }
+      }, 1000);
+    };
 
     const resetInactivityTimer = () => {
-      setIsNavbarVisible(true) // Show navbar when activity occurs
-      clearTimeout(inactivityTimer) // Clear any existing timers
-      startInactivityTimer() // Start a new timer
-    }
+      setIsNavbarVisible(true);
+      clearTimeout(inactivityTimer);
+      startInactivityTimer();
+    };
 
-    // Handle hover at the top of the page
     const handleMouseEnter = (e: MouseEvent) => {
       if (e.clientY < 50) {
-        // If mouse is near the top
-        setIsNavbarVisible(true) // Show navbar
+        setIsNavbarVisible(true);
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    window.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mousemove', handleMouseEnter) // Hover near the top
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleMouseEnter);
 
-    startInactivityTimer() // Start the inactivity timer when the component mounts
+    startInactivityTimer();
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mousemove', handleMouseEnter)
-      clearTimeout(inactivityTimer) // Clean up timer when component unmounts
-    }
-  }, [isScrolled])
-  const isActive = (path: string) => location.pathname === path;
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleMouseEnter);
+      clearTimeout(inactivityTimer);
+    };
+  }, [isScrolled]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('section'); // All sections
+      let foundActiveSection = false;
+  
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight * 0.3 && rect.bottom > 0;
+  
+        if (isVisible && !foundActiveSection) {
+          setActiveSection(section.id); // Set the first visible section as active
+          foundActiveSection = true; // Prevent multiple sections from becoming active
+        }
+      });
+  
+      if (!foundActiveSection) {
+        setActiveSection(null); // Clear active section if no section is visible
+      }
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+  
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isScrolled]);
+  
+ 
   const handleNavigation = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     targetId: string
   ) => {
-    e.preventDefault()
-    setActiveLink(targetId) // Set the clicked link as active
-    if (location.pathname === '/pricing' || location.pathname === '/blog') {
-      navigate('/')
+    e.preventDefault();
+
+    if (['/pricing', '/blog'].includes(location.pathname)) {
+      navigate('/');
       setTimeout(() => {
-        document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' })
-      }, 100)
+        // Special handling for pricing and blog, including offset
+        const element = document.getElementById(targetId);
+        if (element) {
+          const offset = -20; // Adjust as needed
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition + offset;
+    
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          });
+        }
+      }, 100);
     } else {
-      const element = document.getElementById(targetId)
+      const element = document.getElementById(targetId);
       if (element) {
-        const offset = -20
-        const elementPosition = element.getBoundingClientRect().top + window.scrollY
-        const offsetPosition = elementPosition + offset
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
+        const offset = -20; // Adjust as needed
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition + offset;
+    
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
       }
     }
-  }
+    
+    setActiveSection(targetId);
+    
+  };
+
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-      } ${isNavbarVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} // Hide navbar when inactive
+      } ${isNavbarVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo */}
@@ -127,10 +166,10 @@ const LandingPageNavbar: React.FC = () => {
 
         {/* Desktop Center Links */}
         <div className="hidden lg:flex space-x-10 items-center">
-        <a
+          <a
             href="#how-it-works"
             className={`${
-              activeLink === 'how-it-works' ? 'text-blue-600' : 'text-[#5D5F61]'
+              activeSection === 'how-it-works' ? 'text-blue-600' : 'text-[#5D5F61]'
             } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => handleNavigation(e, 'how-it-works')}
           >
@@ -139,20 +178,20 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#sample-presentation"
             className={`${
-              activeLink === 'sample-presentation' ? 'text-blue-600' : 'text-[#5D5F61]'
+              activeSection === 'sample-presentation' ? 'text-blue-600' : 'text-[#5D5F61]'
             } hover:text-blue-600 transition-colors duration-200`}
-            onClick={(e) => handleNavigation(e, 'sample-presentation')}
+            onClick={(e) => handleNavigation(e, 'sample-presentations')}
           >
             Sample Presentation
           </a>
           <a
             href="#pricing"
             className={`${
-              isActive('/pricing') ? 'text-blue-600' : 'text-[#5D5F61]'
+              location.pathname === '/pricing' ? 'text-blue-600' : 'text-[#5D5F61]'
             } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => {
-              e.preventDefault()
-              window.open('/pricing', '_blank')
+              e.preventDefault();
+              window.open('/pricing', '_blank');
             }}
           >
             Pricing
@@ -160,11 +199,11 @@ const LandingPageNavbar: React.FC = () => {
           <a
             href="#blog"
             className={`${
-              isActive('/blog') ? 'text-blue-600' : 'text-[#5D5F61]'
+              location.pathname === '/blog' ? 'text-blue-600' : 'text-[#5D5F61]'
             } hover:text-blue-600 transition-colors duration-200`}
             onClick={(e) => {
-              e.preventDefault()
-              window.open('/blog', '_blank')
+              e.preventDefault();
+              window.open('/blog', '_blank');
             }}
           >
             Blog
@@ -203,7 +242,7 @@ const LandingPageNavbar: React.FC = () => {
             </li>
             <li>
               <a
-                onClick={(e) => handleNavigation(e, 'sample-presentation')}
+                onClick={(e) => handleNavigation(e, 'sample-presentations')}
                 href="#sample-presentation"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
@@ -214,7 +253,7 @@ const LandingPageNavbar: React.FC = () => {
               <a
                  onClick={() => navigate('/pricing')}
                  className={`${
-                  isActive('/pricing') ? 'text-blue-600' : 'text-[#5D5F61]'
+                  location.pathname === '/pricing'  ? 'text-blue-600' : 'text-[#5D5F61]'
                 } hover:text-blue-600 transition-colors duration-200`}
               >
                 Pricing
@@ -224,7 +263,7 @@ const LandingPageNavbar: React.FC = () => {
               <a
                 onClick={() => navigate('/blog')}
                 className={`${
-                  isActive('/blog') ? 'text-blue-600' : 'text-[#5D5F61]'
+                  location.pathname === '/blog'  ? 'text-blue-600' : 'text-[#5D5F61]'
                 } hover:text-blue-600 transition-colors duration-200`}
               >
                 Blog

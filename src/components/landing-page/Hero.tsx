@@ -144,8 +144,11 @@ export const Hero = () => {
       ref={ref}
       className="h-max overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
     >
+     
       <Header />
-      <div className=" bg-gray-50 ">
+
+      <section id='sample-presentation' className=" bg-gray-50 ">
+     
         <motion.div
           style={{
             rotateX,
@@ -153,7 +156,7 @@ export const Hero = () => {
             translateY,
             opacity,
           }}
-          className="div"
+          className="section"
         >
           <motion.div className="flex flex-row-reverse space-x-reverse space-x-20 mb-20">
             {firstRow.map((product) => (
@@ -174,7 +177,8 @@ export const Hero = () => {
             ))}
           </motion.div>
         </motion.div>
-      </div>
+    
+      </section>
     </div>
   )
 }
@@ -188,7 +192,7 @@ export const Header = () => {
       
       />
       <div  id=
-    "sample-presentation">
+    "sample-presentations">
       <motion.h2
      
         className="text-2xl  md:text-4xl font-bold text-white text-center bg-gray-50 py-12"
@@ -215,6 +219,8 @@ export const ProductCard = ({
   translate: MotionValue<number>
 }) => {
   return (
+   <div>
+   
     <motion.div
       style={{
         x: translate,
@@ -237,5 +243,7 @@ export const ProductCard = ({
         {product.title}
       </h2>
     </motion.div>
+
+    </div>
   )
 }
