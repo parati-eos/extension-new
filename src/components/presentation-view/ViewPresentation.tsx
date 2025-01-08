@@ -40,11 +40,6 @@ import Cover from './custom-builder/Cover'
 import { useDispatch, useSelector } from 'react-redux'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 
-interface GenSlideState {
-  isDisplay: boolean
-  isSelected: boolean
-}
-
 interface SlideState {
   isLoading: boolean
   isNoGeneratedSlide: boolean
@@ -99,6 +94,7 @@ export default function ViewPresentation() {
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showCountdown, setShowCountdown] = useState(false)
   const featureDisabled = userPlan === 'free' ? true : false
+  const [newVersionBackDisabled, setNewVersionBackDisabled] = useState(false)
   const [slidesArray, setSlidesArray] = useState<{ [key: string]: string[] }>(
     {}
   )
@@ -259,6 +255,11 @@ export default function ViewPresentation() {
               [currentOutline]: 'newContent',
             }))
           }
+
+          setCurrentSlideIndex((prevIndex) =>
+            prevIndex > 0 ? prevIndex - 1 : 0
+          )
+
           return updatedSlidesArray
         })
       })
@@ -277,7 +278,7 @@ export default function ViewPresentation() {
           PresentationID: presentationID,
           SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
           GenSlideID: slideId,
-          // OUTLINEID WILL BE ADDED LATER
+          outline_id: currentOutlineID,
         },
         {
           headers: {
@@ -375,14 +376,24 @@ export default function ViewPresentation() {
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
     // Set loading state at the start
-    setSlideStates((prev) => ({
+    setSlideStates((prev) => {
+      const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
+      const genSlideID = prev[currentOutline]?.genSlideID
+      return {
+        ...prev,
+        [currentOutline]: {
+          ...prev[currentOutline],
+          isLoading:
+            isNoGeneratedSlide === false && (!genSlideID || genSlideID === ''),
+          isNoGeneratedSlide: false,
+          lastUpdated: Date.now(),
+        },
+      }
+    })
+
+    setIsNewSlideLoading((prev) => ({
       ...prev,
-      [currentOutline]: {
-        ...prev[currentOutline],
-        isLoading: true,
-        isNoGeneratedSlide: false,
-        lastUpdated: Date.now(),
-      },
+      [currentOutline]: true,
     }))
 
     let slideType = outlineType
@@ -408,26 +419,41 @@ export default function ViewPresentation() {
             position: 'top-right',
             autoClose: 2000,
           })
-          setDisplayModes((prev) => ({
-            ...prev,
-            [currentOutline]: 'slides',
-          }))
+          setDisplayModes((prev) => {
+            if (
+              slidesArray[currentOutline] &&
+              slidesArray[currentOutline].length > 0
+            ) {
+              return {
+                ...prev,
+                [currentOutline]: 'slides',
+              }
+            }
+            return prev
+          })
         })
         .catch((error) => {
           toast.error('Error while generating slide', {
             position: 'top-right',
             autoClose: 2000,
           })
-          setSlideStates((prev) => ({
-            ...prev,
-            [currentOutline]: {
-              ...prev[currentOutline],
-              isLoading: false,
-              isNoGeneratedSlide: true,
-              lastUpdated: Date.now(),
-            },
-          }))
+          setSlideStates((prev) => {
+            const genSlideID = prev[currentOutline]?.genSlideID
+            return {
+              ...prev,
+              [currentOutline]: {
+                ...prev[currentOutline],
+                isLoading: false,
+                isNoGeneratedSlide: !genSlideID || genSlideID === '',
+                lastUpdated: Date.now(),
+              },
+            }
+          })
           setDisplayModes((prev) => ({ ...prev, [currentOutline]: 'slides' }))
+          setIsNewSlideLoading((prev) => ({
+            ...prev,
+            [currentOutline]: false,
+          }))
         })
     } catch (error) {
       console.error('Error generating slide:', error)
@@ -444,6 +470,10 @@ export default function ViewPresentation() {
           isLoading: false,
           lastUpdated: Date.now(),
         },
+      }))
+      setIsNewSlideLoading((prev) => ({
+        ...prev,
+        [currentOutline]: false,
       }))
     }
   }
@@ -635,6 +665,7 @@ export default function ViewPresentation() {
             monthlyPlanId={monthlyPlanId!}
             authToken={authToken!}
             orgId={orgId!}
+            backDisabled={newVersionBackDisabled}
           />
         )
 
@@ -686,10 +717,27 @@ export default function ViewPresentation() {
             }}
             outlineID={currentOutlineID}
             setIsSlideLoading={() => {
-              updateSlideState(outlineTitle, {
-                isLoading: true,
-                lastUpdated: Date.now(),
+              setSlideStates((prev) => {
+                const isNoGeneratedSlide =
+                  prev[currentOutline]?.isNoGeneratedSlide
+                const genSlideID = prev[currentOutline]?.genSlideID
+                return {
+                  ...prev,
+                  [currentOutline]: {
+                    ...prev[currentOutline],
+                    isLoading:
+                      isNoGeneratedSlide === false &&
+                      (!genSlideID || genSlideID === ''),
+                    isNoGeneratedSlide: false,
+                    lastUpdated: Date.now(),
+                  },
+                }
               })
+
+              setIsNewSlideLoading((prev) => ({
+                ...prev,
+                [currentOutline]: true,
+              }))
               setDisplayModes((prev) => ({
                 ...prev,
                 [outlineTitle]: 'slides',
@@ -797,6 +845,7 @@ export default function ViewPresentation() {
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   // TODO: WEB SOCKET
   useEffect(() => {
+    console.log('OutlineID Passed to Socket: ', currentOutlineID)
     if (
       currentOutline !== '' &&
       documentID !== null &&
@@ -806,41 +855,71 @@ export default function ViewPresentation() {
       console.info('Connecting to WebSocket server...')
 
       // Set initial loading state
-      setSlideStates((prev) => ({
-        ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
-          isLoading: true,
-          lastUpdated: Date.now(),
-        },
-      }))
-
-      // Clear loading state and set error screen after timeout if no data received after 90sec
-      const timeoutId = setTimeout(() => {
-        setSlideStates((prev) => ({
+      setSlideStates((prev) => {
+        const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
+        return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading: false,
-            isNoGeneratedSlide: false,
+            isLoading: isNoGeneratedSlide === false,
+            lastUpdated: Date.now(),
           },
-        }))
+        }
+      })
+
+      // Clear loading state and set error screen after timeout if no data received after 90sec
+      const timeoutId = setTimeout(() => {
+        setSlideStates((prev) => {
+          const genSlideID = prev[currentOutline]?.genSlideID
+          return {
+            ...prev,
+            [currentOutline]: {
+              ...prev[currentOutline],
+              isLoading: false,
+              isNoGeneratedSlide: !genSlideID || genSlideID === '',
+            },
+          }
+        })
+
+        setIsNewSlideLoading((prev) => {
+          if (prev[currentOutline]) {
+            toast.error(`Slide Not Generated`)
+            return {
+              ...prev,
+              [currentOutline]: false,
+            }
+          }
+          return prev
+        })
       }, 90000)
 
       const processSlides = (newSlides: any[]) => {
         console.log('Socket Data', newSlides)
 
         newSlidesRef.current = newSlides
-        const sectionName = currentOutline.replace(/^\d+\.\s*/, '')
 
         if (newSlides.length > 0) {
           const firstSlide = newSlides[0]
 
           if (
-            firstSlide.SectionName === sectionName &&
+            firstSlide.outline_id === currentOutlineID &&
+            slidesArray[currentOutline]?.length !== newSlides.length &&
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
+            if (slidesArray[currentOutline]?.length < newSlides.length) {
+              setIsNewSlideLoading((prev) => {
+                if (prev[currentOutline]) {
+                  toast.success(`Slide Generated`)
+                  return {
+                    ...prev,
+                    [currentOutline]: false,
+                  }
+                }
+                return prev
+              })
+            }
+
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
@@ -857,12 +936,17 @@ export default function ViewPresentation() {
               setPresentationID(firstSlide.PresentationID)
             }
 
-            const ids = newSlides.map((slide: any) => slide.GenSlideID)
+            const ids = newSlides
+              .filter((slide: any) => slide.display)
+              .map((slide: any) => slide.GenSlideID)
+
             setSlidesId(ids)
-            setSlidesArray((prev) => ({
-              ...prev,
-              [firstSlide.SectionName]: ids,
-            }))
+            setSlidesArray((prev) => {
+              return {
+                ...prev,
+                [currentOutline]: ids,
+              }
+            })
 
             setTotalSlides(ids.length)
             // Update finalizedSlides state
@@ -873,6 +957,17 @@ export default function ViewPresentation() {
                 [currentOutline]: selectedSlide.GenSlideID,
               }))
             }
+
+            // Check if newSlides array has only one object and its display key is false
+            if (newSlides.length === 1 && !newSlides[0].display) {
+              setDisplayModes((prev) => ({
+                ...prev,
+                [currentOutline]: 'newContent',
+              }))
+              if (slidesArray[currentOutline]?.length === 0) {
+                setNewVersionBackDisabled(true)
+              }
+            }
           }
         }
       }
@@ -880,8 +975,9 @@ export default function ViewPresentation() {
       socket.on('slidesData', processSlides)
 
       socket.emit('fetchSlides', {
-        slideType: currentOutline.replace(/^\d+\.\s*/, ''),
+        // slideType: currentOutline.replace(/^\d+\.\s*/, ''),
         formID: documentID,
+        outlineID: currentOutlineID,
       })
 
       // Cleanup function
@@ -1080,7 +1176,6 @@ export default function ViewPresentation() {
   const yearlyPlanId = yearlyPlan?.id
 
   console.log('slidesArray: ', slidesArray)
-  console.log('slidesState: ', slideStates)
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
@@ -1206,7 +1301,7 @@ export default function ViewPresentation() {
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
             <div className="flex items-center gap-2 mr-14">
               <button
-              id='arrows'
+                id="arrows"
                 onClick={handlePaginatePrev}
                 disabled={currentSlideIndex === 0}
                 className={`flex items-center hover:cursor-pointer border border-[#E1E3E5] active:scale-95 transition transform duration-300 ${
@@ -1330,6 +1425,7 @@ export default function ViewPresentation() {
           ) : (
             <button
               onClick={() => onBack(currentOutline)}
+              disabled={newVersionBackDisabled}
               className="border border-gray-300 p-2 rounded-md flex items-center"
             >
               Back
@@ -1350,8 +1446,8 @@ export default function ViewPresentation() {
               />
             </button>
             <span className="text-sm text-[#5D5F61]">
-            Slide {currentSlideIndex + 1} of{' '}
-                {slidesArray[currentOutline]?.length || 0}
+              Slide {currentSlideIndex + 1} of{' '}
+              {slidesArray[currentOutline]?.length || 0}
             </span>
             <button
               onClick={handlePaginateNext}
@@ -1369,7 +1465,7 @@ export default function ViewPresentation() {
           </div>
         </div>
       </div>
-      <GuidedTour/>
+      <GuidedTour />
     </div>
   )
 }

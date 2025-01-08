@@ -7,6 +7,7 @@ import { DisplayMode } from '@/src/types/presentationView'
 import { PricingModal } from '../shared/PricingModal'
 
 interface ButtonProps {
+  backDisabled: boolean
   handleQuickGenerate: () => void
   handleCustomBuilderClick: () => void
   handleSlideNarrative: () => void
@@ -28,11 +29,9 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
   handleSlideNarrative,
-  setDisplayMode,
+  backDisabled,
   userPlan,
   isLoading,
-  customBuilderDisabled,
-  openPricingModal,
   monthlyPlanAmount,
   yearlyPlanAmount,
   currency,
@@ -151,11 +150,10 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
   handleSlideNarrative,
+  backDisabled,
   userPlan,
   setDisplayMode,
   isLoading,
-  customBuilderDisabled,
-  openPricingModal,
   monthlyPlanAmount,
   yearlyPlanAmount,
   currency,
@@ -189,7 +187,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         <>
           {/* Back Button */}
           <div className="hidden lg:block absolute top-4 right-4 ">
-            <BackButton onClick={onBack} />
+            <BackButton onClick={onBack} disabled={backDisabled} />
           </div>
           <div className="text-center">
             <h2 className="text-xl text-[#091220] font-semibold mb-3">

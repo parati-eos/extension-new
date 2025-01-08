@@ -176,6 +176,10 @@ export default function People({
   const handleGenerateSlide = async () => {
     setIsSlideLoading()
     setIsLoading(true)
+
+    // Filter out the loading property from each person
+    const payloadPeople = people.map(({ loading, ...rest }) => rest)
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
@@ -185,7 +189,7 @@ export default function People({
           documentID: documentID,
           data: {
             slideName: heading,
-            people: people,
+            people: payloadPeople,
           },
           outlineID: outlineID,
         },

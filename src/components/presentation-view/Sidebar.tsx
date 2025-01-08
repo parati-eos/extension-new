@@ -128,7 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <span>{`${idx + 1}. ${outline.title}`}</span>
                 {isNewSlideLoading[outline.title] && (
                   <div className="flex items-center justify-center ml-2 mt-1">
-                    <div className="w-4 h-4  border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    <div className="w-6 h-6 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                   </div>
                 )}
               </button>
@@ -153,7 +153,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                   >
                     <button
-                    id="outline"
+                      id="outline"
                       className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 disabled:opacity-20 disabled:cursor-not-allowed`}
                       onClick={() => setInputIndex(idx)}
                       disabled={isDisabled}
@@ -187,9 +187,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             {/* Input for New Outline */}
 
             {inputIndex === idx && (
-              <div 
-              id="new-outline"
-              className="mt-2 flex items-center space-x-2">
+              <div
+                id="new-outline"
+                className="mt-2 flex items-center space-x-2"
+              >
                 <div className="relative flex w-full max-w-xs">
                   <input
                     type="text"
@@ -247,7 +248,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           orgId={orgId!}
         />
       )}
-        <GuidedTour/>
+      <GuidedTour />
     </div>
   )
 }
