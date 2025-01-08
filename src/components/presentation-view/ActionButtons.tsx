@@ -50,6 +50,7 @@ export const DesktopButtonSection: React.FC<ButtonSectionProps> = ({
       {/* New Version Button */}
       <button
         onClick={onNewVersion}
+        id='new-version'
         className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
       >
         <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />

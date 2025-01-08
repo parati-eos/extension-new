@@ -8,6 +8,28 @@ const GuidedTour: React.FC = () => {
     [
       {
         disableBeacon: true,
+        target: "#plus-icons", 
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 1 of 9</strong> <br />
+            Add new sections to the outline to generate new slides.
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
+        disableBeacon: true,
+        target: "#new-version",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 2 of 9</strong> <br />
+            Navigate between different slide versions of the same section
+          </div>
+        ),
+        placement: "top" as Placement,
+      },
+      {
+  
         target: "#arrows",
         content: (
           <div style={{ textAlign: "center" }}>
