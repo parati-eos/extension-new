@@ -63,7 +63,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
         </h1>
         <div className="flex gap-2">
           <button
-          id='share'
+            id="share"
             onClick={handleShare}
             className="text-[#5D5F61] gap-2 hover:text-[#3667B2] border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center active:scale-95 transition transform duration-300"
           >
@@ -76,7 +76,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
             onMouseLeave={handleMouseLeave}
           >
             <button
-            id='export'
+              id="export"
               onClick={handleDownload}
               disabled={userPlan === 'free' && !exportPaid}
               className={`text-[#5D5F61] gap-2 ${
@@ -108,7 +108,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
           </div>
         </div>
       </div>
-      <GuidedTour/>
+      <GuidedTour />
     </div>
   )
 }
@@ -198,13 +198,11 @@ export const MobileHeading: React.FC<HeadingProps> = ({
 
         <button
           onClick={handleShare}
-          disabled={userPlan === 'free'}
           className="text-[#5D5F61] disabled:bg-gray-300 hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
         >
           <FaShare className="h-4 w-4" />
         </button>
       </div>
-   
     </div>
   )
 }
