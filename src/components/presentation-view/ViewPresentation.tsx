@@ -392,7 +392,7 @@ export default function ViewPresentation() {
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading: !slidesArray[currentOutline],
+          isLoading: slidesArray[currentOutline]?.length === 0,
           isNoGeneratedSlide: false,
           lastUpdated: Date.now(),
         },
@@ -403,6 +403,22 @@ export default function ViewPresentation() {
       ...prev,
       [currentOutline]: true,
     }))
+
+    setDisplayModes((prev) => {
+      if (
+        !slideStates[currentOutline]?.isLoading &&
+        slidesArray[currentOutline] &&
+        slidesArray[currentOutline].length > 0
+      ) {
+        console.log('Quick Generate Display State')
+
+        return {
+          ...prev,
+          [currentOutline]: 'slides',
+        }
+      }
+      return prev
+    })
 
     let slideType = outlineType
 
@@ -426,18 +442,6 @@ export default function ViewPresentation() {
           toast.success('Quick Generation Started', {
             position: 'top-right',
             autoClose: 2000,
-          })
-          setDisplayModes((prev) => {
-            if (
-              slidesArray[currentOutline] &&
-              slidesArray[currentOutline].length > 0
-            ) {
-              return {
-                ...prev,
-                [currentOutline]: 'slides',
-              }
-            }
-            return prev
           })
         })
         .catch((error) => {
@@ -952,10 +956,13 @@ export default function ViewPresentation() {
             // Check if newSlides array has only one object and its display key is false
             // or if there are more than one items and all have display set to false
             if (
+              isNewSlideLoading[currentOutline] === false ||
               (newSlides.length === 1 && !newSlides[0].display) ||
               (newSlides.length > 1 &&
                 newSlides.every((slide) => !slide.display))
             ) {
+              console.log('Display False IF')
+
               setDisplayModes((prev) => ({
                 ...prev,
                 [currentOutline]: 'newContent',
@@ -1008,6 +1015,10 @@ export default function ViewPresentation() {
             [currentOutline]: 'Yes',
           }))
           toast.success(`Slide Generated`)
+          setDisplayModes((prev) => ({
+            ...prev,
+            [currentOutline]: 'slides', // Preserve the previous state
+          }))
           return {
             ...prev,
             [currentOutline]: false,
@@ -1025,6 +1036,10 @@ export default function ViewPresentation() {
         }))
       }
     }
+
+    // if (totalSlides === 0) {
+    //   setNewVersionBackDisabled(true)
+    // }
   }, [totalSlides, prevTotalSlides])
 
   // Effect to set loader for pagination changes
@@ -1360,7 +1375,7 @@ export default function ViewPresentation() {
       </div>
 
       {/* MOBILE: MAIN CONTAINER */}
-      <div className="block lg:hidden px-4 py-2">
+      <div className="block lg:hidden p-4">
         {/* MOBILE: HEADING */}
         <MobileHeading
           handleDownload={handleDownload}
