@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+
 import Joyride, { Step, Placement, STATUS } from "react-joyride";
+
+import React, { useState, useRef, useEffect } from "react";
 
 const GuidedTour: React.FC = () => {
   const hasVisited = localStorage.getItem("hasVisited") === "true";
-  const [run, setRun] = useState(!hasVisited); // Start the tour if not visited
-  const [steps] = useState<Step[]>(
-    [
+  const [run, setRun] = useState(false);
+  const [steps, setSteps] = useState<Step[]>([]);
+  const isInitialized = useRef(false); // Track if initialization is done
+
+  const initializeSteps = () => {
+    if (isInitialized.current) return; // Prevent multiple initializations
+    isInitialized.current = true;
+
+    const initialSteps: Step[] = [
       {
         disableBeacon: true,
-        target: "#plus-icons", 
+        target: "#outline",
         content: (
           <div style={{ textAlign: "center" }}>
             <strong>Step 1 of 9</strong> <br />
@@ -18,9 +26,10 @@ const GuidedTour: React.FC = () => {
         placement: "top" as Placement,
       },
       {
-        disableBeacon: true,
+ 
         target: "#new-version",
         content: (
+          
           <div style={{ textAlign: "center" }}>
             <strong>Step 2 of 9</strong> <br />
             Navigate between different slide versions of the same section
@@ -28,6 +37,8 @@ const GuidedTour: React.FC = () => {
         ),
         placement: "top" as Placement,
       },
+      
+     
       {
   
         target: "#arrows",
@@ -99,11 +110,29 @@ const GuidedTour: React.FC = () => {
         ),
         placement: "top" as Placement,
       },
-    ].filter(
-      (step) =>
-        typeof step.target === "string" && document.querySelector(step.target)
-    ) // Filter valid DOM elements
-  );
+    ];
+
+    setSteps(
+      initialSteps.filter(
+        (step) =>
+          typeof step.target === "string" && document.querySelector(step.target)
+      )
+    );
+    
+  };
+
+  useEffect(() => {
+    initializeSteps();
+  }, []); // Only runs once on mount
+
+  useEffect(() => {
+    // Only set `run` to true once the first step is available
+    if (steps.length > 0 && steps[0].target) {
+      setRun(true);
+    }
+  }, [steps]); // Run this effect when `steps` is updated
+  
+
 
   const handleCallback = (data: any) => {
     const { status, action } = data;
