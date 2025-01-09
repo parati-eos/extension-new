@@ -128,7 +128,7 @@ const GuidedTour: React.FC = () => {
   useEffect(() => {
     // Only set `run` to true once the first step is available
     if (steps.length > 0 && steps[0].target) {
-      setRun(true);
+      setRun(!hasVisited);
     }
   }, [steps]); // Run this effect when `steps` is updated
   
