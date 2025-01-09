@@ -410,6 +410,8 @@ export default function ViewPresentation() {
         slidesArray[currentOutline] &&
         slidesArray[currentOutline].length > 0
       ) {
+        console.log('Quick Generate Display State')
+
         return {
           ...prev,
           [currentOutline]: 'slides',
@@ -859,13 +861,11 @@ export default function ViewPresentation() {
       setSlideStates((prev) => {
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
         const hasSlidesData = slidesArray[currentOutline]?.length > 0
-        const newGenerating = isNewSlideLoading[currentOutline]
         return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading:
-              isNoGeneratedSlide === false && !hasSlidesData && newGenerating,
+            isLoading: isNoGeneratedSlide === false && !hasSlidesData,
             lastUpdated: Date.now(),
           },
         }
@@ -956,12 +956,13 @@ export default function ViewPresentation() {
             // Check if newSlides array has only one object and its display key is false
             // or if there are more than one items and all have display set to false
             if (
-              (!slideStates[currentOutline]?.isLoading &&
-                newSlides.length === 1 &&
-                !newSlides[0].display) ||
+              isNewSlideLoading[currentOutline] === false ||
+              (newSlides.length === 1 && !newSlides[0].display) ||
               (newSlides.length > 1 &&
                 newSlides.every((slide) => !slide.display))
             ) {
+              console.log('Display False IF')
+
               setDisplayModes((prev) => ({
                 ...prev,
                 [currentOutline]: 'newContent',
@@ -1035,6 +1036,10 @@ export default function ViewPresentation() {
         }))
       }
     }
+
+    // if (totalSlides === 0) {
+    //   setNewVersionBackDisabled(true)
+    // }
   }, [totalSlides, prevTotalSlides])
 
   // Effect to set loader for pagination changes
