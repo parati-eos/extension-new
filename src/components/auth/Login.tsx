@@ -59,7 +59,7 @@ function Login() {
     }
   }
 
-  const serverurl = process.env.REACT_APP_BACKEND_URL || ''
+  // const serverurl = process.env.REACT_APP_BACKEND_URL || ''
 
   const saveUserData = async (userData: Record<string, any>) => {
     try {
@@ -81,13 +81,16 @@ function Login() {
         latestLogin: new Date().toString(),
       }
 
-      const res = await fetch(`${serverurl}/api/v1/data/userprofile/user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userPayload),
-      })
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/userprofile/user`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userPayload),
+        }
+      )
 
       const responseData = await res.json()
 

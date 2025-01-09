@@ -108,9 +108,6 @@ export default function ViewPresentation() {
   const [newSlideGenerated, setNewSlideGenerated] = useState<{
     [key: string]: string
   }>({})
-  const [newGeneratingSlideNumbers, setNewGeneratingSlideNumbers] = useState<{
-    [key: string]: number
-  }>({})
   const dispatch = useDispatch()
 
   // Handle Share Button Click
@@ -277,15 +274,8 @@ export default function ViewPresentation() {
 
     axios
       .patch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}`,
-        {
-          userID: sessionStorage.getItem('userEmail'),
-          FormID: documentID,
-          PresentationID: presentationID,
-          SectionName: currentOutline.replace(/^\d+\.\s*/, ''),
-          GenSlideID: slideId,
-          outline_id: currentOutlineID,
-        },
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -341,8 +331,8 @@ export default function ViewPresentation() {
       ...prev,
       [currentOutline]:
         slidesArray[currentOutline]?.length > 0
-          ? 'slides'
-          : prev[currentOutline] || 'slides',
+          ? prev[currentOutline]
+          : 'newContent',
     }))
     setIsNewSlideLoading((prev) => ({
       ...prev,
@@ -382,7 +372,10 @@ export default function ViewPresentation() {
       setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
       setDisplayModes((prev) => ({
         ...prev,
-        [currentOutline]: prev[currentOutline] || 'slides',
+        [currentOutline]:
+          slidesArray[currentOutline]?.length > 0
+            ? prev[currentOutline]
+            : 'newContent',
       }))
       setNewSlideGenerated((prev) => ({
         ...prev,
@@ -393,20 +386,13 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
-    setNewGeneratingSlideNumbers((prev) => ({
-      ...prev,
-      [currentOutline]: slidesArray[currentOutline]?.length,
-    }))
     // Set loading state at the start
     setSlideStates((prev) => {
-      const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
-      const genSlideID = prev[currentOutline]?.genSlideID
       return {
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading:
-            isNoGeneratedSlide === false && (!genSlideID || genSlideID === ''),
+          isLoading: !slidesArray[currentOutline],
           isNoGeneratedSlide: false,
           lastUpdated: Date.now(),
         },
@@ -740,16 +726,11 @@ export default function ViewPresentation() {
             outlineID={currentOutlineID}
             setIsSlideLoading={() => {
               setSlideStates((prev) => {
-                const isNoGeneratedSlide =
-                  prev[currentOutline]?.isNoGeneratedSlide
-                const genSlideID = prev[currentOutline]?.genSlideID
                 return {
                   ...prev,
                   [currentOutline]: {
                     ...prev[currentOutline],
-                    isLoading:
-                      isNoGeneratedSlide === false &&
-                      (!genSlideID || genSlideID === ''),
+                    isLoading: !slidesArray[currentOutline],
                     isNoGeneratedSlide: false,
                     lastUpdated: Date.now(),
                   },
@@ -1040,7 +1021,7 @@ export default function ViewPresentation() {
       ) {
         setDisplayModes((prev) => ({
           ...prev,
-          [currentOutline]: 'slides',
+          [currentOutline]: prev[currentOutline], // Preserve the previous state
         }))
       }
     }
@@ -1213,6 +1194,7 @@ export default function ViewPresentation() {
   const yearlyPlanId = yearlyPlan?.id
 
   console.log('slidesArray: ', slidesArray)
+  console.log('slideStates: ', slideStates)
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
