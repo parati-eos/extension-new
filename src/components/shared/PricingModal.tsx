@@ -331,6 +331,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             quantity: 1,
             notes: {
               note_key: 'Zynth Presentation',
+              orgId: orgId,
             },
           },
           {

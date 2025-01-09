@@ -70,6 +70,7 @@ export default function ViewPresentation() {
   const [pptName, setPptName] = useState<string | null>(null)
   const [presentationID, setPresentationID] = useState<string>('')
   const [isDocumentIDLoading, setIsDocumentIDLoading] = useState(true)
+  const [isPptNameLoading, setIsPptNameLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(1)
   const [currentOutline, setCurrentOutline] = useState('')
   const [currentOutlineID, setCurrentOutlineID] = useState('')
@@ -108,6 +109,7 @@ export default function ViewPresentation() {
   const [newSlideGenerated, setNewSlideGenerated] = useState<{
     [key: string]: string
   }>({})
+  const [intervalID, setIntervalID] = useState<number | null>(null)
   const dispatch = useDispatch()
 
   // Handle Share Button Click
@@ -257,6 +259,7 @@ export default function ViewPresentation() {
               ...prev,
               [currentOutline]: 'newContent',
             }))
+            setNewVersionBackDisabled(true)
           }
 
           setCurrentSlideIndex((prevIndex) =>
@@ -745,10 +748,12 @@ export default function ViewPresentation() {
                 ...prev,
                 [currentOutline]: true,
               }))
-              setDisplayModes((prev) => ({
-                ...prev,
-                [outlineTitle]: 'slides',
-              }))
+              if (slidesArray[currentOutline]?.length !== 0) {
+                setDisplayModes((prev) => ({
+                  ...prev,
+                  [outlineTitle]: 'slides',
+                }))
+              }
             }}
           />
         )
@@ -773,68 +778,59 @@ export default function ViewPresentation() {
   }, [outlines])
 
   // Get DocumentID and Presentation Name
-  useEffect(() => {
-    const getDocumentId = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
+  // useEffect(() => {
+  //   // const getDocumentId = async () => {
+  //   //   try {
+  //   //     const response = await axios.get(
+  //   //       `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+  //   //       {
+  //   //         headers: {
+  //   //           Authorization: `Bearer ${authToken}`,
+  //   //         },
+  //   //       }
+  //   //     )
 
-        const result = response.data
-        // Only update documentID if it hasn't been set yet
-        setPptName(result.documentName)
-        setDocumentID((prev) => prev || result.documentID)
-        setIsDocumentIDLoading(false)
-      } catch (error) {
-        console.error('Error fetching document:', error)
-        setIsDocumentIDLoading(false)
-      }
-    }
+  //   //     const result = response.data
+  //   //     // Only update documentID if it hasn't been set yet
+  //   //     setPptName(result.documentName)
+  //   //     setDocumentID((prev) => prev || result.documentID)
+  //   //     setIsDocumentIDLoading(false)
+  //   //   } catch (error) {
+  //   //     console.error('Error fetching document:', error)
+  //   //     setIsDocumentIDLoading(false)
+  //   //   }
+  //   // }
 
-    const documentIDFromUrl = searchParams.get('documentID')
-    const pptNameFromUrl = searchParams.get('presentationName')
+  //   const documentIDFromUrl = searchParams.get('documentID')
+  //   const pptNameFromUrl = searchParams.get('presentationName')
 
-    if (documentIDFromUrl && documentIDFromUrl !== 'loading') {
-      // If documentID comes from URL and is valid, set it only if it hasn't been set
-      setDocumentID((prev) => prev || documentIDFromUrl)
-      setPptName(pptNameFromUrl)
+  //   if (documentIDFromUrl && documentIDFromUrl !== 'loading') {
+  //     // If documentID comes from URL and is valid, set it only if it hasn't been set
+  //     setDocumentID(documentIDFromUrl)
+  //     setPptName(pptNameFromUrl)
 
-      // Fetch the pptName if needed
-      const getPptName = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          const result = response.data
-          setPptName(result.documentName)
-        } catch (error) {
-          console.error('Error fetching document:', error)
-        }
-      }
-      if (pptNameFromUrl !== 'loading' || undefined) {
-        getPptName()
-      }
-      setIsDocumentIDLoading(false)
-    } else {
-      // Trigger the API call only if documentID is not present or is 'loading'
-      const timer = setTimeout(() => {
-        getDocumentId()
-      }, 23000) // delay
-
-      // Cleanup the timer in case the component unmounts
-      return () => clearTimeout(timer)
-    }
-  }, [searchParams, authToken, orgId])
+  //     // Fetch the pptName if needed
+  //     const getPptName = async () => {
+  //       try {
+  //         const response = await axios.get(
+  //           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${authToken}`,
+  //             },
+  //           }
+  //         )
+  //         const result = response.data
+  //         setPptName(result.documentName)
+  //       } catch (error) {
+  //         console.error('Error fetching document:', error)
+  //       }
+  //     }
+  //     if (pptNameFromUrl === 'loading' || undefined) {
+  //       getPptName()
+  //     }
+  //   }
+  // }, [searchParams, authToken, orgId])
 
   const updateSlideState = useCallback(
     (outlineTitle: string, updates: Partial<SlideState>) => {
@@ -860,11 +856,18 @@ export default function ViewPresentation() {
       setSlideStates((prev) => {
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
         const hasSlidesData = slidesArray[currentOutline]?.length > 0
+
+        // Check if isLoading is already true
+        const isAlreadyLoading = prev[currentOutline]?.isLoading
+
+        // Only update isLoading to true if it is not already true
         return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading: isNoGeneratedSlide === false && !hasSlidesData,
+            isLoading: isAlreadyLoading
+              ? true
+              : isNoGeneratedSlide === false && !hasSlidesData,
             lastUpdated: Date.now(),
           },
         }
@@ -1060,6 +1063,39 @@ export default function ViewPresentation() {
   }, [currentSlideIndex, prevSlideIndex])
 
   // Fetch Outlines
+  // const fetchOutlines = useCallback(async () => {
+  //   if (!documentID) return
+
+  //   try {
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${authToken}`,
+  //         },
+  //       }
+  //     )
+  //     const fetchedOutlines = response.data.outline
+  //     setOutlines(fetchedOutlines)
+  //     if (fetchedOutlines.length > 0) {
+  //       setCurrentOutline(fetchedOutlines[0].title)
+  //       setCurrentOutlineID(fetchedOutlines[0].outlineID)
+  //     }
+  //     setIsDocumentIDLoading(false)
+  //   } catch (error) {
+  //     console.error('Error fetching outlines:', error)
+  //   }
+  // }, [documentID, authToken])
+  // useEffect(() => {
+  //   if (searchParams.get('presentatioName') !== null || 'loading') {
+  //     fetchOutlines()
+  //   } else {
+  //     setTimeout(() => {
+  //       fetchOutlines()
+  //     }, 25000)
+  //   }
+  // }, [fetchOutlines, documentID, searchParams])
+  // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
     if (!documentID) return
 
@@ -1078,13 +1114,26 @@ export default function ViewPresentation() {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)
       }
+      setIsDocumentIDLoading(false)
     } catch (error) {
       console.error('Error fetching outlines:', error)
     }
   }, [documentID, authToken])
+
   useEffect(() => {
-    fetchOutlines()
-  }, [fetchOutlines, documentID])
+    if (searchParams.get('presentationName') !== null) {
+      fetchOutlines()
+    } else {
+      const interval = setInterval(async () => {
+        await fetchOutlines()
+        if (!isDocumentIDLoading) {
+          clearInterval(interval)
+        }
+      }, 2000)
+
+      return () => clearInterval(interval)
+    }
+  }, [fetchOutlines, documentID, searchParams, isDocumentIDLoading])
 
   // Set Slide Type For Quick Generate
   useEffect(() => {
@@ -1097,6 +1146,35 @@ export default function ViewPresentation() {
 
   // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
+    const documentIDFromUrl = searchParams.get('documentID')
+    setDocumentID(documentIDFromUrl)
+    const pptNameFromUrl = searchParams.get('presentationName')
+    // Fetch the pptName if needed
+    const getPptName = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const result = response.data
+        setPptName(result.documentName)
+        setIsPptNameLoading(false)
+      } catch (error) {
+        console.error('Error fetching document:', error)
+      }
+    }
+
+    if (!pptNameFromUrl) {
+      getPptName()
+    }
+
+    setPptName(pptNameFromUrl)
+    setIsPptNameLoading(false)
+
     // Get User Plan
     const fetchUserPlan = async () => {
       try {
@@ -1196,7 +1274,7 @@ export default function ViewPresentation() {
     }
 
     getPricingData()
-  }, [documentID, authToken, dispatch, orgId, userPlan])
+  }, [documentID, authToken, dispatch, orgId, userPlan, searchParams])
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
@@ -1252,7 +1330,7 @@ export default function ViewPresentation() {
         handleDownload={handleDownload}
         handleShare={handleShare}
         pptName={pptName!}
-        isLoading={isDocumentIDLoading}
+        isLoading={isPptNameLoading}
         userPlan={userPlan!}
         openPricingModal={() => setIsPricingModalOpen(true)}
         exportPaid={isExportPaid}
@@ -1374,7 +1452,7 @@ export default function ViewPresentation() {
           handleDownload={handleDownload}
           handleShare={handleShare}
           pptName={pptName!}
-          isLoading={isDocumentIDLoading}
+          isLoading={isPptNameLoading}
           userPlan={userPlan!}
           openPricingModal={() => setIsPricingModalOpen(true)}
           exportPaid={isExportPaid}
@@ -1385,6 +1463,8 @@ export default function ViewPresentation() {
           <div className="block lg:hidden">
             {outlines && outlines.length > 0 && (
               <MobileOutlineModal
+                isNewSlideLoading={isNewSlideLoading}
+                newSlideGenerated={newSlideGenerated}
                 documentID={documentID!}
                 outlines={outlines}
                 onSelectOutline={(outline) => {

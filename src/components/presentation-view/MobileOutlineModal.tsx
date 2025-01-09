@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FaTimes, FaPlus, FaChevronDown } from 'react-icons/fa'
+import {
+  FaTimes,
+  FaPlus,
+  FaChevronDown,
+  FaCheck,
+  FaExclamation,
+} from 'react-icons/fa'
 import { Outlines } from '../../types/types'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -20,6 +26,10 @@ interface MobileOutlineDropdownProps {
   monthlyPlanId: string
   authToken: string
   orgId: string
+  isNewSlideLoading: {
+    [key: string]: boolean
+  }
+  newSlideGenerated: { [key: string]: string }
 }
 
 export default function MobileOutlineModal({
@@ -36,6 +46,8 @@ export default function MobileOutlineModal({
   yearlyPlanId,
   monthlyPlanId,
   orgId,
+  newSlideGenerated,
+  isNewSlideLoading,
 }: MobileOutlineDropdownProps) {
   const [isOutlinesOpen, setIsOutlinesOpen] = useState(false)
   const [isAddSlideModalOpen, setIsAddSlideModalOpen] = useState(false)
@@ -102,12 +114,33 @@ export default function MobileOutlineModal({
             <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <>
+          <div className="flex items-center">
             <span className="text-[#091220]">
               {selectedOutline || 'Select Outline'}
             </span>
-            <FaChevronDown className="text-gray-500" />
-          </>
+            {isNewSlideLoading[selectedOutline] && (
+              <div className="flex items-center justify-center ml-2 mt-1">
+                <div className="w-3 h-3 border-3 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            )}
+            {newSlideGenerated[selectedOutline] === 'Yes' &&
+              !isNewSlideLoading[selectedOutline] && (
+                <div className="flex items-center justify-center ml-2 mt-1">
+                  <div className="w-3 h-3">
+                    <FaCheck className="text-green-600" />
+                  </div>
+                </div>
+              )}
+            {newSlideGenerated[selectedOutline] === 'No' &&
+              !isNewSlideLoading[selectedOutline] && (
+                <div className="flex items-center justify-center ml-2 mt-1">
+                  <div className="w-3 h-3">
+                    <FaExclamation className="text-red-700" />
+                  </div>
+                </div>
+              )}
+            <FaChevronDown className="text-gray-500 ml-2" />
+          </div>
         )}
       </div>
 
@@ -172,6 +205,27 @@ export default function MobileOutlineModal({
                 }}
               >
                 {index + 1}. {outline.title}
+                {isNewSlideLoading[outline.title] && (
+                  <div className="flex items-center justify-center ml-2 mt-1">
+                    <div className="w-4 h-4 border-3 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                )}
+                {newSlideGenerated[outline.title] === 'Yes' &&
+                  !isNewSlideLoading[outline.title] && (
+                    <div className="flex items-center justify-center ml-2 mt-1">
+                      <div className="w-5 h-5">
+                        <FaCheck className="text-green-600" />
+                      </div>
+                    </div>
+                  )}
+                {newSlideGenerated[outline.title] === 'No' &&
+                  !isNewSlideLoading[outline.title] && (
+                    <div className="flex items-center justify-center ml-2 mt-1">
+                      <div className="w-5 h-5">
+                        <FaExclamation className="text-red-700" />
+                      </div>
+                    </div>
+                  )}
               </li>
             ))}
           </ul>

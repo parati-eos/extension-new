@@ -62,10 +62,6 @@ const SelectPresentationType: React.FC = () => {
       icon: <FaEllipsisH className="text-[#3667B2]" />,
     },
   ]
-  const [tourActive, setTourActive] = useState(false);
-
-  const startTour = () => setTourActive(true);
-  const stopTour = () => setTourActive(false);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRefineModalOpen, setIsRefineModalOpen] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -88,6 +84,11 @@ const SelectPresentationType: React.FC = () => {
   const [showTooltip, setShowTooltip] = React.useState(false)
   const [refineLoading, setRefineLoading] = useState(false)
   const dispatch = useDispatch()
+
+  const generateDocumentID = () => {
+    return 'Document-' + Date.now()
+  }
+  const generatedDocumentID = generateDocumentID()
 
   const handleMouseEnter = () => {
     // Clear any existing timeout to avoid premature hiding
@@ -142,15 +143,21 @@ const SelectPresentationType: React.FC = () => {
 
   const handleGenerate = () => {
     // Navigate immediately with initial placeholders
+    // navigate(
+    //   `/presentation-view?documentID=loading&slideType=${selectedTypeName}`
+    // )
     navigate(
-      `/presentation-view?documentID=loading&slideType=${selectedTypeName}`
+      `/presentation-view?documentID=${generatedDocumentID}&slideType=${selectedTypeName}`
     )
 
     const quickGenerate = async () => {
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
-          {},
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}/${generatedDocumentID}`,
+          // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
+          {
+            // documentID: generatedDocumentID,
+          },
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -158,15 +165,15 @@ const SelectPresentationType: React.FC = () => {
           }
         )
 
-        const result = await response.data
+        await response.data
 
-        if (result.documentID && result.documentID !== '') {
-          // Update the URL with actual query parameters
-          navigate(
-            `/presentation-view?documentID=${result.documentID}&slideType=${selectedTypeName}`,
-            { replace: true }
-          )
-        }
+        // if (result.documentID && result.documentID !== '') {
+        //   // Update the URL with actual query parameters
+        //   navigate(
+        //     `/presentation-view?documentID=${result.documentID}&slideType=${selectedTypeName}`,
+        //     { replace: true }
+        //   )
+        // }
       } catch (error) {
         toast.error('Error generating ppt', {
           position: 'top-right',
@@ -188,11 +195,15 @@ const SelectPresentationType: React.FC = () => {
         return
       }
 
+      navigate(
+        `/presentation-view?documentID=${generatedDocumentID}&slideType=${selectedTypeName}`
+      )
+
       setRefineLoading(true)
 
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/refineppt/${orgId}/${selectedTypeName}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/refineppt/${orgId}/${selectedTypeName}/${generatedDocumentID}`,
           {
             pdfLink: pdfLink,
           },
@@ -203,16 +214,16 @@ const SelectPresentationType: React.FC = () => {
           }
         )
 
-        const result = await response.data
-        if (
-          result.documentData.documentID &&
-          result.documentData.documentID !== ''
-        ) {
-          setRefineLoading(false)
-          navigate(
-            `/presentation-view?documentID=${result.documentData.documentID}&presentationName=${result.documentData.documentName}`
-          )
-        }
+        await response.data
+        // if (
+        //   result.documentData.documentID &&
+        //   result.documentData.documentID !== ''
+        // ) {
+        //   setRefineLoading(false)
+        //   navigate(
+        //     `/presentation-view?documentID=${result.documentData.documentID}&presentationName=${result.documentData.documentName}`
+        //   )
+        // }
       } catch (error) {
         toast.error('Error refining ppt', {
           position: 'top-right',
@@ -368,11 +379,9 @@ const SelectPresentationType: React.FC = () => {
 
       {/* Generate Buttons for medium and large screens */}
       {selectedType && (
-        <div 
-
-        className="hidden lg:flex w-max justify-center mt-4 ml-16">
-          <button        id="generate-presentation" // Add this ID for targeting
-
+        <div className="hidden lg:flex w-max justify-center mt-4 ml-16">
+          <button
+            id="generate-presentation" // Add this ID for targeting
             onClick={handleGenerate}
             disabled={isButtonDisabled}
             className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
@@ -380,7 +389,6 @@ const SelectPresentationType: React.FC = () => {
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-[#3667B2] hover:bg-[#0A8568]'
             }`}
-            
           >
             Generate Presentation
           </button>
@@ -616,8 +624,7 @@ const SelectPresentationType: React.FC = () => {
           </div>
         </div>
       )}
-       <GuidedTour/>
-
+      <GuidedTour />
     </div>
   )
 }

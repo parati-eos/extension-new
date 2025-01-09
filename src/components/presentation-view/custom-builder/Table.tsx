@@ -164,39 +164,37 @@ export default function Table({
   const handleGenerateSlide = async () => {
     setIsSlideLoading()
     setIsLoading(true)
+    // Prepare table data, filtering out empty row and column headers
+    const rowHeaders = tableData.rowHeaders.filter((header) => header !== '')
+    const columnHeaders = tableData.columnHeaders.filter(
+      (header) => header !== ''
+    )
+
     const tablePayload = {
-      rowHeader1: tableData.rowHeaders[0] || '',
-      rowHeader2: tableData.rowHeaders[1] || '',
-      rowHeader3: tableData.rowHeaders[2] || '',
-      rowHeader4: tableData.rowHeaders[3] || '',
-      rowHeader5: tableData.rowHeaders[4] || '',
-      rowHeader6: tableData.rowHeaders[5] || '',
-      rowHeader7: tableData.rowHeaders[6] || '',
-      rowHeader8: tableData.rowHeaders[7] || '',
-      columnHeader1: tableData.columnHeaders[0] || '',
-      columnHeader2: tableData.columnHeaders[1] || '',
-      columnHeader3: tableData.columnHeaders[2] || '',
-      columnHeader4: tableData.columnHeaders[3] || '',
-      columnHeader5: tableData.columnHeaders[4] || '',
-      rows1: transformRow(tableData.rows[0] || []),
-      rows2: transformRow(tableData.rows[1] || []),
-      rows3: transformRow(tableData.rows[2] || []),
-      rows4: transformRow(tableData.rows[3] || []),
-      rows5: transformRow(tableData.rows[4] || []),
-      rows6: transformRow(tableData.rows[5] || []),
-      rows7: transformRow(tableData.rows[6] || []),
-      rows8: transformRow(tableData.rows[7] || []),
+      ...rowHeaders.reduce<Record<string, string>>((acc, header, index) => {
+        acc[`rowHeader${index + 1}`] = header
+        return acc
+      }, {}),
+      ...columnHeaders.reduce<Record<string, string>>((acc, header, index) => {
+        acc[`columnHeader${index + 1}`] = header
+        return acc
+      }, {}),
+      rows: tableData.rows.map((row, index) => ({
+        attribute1: row[0] || '',
+        attribute2: row[1] || '',
+        attribute3: row[2] || '',
+        attribute4: row[3] || '',
+        attribute5: row[4] || '',
+      })),
     }
 
-    // Filter out empty fields and empty rows
-    const filteredTablePayload = Object.fromEntries(
-      Object.entries(tablePayload).filter(([key, value]) => {
-        if (typeof value === 'object' && value !== null) {
-          return Object.values(value).some((attr) => attr !== '')
-        }
-        return value !== ''
-      })
-    )
+    // Filter out empty rows
+    const filteredTablePayload = {
+      ...tablePayload,
+      rows: tablePayload.rows.filter((row) =>
+        Object.values(row).some((attr) => attr !== '')
+      ),
+    }
 
     try {
       const response = await axios.post(
