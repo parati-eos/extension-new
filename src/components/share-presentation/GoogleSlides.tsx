@@ -62,7 +62,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
           slidesData.map((slideId, index) => (
             <div key={slideId}>
               <iframe
-                className="h-[80vh] w-[100%] bg-black border-[2px] border-[#3667B2]
+                className="h-[50vh] lg:h-[80vh] w-[100%] bg-black border-[2px] border-[#3667B2]
                 mb-2 pointer-events-none"
                 title={`Google Slide ${index + 1}`}
                 src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${slideId}`}
