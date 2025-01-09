@@ -107,133 +107,135 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
         </div>
       )}
-      <ul className="space-y-2 relative">
-        {outlines.map((outline, idx) => (
-          <React.Fragment key={outline._id}>
-            <li
-              ref={(el) => (outlineRefs.current[idx] = el)}
-              className="relative group"
-              onMouseEnter={() => setHoverIndex(idx)}
-              onMouseLeave={() => setHoverIndex(null)}
+    <ul className="space-y-2 relative">
+  {outlines.map((outline, idx) => (
+    <React.Fragment key={outline._id}>
+      <li
+        ref={(el) => (outlineRefs.current[idx] = el)}
+        className="relative group"
+        onMouseEnter={() => setHoverIndex(idx)}
+        onMouseLeave={() => setHoverIndex(null)}
+      >
+        {/* Outline Title */}
+        <button
+          onClick={() => onOutlineSelect(outline.title)}
+          className={`w-full max-w-xs font-normal text-left p-2 rounded-lg flex justify-between ${
+            selectedOutline === outline.title
+              ? 'bg-blue-50 text-[#3667B2]'
+              : 'hover:bg-gray-200 text-gray-600'
+          }`}
+        >
+          <span>{`${idx + 1}. ${outline.title}`}</span>
+          {isNewSlideLoading[outline.title] && (
+            <div className="flex items-center justify-center ml-2 mt-1">
+              <div className="w-6 h-6 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          )}
+        </button>
+
+        {/* + Button */}
+        <div
+          className={`mt-2 flex items-center justify-center space-x-4 relative ${
+            idx === 0 || hoverIndex === idx ? '' : 'hidden group-hover:flex'
+          }`}
+        >
+          {/* Left Line */}
+          <div className="flex-grow h-px bg-gray-300"></div>
+
+          {/* Circular + Icon */}
+          <div
+          
+            className="relative"
+            onMouseEnter={() => {
+              if (isDisabled && userPlan === 'free') setIsDialogVisible(true)
+            }}
+            onMouseLeave={() => {
+              if (isDisabled && userPlan === 'free') setIsDialogVisible(false)
+            }}
+          >
+            <button
+              id={idx === 0 ? 'outline' : undefined} // Add id to the first button for tutorial targeting
+              className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 ${
+                isDisabled ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              onClick={() => setInputIndex(idx)}
+              disabled={isDisabled}
             >
-              {/* Outline Title */}
-              <button
-                onClick={() => onOutlineSelect(outline.title)}
-                className={`w-full max-w-xs font-normal text-left p-2 rounded-lg flex justify-between ${
-                  selectedOutline === outline.title
-                    ? 'bg-blue-50 text-[#3667B2]'
-                    : 'hover:bg-gray-200 text-gray-600'
-                }`}
-              >
-                <span>{`${idx + 1}. ${outline.title}`}</span>
-                {isNewSlideLoading[outline.title] && (
-                  <div className="flex items-center justify-center ml-2 mt-1">
-                    <div className="w-6 h-6 border-2 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                  </div>
-                )}
-              </button>
+              +
+            </button>
 
-              {/* + Button Below the Title */}
-
-              {hoverIndex === idx && inputIndex === null && (
-                <div className="mt-2 flex items-center justify-center space-x-4 relative">
-                  {/* Left Line */}
-                  <div className="flex-grow h-px bg-gray-300"></div>
-
-                  {/* Circular + Icon */}
-                  <div
-                    className="relative"
-                    onMouseEnter={() => {
-                      if (isDisabled && userPlan === 'free')
-                        setIsDialogVisible(true)
-                    }}
-                    onMouseLeave={() => {
-                      if (isDisabled && userPlan === 'free')
-                        setIsDialogVisible(false)
-                    }}
+            {/* Tooltip */}
+            {isDialogVisible && isDisabled && userPlan === 'free' && (
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
+                <p className="text-sm text-center text-gray-800">
+                  Please{' '}
+                  <button
+                    className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
+                    onClick={() => setIsPricingModalOpen(true)}
                   >
-                    <button
-                      id="outline"
-                      className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 disabled:opacity-20 disabled:cursor-not-allowed`}
-                      onClick={() => setInputIndex(idx)}
-                      disabled={isDisabled}
-                    >
-                      +
-                    </button>
-
-                    {/* Tooltip */}
-                    {isDialogVisible && isDisabled && userPlan === 'free' && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                        <p className="text-sm text-center text-gray-800">
-                          Please{' '}
-                          <button
-                            className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                            onClick={() => setIsPricingModalOpen(true)}
-                          >
-                            upgrade to Pro
-                          </button>{' '}
-                          plan to access this feature.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Right Line */}
-                  <div className="flex-grow h-px bg-gray-300"></div>
-                </div>
-              )}
-            </li>
-
-            {/* Input for New Outline */}
-
-            {inputIndex === idx && (
-              <div
-                id="new-outline"
-                className="mt-2 flex items-center space-x-2"
-              >
-                <div className="relative flex w-full max-w-xs">
-                  <input
-                    type="text"
-                    value={newOutline}
-                    onChange={(e) => setNewOutline(e.target.value)}
-                    className="block w-full p-2 border border-gray-300 rounded-lg"
-                    placeholder="New Outline"
-                  />
-                  <div className="absolute inset-y-0 right-2 flex items-center space-x-1">
-                    <button
-                      onClick={() => handleAddOutline(idx)}
-                      disabled={!newOutline.trim() || newOutlineLoading}
-                      className={`text-[#0A8568] ${
-                        !newOutline.trim() || newOutlineLoading
-                          ? 'opacity-20'
-                          : ''
-                      }`}
-                    >
-                      {newOutlineLoading && ''}
-                      <FaCheck
-                        className={`text-[#0A8568] ${
-                          !newOutline.trim() || newOutlineLoading
-                            ? 'opacity-20'
-                            : ''
-                        }`}
-                      />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setInputIndex(null)
-                        setNewOutline('')
-                      }}
-                      className="text-[#8A8B8C] text-sm"
-                    >
-                      <FaTimes className="text-[#8A8B8C] text-base" />
-                    </button>
-                  </div>
-                </div>
+                    upgrade to Pro
+                  </button>{' '}
+                  plan to access this feature.
+                </p>
               </div>
             )}
-          </React.Fragment>
-        ))}
-      </ul>
+          </div>
+
+          {/* Right Line */}
+          <div className="flex-grow h-px bg-gray-300"></div>
+        </div>
+      </li>
+
+      {/* Input for New Outline */}
+      {inputIndex === idx && (
+        <div
+          
+          className="mt-2 flex items-center space-x-2"
+        >
+          <div className="relative flex w-full max-w-xs">
+            <input
+              type="text"
+              value={newOutline}
+              onChange={(e) => setNewOutline(e.target.value)}
+              className="block w-full p-2 border border-gray-300 rounded-lg"
+              placeholder="New Outline"
+            />
+            <div className="absolute inset-y-0 right-2 flex items-center space-x-1">
+              <button
+                onClick={() => handleAddOutline(idx)}
+                disabled={!newOutline.trim() || newOutlineLoading}
+                className={`text-[#0A8568] ${
+                  !newOutline.trim() || newOutlineLoading
+                    ? 'opacity-20'
+                    : ''
+                }`}
+              >
+                {newOutlineLoading && ''}
+                <FaCheck
+                  className={`text-[#0A8568] ${
+                    !newOutline.trim() || newOutlineLoading
+                      ? 'opacity-20'
+                      : ''
+                  }`}
+                />
+              </button>
+              <button
+                onClick={() => {
+                  setInputIndex(null)
+                  setNewOutline('')
+                }}
+                className="text-[#8A8B8C] text-sm"
+              >
+                <FaTimes className="text-[#8A8B8C] text-base" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  ))}
+</ul>
+
       {/* Pricing Modal */}
       {isPricingModalOpen && (
         <PricingModal
