@@ -39,6 +39,7 @@ const GuidedTour: React.FC = () => {
           beacon: {
             display: 'none',
           },
+          
         },
     
         placement: "top" as Placement,
@@ -178,6 +179,12 @@ const GuidedTour: React.FC = () => {
           },
           buttonBack: {
             color: "white", // Blue text for Back button
+          },
+          spotlight: {
+            /* Adjust the spotlight's box-shadow, border, etc. */
+           
+          
+            transform: "scale(0.9)", // Shrink the spotlight size
           },
         }}
         locale={{

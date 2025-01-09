@@ -198,7 +198,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
 
         <button
           onClick={handleShare}
-          className="text-[#5D5F61] disabled:bg-gray-300 hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
+          className="text-[#5D5F61] disabled:bg-gray-300  border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
         >
           <FaShare className="h-4 w-4" />
         </button>

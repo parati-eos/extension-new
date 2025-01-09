@@ -1423,7 +1423,7 @@ export default function ViewPresentation() {
   className={`relative bg-white ${
     displayModes[currentOutline] !== 'slides'
       ? 'h-[45vh] md:h-[50vh]'
-      : 'h-[45vh]'  // keep the height the same when 'slides' mode
+      : 'h-[45.5vh]'  // keep the height the same when 'slides' mode
   } w-full border border-gray-200 mt-12 mb-6`}
 >
           {renderContent({
