@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 const GuidedTour: React.FC = () => {
   const hasVisited = localStorage.getItem("hasVisited") === "true";
-  const [run, setRun] = useState(false);
+  const [run, setRun] = useState(true);
   const [steps, setSteps] = useState<Step[]>([]);
   const isInitialized = useRef(false); // Track if initialization is done
 
@@ -35,6 +35,12 @@ const GuidedTour: React.FC = () => {
             Navigate between different slide versions of the same section
           </div>
         ),
+        styles: {
+          beacon: {
+            display: 'none',
+          },
+        },
+    
         placement: "top" as Placement,
       },
       
