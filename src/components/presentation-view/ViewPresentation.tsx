@@ -1500,12 +1500,12 @@ export default function ViewPresentation() {
 
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
-          className={`relative bg-white ${
-            displayModes[currentOutline] !== 'slides'
-              ? 'h-[45vh] md:h-[50vh]'
-              : 'h-[30vh]'
-          } w-full border border-gray-200 mt-12 mb-6`}
-        >
+  className={`relative bg-white ${
+    displayModes[currentOutline] !== 'slides'
+      ? 'h-[45vh] md:h-[50vh]'
+      : 'h-[45.5vh]'  // keep the height the same when 'slides' mode
+  } w-full border border-gray-200 mt-12 mb-6`}
+>
           {renderContent({
             GenSlideID: slidesArray[currentOutline]
               ? slidesArray[currentOutline][currentSlideIndex]

@@ -5,8 +5,9 @@ import React, { useState, useRef, useEffect } from "react";
 
 const GuidedTour: React.FC = () => {
   const hasVisited = localStorage.getItem("hasVisited") === "true";
-  const [run, setRun] = useState(false);
+  const [run, setRun] = useState(!hasVisited); // Run the tour if user hasn't visited
   const [steps, setSteps] = useState<Step[]>([]);
+  const [isMobile, setIsMobile] = useState(false); // State to track if the screen is mobile
   const isInitialized = useRef(false); // Track if initialization is done
 
   const initializeSteps = () => {
@@ -35,6 +36,13 @@ const GuidedTour: React.FC = () => {
             Navigate between different slide versions of the same section
           </div>
         ),
+        styles: {
+          beacon: {
+            display: 'none',
+          },
+          
+        },
+    
         placement: "top" as Placement,
       },
       
@@ -92,6 +100,11 @@ const GuidedTour: React.FC = () => {
       },
       {
         target: "#history",
+        styles: {
+          beacon: {
+            display: 'none',
+          },
+        },
         content: (
           <div style={{ textAlign: "center" }}>
             <strong>Step 8 of 9</strong> <br />
@@ -123,62 +136,68 @@ const GuidedTour: React.FC = () => {
 
   useEffect(() => {
     initializeSteps();
+    // Detect mobile screen size
+    setIsMobile(window.innerWidth < 1024); // 'lg' breakpoint in Tailwind is 1024px
+    window.addEventListener("resize", () => {
+      setIsMobile(window.innerWidth < 1024);
+    });
+    return () => {
+      window.removeEventListener("resize", () => {
+        setIsMobile(window.innerWidth < 1024);
+      });
+    };
   }, []); // Only runs once on mount
-
-  useEffect(() => {
-    // Only set `run` to true once the first step is available
-    if (steps.length > 0 && steps[0].target) {
-      setRun(true);
-    }
-  }, [steps]); // Run this effect when `steps` is updated
-  
-
 
   const handleCallback = (data: any) => {
     const { status, action } = data;
 
     if (status === STATUS.FINISHED) {
-      // Set localStorage only after completing the tour
       localStorage.setItem("hasVisited", "true");
       setRun(false);
     } else if (status === STATUS.SKIPPED || action === "close") {
+      localStorage.setItem("hasVisited", "true"); // Update localStorage
       setRun(false); // Stop the tour if skipped or closed
     }
   };
 
   return (
     <div>
-      {/* Joyride Component */}
-      <Joyride
-        steps={steps}
-        continuous={true}
-        scrollToFirstStep={true}
-        showSkipButton={true}
-        run={run}
-        callback={handleCallback}
-        styles={{
-          options: {
-            arrowColor: "#3667B2",
-            backgroundColor: "#3667B2",
-            overlayColor: "rgba(79, 26, 0, 0.4)",
-            primaryColor: "#496999",
-            textColor: "#fff",
-            width: 300,
-            zIndex: 1000,
-          },
-          buttonNext: {
-            backgroundColor: "blue", // Green Next button
-            color: "#fff", // White text for Next button
-          },
-          buttonBack: {
-            color: "white", // Blue text for Back button
-          },
-        }}
-        locale={{
-          last: "Finish",
-          skip: "Skip",
-        }}
-      />
+      {/* Conditionally render Joyride only for non-mobile views */}
+      {!isMobile && (
+        <Joyride
+          steps={steps}
+          continuous={true}
+          scrollToFirstStep={true}
+          showSkipButton={true}
+          run={run}
+          callback={handleCallback}
+          styles={{
+            options: {
+              arrowColor: "#3667B2",
+              backgroundColor: "#3667B2",
+              overlayColor: "rgba(79, 26, 0, 0.4)",
+              primaryColor: "#496999",
+              textColor: "#fff",
+              width: 300,
+              zIndex: 1000,
+            },
+            buttonNext: {
+              backgroundColor: "blue", // Green Next button
+              color: "#fff", // White text for Next button
+            },
+            buttonBack: {
+              color: "white", // Blue text for Back button
+            },
+            spotlight: {
+              transform: "scale(0.9)", // Shrink the spotlight size
+            },
+          }}
+          locale={{
+            last: "Finish",
+            skip: "Skip",
+          }}
+        />
+      )}
     </div>
   );
 };

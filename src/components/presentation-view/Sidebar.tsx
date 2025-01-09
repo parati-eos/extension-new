@@ -35,7 +35,19 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [newOutlineLoading, setNewOutlineLoading] = useState(false)
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const [hasVisited, setHasVisited] = useState(false);
 
+  // Retrieve `hasVisited` from local storage on mount
+  useEffect(() => {
+    const visited = localStorage.getItem('hasVisited') === 'true';
+    setHasVisited(visited);
+  }, []); // Runs only once when the component mounts
+
+  // Function to set `hasVisited` in local storage
+  const markAsVisited = () => {
+    localStorage.setItem('hasVisited', 'true');
+    setHasVisited(true);
+  };
   useEffect(() => {
     setOutlines(fetchedOutlines)
   }, [fetchedOutlines])
@@ -153,12 +165,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
               {/* + Button */}
               <div
-                className={`mt-2 flex items-center justify-center space-x-4 relative ${
-                  idx === 0 || hoverIndex === idx
-                    ? ''
-                    : 'hidden group-hover:flex'
-                }`}
-              >
+  className={`mt-2 flex items-center justify-center space-x-4 relative ${
+    (idx === 0 && !hasVisited) || hoverIndex === idx
+      ? ''
+      : 'hidden group-hover:flex'
+  }`}
+>
+
+              
                 {/* Left Line */}
                 <div className="flex-grow h-px bg-gray-300"></div>
 
