@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 const GuidedTour: React.FC = () => {
   const hasVisited = localStorage.getItem("hasVisited") === "true";
-  const [run, setRun] = useState(true);
+  const [run, setRun] = useState(!hasVisited); // Run the tour if user hasn't visited
   const [steps, setSteps] = useState<Step[]>([]);
   const isInitialized = useRef(false); // Track if initialization is done
 
@@ -98,6 +98,11 @@ const GuidedTour: React.FC = () => {
       },
       {
         target: "#history",
+        styles: {
+          beacon: {
+            display: 'none',
+          },
+        },
         content: (
           <div style={{ textAlign: "center" }}>
             <strong>Step 8 of 9</strong> <br />
@@ -131,12 +136,7 @@ const GuidedTour: React.FC = () => {
     initializeSteps();
   }, []); // Only runs once on mount
 
-  useEffect(() => {
-    // Only set `run` to true once the first step is available
-    if (steps.length > 0 && steps[0].target) {
-      setRun(!hasVisited);
-    }
-  }, [steps]); // Run this effect when `steps` is updated
+
   
 
 
@@ -144,10 +144,10 @@ const GuidedTour: React.FC = () => {
     const { status, action } = data;
 
     if (status === STATUS.FINISHED) {
-      // Set localStorage only after completing the tour
       localStorage.setItem("hasVisited", "true");
       setRun(false);
     } else if (status === STATUS.SKIPPED || action === "close") {
+      localStorage.setItem("hasVisited", "true"); // Update localStorage
       setRun(false); // Stop the tour if skipped or closed
     }
   };
