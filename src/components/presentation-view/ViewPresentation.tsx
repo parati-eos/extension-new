@@ -859,11 +859,13 @@ export default function ViewPresentation() {
       setSlideStates((prev) => {
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
         const hasSlidesData = slidesArray[currentOutline]?.length > 0
+        const newGenerating = isNewSlideLoading[currentOutline]
         return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading: isNoGeneratedSlide === false && !hasSlidesData,
+            isLoading:
+              isNoGeneratedSlide === false && !hasSlidesData && newGenerating,
             lastUpdated: Date.now(),
           },
         }
@@ -1368,7 +1370,7 @@ export default function ViewPresentation() {
       </div>
 
       {/* MOBILE: MAIN CONTAINER */}
-      <div className="block lg:hidden px-4 py-2">
+      <div className="block lg:hidden p-4">
         {/* MOBILE: HEADING */}
         <MobileHeading
           handleDownload={handleDownload}
