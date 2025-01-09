@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 const GuidedTourMobile: React.FC = () => {
   const hasVisited = localStorage.getItem("hasVisited") === "true";
-  const [run, setRun] = useState(true); // Run the tour if user hasn't visited
+  const [run, setRun] = useState(!hasVisited); // Run the tour if user hasn't visited
   const [steps, setSteps] = useState<Step[]>([]);
   const [isMobile, setIsMobile] = useState(false); // State to track if the screen is mobile
   const isInitialized = useRef(false); // Track if initialization is done
