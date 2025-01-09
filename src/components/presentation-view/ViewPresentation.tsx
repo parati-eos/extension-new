@@ -852,7 +852,6 @@ export default function ViewPresentation() {
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   // TODO: WEB SOCKET
   useEffect(() => {
-    console.log('OutlineID Passed to Socket: ', currentOutlineID)
     if (currentOutline !== '' && documentID !== null) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
       console.info('Connecting to WebSocket server...')
@@ -871,7 +870,7 @@ export default function ViewPresentation() {
         }
       })
 
-      // Clear loading state and set error screen after timeout if no data received after 90sec
+      // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
         setSlideStates((prev) => {
           const genSlideID = prev[currentOutline]?.genSlideID
@@ -956,13 +955,10 @@ export default function ViewPresentation() {
             // Check if newSlides array has only one object and its display key is false
             // or if there are more than one items and all have display set to false
             if (
-              isNewSlideLoading[currentOutline] === false ||
               (newSlides.length === 1 && !newSlides[0].display) ||
               (newSlides.length > 1 &&
                 newSlides.every((slide) => !slide.display))
             ) {
-              console.log('Display False IF')
-
               setDisplayModes((prev) => ({
                 ...prev,
                 [currentOutline]: 'newContent',
@@ -1037,9 +1033,9 @@ export default function ViewPresentation() {
       }
     }
 
-    // if (totalSlides === 0) {
-    //   setNewVersionBackDisabled(true)
-    // }
+    if (totalSlides !== 0) {
+      setNewVersionBackDisabled(false)
+    }
   }, [totalSlides, prevTotalSlides])
 
   // Effect to set loader for pagination changes
@@ -1077,8 +1073,6 @@ export default function ViewPresentation() {
         }
       )
       const fetchedOutlines = response.data.outline
-      console.log('Fetched Outlines:', fetchedOutlines)
-
       setOutlines(fetchedOutlines)
       if (fetchedOutlines.length > 0) {
         setCurrentOutline(fetchedOutlines[0].title)
@@ -1208,7 +1202,6 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
 
-  console.log('slidesArray: ', slidesArray)
   console.log('slideStates: ', slideStates)
 
   return (
