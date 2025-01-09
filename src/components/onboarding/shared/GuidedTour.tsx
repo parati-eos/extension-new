@@ -7,6 +7,7 @@ const GuidedTour: React.FC = () => {
   const hasVisited = localStorage.getItem("hasVisited") === "true";
   const [run, setRun] = useState(!hasVisited); // Run the tour if user hasn't visited
   const [steps, setSteps] = useState<Step[]>([]);
+  const [isMobile, setIsMobile] = useState(false); // State to track if the screen is mobile
   const isInitialized = useRef(false); // Track if initialization is done
 
   const initializeSteps = () => {
@@ -135,11 +136,17 @@ const GuidedTour: React.FC = () => {
 
   useEffect(() => {
     initializeSteps();
+    // Detect mobile screen size
+    setIsMobile(window.innerWidth < 1024); // 'lg' breakpoint in Tailwind is 1024px
+    window.addEventListener("resize", () => {
+      setIsMobile(window.innerWidth < 1024);
+    });
+    return () => {
+      window.removeEventListener("resize", () => {
+        setIsMobile(window.innerWidth < 1024);
+      });
+    };
   }, []); // Only runs once on mount
-
-
-  
-
 
   const handleCallback = (data: any) => {
     const { status, action } = data;
@@ -155,43 +162,42 @@ const GuidedTour: React.FC = () => {
 
   return (
     <div>
-      {/* Joyride Component */}
-      <Joyride
-        steps={steps}
-        continuous={true}
-        scrollToFirstStep={true}
-        showSkipButton={true}
-        run={run}
-        callback={handleCallback}
-        styles={{
-          options: {
-            arrowColor: "#3667B2",
-            backgroundColor: "#3667B2",
-            overlayColor: "rgba(79, 26, 0, 0.4)",
-            primaryColor: "#496999",
-            textColor: "#fff",
-            width: 300,
-            zIndex: 1000,
-          },
-          buttonNext: {
-            backgroundColor: "blue", // Green Next button
-            color: "#fff", // White text for Next button
-          },
-          buttonBack: {
-            color: "white", // Blue text for Back button
-          },
-          spotlight: {
-            /* Adjust the spotlight's box-shadow, border, etc. */
-           
-          
-            transform: "scale(0.9)", // Shrink the spotlight size
-          },
-        }}
-        locale={{
-          last: "Finish",
-          skip: "Skip",
-        }}
-      />
+      {/* Conditionally render Joyride only for non-mobile views */}
+      {!isMobile && (
+        <Joyride
+          steps={steps}
+          continuous={true}
+          scrollToFirstStep={true}
+          showSkipButton={true}
+          run={run}
+          callback={handleCallback}
+          styles={{
+            options: {
+              arrowColor: "#3667B2",
+              backgroundColor: "#3667B2",
+              overlayColor: "rgba(79, 26, 0, 0.4)",
+              primaryColor: "#496999",
+              textColor: "#fff",
+              width: 300,
+              zIndex: 1000,
+            },
+            buttonNext: {
+              backgroundColor: "blue", // Green Next button
+              color: "#fff", // White text for Next button
+            },
+            buttonBack: {
+              color: "white", // Blue text for Back button
+            },
+            spotlight: {
+              transform: "scale(0.9)", // Shrink the spotlight size
+            },
+          }}
+          locale={{
+            last: "Finish",
+            skip: "Skip",
+          }}
+        />
+      )}
     </div>
   );
 };
