@@ -39,6 +39,7 @@ import Contact from './custom-builder/Contact'
 import Cover from './custom-builder/Cover'
 import { useDispatch, useSelector } from 'react-redux'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 
 interface SlideState {
   isLoading: boolean
@@ -1463,6 +1464,7 @@ export default function ViewPresentation() {
           {/* MOBILE: PAGINATION BUTTONS */}
           <div className="flex items-center gap-2">
             <button
+            id='arrow-mobile'
               onClick={handlePaginatePrev}
               disabled={currentSlideIndex === 0}
               className="flex items-center border bg-white border-gray-300 p-2 rounded-md"
@@ -1494,6 +1496,7 @@ export default function ViewPresentation() {
         </div>
       </div>
       <GuidedTour />
+      <GuidedTourMobile/>
     </div>
   )
 }

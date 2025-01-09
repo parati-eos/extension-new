@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaTrash, FaCheck, FaPlus } from 'react-icons/fa'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 
 type ButtonSectionProps = {
   onDelete: () => void
@@ -81,6 +82,7 @@ export const MobileButtonSection: React.FC<IconButtonGroupProps> = ({
     <div className="flex gap-4">
       {/* Delete Button */}
       <button
+      id='delete-mobile'
 
         onClick={onDelete}
         className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
@@ -90,6 +92,7 @@ export const MobileButtonSection: React.FC<IconButtonGroupProps> = ({
 
       {/* Finalize Button */}
       <button
+      id='finalize-mobile'
         onClick={onFinalize}
         className={`border ${
           currentSlideId && finalized
@@ -106,6 +109,7 @@ export const MobileButtonSection: React.FC<IconButtonGroupProps> = ({
 
       {/* New Version Button */}
       <button
+      id='new-version-mobile'
         onClick={onNewVersion}
         className={`hover:text-blue-600 border ${
           displayMode === 'newContent' ? 'border-gray-300' : 'border-[#3667B2]'
@@ -118,6 +122,7 @@ export const MobileButtonSection: React.FC<IconButtonGroupProps> = ({
         />
       </button>
       <GuidedTour/>
+      <GuidedTourMobile/>
     </div>
   )
 }

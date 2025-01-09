@@ -6,6 +6,7 @@ import { FaCheck, FaExclamation, FaTimes } from 'react-icons/fa'
 import './viewpresentation.css'
 import { PricingModal } from '../shared/PricingModal'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 // import crypto from 'crypto'
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -283,6 +284,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         />
       )}
       <GuidedTour />
+      <GuidedTourMobile/>
     </div>
   )
 }
