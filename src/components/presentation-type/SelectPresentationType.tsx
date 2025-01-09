@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice'
 import uploadLogoToS3 from '../../utils/uploadLogoToS3'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
     { id: 1, label: 'Product', icon: <FaBox className="text-[#3667B2]" /> },
@@ -625,6 +626,7 @@ const SelectPresentationType: React.FC = () => {
         </div>
       )}
       <GuidedTour />
+      <GuidedTourMobile />
     </div>
   )
 }

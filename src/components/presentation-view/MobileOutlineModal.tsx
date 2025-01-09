@@ -10,6 +10,7 @@ import { Outlines } from '../../types/types'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { PricingModal } from '../shared/PricingModal'
+import GuidedTourOutlineMobile from '../onboarding/shared/GuidedTourOutlineMobile'
 
 interface MobileOutlineDropdownProps {
   outlines: Outlines[]
@@ -106,6 +107,7 @@ export default function MobileOutlineModal({
     <div>
       {/* Dropdown Button */}
       <div
+      id='dropdown-mobile'
         className="border w-full rounded-lg p-4 bg-white flex justify-between items-center cursor-pointer"
         onClick={() => setIsOutlinesOpen(true)}
       >
@@ -160,6 +162,7 @@ export default function MobileOutlineModal({
               {/* Add Slide Button with Tooltip */}
               <div ref={buttonRef} className="relative inline-block">
                 <button
+                id='outline-mobile'
                   className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline ${
                     userPlan === 'free' ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
@@ -298,6 +301,7 @@ export default function MobileOutlineModal({
           orgId={orgId!}
         />
       )}
+      <GuidedTourOutlineMobile/>
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { Plan } from '../../types/pricingTypes'
 import axios from 'axios'
 import { IpInfoResponse } from '../../types/authTypes'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 interface NavbarProps {
   showHistoryId?: boolean; // Add a prop to control the "history" ID
   showOrganizationProfileId?: boolean; // Add a prop to control the "organization-profile" ID
@@ -210,6 +211,7 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
         />
       )}
             <GuidedTour/>
+            <GuidedTourMobile/>
     </nav>
   )
 }

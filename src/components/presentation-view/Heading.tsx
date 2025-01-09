@@ -2,6 +2,8 @@ import { FaDownload, FaShare } from 'react-icons/fa'
 import { HeadingProps } from '../../types/types'
 import { useEffect, useRef, useState } from 'react'
 import GuidedTour from '../onboarding/shared/GuidedTour'
+import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
+
 
 export const DesktopHeading: React.FC<HeadingProps> = ({
   handleShare,
@@ -109,6 +111,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
         </div>
       </div>
       <GuidedTour />
+
     </div>
   )
 }
@@ -161,6 +164,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
         <div className="relative">
           {/* Button */}
           <button
+          id='export-mobile'
             ref={buttonRef}
             onClick={() => {
               if (userPlan === 'free' && !exportPaid) {
@@ -197,12 +201,16 @@ export const MobileHeading: React.FC<HeadingProps> = ({
         </div>
 
         <button
+        id='share-mobile'
           onClick={handleShare}
           className="text-[#5D5F61] disabled:bg-gray-300  border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
         >
           <FaShare className="h-4 w-4" />
         </button>
       </div>
+      <GuidedTourMobile/>
     </div>
+
+
   )
 }
