@@ -133,20 +133,22 @@ const Sidebar: React.FC<SidebarProps> = ({
                     <div className="w-5 h-5 border-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
                   </div>
                 )}
-                {newSlideGenerated[outline.title] === 'Yes' && (
-                  <div className="flex items-center justify-center ml-2 mt-1">
-                    <div className="w-5 h-5">
-                      <FaCheck className="text-green-600" />
+                {newSlideGenerated[outline.title] === 'Yes' &&
+                  !isNewSlideLoading[outline.title] && (
+                    <div className="flex items-center justify-center ml-2 mt-1">
+                      <div className="w-5 h-5">
+                        <FaCheck className="text-green-600" />
+                      </div>
                     </div>
-                  </div>
-                )}
-                {newSlideGenerated[outline.title] === 'No' && (
-                  <div className="flex items-center justify-center ml-2 mt-1">
-                    <div className="w-5 h-5">
-                      <FaExclamation className="text-red-700" />
+                  )}
+                {newSlideGenerated[outline.title] === 'No' &&
+                  !isNewSlideLoading[outline.title] && (
+                    <div className="flex items-center justify-center ml-2 mt-1">
+                      <div className="w-5 h-5">
+                        <FaExclamation className="text-red-700" />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </button>
 
               {/* + Button */}
