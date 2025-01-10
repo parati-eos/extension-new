@@ -473,13 +473,18 @@ export default function ViewPresentation() {
     ) {
       setCurrentOutline(outlines[closestIndex]?.title)
       setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
-      setDisplayModes((prev) => ({
-        ...prev,
-        [currentOutline]:
-          slidesArray[currentOutline]?.length > 0
-            ? prev[currentOutline]
-            : 'newContent',
-      }))
+      if (
+        isNewSlideLoading[currentOutline] === false ||
+        isNewSlideLoading[currentOutline] === undefined
+      ) {
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]:
+            slidesArray[currentOutline]?.length === 0
+              ? 'newContent'
+              : prev[currentOutline],
+        }))
+      }
       setNewSlideGenerated((prev) => ({
         ...prev,
         [currentOutline]: prev[currentOutline] && '',
@@ -755,7 +760,7 @@ export default function ViewPresentation() {
                   ...prev,
                   [currentOutline]: {
                     ...prev[currentOutline],
-                    isLoading: !slidesArray[currentOutline],
+                    isLoading: slidesArray[currentOutline]?.length === 0,
                     isNoGeneratedSlide: false,
                     lastUpdated: Date.now(),
                   },
@@ -858,7 +863,10 @@ export default function ViewPresentation() {
               ...prev,
               [currentOutline]: 'No',
             }))
-            toast.error(`Slide Not Generated`)
+            toast.error(`New Slide Not Generated`, {
+              position: 'top-right',
+              autoClose: 3000,
+            })
             return {
               ...prev,
               [currentOutline]: false,
@@ -979,7 +987,10 @@ export default function ViewPresentation() {
               ...prev,
               [currentOutline]: 'Yes',
             }))
-            toast.success(`Slide Generated`)
+            toast.success(`Slide Generated`, {
+              position: 'top-right',
+              autoClose: 3000,
+            })
             setDisplayModes((prev) => ({
               ...prev,
               [currentOutline]: 'slides', // Preserve the previous state
