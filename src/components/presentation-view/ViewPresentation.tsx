@@ -398,7 +398,11 @@ export default function ViewPresentation() {
         newMode = 'newContent'
       } else if (currentMode === 'customBuilder') {
         newMode = 'newContent'
-      } else if (currentMode === 'newContent') {
+      } 
+      else if (currentMode === 'Cover') {
+        newMode = 'newContent'
+      }
+      else if (currentMode === 'newContent') {
         newMode = 'slides'
       } else {
         newMode = 'customBuilder'
