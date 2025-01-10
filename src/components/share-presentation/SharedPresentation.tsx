@@ -21,7 +21,7 @@ const GooglePresentation: React.FC<GooglePresentationProps> = ({ formId }) => {
 const SharedPresentation = ({ formId }: SharedPresentationProps) => {
   const [currentSlideKey, setCurrentSlideKey] = useState<number>(0)
   return (
-    <div className="main-container">
+    <div className="main-container h-screen overflow-hidden ">
       <div className="flex flex-col items-center justify-center">
         <a
           href="/"
