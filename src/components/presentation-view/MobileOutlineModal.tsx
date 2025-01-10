@@ -110,7 +110,7 @@ export default function MobileOutlineModal({
       {/* Dropdown Button */}
       <div
         id="dropdown-mobile"
-        className="border w-full rounded-lg p-4 bg-white flex justify-between items-center cursor-pointer"
+        className="border w-full rounded-lg p-4 bg-white cursor-pointer"
         onClick={() => setIsOutlinesOpen(true)}
       >
         {isLoading ? (
@@ -118,32 +118,38 @@ export default function MobileOutlineModal({
             <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="flex items-center">
-            <span className="text-[#091220]">
-              {selectedOutline || 'Select Outline'}
+          <div className="flex items-center justify-between">
+            <span className="text-[#091220] flex items-center">
+              <span> {selectedOutline || 'Select Outline'}</span>
+              <span>
+                {isNewSlideLoading[selectedOutline] && (
+                  <div className="flex items-center justify-center ml-4 mt-1">
+                    <div className="w-4 h-4 border-4 border-t-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                )}
+                {newSlideGenerated[selectedOutline] === 'Yes' &&
+                  !isNewSlideLoading[selectedOutline] && (
+                    <div className="flex items-center justify-center ml-4 mb-1">
+                      <div className="w-3 h-3">
+                        <FaCheck className="text-green-600" />
+                      </div>
+                    </div>
+                  )}
+                {newSlideGenerated[selectedOutline] === 'No' &&
+                  !isNewSlideLoading[selectedOutline] && (
+                    <div className="flex items-center justify-center ml-4 mb-1">
+                      <div className="w-3 h-3">
+                        <FaExclamation className="text-red-700" />
+                      </div>
+                    </div>
+                  )}
+              </span>
             </span>
-            {isNewSlideLoading[selectedOutline] && (
-              <div className="flex items-center justify-center ml-2 mt-1">
-                <div className="w-3 h-3 border-3 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
-              </div>
-            )}
-            {newSlideGenerated[selectedOutline] === 'Yes' &&
-              !isNewSlideLoading[selectedOutline] && (
-                <div className="flex items-center justify-center ml-2 mt-1">
-                  <div className="w-3 h-3">
-                    <FaCheck className="text-green-600" />
-                  </div>
-                </div>
-              )}
-            {newSlideGenerated[selectedOutline] === 'No' &&
-              !isNewSlideLoading[selectedOutline] && (
-                <div className="flex items-center justify-center ml-2 mt-1">
-                  <div className="w-3 h-3">
-                    <FaExclamation className="text-red-700" />
-                  </div>
-                </div>
-              )}
-            <FaChevronDown className="text-gray-500 ml-2" />
+
+            <span>
+              {' '}
+              <FaChevronDown className="text-gray-500 ml-2" />
+            </span>
           </div>
         )}
       </div>
@@ -203,34 +209,38 @@ export default function MobileOutlineModal({
             {outlines.map((outline, index) => (
               <li
                 key={index}
-                className="py-2 font-medium text-[#091220]"
+                className="py-2 font-medium text-[#091220] flex items-center justify-between"
                 onClick={() => {
                   onSelectOutline(outline.title)
                   setIsOutlinesOpen(false)
                 }}
               >
-                {index + 1}. {outline.title}
-                {isNewSlideLoading[outline.title] && (
-                  <div className="flex items-center justify-center ml-2 mt-1">
-                    <div className="w-4 h-4 border-3 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
-                  </div>
-                )}
-                {newSlideGenerated[outline.title] === 'Yes' &&
-                  !isNewSlideLoading[outline.title] && (
+                <span>
+                  {index + 1}. {outline.title}
+                </span>
+                <span>
+                  {isNewSlideLoading[outline.title] && (
                     <div className="flex items-center justify-center ml-2 mt-1">
+                      <div className="w-6 h-6 border-4 border-t-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                  {newSlideGenerated[outline.title] === 'Yes' &&
+                    !isNewSlideLoading[outline.title] && (
+                      // <div className="flex items-center justify-center ml-2 mt-1">
                       <div className="w-5 h-5">
                         <FaCheck className="text-green-600" />
                       </div>
-                    </div>
-                  )}
-                {newSlideGenerated[outline.title] === 'No' &&
-                  !isNewSlideLoading[outline.title] && (
-                    <div className="flex items-center justify-center ml-2 mt-1">
+                      // </div>
+                    )}
+                  {newSlideGenerated[outline.title] === 'No' &&
+                    !isNewSlideLoading[outline.title] && (
+                      // <div className="flex items-center justify-center ml-2 mt-1">
                       <div className="w-5 h-5">
                         <FaExclamation className="text-red-700" />
                       </div>
-                    </div>
-                  )}
+                      // </div>
+                    )}
+                </span>
               </li>
             ))}
           </ul>

@@ -1457,9 +1457,28 @@ export default function ViewPresentation() {
                   )
                   setCurrentSlide(slideIndex)
                   setCurrentSlideIndex(0)
-                  setDisplayModes((prev) => ({
+                  // Only execute setDisplayModes if isNewSlideLoading[title] is false or undefined
+                  if (
+                    isNewSlideLoading[outline] === false ||
+                    isNewSlideLoading[outline] === undefined
+                  ) {
+                    setDisplayModes((prev) => ({
+                      ...prev,
+                      [currentOutline]:
+                        slidesArray[outline]?.length === 0
+                          ? 'newContent'
+                          : prev[currentOutline],
+                    }))
+                  }
+
+                  setIsNewSlideLoading((prev) => ({
                     ...prev,
-                    [currentOutline]: 'slides',
+                    [currentOutline]: prev[currentOutline],
+                  }))
+
+                  setNewSlideGenerated((prev) => ({
+                    ...prev,
+                    [outline]: prev[outline] && '',
                   }))
                 }}
                 selectedOutline={currentOutline}
@@ -1536,8 +1555,11 @@ export default function ViewPresentation() {
               />
             </button>
             <span className="text-sm text-[#5D5F61]">
-              Slide {currentSlideIndex + 1} of{' '}
-              {slidesArray[currentOutline]?.length || 0}
+              Slide{' '}
+              {slidesArray[currentOutline]?.length > 0
+                ? currentSlideIndex + 1
+                : '0'}{' '}
+              of {slidesArray[currentOutline]?.length || 0}
             </span>
             <button
               onClick={handlePaginateNext}

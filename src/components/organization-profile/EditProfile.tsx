@@ -601,10 +601,17 @@ const EditProfile: React.FC = () => {
                   Company Phone
                 </label>
                 <input
-                  type="text"
+                  type="tel"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
                   name="contactPhone"
                   value={formData.contactPhone}
                   onChange={handlevalidationChange}
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault()
+                    }
+                  }}
                   placeholder="Enter Company Phone"
                   className={`w-full border ${
                     validationErrors.contactPhone
