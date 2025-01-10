@@ -1131,7 +1131,7 @@ export default function ViewPresentation() {
     const getPptName = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${documentID}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
