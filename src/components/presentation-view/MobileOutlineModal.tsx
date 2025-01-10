@@ -58,6 +58,7 @@ export default function MobileOutlineModal({
   const [newSlidePosition, setNewSlidePosition] = useState('')
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
+  const [isAddingSlide, setIsAddingSlide] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const buttonRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -77,6 +78,7 @@ export default function MobileOutlineModal({
   }, [])
 
   const handleAddSlide = async () => {
+    setIsAddingSlide(true)
     if (newSlideTitle && newSlidePosition) {
       const outlineIndex = Number(newSlidePosition) - 1
       const response = await axios.post(
@@ -100,6 +102,7 @@ export default function MobileOutlineModal({
           position: 'top-right',
           autoClose: 3000,
         })
+        setIsAddingSlide(false)
         fetchOutlines()
       }
     }
@@ -284,12 +287,19 @@ export default function MobileOutlineModal({
               onChange={(e) => setNewSlidePosition(e.target.value)}
             />
             {/* Action Buttons */}
-            <button
-              onClick={handleAddSlide}
-              className="w-full bg-[#3667B2] text-white p-4 rounded-lg mt-4"
-            >
-              Add Slide
-            </button>
+            {!isAddingSlide && (
+              <button
+                onClick={handleAddSlide}
+                className="w-full bg-[#3667B2] text-white p-4 rounded-lg mt-4"
+              >
+                Add Slide
+              </button>
+            )}
+            {isAddingSlide && (
+              <div className="w-full h-full flex items-center justify-center mt-4">
+                <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            )}
             <button
               onClick={() => setIsAddSlideModalOpen(false)}
               className="w-full text-[#5D5F61] p-3 mt-2"

@@ -322,7 +322,6 @@ const HistoryContainer: React.FC = () => {
           console.log('Country:', country)
 
           if (country !== 'IN' && country !== 'India' && country !== 'In') {
-            console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
@@ -331,7 +330,6 @@ const HistoryContainer: React.FC = () => {
             country === 'India' ||
             country === 'In'
           ) {
-            console.log('Reached Else')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('INR')

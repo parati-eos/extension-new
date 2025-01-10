@@ -76,10 +76,8 @@ const Navbar: React.FC<NavbarProps> = ({
         )
         .then((response) => {
           const country = ipInfoData!.country!
-          console.log('Country:', country)
 
           if (country !== 'IN' && country !== 'India' && country !== 'In') {
-            console.log('Reached If')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('USD')
@@ -88,7 +86,6 @@ const Navbar: React.FC<NavbarProps> = ({
             country === 'India' ||
             country === 'In'
           ) {
-            console.log('Reached Else')
             setMonthlyPlan(response.data.items[1])
             setYearlyPlan(response.data.items[0])
             setCurrency('INR')

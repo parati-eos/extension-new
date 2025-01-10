@@ -362,6 +362,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/cancel-subscription`,
             {
               subscription_id: subscriptionId,
+              orgId: orgId,
             },
             {
               headers: {
@@ -381,8 +382,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       }
     }
   }
-
-  console.log('Currency', currency)
 
   return (
     <div
