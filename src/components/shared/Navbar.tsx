@@ -132,7 +132,7 @@ const Navbar: React.FC<NavbarProps> = ({
   }
 
   return (
-    <nav className="bg-white p-2 pt-8 lg:p-3">
+    <nav className="bg-white p-2 lg:p-3">
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
         <a
