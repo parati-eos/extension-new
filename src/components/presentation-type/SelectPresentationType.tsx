@@ -84,6 +84,7 @@ const SelectPresentationType: React.FC = () => {
   const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showTooltip, setShowTooltip] = React.useState(false)
   const [refineLoading, setRefineLoading] = useState(false)
+  const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
 
   const generateDocumentID = () => {
@@ -175,11 +176,13 @@ const SelectPresentationType: React.FC = () => {
         //     { replace: true }
         //   )
         // }
-      } catch (error) {
-        toast.error('Error generating ppt', {
-          position: 'top-right',
-          autoClose: 2000,
-        })
+      } catch (error: any) {
+        if (error.response?.status !== 502 && error.response?.status !== 408) {
+          toast.error('Error generating ppt', {
+            position: 'top-right',
+            autoClose: 2000,
+          })
+        }
       }
     }
 
@@ -225,11 +228,13 @@ const SelectPresentationType: React.FC = () => {
         //     `/presentation-view?documentID=${result.documentData.documentID}&presentationName=${result.documentData.documentName}`
         //   )
         // }
-      } catch (error) {
-        toast.error('Error refining ppt', {
-          position: 'top-right',
-          autoClose: 2000,
-        })
+      } catch (error: any) {
+        if (error.response?.status !== 502 && error.response?.status !== 408) {
+          toast.error('Error generating ppt', {
+            position: 'top-right',
+            autoClose: 2000,
+          })
+        }
         setRefineLoading(false)
       }
     }
@@ -297,7 +302,9 @@ const SelectPresentationType: React.FC = () => {
           }
         )
         const planName = response.data.plan.plan_name
+        const subscriptionId = response.data.plan.subscriptionId
         dispatch(setUserPlan(planName))
+        setSubId(subscriptionId)
       } catch (error) {
         console.error('Error fetching user plan:', error)
       }
@@ -441,6 +448,7 @@ const SelectPresentationType: React.FC = () => {
             setIsPricingModalOpen(false)
           }}
           heading={pricingModalHeading}
+          subscriptionId={subId}
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
           currency={currency}

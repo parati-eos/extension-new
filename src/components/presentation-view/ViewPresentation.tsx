@@ -110,7 +110,7 @@ export default function ViewPresentation() {
   const [newSlideGenerated, setNewSlideGenerated] = useState<{
     [key: string]: string
   }>({})
-  const [intervalID, setIntervalID] = useState<number | null>(null)
+  const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
 
   // Handle Share Button Click
@@ -331,13 +331,15 @@ export default function ViewPresentation() {
       block: 'nearest',
     })
     setCurrentSlideIndex(0)
-    setDisplayModes((prev) => ({
-      ...prev,
-      [currentOutline]:
-        slidesArray[currentOutline]?.length > 0
-          ? prev[currentOutline]
-          : 'newContent',
-    }))
+    if (!isNewSlideLoading[title]) {
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]:
+          slidesArray[currentOutline]?.length > 0
+            ? prev[currentOutline]
+            : 'newContent',
+      }))
+    }
     setIsNewSlideLoading((prev) => ({
       ...prev,
       [currentOutline]: prev[currentOutline],
@@ -560,6 +562,14 @@ export default function ViewPresentation() {
       const currentMode = prev[outlineTitle]
       let newMode: DisplayMode = 'slides'
 
+      if (
+        (outlineTitle === outlines[0].title ||
+          outlineTitle === outlines[outlines.length - 1].title) &&
+        currentMode === 'customBuilder'
+      ) {
+        newMode = 'newContent'
+      }
+
       if (currentMode === 'SlideNarrative') {
         newMode = 'newContent'
       } else if (currentMode === 'customBuilder') {
@@ -627,6 +637,7 @@ export default function ViewPresentation() {
         return (
           <NewSlideVersion
             isLoading={slideState.isLoading}
+            subscriptionId={subId}
             setDisplayMode={(value: SetStateAction<DisplayMode>) => {
               const newMode =
                 typeof value === 'function'
@@ -1008,24 +1019,26 @@ export default function ViewPresentation() {
         setPrevTotalSlides(totalSlides)
       }, 6000)
 
-      setIsNewSlideLoading((prev) => {
-        if (prev[currentOutline]) {
-          setNewSlideGenerated((prev) => ({
-            ...prev,
-            [currentOutline]: 'Yes',
-          }))
-          toast.success(`Slide Generated`)
-          setDisplayModes((prev) => ({
-            ...prev,
-            [currentOutline]: 'slides', // Preserve the previous state
-          }))
-          return {
-            ...prev,
-            [currentOutline]: false,
+      if (totalSlides !== 0 && slidesArray[currentOutline].length !== 0) {
+        setIsNewSlideLoading((prev) => {
+          if (prev[currentOutline]) {
+            setNewSlideGenerated((prev) => ({
+              ...prev,
+              [currentOutline]: 'Yes',
+            }))
+            toast.success(`Slide Generated`)
+            setDisplayModes((prev) => ({
+              ...prev,
+              [currentOutline]: 'slides', // Preserve the previous state
+            }))
+            return {
+              ...prev,
+              [currentOutline]: false,
+            }
           }
-        }
-        return prev
-      })
+          return prev
+        })
+      }
       if (
         slidesArray[currentOutline] &&
         slidesArray[currentOutline].length >= 1
@@ -1188,7 +1201,9 @@ export default function ViewPresentation() {
           }
         )
         const planName = response.data.plan.plan_name
+        const subscriptionId = response.data.plan.subscriptionId
         dispatch(setUserPlan(planName))
+        setSubId(subscriptionId)
       } catch (error) {
         console.error('Error fetching user plan:', error)
       }
@@ -1231,7 +1246,7 @@ export default function ViewPresentation() {
     }
 
     // Call the payment status check
-    if (documentID) {
+    if (documentID && userPlan === 'free') {
       checkPaymentStatusAndProceed()
     }
 
@@ -1304,6 +1319,7 @@ export default function ViewPresentation() {
             setIsPricingModalOpen(false)
           }}
           heading={pricingModalHeading}
+          subscriptionId={subId}
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
           currency={currency}
@@ -1501,12 +1517,12 @@ export default function ViewPresentation() {
 
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
-  className={`relative bg-white ${
-    displayModes[currentOutline] !== 'slides'
-      ? 'h-[45vh] md:h-[50vh]'
-      : 'h-[45.5vh]'  // keep the height the same when 'slides' mode
-  } w-full border border-gray-200 mt-12 mb-6`}
->
+          className={`relative bg-white ${
+            displayModes[currentOutline] !== 'slides'
+              ? 'h-[45vh] md:h-[50vh]'
+              : 'h-[45.5vh]' // keep the height the same when 'slides' mode
+          } w-full border border-gray-200 mt-12 mb-6`}
+        >
           {renderContent({
             GenSlideID: slidesArray[currentOutline]
               ? slidesArray[currentOutline][currentSlideIndex]
@@ -1544,7 +1560,7 @@ export default function ViewPresentation() {
           {/* MOBILE: PAGINATION BUTTONS */}
           <div className="flex items-center gap-2">
             <button
-            id='arrow-mobile'
+              id="arrow-mobile"
               onClick={handlePaginatePrev}
               disabled={currentSlideIndex === 0}
               className="flex items-center border bg-white border-gray-300 p-2 rounded-md"
@@ -1576,7 +1592,7 @@ export default function ViewPresentation() {
         </div>
       </div>
       <GuidedTour />
-      <GuidedTourMobile/>
+      <GuidedTourMobile />
     </div>
   )
 }

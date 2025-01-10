@@ -9,11 +9,14 @@ import { IpInfoResponse } from '../../types/authTypes'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 interface NavbarProps {
-  showHistoryId?: boolean; // Add a prop to control the "history" ID
-  showOrganizationProfileId?: boolean; // Add a prop to control the "organization-profile" ID
+  showHistoryId?: boolean // Add a prop to control the "history" ID
+  showOrganizationProfileId?: boolean // Add a prop to control the "organization-profile" ID
 }
 
-const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  showHistoryId,
+  showOrganizationProfileId,
+}) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
@@ -23,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
   const userProfileImage = sessionStorage.getItem('userDP')
   const [currency, setCurrency] = useState<string>()
   const userProfileRef = useRef<HTMLDivElement | null>(null) // Reference to the profile image to handle click toggles
-
+  const [subId, setSubId] = useState('')
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -93,6 +96,25 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
         })
     }
 
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const subscriptionId = response.data.plan.subscriptionId
+        setSubId(subscriptionId)
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
+    }
+
+    fetchUserPlan()
+
     const timer = setTimeout(() => {
       getPricingData()
     }, 3000) // delay
@@ -136,7 +158,7 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
             </span>
           </button>
           <button
-      id={showHistoryId ? 'history' : undefined} // Conditionally apply the ID
+            id={showHistoryId ? 'history' : undefined} // Conditionally apply the ID
             onClick={() => navigate('/history')}
             className="bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] hover:bg-[#3667B2] hover:text-white hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
           >
@@ -149,9 +171,10 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
             </span>
           </button>
           {/* User Profile Icon */}
-          <div 
-          id={showOrganizationProfileId? 'organization-profile' : undefined} // Conditionally apply the ID
-          ref={userProfileRef}>
+          <div
+            id={showOrganizationProfileId ? 'organization-profile' : undefined} // Conditionally apply the ID
+            ref={userProfileRef}
+          >
             {userProfileImage ? (
               <img
                 src={userProfileImage}
@@ -184,7 +207,7 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
               >
                 Subscription Plans
               </button>
-              
+
               <button
                 className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
                 onClick={handleLogout}
@@ -203,6 +226,7 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
           heading="Subscription Plans"
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
+          subscriptionId={subId}
           currency={currency!}
           yearlyPlanId={yearlyPlanId!}
           monthlyPlanId={monthlyPlanId!}
@@ -210,8 +234,8 @@ const Navbar: React.FC<NavbarProps> = ({ showHistoryId,showOrganizationProfileId
           orgId={orgId!}
         />
       )}
-            <GuidedTour/>
-            <GuidedTourMobile/>
+      <GuidedTour />
+      <GuidedTourMobile />
     </nav>
   )
 }

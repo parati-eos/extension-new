@@ -23,6 +23,7 @@ interface ButtonProps {
   monthlyPlanId: string
   authToken: string
   orgId: string
+  subscriptionId: string
 }
 
 export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
@@ -39,6 +40,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   monthlyPlanId,
   authToken,
   orgId,
+  subscriptionId,
 }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
@@ -140,6 +142,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
+          subscriptionId={subscriptionId}
         />
       )}
     </div>
@@ -161,6 +164,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   monthlyPlanId,
   authToken,
   orgId,
+  subscriptionId,
 }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
@@ -271,6 +275,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
       {/* Pricing Modal */}
       {isPricingModalOpen && (
         <PricingModal
+          subscriptionId={subscriptionId}
           closeModal={() => setIsPricingModalOpen(false)}
           heading="Subscription Plans"
           monthlyPlanAmount={monthlyPlanAmount}

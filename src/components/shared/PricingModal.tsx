@@ -16,6 +16,7 @@ interface PricingModalProps {
   exportButtonText?: string
   exportHandler?: () => void
   isButtonDisabled?: boolean
+  subscriptionId: string
 }
 
 const categories = [
@@ -55,6 +56,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   exportButtonText,
   exportHandler,
   isButtonDisabled,
+  subscriptionId,
 }) => {
   const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -327,12 +329,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             customer_id: orgId,
             total_count: 12,
             start_at: startAtUnix,
-            expire_by: expireByUnix,
             quantity: 1,
-            notes: {
-              note_key: 'Zynth Presentation',
-              orgId: orgId,
-            },
+            orgId: orgId,
           },
           {
             headers: {
@@ -355,24 +353,32 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   }
 
   const handleCancel = async () => {
-    console.log('Cancel Clicked')
-
     setIsLoading(true)
 
     if (userPlan !== 'free') {
       try {
-        const response = await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/cancel-subscription`,
-          {
-            subscription_id: '',
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
+        await axios
+          .post(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/razorpay/cancel-subscription`,
+            {
+              subscription_id: subscriptionId,
             },
-          }
-        )
-      } catch (error) {}
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status === 200) {
+              window.location.reload()
+            }
+            setIsLoading(false)
+          })
+      } catch (error) {
+        console.log(error)
+        setIsLoading(false)
+      }
     }
   }
 

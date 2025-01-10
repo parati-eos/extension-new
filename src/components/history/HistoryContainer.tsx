@@ -52,6 +52,7 @@ const HistoryContainer: React.FC = () => {
   const [currency, setCurrency] = useState('')
   const [documentID, setDocumentID] = useState<string | null>(null)
   const [paid, setIsPaid] = useState(false)
+  const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
 
   // Handle Download Button Click
@@ -349,7 +350,9 @@ const HistoryContainer: React.FC = () => {
           }
         )
         const planName = response.data.plan.plan_name
+        const subscriptionId = response.data.plan.subscriptionId
         dispatch(setUserPlan(planName))
+        setSubId(subscriptionId)
       } catch (error) {
         console.error('Error fetching user plan:', error)
       }
@@ -783,6 +786,7 @@ const HistoryContainer: React.FC = () => {
                 setPricingModalHeading('')
               }}
               heading={pricingModalHeading}
+              subscriptionId={subId}
               monthlyPlanAmount={monthlyPlanAmount}
               yearlyPlanAmount={yearlyPlanAmount}
               currency={currency}
