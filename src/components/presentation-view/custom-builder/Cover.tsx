@@ -132,7 +132,7 @@ export default function Cover({
         <BackButton onClick={onBack} />
       </div>
       <div className="flex items-center "></div>
-      <div className="py-4 mt-8">
+      <div className="py-2 lg:mt-8">
         <input
           type="text"
           placeholder="Enter your tagline"
@@ -143,7 +143,7 @@ export default function Cover({
       <div className="lg:w-[50%] w-full h-full   flex flex-col flex-grow items-center">
         {/* Logo Upload Section */}
         <div></div>
-        <div className="border border-gray-300 rounded-xl w-full lg:h-[60%] h-[80%] flex flex-col  justify-center items-center ">
+        <div className="border border-gray-300 rounded-xl w-full lg:h-[60%] h-[95%] flex flex-col  justify-center items-center ">
           <input
             type="file"
             ref={logoUploadInputRef}

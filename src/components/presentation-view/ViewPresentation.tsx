@@ -1284,7 +1284,7 @@ export default function ViewPresentation() {
   console.log('slideStates: ', slideStates)
 
   return (
-    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-[100vh] no-scrollbar no-scrollbar::-webkit-scrollbar">
+    <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Export Countdown */}
       {showCountdown && (
         <div className="modal">
@@ -1447,7 +1447,7 @@ export default function ViewPresentation() {
       </div>
 
       {/* MOBILE: MAIN CONTAINER */}
-      <div className="block lg:hidden p-4">
+      <div className="block lg:hidden p-4 h-screen overflow-hidden">
         {/* MOBILE: HEADING */}
         <MobileHeading
           handleDownload={handleDownload}
@@ -1460,7 +1460,7 @@ export default function ViewPresentation() {
         />
 
         {/* MOBILE: OUTLINE Modal */}
-        <div className="space-y-4 mt-12 mb-7">
+        <div className="space-y-4 mt-4 mb-4">
           <div className="block lg:hidden">
             {outlines && outlines.length > 0 && (
               <MobileOutlineModal
@@ -1503,9 +1503,9 @@ export default function ViewPresentation() {
         <div
   className={`relative bg-white ${
     displayModes[currentOutline] !== 'slides'
-      ? 'h-[45vh] md:h-[50vh]'
-      : 'h-[45.5vh]'  // keep the height the same when 'slides' mode
-  } w-full border border-gray-200 mt-12 mb-6`}
+      ? 'h-[50vh] md:h-[50vh]'
+      : 'h-[50.5vh]'  // keep the height the same when 'slides' mode
+  } w-full border border-gray-200 mb-2`}
 >
           {renderContent({
             GenSlideID: slidesArray[currentOutline]

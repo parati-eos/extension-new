@@ -69,27 +69,24 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
         ))}
       </div>
 
-      {/* Mobile View */}
-      <div className="lg:hidden flex flex-wrap justify-start p-2">
-        {slideTypes.map((type) => (
-          <div
-            key={type.name}
-            className="flex flex-col items-center flex-shrink-0 cursor-pointer"
-            style={{
-              width: '30%', // Adjust width to allow 3 divs in a row
-              margin: '5px 0', // Add vertical margin for spacing
-            }}
-            onClick={() => onTypeClick(type.name)}
-          >
-            <img
-              src={type.icon}
-              alt={type.name}
-              className="w-12 h-12 mb-2" // Icon size for mobile
-            />
-            <span className="text-xs font-medium">{type.name}</span>
-          </div>
-        ))}
-      </div>
+
+     {/* Mobile View */}
+<div className="lg:hidden h-full grid grid-cols-3 gap-4  px-2 py-4 ">
+  {slideTypes.map((type) => (
+    <div
+      key={type.name}
+      className="flex flex-col items-center cursor-pointer"
+      onClick={() => onTypeClick(type.name)}
+    >
+      <img
+        src={type.icon}
+        alt={type.name}
+        className="w-12 h-12 mb-2" // Icon size for mobile
+      />
+      <span className="text-xs font-medium text-center">{type.name}</span>
+    </div>
+  ))}
+</div>
     </div>
   )
 }
