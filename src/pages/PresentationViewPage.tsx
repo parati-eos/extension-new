@@ -4,7 +4,7 @@ import Navbar from '../components/shared/Navbar'
 
 const PresentationViewPage: React.FC = () => {
   return (<>
-  <div className='overflow-hidden h-screen'>
+  <div className='overflow-hidden h-dvh'>
        <Navbar showHistoryId={true} showOrganizationProfileId={true} />
       <ViewPresentation />
       </div>
