@@ -27,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   authToken,
   orgId,
   isNewSlideLoading,
+  subscriptionId,
 }) => {
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
@@ -36,19 +37,19 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [newOutlineLoading, setNewOutlineLoading] = useState(false)
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
-  const [hasVisited, setHasVisited] = useState(false);
+  const [hasVisited, setHasVisited] = useState(false)
 
   // Retrieve `hasVisited` from local storage on mount
   useEffect(() => {
-    const visited = localStorage.getItem('hasVisited') === 'true';
-    setHasVisited(visited);
-  }, []); // Runs only once when the component mounts
+    const visited = localStorage.getItem('hasVisited') === 'true'
+    setHasVisited(visited)
+  }, []) // Runs only once when the component mounts
 
   // Function to set `hasVisited` in local storage
   const markAsVisited = () => {
-    localStorage.setItem('hasVisited', 'true');
-    setHasVisited(true);
-  };
+    localStorage.setItem('hasVisited', 'true')
+    setHasVisited(true)
+  }
   useEffect(() => {
     setOutlines(fetchedOutlines)
   }, [fetchedOutlines])
@@ -98,7 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       if (result.title && result.type) {
         toast.success('Outline Successfully Added', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
         fetchOutlines()
         setNewOutlineLoading(false)
@@ -109,7 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       console.error('Error adding outline:', error)
       toast.error('Error adding outline', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       setNewOutlineLoading(false)
     }
@@ -166,14 +167,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 
               {/* + Button */}
               <div
-  className={`mt-2 flex items-center justify-center space-x-4 relative ${
-    (idx === 0 && !hasVisited) || hoverIndex === idx
-      ? ''
-      : 'hidden group-hover:flex'
-  }`}
->
-
-              
+                className={`mt-2 flex items-center justify-center space-x-4 relative ${
+                  (idx === 0 && !hasVisited) || hoverIndex === idx
+                    ? ''
+                    : 'hidden group-hover:flex'
+                }`}
+              >
                 {/* Left Line */}
                 <div className="flex-grow h-px bg-gray-300"></div>
 
@@ -281,10 +280,11 @@ const Sidebar: React.FC<SidebarProps> = ({
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
+          subscriptionId={subscriptionId}
         />
       )}
       <GuidedTour />
-      <GuidedTourMobile/>
+      <GuidedTourMobile />
     </div>
   )
 }

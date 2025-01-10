@@ -216,16 +216,16 @@ export default function Table({
         }
       )
       console.log(response)
-      toast.success('Data successfully sent to the server!', {
+      toast.info('Data submitted successfully!', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       setIsLoading(false)
       setDisplayMode('slides')
     } catch (error) {
       toast.error('Error sending data', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     }
   }

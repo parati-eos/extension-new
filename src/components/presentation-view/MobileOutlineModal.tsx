@@ -19,6 +19,7 @@ interface MobileOutlineDropdownProps {
   documentID: string
   fetchOutlines: () => Promise<void>
   isLoading: boolean
+  subscriptionId: string
   userPlan: string // Plan types
   monthlyPlanAmount: number
   yearlyPlanAmount: number
@@ -48,6 +49,7 @@ export default function MobileOutlineModal({
   monthlyPlanId,
   orgId,
   newSlideGenerated,
+  subscriptionId,
   isNewSlideLoading,
 }: MobileOutlineDropdownProps) {
   const [isOutlinesOpen, setIsOutlinesOpen] = useState(false)
@@ -96,7 +98,7 @@ export default function MobileOutlineModal({
         setIsAddSlideModalOpen(false)
         toast.success('Outline Added', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
         fetchOutlines()
       }
@@ -107,7 +109,7 @@ export default function MobileOutlineModal({
     <div>
       {/* Dropdown Button */}
       <div
-      id='dropdown-mobile'
+        id="dropdown-mobile"
         className="border w-full rounded-lg p-4 bg-white flex justify-between items-center cursor-pointer"
         onClick={() => setIsOutlinesOpen(true)}
       >
@@ -162,7 +164,7 @@ export default function MobileOutlineModal({
               {/* Add Slide Button with Tooltip */}
               <div ref={buttonRef} className="relative inline-block">
                 <button
-                id='outline-mobile'
+                  id="outline-mobile"
                   className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline ${
                     userPlan === 'free' ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
@@ -299,9 +301,10 @@ export default function MobileOutlineModal({
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
+          subscriptionId={subscriptionId}
         />
       )}
-      <GuidedTourOutlineMobile/>
+      <GuidedTourOutlineMobile />
     </div>
   )
 }

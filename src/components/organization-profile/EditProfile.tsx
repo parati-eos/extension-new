@@ -188,7 +188,7 @@ const EditProfile: React.FC = () => {
       console.error('Failed to update profile', error)
       toast.error('Failed to update profile. Please try again.', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setLoading(false)

@@ -123,7 +123,7 @@ export default function People({
     } catch (error) {
       toast.error('Error uploading image', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       setPeople((prevPeople) => {
         const updatedPeople = [...prevPeople]
@@ -199,9 +199,9 @@ export default function People({
           },
         }
       )
-      toast.success('Data successfully sent to the server!', {
+      toast.info('Data submitted successfully!', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       setIsLoading(false)
       setDisplayMode('slides')
@@ -209,7 +209,7 @@ export default function People({
     } catch (error) {
       toast.error('Error sending data', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     }
   }

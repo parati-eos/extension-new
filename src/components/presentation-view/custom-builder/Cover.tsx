@@ -49,7 +49,7 @@ export default function Cover({
       } catch (error) {
         toast.error('Error uploading logo', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       } finally {
         setIsImageLoading(false)
@@ -68,7 +68,7 @@ export default function Cover({
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       } finally {
         setIsUploading(false)
@@ -105,15 +105,15 @@ export default function Cover({
           },
         }
       )
-      toast.success('Slide generation started', {
+      toast.info('Slide generation started', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       console.log(response.data)
     } catch (error) {
       toast.error('Error while generating slide', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setIsLoading(false)

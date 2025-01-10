@@ -39,7 +39,7 @@ const ViewProfile: React.FC = () => {
       .catch((error) => {
         toast.error('Error fetching organization data', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       })
   }, [])

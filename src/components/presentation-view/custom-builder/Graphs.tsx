@@ -165,9 +165,9 @@ export default function Graphs({
           }
         )
         .then((response) => {
-          toast.success('Data submitted successfully!', {
+          toast.info('Data submitted successfully!', {
             position: 'top-right',
-            autoClose: 2000,
+            autoClose: 3000,
           })
           setIsLoading(false)
           setDisplayMode('slides')

@@ -320,6 +320,97 @@ export default function ViewPresentation() {
     }))
   }
 
+  // Paginate Back
+  const handlePaginatePrev = () => {
+    if (currentSlideIndex > 0) {
+      setCurrentSlideIndex((prev) => prev - 1)
+      setSlideStates((prev) => ({
+        ...prev,
+        [currentOutline]: {
+          ...prev[currentOutline],
+          isLoading: true,
+        },
+      }))
+
+      setTimeout(() => {
+        setSlideStates((prev) => ({
+          ...prev,
+          [currentOutline]: {
+            ...prev[currentOutline],
+            isLoading: false,
+          },
+        }))
+      }, 100)
+    }
+  }
+
+  // Paginate Next
+  const handlePaginateNext = () => {
+    const currentSlides = slidesArray[currentOutline]
+    if (currentSlides && currentSlideIndex < currentSlides.length - 1) {
+      setCurrentSlideIndex((prev) => prev + 1)
+      setSlideStates((prev) => ({
+        ...prev,
+        [currentOutline]: {
+          ...prev[currentOutline],
+          isLoading: true,
+        },
+      }))
+
+      setTimeout(() => {
+        setSlideStates((prev) => ({
+          ...prev,
+          [currentOutline]: {
+            ...prev[currentOutline],
+            isLoading: false,
+          },
+        }))
+      }, 100)
+    }
+  }
+
+  // Custom Builder Slide Type Select Handler
+  const handleCustomTypeClick = (
+    typeName: DisplayMode,
+    outlineTitle: string
+  ) => {
+    setDisplayModes((prev) => ({
+      ...prev,
+      [outlineTitle]: typeName,
+    }))
+  }
+
+  // Mobile Back Button
+  const onBack = (outlineTitle: string) => {
+    setDisplayModes((prev) => {
+      const currentMode = prev[outlineTitle]
+      let newMode: DisplayMode = 'slides'
+
+      if (
+        (outlineTitle === outlines[0].title ||
+          outlineTitle === outlines[outlines.length - 1].title) &&
+        currentMode === 'customBuilder'
+      ) {
+        newMode = 'newContent'
+      }
+
+      if (currentMode === 'SlideNarrative') {
+        newMode = 'newContent'
+      } else if (currentMode === 'customBuilder') {
+        newMode = 'newContent'
+      } else if (currentMode === 'newContent') {
+        newMode = 'slides'
+      } else {
+        newMode = 'customBuilder'
+      }
+
+      return {
+        ...prev,
+        [outlineTitle]: newMode,
+      }
+    })
+  }
+
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (title: string) => {
     setCurrentOutline(title)
@@ -331,15 +422,21 @@ export default function ViewPresentation() {
       block: 'nearest',
     })
     setCurrentSlideIndex(0)
-    if (!isNewSlideLoading[title]) {
+
+    // Only execute setDisplayModes if isNewSlideLoading[title] is false or undefined
+    if (
+      isNewSlideLoading[title] === false ||
+      isNewSlideLoading[title] === undefined
+    ) {
       setDisplayModes((prev) => ({
         ...prev,
         [currentOutline]:
-          slidesArray[currentOutline]?.length > 0
-            ? prev[currentOutline]
-            : 'newContent',
+          slidesArray[title]?.length === 0
+            ? 'newContent'
+            : prev[currentOutline],
       }))
     }
+
     setIsNewSlideLoading((prev) => ({
       ...prev,
       [currentOutline]: prev[currentOutline],
@@ -445,15 +542,15 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          toast.success('Quick Generation Started', {
+          toast.info('Slide Generation Started', {
             position: 'top-right',
-            autoClose: 2000,
+            autoClose: 3000,
           })
         })
         .catch((error) => {
           toast.error('Error while generating slide', {
             position: 'top-right',
-            autoClose: 2000,
+            autoClose: 3000,
           })
           setSlideStates((prev) => {
             const genSlideID = prev[currentOutline]?.genSlideID
@@ -477,7 +574,7 @@ export default function ViewPresentation() {
       console.error('Error generating slide:', error)
       toast.error('Error while generating slide', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
 
       // Reset loading state on error
@@ -494,97 +591,6 @@ export default function ViewPresentation() {
         [currentOutline]: false,
       }))
     }
-  }
-
-  // Paginate Back
-  const handlePaginatePrev = () => {
-    if (currentSlideIndex > 0) {
-      setCurrentSlideIndex((prev) => prev - 1)
-      setSlideStates((prev) => ({
-        ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
-          isLoading: true,
-        },
-      }))
-
-      setTimeout(() => {
-        setSlideStates((prev) => ({
-          ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
-            isLoading: false,
-          },
-        }))
-      }, 300)
-    }
-  }
-
-  // Paginate Next
-  const handlePaginateNext = () => {
-    const currentSlides = slidesArray[currentOutline]
-    if (currentSlides && currentSlideIndex < currentSlides.length - 1) {
-      setCurrentSlideIndex((prev) => prev + 1)
-      setSlideStates((prev) => ({
-        ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
-          isLoading: true,
-        },
-      }))
-
-      setTimeout(() => {
-        setSlideStates((prev) => ({
-          ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
-            isLoading: false,
-          },
-        }))
-      }, 300)
-    }
-  }
-
-  // Custom Builder Slide Type Select Handler
-  const handleCustomTypeClick = (
-    typeName: DisplayMode,
-    outlineTitle: string
-  ) => {
-    setDisplayModes((prev) => ({
-      ...prev,
-      [outlineTitle]: typeName,
-    }))
-  }
-
-  // Mobile Back Button
-  const onBack = (outlineTitle: string) => {
-    setDisplayModes((prev) => {
-      const currentMode = prev[outlineTitle]
-      let newMode: DisplayMode = 'slides'
-
-      if (
-        (outlineTitle === outlines[0].title ||
-          outlineTitle === outlines[outlines.length - 1].title) &&
-        currentMode === 'customBuilder'
-      ) {
-        newMode = 'newContent'
-      }
-
-      if (currentMode === 'SlideNarrative') {
-        newMode = 'newContent'
-      } else if (currentMode === 'customBuilder') {
-        newMode = 'newContent'
-      } else if (currentMode === 'newContent') {
-        newMode = 'slides'
-      } else {
-        newMode = 'customBuilder'
-      }
-
-      return {
-        ...prev,
-        [outlineTitle]: newMode,
-      }
-    })
   }
 
   // Render Slide Content
@@ -661,7 +667,7 @@ export default function ViewPresentation() {
               if (featureDisabled) {
                 toast.info('Upgrade to pro to access this feature', {
                   position: 'top-right',
-                  autoClose: 2000,
+                  autoClose: 3000,
                 })
               } else {
                 const newMode =
@@ -789,61 +795,6 @@ export default function ViewPresentation() {
     setDisplayModes(initialModes)
   }, [outlines])
 
-  // Get DocumentID and Presentation Name
-  // useEffect(() => {
-  //   // const getDocumentId = async () => {
-  //   //   try {
-  //   //     const response = await axios.get(
-  //   //       `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
-  //   //       {
-  //   //         headers: {
-  //   //           Authorization: `Bearer ${authToken}`,
-  //   //         },
-  //   //       }
-  //   //     )
-
-  //   //     const result = response.data
-  //   //     // Only update documentID if it hasn't been set yet
-  //   //     setPptName(result.documentName)
-  //   //     setDocumentID((prev) => prev || result.documentID)
-  //   //     setIsDocumentIDLoading(false)
-  //   //   } catch (error) {
-  //   //     console.error('Error fetching document:', error)
-  //   //     setIsDocumentIDLoading(false)
-  //   //   }
-  //   // }
-
-  //   const documentIDFromUrl = searchParams.get('documentID')
-  //   const pptNameFromUrl = searchParams.get('presentationName')
-
-  //   if (documentIDFromUrl && documentIDFromUrl !== 'loading') {
-  //     // If documentID comes from URL and is valid, set it only if it hasn't been set
-  //     setDocumentID(documentIDFromUrl)
-  //     setPptName(pptNameFromUrl)
-
-  //     // Fetch the pptName if needed
-  //     const getPptName = async () => {
-  //       try {
-  //         const response = await axios.get(
-  //           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/documents/latest/${orgId}`,
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${authToken}`,
-  //             },
-  //           }
-  //         )
-  //         const result = response.data
-  //         setPptName(result.documentName)
-  //       } catch (error) {
-  //         console.error('Error fetching document:', error)
-  //       }
-  //     }
-  //     if (pptNameFromUrl === 'loading' || undefined) {
-  //       getPptName()
-  //     }
-  //   }
-  // }, [searchParams, authToken, orgId])
-
   const updateSlideState = useCallback(
     (outlineTitle: string, updates: Partial<SlideState>) => {
       setSlideStates((prev) => ({
@@ -869,17 +820,19 @@ export default function ViewPresentation() {
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
         const hasSlidesData = slidesArray[currentOutline]?.length > 0
 
-        // Check if isLoading is already true
-        const isAlreadyLoading = prev[currentOutline]?.isLoading
+        // Keep loading true if isNewSlideLoading is true and no slides exist
+        const shouldKeepLoading =
+          isNewSlideLoading[currentOutline] && !hasSlidesData
 
         // Only update isLoading to true if it is not already true
         return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading: isAlreadyLoading
-              ? true
-              : isNoGeneratedSlide === false && !hasSlidesData,
+            isLoading:
+              shouldKeepLoading ||
+              (isNoGeneratedSlide === false && !hasSlidesData),
+
             lastUpdated: Date.now(),
           },
         }
@@ -1019,7 +972,7 @@ export default function ViewPresentation() {
         setPrevTotalSlides(totalSlides)
       }, 6000)
 
-      if (totalSlides !== 0 && slidesArray[currentOutline].length !== 0) {
+      if (totalSlides !== 0) {
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
             setNewSlideGenerated((prev) => ({
@@ -1296,8 +1249,6 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
 
-  console.log('slideStates: ', slideStates)
-
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Export Countdown */}
@@ -1374,6 +1325,7 @@ export default function ViewPresentation() {
           yearlyPlanId={yearlyPlanId!}
           monthlyPlanId={monthlyPlanId!}
           orgId={orgId!}
+          subscriptionId={subId}
         />
 
         {/*MEDIUM LARGE SCREEN: SLIDE DISPLAY CONTAINER*/}
@@ -1503,6 +1455,7 @@ export default function ViewPresentation() {
                 fetchOutlines={fetchOutlines}
                 isLoading={isDocumentIDLoading}
                 userPlan={userPlan}
+                subscriptionId={subId}
                 monthlyPlanAmount={monthlyPlanAmount}
                 yearlyPlanAmount={yearlyPlanAmount}
                 currency={currency}

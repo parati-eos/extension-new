@@ -54,6 +54,7 @@ export interface Outlines {
 }
 
 export interface SidebarProps {
+  subscriptionId: string
   newSlideGenerated: { [key: string]: string }
   onOutlineSelect: (option: string) => void
   selectedOutline: string

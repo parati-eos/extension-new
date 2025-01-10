@@ -44,7 +44,7 @@ export default function SlideNarrative({
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
         setUploadCompleted(false) // Mark upload as failed
       } finally {
@@ -79,15 +79,15 @@ export default function SlideNarrative({
         setDisplayMode('slides')
       }
       if (response) {
-        toast.success('Slide Generation Started', {
+        toast.info('Slide Generation Started', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       }
     } catch (error) {
       toast.error('Failed to send narrative.', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       setDisplayMode('slides')
     } finally {

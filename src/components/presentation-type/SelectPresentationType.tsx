@@ -137,7 +137,7 @@ const SelectPresentationType: React.FC = () => {
       } else {
         toast.info('Please upload a valid PDF', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       }
     }
@@ -180,7 +180,7 @@ const SelectPresentationType: React.FC = () => {
         if (error.response?.status !== 502 && error.response?.status !== 408) {
           toast.error('Error generating ppt', {
             position: 'top-right',
-            autoClose: 2000,
+            autoClose: 3000,
           })
         }
       }
@@ -194,7 +194,7 @@ const SelectPresentationType: React.FC = () => {
       if (!file) {
         toast.info('Please upload a PDF to refine', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
         return
       }
@@ -232,7 +232,7 @@ const SelectPresentationType: React.FC = () => {
         if (error.response?.status !== 502 && error.response?.status !== 408) {
           toast.error('Error generating ppt', {
             position: 'top-right',
-            autoClose: 2000,
+            autoClose: 3000,
           })
         }
         setRefineLoading(false)

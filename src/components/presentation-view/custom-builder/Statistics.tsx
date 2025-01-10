@@ -103,21 +103,19 @@ export default function Statistics({
           },
         }
       )
-
-      console.log('PATCH Response:', response.data)
-      toast.success('Data submitted successfully', {
+      toast.info('Data submitted successfully!', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       setDisplayMode('slides')
     } catch (error) {
       toast.error('Error generating slide', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       toast.error('Failed to generate slide.', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setLoading(false)
@@ -135,7 +133,7 @@ export default function Statistics({
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
         setUploadCompleted(false) // Mark upload as failed
       } finally {

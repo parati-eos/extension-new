@@ -137,12 +137,12 @@ export default function Contact({
 
       toast.success('Contact details submitted successfully', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } catch (error) {
       toast.error('Error while submitting data', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setIsLoading(false)
@@ -160,7 +160,7 @@ export default function Contact({
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       } finally {
         setIsImageLoading(false)

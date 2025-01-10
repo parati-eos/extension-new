@@ -32,27 +32,27 @@ export default function Images({
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const transformData = (imageUrls: string[]) => {
-    const headers: Record<string, string> = {}; // Initialize an empty object for dynamic headers
-  
+    const headers: Record<string, string> = {} // Initialize an empty object for dynamic headers
+
     // Loop through the image URLs and extract filenames to use as headers
     imageUrls.forEach((url, index) => {
-      const parts = url.split('/'); // Split the URL by '/'
-      const filenameWithExtension = parts[parts.length - 1]; // Get the last part (filename.extension)
-      
+      const parts = url.split('/') // Split the URL by '/'
+      const filenameWithExtension = parts[parts.length - 1] // Get the last part (filename.extension)
+
       // Remove the number prefix (if present) and get the filename without extension
-      const filenameWithoutNumber = filenameWithExtension.replace(/^\d+_/, '').split('.')[0]; // Remove leading number followed by underscore
-  
-      headers[`header${index + 1}`] = filenameWithoutNumber; // Dynamically create header keys (header1, header2, etc.)
-    });
-  
+      const filenameWithoutNumber = filenameWithExtension
+        .replace(/^\d+_/, '')
+        .split('.')[0] // Remove leading number followed by underscore
+
+      headers[`header${index + 1}`] = filenameWithoutNumber // Dynamically create header keys (header1, header2, etc.)
+    })
+
     // Return the headers along with the original image URLs
     return {
       ...headers, // Spread the dynamically created headers
       imageurl: imageUrls, // Keep the original URLs in 'imageurl'
-    };
-  };
-  
-  
+    }
+  }
 
   // Refs for file inputs
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -90,7 +90,7 @@ export default function Images({
     } catch (error) {
       toast.error('Upload failed', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setIsUploading(false)
@@ -106,7 +106,7 @@ export default function Images({
     setIsLoading(true)
     try {
       // Create the transformed payload
-      const transformedHeaders = transformData(images); // Assuming images are the URLs
+      const transformedHeaders = transformData(images) // Assuming images are the URLs
       const payload = {
         type: 'Images',
         documentID: documentID,
@@ -117,8 +117,8 @@ export default function Images({
           imageurl: images, // Pass the original image URLs
         },
         outlineID: outlineID,
-      };
-  
+      }
+
       // Send the request
       await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
@@ -129,15 +129,15 @@ export default function Images({
           },
         }
       )
-      toast.success('Images submitted successfully!', {
+      toast.info('Images submitted successfully!', {
         position: 'top-right',
-        autoClose: 2000,
-      });
-      setDisplayMode('slides');
+        autoClose: 3000,
+      })
+      setDisplayMode('slides')
     } catch (error) {
       toast.error('Submit failed', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setIsLoading(false)

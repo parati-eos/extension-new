@@ -64,7 +64,7 @@ export default function Points({
       } catch (error) {
         toast.error('Error uploading image', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
         setUploadCompleted(false) // Mark upload as failed
       } finally {
@@ -97,9 +97,9 @@ export default function Points({
         }
       )
       if (response.status === 200) {
-        toast.success('Data successfully sent to the server!', {
+        toast.info('Data submitted successfully!', {
           position: 'top-right',
-          autoClose: 2000,
+          autoClose: 3000,
         })
       }
       console.log('Server response:', response.data)
@@ -107,11 +107,11 @@ export default function Points({
     } catch (error) {
       toast.error('Error sending data', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
       toast.error('Failed to send data.', {
         position: 'top-right',
-        autoClose: 2000,
+        autoClose: 3000,
       })
     } finally {
       setIsLoading(false)
