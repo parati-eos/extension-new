@@ -176,12 +176,12 @@ const Navbar: React.FC<NavbarProps> = ({
               <img
                 src={userProfileImage}
                 alt="User Profile"
-                className="w-11 h-12 lg:w-11 lg:h-11 rounded-full hover:scale-105 cursor-pointer"
+                className="w-11 h-11 lg:w-11 lg:h-11 rounded-full hover:scale-105 cursor-pointer"
                 onClick={toggleDropdown} // Toggle dropdown when clicked
               />
             ) : (
               <FaUser
-                className="w-9 h-9 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
+                className="w-11 h-11 lg:w-10 lg:h-10 rounded-full hover:scale-105 cursor-pointer"
                 onClick={toggleDropdown} // Toggle dropdown when clicked
               />
             )}
