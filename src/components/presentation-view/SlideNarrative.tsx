@@ -145,9 +145,9 @@ export default function SlideNarrative({
         {/* Generate Slide Button */}
         <button
           onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled}
+          disabled={isGenerateDisabled || isLoading}
           className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-            isGenerateDisabled
+            isGenerateDisabled||isLoading
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
           }`}
@@ -169,9 +169,9 @@ export default function SlideNarrative({
         </div>
         <button
           onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled}
+          disabled={isGenerateDisabled||isLoading}
           className={`flex-1 py-2 rounded-md   ${
-            isGenerateDisabled
+            isGenerateDisabled||isLoading
               ? 'bg-gray-200 text-black cursor-not-allowed'
               : 'bg-[#3667B2] text-white'
           }`}
