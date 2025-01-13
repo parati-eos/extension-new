@@ -479,22 +479,22 @@ const EditProfile: React.FC = () => {
                   <img
                     src={logo && !isUploading ? logo : formData.logo}
                     alt="Organization Logo"
-                    className="w-28 h-28 rounded-full"
+                    className="w-20 h-20 rounded-full"
                   />
-                  <button
-                    className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
-                    onClick={handleButtonClick}
-                  >
-                    Change Logo
-                  </button>
-                  <input
-                    type="file"
-                    id="changeLogoInput"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  {isUploading && <p>Uploading...</p>}
+           
+  <button
+     className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
+    onClick={handleButtonClick}
+  >
+    {isUploading ? 'Uploading...' : 'Change Logo'}
+  </button>
+  <input
+    type="file"
+    id="changeLogoInput"
+    accept="image/*"
+    onChange={handleFileChange}
+    className="hidden"
+  />
                 </div>
               </div>
 
