@@ -18,7 +18,7 @@ const GoogleslidesShare = () => {
     const fetchSlidesData = async () => {
       try {
         const serverurl = process.env.REACT_APP_SERVER_URL
-        const url = `${serverurl}/slides?&formId=${formId}`
+        const url = `https://zynth.ai/api/slides?&formId=${formId}`
         const response = await fetch(url)
         if (!response.ok) {
           throw new Error('Failed to fetch slides data')
