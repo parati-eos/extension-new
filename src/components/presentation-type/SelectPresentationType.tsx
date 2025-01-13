@@ -299,6 +299,8 @@ const SelectPresentationType: React.FC = () => {
         )
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
+        console.log('Subscription ID: ', response.data.plan.subscriptionId)
+
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {

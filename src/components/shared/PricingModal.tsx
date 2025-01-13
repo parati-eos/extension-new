@@ -355,6 +355,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const handleCancel = async () => {
     setIsLoading(true)
 
+    console.log('Sub ID: ', subscriptionId)
+
     if (userPlan !== 'free') {
       try {
         await axios
