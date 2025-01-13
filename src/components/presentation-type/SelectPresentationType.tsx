@@ -177,7 +177,7 @@ const SelectPresentationType: React.FC = () => {
         //   )
         // }
       } catch (error: any) {
-        if (error.response?.status !== 502 && error.response?.status !== 408) {
+        if (error.response?.status === 404) {
           toast.error('Error generating ppt', {
             position: 'top-right',
             autoClose: 3000,
@@ -229,7 +229,7 @@ const SelectPresentationType: React.FC = () => {
         //   )
         // }
       } catch (error: any) {
-        if (error.response?.status !== 502 && error.response?.status !== 408) {
+        if (error.response?.status === 404) {
           toast.error('Error generating ppt', {
             position: 'top-right',
             autoClose: 3000,
