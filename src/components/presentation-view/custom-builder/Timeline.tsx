@@ -222,7 +222,7 @@ export default function Timeline({
             />
             <button
               onClick={(e) => {
-                if (!isGenerateDisabled) {
+                if (!isGenerateDisabled&&!isLoading) {
                   handleGenerateSlide()
                 } else {
                   e.preventDefault() // Block click when disabled
@@ -231,7 +231,7 @@ export default function Timeline({
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
-                isGenerateDisabled || loading
+                isGenerateDisabled || loading||isLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
               }`}
@@ -260,7 +260,7 @@ export default function Timeline({
 
             <button
               onClick={(e) => {
-                if (!isGenerateDisabled) {
+                if (!isGenerateDisabled&&!isLoading) {
                   handleGenerateSlide()
                 } else {
                   e.preventDefault() // Prevent action when disabled
@@ -269,7 +269,7 @@ export default function Timeline({
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 ${
-                isGenerateDisabled || loading
+                isGenerateDisabled || loading || isLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                   : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
               }`}
