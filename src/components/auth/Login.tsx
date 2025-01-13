@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signInWithPopup, OAuthProvider } from 'firebase/auth'
 import { auth } from '../../firebaseConfig'
@@ -13,6 +13,7 @@ import { setUserPlan } from '../../redux/slices/userSlice'
 function Login() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
 
   const defaultAvatarUrl =
     'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true'
@@ -62,6 +63,7 @@ function Login() {
   // const serverurl = process.env.REACT_APP_BACKEND_URL || ''
 
   const saveUserData = async (userData: Record<string, any>) => {
+    setIsLoading(true)
     try {
       const ipInfoResponse = await fetch(
         'https://ipinfo.io/json?token=f0e9cf876d422e'
@@ -102,52 +104,62 @@ function Login() {
         navigate('/new-presentation')
       } else if (!responseData.orgId || responseData.plan === null || '') {
         sessionStorage.setItem('orgId', generatedOrgId)
+        setIsLoading(false)
         navigate('/onboarding')
       }
       sessionStorage.setItem('authToken', responseData.token)
     } catch (error) {
+      setIsLoading(false)
       console.error('Error storing user data:', error)
     }
   }
 
   return (
     <div className="relative flex flex-col shadow-lg h-screen">
-      {/* Background Split */}
-      <div className="absolute top-0 left-0 w-full h-3/4 md:h-1/2 bg-[#3667B2]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-1/4 md:h-1/2 bg-white"></div>
-
-      <div className="relative flex flex-col md:flex-row justify-center items-center h-full w-full">
-        {/* Image Section */}
-        <div className="flex justify-center items-center h-[50vh]  md:h-full w-full md:w-1/2 md:px-0">
-          <img
-            src={ContentImage}
-            alt="Auth"
-            className="h-full w-full  md:max-h-none object-cover "
-            loading="lazy"
-          />
+      {isLoading ? (
+        <div className="w-full min-h-screen flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
         </div>
-        {/* Buttons Section */}
-        <div className="flex justify-center items-center h-[60vh] md:h-full w-full md:w-1/2 px-6 md:px-12">
-          <div className="p-6 bg-transparent border-2 border-[#004264] shadow-lg text-white rounded-lg flex flex-col items-center w-full max-w-md">
-            <h1 className="text-2xl md:text-3xl font-bold lg:mb-2 md:mb-4">
-              Login
-            </h1>
-            <div className="flex flex-col justify-center items-center">
-              <span className="hover:scale-105">
-                <GoogleOAuthProvider clientId="1053104378274-jchabnb9vv91n94l76g97aeuuqmrokt9.apps.googleusercontent.com">
-                  <GoogleLogin onSuccess={handleGoogleSuccess} />
-                </GoogleOAuthProvider>
-              </span>
+      ) : (
+        <>
+          {/* Background Split */}
+          <div className="absolute top-0 left-0 w-full h-3/4 md:h-1/2 bg-[#3667B2]"></div>
+          <div className="absolute bottom-0 left-0 w-full h-1/4 md:h-1/2 bg-white"></div>
+
+          <div className="relative flex flex-col md:flex-row justify-center items-center h-full w-full">
+            {/* Image Section */}
+            <div className="flex justify-center items-center h-[50vh]  md:h-full w-full md:w-1/2 md:px-0">
               <img
-                onClick={handleMicrosoftLogin}
-                src={MicrosoftIcon}
-                alt="Microsoft Login"
-                className="w-full h-full mt-4 hover:cursor-pointer hover:scale-105"
+                src={ContentImage}
+                alt="Auth"
+                className="h-full w-full  md:max-h-none object-cover "
+                loading="lazy"
               />
             </div>
+            {/* Buttons Section */}
+            <div className="flex justify-center items-center h-[60vh] md:h-full w-full md:w-1/2 px-6 md:px-12">
+              <div className="p-6 bg-transparent border-2 border-[#004264] shadow-lg text-white rounded-lg flex flex-col items-center w-full max-w-md">
+                <h1 className="text-2xl md:text-3xl font-bold lg:mb-2 md:mb-4">
+                  Login
+                </h1>
+                <div className="flex flex-col justify-center items-center">
+                  <span className="hover:scale-105">
+                    <GoogleOAuthProvider clientId="1053104378274-jchabnb9vv91n94l76g97aeuuqmrokt9.apps.googleusercontent.com">
+                      <GoogleLogin onSuccess={handleGoogleSuccess} />
+                    </GoogleOAuthProvider>
+                  </span>
+                  <img
+                    onClick={handleMicrosoftLogin}
+                    src={MicrosoftIcon}
+                    alt="Microsoft Login"
+                    className="w-full h-full mt-4 hover:cursor-pointer hover:scale-105"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   )
 }

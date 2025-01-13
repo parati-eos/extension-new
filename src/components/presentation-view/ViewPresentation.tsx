@@ -862,7 +862,8 @@ export default function ViewPresentation() {
             [currentOutline]: {
               ...prev[currentOutline],
               isLoading: false,
-              isNoGeneratedSlide: !genSlideID || genSlideID === '',
+              isNoGeneratedSlide:
+                totalSlides === 0 && (!genSlideID || genSlideID === ''),
             },
           }
         })
@@ -1065,7 +1066,7 @@ export default function ViewPresentation() {
       )
       const fetchedOutlines = response.data.outline
       setOutlines(fetchedOutlines)
-      if (fetchedOutlines.length > 0) {
+      if (fetchedOutlines.length > 0 && !currentOutline && !currentOutlineID) {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)
       }
