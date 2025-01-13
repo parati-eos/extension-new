@@ -78,16 +78,16 @@ const Navbar: React.FC<NavbarProps> = ({
           const country = ipInfoData!.country!
 
           if (country !== 'IN' && country !== 'India' && country !== 'In') {
-            setMonthlyPlan(response.data.items[1])
-            setYearlyPlan(response.data.items[0])
+            setMonthlyPlan(response.data.items[4])
+            setYearlyPlan(response.data.items[2])
             setCurrency('USD')
           } else if (
             country === 'IN' ||
             country === 'India' ||
             country === 'In'
           ) {
-            setMonthlyPlan(response.data.items[1])
-            setYearlyPlan(response.data.items[0])
+            setMonthlyPlan(response.data.items[5])
+            setYearlyPlan(response.data.items[3])
             setCurrency('INR')
           }
         })
