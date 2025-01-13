@@ -768,7 +768,9 @@ export default function ViewPresentation() {
                   ...prev,
                   [currentOutline]: {
                     ...prev[currentOutline],
-                    isLoading: slidesArray[currentOutline]?.length === 0,
+                    isLoading:
+                      !slidesArray[currentOutline] ||
+                      slidesArray[currentOutline].length === 0,
                     isNoGeneratedSlide: false,
                     lastUpdated: Date.now(),
                   },
@@ -1049,39 +1051,6 @@ export default function ViewPresentation() {
   }, [currentSlideIndex, prevSlideIndex])
 
   // Fetch Outlines
-  // const fetchOutlines = useCallback(async () => {
-  //   if (!documentID) return
-
-  //   try {
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${documentID}/outline`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${authToken}`,
-  //         },
-  //       }
-  //     )
-  //     const fetchedOutlines = response.data.outline
-  //     setOutlines(fetchedOutlines)
-  //     if (fetchedOutlines.length > 0) {
-  //       setCurrentOutline(fetchedOutlines[0].title)
-  //       setCurrentOutlineID(fetchedOutlines[0].outlineID)
-  //     }
-  //     setIsDocumentIDLoading(false)
-  //   } catch (error) {
-  //     console.error('Error fetching outlines:', error)
-  //   }
-  // }, [documentID, authToken])
-  // useEffect(() => {
-  //   if (searchParams.get('presentatioName') !== null || 'loading') {
-  //     fetchOutlines()
-  //   } else {
-  //     setTimeout(() => {
-  //       fetchOutlines()
-  //     }, 25000)
-  //   }
-  // }, [fetchOutlines, documentID, searchParams])
-  // Fetch Outlines
   const fetchOutlines = useCallback(async () => {
     if (!documentID) return
 
@@ -1105,7 +1074,6 @@ export default function ViewPresentation() {
       console.error('Error fetching outlines:', error)
     }
   }, [documentID, authToken])
-
   useEffect(() => {
     if (searchParams.get('presentationName') !== null) {
       fetchOutlines()

@@ -184,12 +184,14 @@ const EditProfile: React.FC = () => {
         }
       )
       navigate('/organization-profile')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update profile', error)
-      toast.error('Failed to update profile. Please try again.', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
+      if (error.response?.status === 404) {
+        toast.error('Error updating profile data', {
+          position: 'top-right',
+          autoClose: 3000,
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -254,6 +256,7 @@ const EditProfile: React.FC = () => {
       setOtherIndustry('') // Reset otherIndustry input
     }
   }, [sector])
+
   const handlevalidationChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -272,6 +275,7 @@ const EditProfile: React.FC = () => {
     // Update the validationErrors state
     setValidationErrors((prev) => ({ ...prev, [name]: error }))
   }
+
   const isButtonDisabled = () => {
     const hasErrors = Object.values(validationErrors).some((error) => error)
 

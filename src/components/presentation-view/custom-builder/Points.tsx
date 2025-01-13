@@ -85,7 +85,7 @@ export default function Points({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: selectedImage || '',
+            ...(selectedImage && { image: selectedImage }),
             pointers: points.filter((point) => point.trim() !== ''),
           },
           outlineID: outlineID,
