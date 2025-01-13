@@ -793,6 +793,58 @@ export default function ViewPresentation() {
     }
   }
 
+  // Effect to monitor changes
+  useEffect(() => {
+    if (totalSlides !== prevTotalSlides) {
+      updateSlideState(currentOutline, {
+        isLoading: false,
+        isNoGeneratedSlide: false,
+        retryCount: 0,
+        lastUpdated: Date.now(),
+      })
+
+      if (
+        slidesArray[currentOutline] &&
+        slidesArray[currentOutline].length >= 1
+      ) {
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]: prev[currentOutline], // Preserve the previous state
+        }))
+      }
+
+      if (totalSlides !== 0) {
+        setIsNewSlideLoading((prev) => {
+          if (prev[currentOutline]) {
+            setNewSlideGenerated((prev) => ({
+              ...prev,
+              [currentOutline]: 'Yes',
+            }))
+            toast.success(`Slide Generated`, {
+              position: 'top-right',
+              autoClose: 3000,
+            })
+            setDisplayModes((prev) => ({
+              ...prev,
+              [currentOutline]: 'slides', // Preserve the previous state
+            }))
+            return {
+              ...prev,
+              [currentOutline]: false,
+            }
+          }
+          return prev
+        })
+      }
+    }
+
+    if (totalSlides !== 0) {
+      setNewVersionBackDisabled(false)
+    }
+
+    setPrevTotalSlides(totalSlides)
+  }, [totalSlides, prevTotalSlides])
+
   useEffect(() => {
     const { initialStates, initialModes } = outlines.reduce(
       (acc, outline) => {
@@ -805,6 +857,8 @@ export default function ViewPresentation() {
         initialModes: {} as { [key: string]: DisplayMode },
       }
     )
+
+    console.log('Reached HERE')
 
     setSlideStates(initialStates)
     setDisplayModes(initialModes)
@@ -901,6 +955,8 @@ export default function ViewPresentation() {
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
+            console.log('Reached Socket')
+
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
@@ -977,58 +1033,6 @@ export default function ViewPresentation() {
     setCurrentSlideIndex(0)
     setPrevSlideIndex(0)
   }, [currentOutline])
-
-  // Effect to monitor changes
-  useEffect(() => {
-    if (totalSlides !== prevTotalSlides) {
-      setTimeout(() => {
-        updateSlideState(currentOutline, {
-          isLoading: false,
-          isNoGeneratedSlide: false,
-          retryCount: 0,
-          lastUpdated: Date.now(),
-        })
-        setPrevTotalSlides(totalSlides)
-      }, 6000)
-
-      if (totalSlides !== 0) {
-        setIsNewSlideLoading((prev) => {
-          if (prev[currentOutline]) {
-            setNewSlideGenerated((prev) => ({
-              ...prev,
-              [currentOutline]: 'Yes',
-            }))
-            toast.success(`Slide Generated`, {
-              position: 'top-right',
-              autoClose: 3000,
-            })
-            setDisplayModes((prev) => ({
-              ...prev,
-              [currentOutline]: 'slides', // Preserve the previous state
-            }))
-            return {
-              ...prev,
-              [currentOutline]: false,
-            }
-          }
-          return prev
-        })
-      }
-      if (
-        slidesArray[currentOutline] &&
-        slidesArray[currentOutline].length >= 1
-      ) {
-        setDisplayModes((prev) => ({
-          ...prev,
-          [currentOutline]: prev[currentOutline], // Preserve the previous state
-        }))
-      }
-    }
-
-    if (totalSlides !== 0) {
-      setNewVersionBackDisabled(false)
-    }
-  }, [totalSlides, prevTotalSlides])
 
   // Effect to set loader for pagination changes
   useEffect(() => {
