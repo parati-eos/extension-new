@@ -11,6 +11,7 @@ import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import PresentationShare from './pages/PresentationShare.tsx'
+import PitchZynthShare from './components/pitchZynthShare/Share.jsx'
 import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import Test from './test/test.tsx'
 import PricingPage from './pages/PricingPage.tsx'
@@ -52,7 +53,8 @@ const App: React.FC = () => {
               </ProtectedRoutes>
             }
           />
-          <Route path="/share" element={<PresentationShare />} />
+          <Route path="/presentation" element={<PresentationShare />} />
+          <Route path="/share" element={<PitchZynthShare />} />
           <Route path="/test" element={<Test />} />
         </Routes>
       </Router>

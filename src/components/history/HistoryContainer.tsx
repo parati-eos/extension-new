@@ -151,17 +151,17 @@ const HistoryContainer: React.FC = () => {
       if (!url || typeof url !== 'string') {
         throw new Error('Invalid URL in response')
       }
-  
+
       // Open URL based on device type
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile: Open in the same tab
-        window.location.href = url;
+        window.location.href = url
       } else {
         // Desktop: Open directly in a new tab
-        window.open(url, "_blank");
+        window.open(url, '_blank')
       }
     } catch (error) {
-      console.error("Error exporting presentation:", error);
+      console.error('Error exporting presentation:', error)
       alert(
         "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
       )
@@ -209,7 +209,7 @@ const HistoryContainer: React.FC = () => {
 
   // Handle Share Button Click
   const handleShare = async () => {
-    const url = `/share?formId=${documentID}`
+    const url = `/presentation?formId=${documentID}`
     window.open(url, '_blank') // Opens the URL in a new tab
   }
 

@@ -112,10 +112,11 @@ export default function ViewPresentation() {
   }>({})
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
+  const [displayBoxLoading, setDisplayBoxLoading] = useState(true)
 
   // Handle Share Button Click
   const handleShare = async () => {
-    const url = `/share?formId=${documentID}`
+    const url = `/presentation?formId=${documentID}`
     window.open(url, '_blank') // Opens the URL in a new tab
   }
 
@@ -1116,6 +1117,7 @@ export default function ViewPresentation() {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)
       }
+      setDisplayBoxLoading(false)
       setIsDocumentIDLoading(false)
     } catch (error) {
       console.error('Error fetching outlines:', error)
@@ -1380,10 +1382,9 @@ export default function ViewPresentation() {
             onScroll={handleScroll}
             ref={scrollContainerRef}
           >
-            {slideStates[currentOutline]?.isLoading && (
+            {displayBoxLoading && (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
                 <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                <h1>Generating Slide Please Wait...</h1>
               </div>
             )}
             {outlines.map((outline, index) => (
@@ -1538,6 +1539,11 @@ export default function ViewPresentation() {
               : 'h-[50.5vh]' // keep the height the same when 'slides' mode
           } w-full border border-gray-200 mb-2`}
         >
+          {displayBoxLoading && (
+            <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
+              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            </div>
+          )}
           {renderContent({
             GenSlideID: slidesArray[currentOutline]
               ? slidesArray[currentOutline][currentSlideIndex]
