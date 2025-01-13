@@ -152,31 +152,10 @@ const HistoryContainer: React.FC = () => {
         throw new Error('Invalid URL in response')
       }
   
-      // Mobile detection
+      // Open URL based on device type
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        const testGoogleSlidesApp = (url: string, fallback: () => void) => {
-          const timeout = setTimeout(() => fallback(), 1500); // Fallback to browser
-          const iframe = document.createElement("iframe");
-          iframe.src = `googleslides://open?url=${encodeURIComponent(url)}`;
-          iframe.style.display = "none";
-  
-          // Clean up after test
-          iframe.onload = () => {
-            clearTimeout(timeout);
-            document.body.removeChild(iframe);
-          };
-          iframe.onerror = () => {
-            clearTimeout(timeout);
-            fallback();
-          };
-  
-          document.body.appendChild(iframe);
-        };
-  
-        testGoogleSlidesApp(url, () => {
-          // Fallback: Open directly in browser
-          window.open(url, "_blank");
-        });
+        // Mobile: Open in the same tab
+        window.location.href = url;
       } else {
         // Desktop: Open directly in a new tab
         window.open(url, "_blank");

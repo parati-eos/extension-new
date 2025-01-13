@@ -174,30 +174,9 @@ export default function ViewPresentation() {
       if (presentationUrl && typeof presentationUrl === 'string') {
         setCountdown(0)
         setIsExportPaid(true)
-
-        // Handle mobile-specific download behavior
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-          const testGoogleSlidesApp = (url: string, fallback: () => void) => {
-            const timeout = setTimeout(() => fallback(), 1500)
-            const iframe = document.createElement('iframe')
-            iframe.src = `googleslides://open?url=${encodeURIComponent(url)}`
-            iframe.style.display = 'none'
-
-            iframe.onload = () => {
-              clearTimeout(timeout)
-              document.body.removeChild(iframe)
-            }
-            iframe.onerror = () => {
-              clearTimeout(timeout)
-              fallback()
-            }
-
-            document.body.appendChild(iframe)
-          }
-
-          testGoogleSlidesApp(presentationUrl, () => {
-            window.open(presentationUrl, '_blank')
-          })
+          // Mobile: Open directly in the same tab
+          window.location.href = presentationUrl
         } else {
           // Desktop: Open directly in a new tab
           window.open(presentationUrl, '_blank')

@@ -149,7 +149,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
   }, [])
 
   return (
-    <div className="flex items-center justify-between gap-2 mt-4 mb-4 lg:mt-6 lg:mb-5">
+    <div className="flex items-center justify-between gap-2   lg:mt-6 lg:mb-5">
       <h1 className="text-2xl font-semibold flex-1 mr-4 break-words">
         {isLoading && (
           <div className="w-full h-full flex items-center justify-center">
