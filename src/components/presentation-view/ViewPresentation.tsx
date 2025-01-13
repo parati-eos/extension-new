@@ -493,6 +493,12 @@ export default function ViewPresentation() {
               : prev[currentOutline],
         }))
       }
+
+      setIsNewSlideLoading((prev) => ({
+        ...prev,
+        [currentOutline]: prev[currentOutline],
+      }))
+
       setNewSlideGenerated((prev) => ({
         ...prev,
         [currentOutline]: prev[currentOutline] && '',
@@ -860,8 +866,17 @@ export default function ViewPresentation() {
 
     console.log('Reached HERE')
 
-    setSlideStates(initialStates)
-    setDisplayModes(initialModes)
+    if (!slidesArray[currentOutline]) {
+      setSlideStates(initialStates)
+      setDisplayModes(initialModes)
+    } else if (slidesArray[currentOutline]?.length > 0) {
+      console.log('Reached HERE else')
+
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]: 'slides',
+      }))
+    }
   }, [outlines])
 
   const updateSlideState = useCallback(
@@ -886,6 +901,8 @@ export default function ViewPresentation() {
 
       // Set initial loading state
       setSlideStates((prev) => {
+        console.log('Reached Socket Initial')
+
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
         const hasSlidesData = slidesArray[currentOutline]?.length > 0
 
@@ -893,15 +910,18 @@ export default function ViewPresentation() {
         const shouldKeepLoading =
           isNewSlideLoading[currentOutline] && !hasSlidesData
 
+        console.log('Slides Array Initial: ', slidesArray[currentOutline])
+
+        const loadingTrue =
+          !slidesArray[currentOutline] &&
+          (shouldKeepLoading ||
+            (isNoGeneratedSlide === false && !hasSlidesData))
         // Only update isLoading to true if it is not already true
         return {
           ...prev,
           [currentOutline]: {
             ...prev[currentOutline],
-            isLoading:
-              shouldKeepLoading ||
-              (isNoGeneratedSlide === false && !hasSlidesData),
-
+            isLoading: loadingTrue ? true : false,
             lastUpdated: Date.now(),
           },
         }
@@ -910,6 +930,8 @@ export default function ViewPresentation() {
       // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
         setSlideStates((prev) => {
+          console.log('Reached Socket Timer')
+
           const genSlideID = prev[currentOutline]?.genSlideID
           return {
             ...prev,

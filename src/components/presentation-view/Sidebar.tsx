@@ -101,7 +101,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           position: 'top-right',
           autoClose: 3000,
         })
-        fetchOutlines()
+        // fetchOutlines()
+        window.location.reload()
         setNewOutlineLoading(false)
       }
       setInputIndex(null)
