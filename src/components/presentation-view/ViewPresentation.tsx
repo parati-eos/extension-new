@@ -174,17 +174,44 @@ export default function ViewPresentation() {
       if (presentationUrl && typeof presentationUrl === 'string') {
         setCountdown(0)
         setIsExportPaid(true)
-        window.open(presentationUrl, '_blank')
+
+      // Handle mobile-specific download behavior
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const testGoogleSlidesApp = (url: string, fallback: () => void) => {
+          const timeout = setTimeout(() => fallback(), 1500)
+          const iframe = document.createElement('iframe')
+          iframe.src = `googleslides://open?url=${encodeURIComponent(url)}`
+          iframe.style.display = 'none'
+
+          iframe.onload = () => {
+            clearTimeout(timeout)
+            document.body.removeChild(iframe)
+          }
+          iframe.onerror = () => {
+            clearTimeout(timeout)
+            fallback()
+          }
+
+          document.body.appendChild(iframe)
+        }
+
+        testGoogleSlidesApp(presentationUrl, () => {
+          window.open(presentationUrl, '_blank')
+        })
       } else {
-        throw new Error('Invalid URL in response')
+        // Desktop: Open directly in a new tab
+        window.open(presentationUrl, '_blank')
       }
-    } catch (error) {
-      console.error('Error exporting presentation:', error)
-      alert(
-        "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
-      )
+    } else {
+      throw new Error('Invalid URL in response')
     }
+  } catch (error) {
+    console.error('Error exporting presentation:', error)
+    alert(
+      "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
+    )
   }
+}
 
   useEffect(() => {
     if (countdown === null || countdown === 0) {
