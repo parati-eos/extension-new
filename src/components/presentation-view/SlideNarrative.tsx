@@ -65,7 +65,9 @@ export default function SlideNarrative({
           documentID: documentID,
           input: narrative,
           outlineID: outlineID,
-          image: selectedImage || '',
+          data: {
+            image: selectedImage || '',
+          },
         },
         {
           headers: {
