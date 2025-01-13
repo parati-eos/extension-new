@@ -48,6 +48,8 @@ export default function People({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const isFirstRender = useRef(true) // Tracks if it's the first render
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
+  const [isImageUploading, setIsImageUploading] = useState(false); // Track image upload state
+
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -105,7 +107,10 @@ export default function People({
       })
       return
     }
-
+  
+    // Set image uploading state
+    setIsImageUploading(true);  // Set global state to true when image upload starts
+  
     setPeople((prevPeople) => {
       const updatedPeople = [...prevPeople]
       updatedPeople[index].loading = true // Set loading to true for the current person
@@ -130,6 +135,9 @@ export default function People({
         updatedPeople[index].loading = false // Set loading to false on error
         return updatedPeople
       })
+    } finally {
+      // Set image uploading state to false after the upload finishes
+      setIsImageUploading(false); // Reset the uploading state
     }
   }
 
@@ -365,7 +373,7 @@ export default function People({
           <div className=" flex w-full  justify-end ">
             <button
               onClick={(e) => {
-                if (!isGenerateDisabled) {
+                if (!isGenerateDisabled&&!isImageUploading) {
                   handleGenerateSlide()
                 } else {
                   e.preventDefault() // Prevent action when disabled
@@ -374,7 +382,7 @@ export default function People({
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`lg:w-[180px] py-2 px-5 justify-end  rounded-md active:scale-95 transition transform duration-300 ${
-                isGenerateDisabled
+                isGenerateDisabled || isImageUploading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
               }`}

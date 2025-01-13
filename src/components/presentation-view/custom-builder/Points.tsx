@@ -206,9 +206,9 @@ export default function Points({
             {/* Generate Slide Button */}
             <button
               onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled || isLoading}
+              disabled={isGenerateDisabled || isLoading||isImageLoading}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
-                isGenerateDisabled || isLoading
+                isGenerateDisabled || isLoading||isImageLoading
                   ? 'bg-gray-200 text-gray-500'
                   : 'bg-[#3667B2] text-white'
               }`}
@@ -229,9 +229,9 @@ export default function Points({
 
             <button
               onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled}
+              disabled={isGenerateDisabled || isLoading||isImageLoading}
               className={`flex-1 py-2 rounded-md ${
-                isGenerateDisabled
+                isGenerateDisabled||isLoading||isImageLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white'
               }`}
