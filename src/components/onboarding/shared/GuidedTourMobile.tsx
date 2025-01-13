@@ -13,17 +13,25 @@ const GuidedTourMobile: React.FC = () => {
     isInitialized.current = true;
 
     const initialSteps: Step[] = [
-        {
-            disableBeacon: true,
-            target: "#dropdown-mobile",
-            content: (
-              <div style={{ textAlign: "center" }}>
-                <strong>Step 1 of 9</strong> <br />
-                Add new sections to the outline to generate new slides.
-              </div>
-            ),
-            placement: "top" as Placement,
+      {
+        disableBeacon: true,
+        target: "#dropdown-mobile",
+        content: (
+          <div style={{ textAlign: "center" }}>
+            <strong>Step 1 of 9</strong> <br />
+            Add new sections to the outline to generate new slides.
+          </div>
+        ),
+        placement: "top" as Placement,
+
+        
+        styles: {
+          spotlight: {
+            transform: "scale(1)", // Slightly scales up the spotlighted area
           },
+        },
+      },
+      
       {
         disableBeacon: true,
         target: "#new-version-mobile",
