@@ -87,7 +87,7 @@ export default function MobileOutlineModal({
           documentId: documentID,
           title: newSlideTitle,
           position: Number(outlineIndex),
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: `outlineID-${window.crypto.randomUUID()}`,
         },
         {
           headers: {

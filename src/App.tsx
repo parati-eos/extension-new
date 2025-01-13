@@ -48,12 +48,11 @@ const App: React.FC = () => {
                     element={<PresentationViewPage />}
                   />
                   <Route path="history" element={<HistoryPage />} />
-                  <Route path="share" element={<PresentationShare />} />
-                 
                 </Routes>
               </ProtectedRoutes>
             }
           />
+          <Route path="/share" element={<PresentationShare />} />
           <Route path="/test" element={<Test />} />
         </Routes>
       </Router>

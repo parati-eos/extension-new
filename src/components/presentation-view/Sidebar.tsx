@@ -87,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           documentId: documentID,
           title: updatedOutline.title,
           position: index + 1,
-          outlineID: `outlineID-${crypto.randomUUID()}`,
+          outlineID: `outlineID-${window.crypto.randomUUID()}`,
         },
         {
           headers: {

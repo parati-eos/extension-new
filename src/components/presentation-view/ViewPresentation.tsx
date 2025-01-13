@@ -281,17 +281,24 @@ export default function ViewPresentation() {
   // Handle Finalize Button Click
   const handleFinalize = () => {
     const slideId = slidesArray[currentOutline]?.[currentSlideIndex]
+    const isFinalized = finalizedSlides[currentOutline] === slideId
 
-    axios
-      .patch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
+    const url = isFinalized
+      ? `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/displayfalse/${slideId}`
+      : `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`
+    const requestType = isFinalized ? 'post' : 'patch'
+
+    axios[requestType](
+      //`${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/displayfalse/${slideId}`
+      // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`,
+      url,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    )
       .then((response) => {
         setFinalizedSlides((prevFinalizedSlides) => {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
