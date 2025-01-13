@@ -151,9 +151,38 @@ const HistoryContainer: React.FC = () => {
       if (!url || typeof url !== 'string') {
         throw new Error('Invalid URL in response')
       }
-      window.open(url, '_blank')
+  
+      // Mobile detection
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const testGoogleSlidesApp = (url: string, fallback: () => void) => {
+          const timeout = setTimeout(() => fallback(), 1500); // Fallback to browser
+          const iframe = document.createElement("iframe");
+          iframe.src = `googleslides://open?url=${encodeURIComponent(url)}`;
+          iframe.style.display = "none";
+  
+          // Clean up after test
+          iframe.onload = () => {
+            clearTimeout(timeout);
+            document.body.removeChild(iframe);
+          };
+          iframe.onerror = () => {
+            clearTimeout(timeout);
+            fallback();
+          };
+  
+          document.body.appendChild(iframe);
+        };
+  
+        testGoogleSlidesApp(url, () => {
+          // Fallback: Open directly in browser
+          window.open(url, "_blank");
+        });
+      } else {
+        // Desktop: Open directly in a new tab
+        window.open(url, "_blank");
+      }
     } catch (error) {
-      console.error('Error exporting presentation:', error)
+      console.error("Error exporting presentation:", error);
       alert(
         "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
       )
