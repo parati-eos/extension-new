@@ -43,7 +43,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
         }
         const data = await response.json()
         const currency = data.country === 'IN' ? 'INR' : 'USD'
-        const amount = currency === 'INR' ? 1 : 9
+        const amount = currency === 'INR' ? 499 : 9
 
         setPaymentData((prevData) => ({
           ...prevData,
