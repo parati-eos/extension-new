@@ -175,43 +175,43 @@ export default function ViewPresentation() {
         setCountdown(0)
         setIsExportPaid(true)
 
-      // Handle mobile-specific download behavior
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        const testGoogleSlidesApp = (url: string, fallback: () => void) => {
-          const timeout = setTimeout(() => fallback(), 1500)
-          const iframe = document.createElement('iframe')
-          iframe.src = `googleslides://open?url=${encodeURIComponent(url)}`
-          iframe.style.display = 'none'
+        // Handle mobile-specific download behavior
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          const testGoogleSlidesApp = (url: string, fallback: () => void) => {
+            const timeout = setTimeout(() => fallback(), 1500)
+            const iframe = document.createElement('iframe')
+            iframe.src = `googleslides://open?url=${encodeURIComponent(url)}`
+            iframe.style.display = 'none'
 
-          iframe.onload = () => {
-            clearTimeout(timeout)
-            document.body.removeChild(iframe)
+            iframe.onload = () => {
+              clearTimeout(timeout)
+              document.body.removeChild(iframe)
+            }
+            iframe.onerror = () => {
+              clearTimeout(timeout)
+              fallback()
+            }
+
+            document.body.appendChild(iframe)
           }
-          iframe.onerror = () => {
-            clearTimeout(timeout)
-            fallback()
-          }
 
-          document.body.appendChild(iframe)
-        }
-
-        testGoogleSlidesApp(presentationUrl, () => {
+          testGoogleSlidesApp(presentationUrl, () => {
+            window.open(presentationUrl, '_blank')
+          })
+        } else {
+          // Desktop: Open directly in a new tab
           window.open(presentationUrl, '_blank')
-        })
+        }
       } else {
-        // Desktop: Open directly in a new tab
-        window.open(presentationUrl, '_blank')
+        throw new Error('Invalid URL in response')
       }
-    } else {
-      throw new Error('Invalid URL in response')
+    } catch (error) {
+      console.error('Error exporting presentation:', error)
+      alert(
+        "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
+      )
     }
-  } catch (error) {
-    console.error('Error exporting presentation:', error)
-    alert(
-      "Oops! It seems like the pitch deck presentation is missing. Click 'Generate Presentation' to begin your journey to success!"
-    )
   }
-}
 
   useEffect(() => {
     if (countdown === null || countdown === 0) {
@@ -1170,13 +1170,22 @@ export default function ViewPresentation() {
         const result = response.data
         setPptName(result.documentName)
         setIsPptNameLoading(false)
+        return true
       } catch (error) {
         console.error('Error fetching document:', error)
+        return false
       }
     }
 
     if (!pptNameFromUrl) {
-      getPptName()
+      const interval = setInterval(async () => {
+        const success = await getPptName()
+        if (success) {
+          clearInterval(interval)
+        }
+      }, 2000)
+
+      return () => clearInterval(interval)
     }
 
     setPptName(pptNameFromUrl)
