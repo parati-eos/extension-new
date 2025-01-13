@@ -494,7 +494,7 @@ const SelectPresentationType: React.FC = () => {
 
               <button
                 onClick={() => {
-                  if (userPlan === 'pro') {
+                  if (userPlan !== 'free') {
                     setIsRefineModalOpen(true) // Open refine modal
                   } else if (userPlan === 'free') {
                     setShowTooltip(true) // Show tooltip
