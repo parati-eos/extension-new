@@ -802,6 +802,8 @@ export default function ViewPresentation() {
   // Effect to monitor changes
   useEffect(() => {
     if (totalSlides !== prevTotalSlides) {
+      console.log('Reached First IF')
+
       updateSlideState(currentOutline, {
         isLoading: false,
         isNoGeneratedSlide: false,
@@ -813,6 +815,8 @@ export default function ViewPresentation() {
         slidesArray[currentOutline] &&
         slidesArray[currentOutline].length >= 1
       ) {
+        console.log('Reached Second IF')
+
         setDisplayModes((prev) => ({
           ...prev,
           [currentOutline]: prev[currentOutline], // Preserve the previous state
@@ -820,8 +824,12 @@ export default function ViewPresentation() {
       }
 
       if (totalSlides !== 0) {
+        console.log('Reached Third IF')
+
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
+            console.log('Reached Fourth IF')
+
             setNewSlideGenerated((prev) => ({
               ...prev,
               [currentOutline]: 'Yes',
@@ -864,14 +872,10 @@ export default function ViewPresentation() {
       }
     )
 
-    console.log('Reached HERE')
-
     if (!slidesArray[currentOutline]) {
       setSlideStates(initialStates)
       setDisplayModes(initialModes)
     } else if (slidesArray[currentOutline]?.length > 0) {
-      console.log('Reached HERE else')
-
       setDisplayModes((prev) => ({
         ...prev,
         [currentOutline]: 'slides',
@@ -901,8 +905,6 @@ export default function ViewPresentation() {
 
       // Set initial loading state
       setSlideStates((prev) => {
-        console.log('Reached Socket Initial')
-
         const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
         const hasSlidesData = slidesArray[currentOutline]?.length > 0
 
@@ -930,8 +932,6 @@ export default function ViewPresentation() {
       // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
         setSlideStates((prev) => {
-          console.log('Reached Socket Timer')
-
           const genSlideID = prev[currentOutline]?.genSlideID
           return {
             ...prev,
@@ -977,8 +977,6 @@ export default function ViewPresentation() {
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
-            console.log('Reached Socket')
-
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
@@ -1015,6 +1013,21 @@ export default function ViewPresentation() {
                 ...prev,
                 [currentOutline]: selectedSlide.GenSlideID,
               }))
+            }
+
+            if (isNewSlideLoading[currentOutline] && newSlides.length === 1) {
+              setIsNewSlideLoading((prev) => ({
+                ...prev,
+                [currentOutline]: false,
+              }))
+              setNewSlideGenerated((prev) => ({
+                ...prev,
+                [currentOutline]: 'Yes',
+              }))
+              toast.success(`Slide Generated`, {
+                position: 'top-right',
+                autoClose: 3000,
+              })
             }
 
             // Check if newSlides array has only one object and its display key is false
