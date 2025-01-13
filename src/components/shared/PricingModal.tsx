@@ -503,7 +503,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       : 'bg-[#3667B2] text-white  hover:scale-105 active:scale-95 transition transform'
   } 
   ${
-    userPlan === 'pro' && plan.name.toLowerCase() === 'free'
+    userPlan !== 'free' && plan.name.toLowerCase() === 'free'
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
@@ -568,7 +568,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       : ''
   } 
   ${
-    userPlan === 'pro' && plan.name.toLowerCase() === 'free'
+    userPlan !== 'free' && plan.name.toLowerCase() === 'free'
       ? 'cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500'
       : ''
   }`}
@@ -678,7 +678,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         </div>
         <div
           className={`rounded-xl ml-4  mr-4 bg-white lg:hidden mt-8 border ${
-            userPlan === 'pro' ? 'border-[#3667B2]' : 'border-white'
+            userPlan !== 'free' ? 'border-[#3667B2]' : 'border-white'
           }`}
         >
           <div className="px-4 ">
@@ -704,7 +704,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             <button
               onClick={userPlan === 'free' ? handleUpgrade : handleCancel}
               className={`py-2 px-4 w-full mt-4 rounded-lg border ${
-                userPlan === 'free' || userPlan === 'pro'
+                userPlan === 'free' || userPlan !== 'free'
                   ? 'bg-[#3667B2] text-white border-[#3667B2]'
                   : ''
               }`}
@@ -795,7 +795,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <button
                 onClick={userPlan === 'free' ? handleUpgrade : handleCancel}
                 className={`py-2 px-4 w-full mt-4 rounded-lg border ${
-                  userPlan === 'free' || userPlan === 'pro'
+                  userPlan === 'free' || userPlan !== 'free'
                     ? 'bg-[#3667B2] text-white border-[#3667B2]'
                     : ''
                 }`}
