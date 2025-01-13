@@ -89,7 +89,7 @@ export default function Statistics({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: selectedImage,
+            image: selectedImage || '',
             stats: title.map((label, index) => ({
               label,
               value: Number(description[index] || 0), // Adjusted to include all rows

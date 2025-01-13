@@ -113,7 +113,7 @@ export default function Contact({
         email,
         phone,
         linkedin,
-        image: selectedImage,
+        image: selectedImage || '',
       },
       outlineID: outlineID,
     }

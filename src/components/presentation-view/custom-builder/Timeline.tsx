@@ -90,7 +90,7 @@ export default function Timeline({
           documentID: documentID,
           data: {
             slideName: heading,
-            image: selectedImage,
+            image: selectedImage || '',
             phases: phases,
           },
           outlineID: outlineID,

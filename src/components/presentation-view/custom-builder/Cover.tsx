@@ -95,7 +95,7 @@ export default function Cover({
           data: {
             slideName: heading,
             logo,
-            image: selectedImage,
+            image: selectedImage || '',
           },
           outlineID,
         },
