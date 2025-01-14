@@ -102,6 +102,9 @@ export default function Images({
   }
 
   const handleSubmit = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     setIsLoading(true)
     try {

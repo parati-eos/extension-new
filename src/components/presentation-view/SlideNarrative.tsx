@@ -54,6 +54,9 @@ export default function SlideNarrative({
   }
 
   const handleGenerateSlide = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     if (!narrative.trim()) return
     try {
@@ -149,7 +152,7 @@ export default function SlideNarrative({
           onClick={handleGenerateSlide}
           disabled={isGenerateDisabled || isLoading}
           className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-            isGenerateDisabled||isLoading
+            isGenerateDisabled || isLoading
               ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
               : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
           }`}
@@ -171,9 +174,9 @@ export default function SlideNarrative({
         </div>
         <button
           onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled||isLoading}
+          disabled={isGenerateDisabled || isLoading}
           className={`flex-1 py-2 rounded-md   ${
-            isGenerateDisabled||isLoading
+            isGenerateDisabled || isLoading
               ? 'bg-gray-200 text-black cursor-not-allowed'
               : 'bg-[#3667B2] text-white'
           }`}

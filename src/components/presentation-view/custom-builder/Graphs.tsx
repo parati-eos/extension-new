@@ -126,6 +126,9 @@ export default function Graphs({
   }, [rows, series])
 
   const handleSubmit = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     setIsLoading(true)
     try {
@@ -151,7 +154,7 @@ export default function Graphs({
             documentID: documentID,
             outlineID: outlineID,
             data: {
-              chartType: selectedChart,
+              chartType: selectedChart!.toLowerCase(),
               slideName: heading,
               chart: {
                 series: seriesData,

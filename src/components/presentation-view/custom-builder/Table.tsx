@@ -162,6 +162,9 @@ export default function Table({
   }
 
   const handleGenerateSlide = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     setIsLoading(true)
     // Prepare table data, filtering out empty row and column headers

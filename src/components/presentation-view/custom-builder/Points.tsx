@@ -74,6 +74,9 @@ export default function Points({
   }
 
   const handleGenerateSlide = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     setIsLoading(true)
     try {
@@ -206,9 +209,9 @@ export default function Points({
             {/* Generate Slide Button */}
             <button
               onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled || isLoading||isImageLoading}
+              disabled={isGenerateDisabled || isLoading || isImageLoading}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
-                isGenerateDisabled || isLoading||isImageLoading
+                isGenerateDisabled || isLoading || isImageLoading
                   ? 'bg-gray-200 text-gray-500'
                   : 'bg-[#3667B2] text-white'
               }`}
@@ -229,9 +232,9 @@ export default function Points({
 
             <button
               onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled || isLoading||isImageLoading}
+              disabled={isGenerateDisabled || isLoading || isImageLoading}
               className={`flex-1 py-2 rounded-md ${
-                isGenerateDisabled||isLoading||isImageLoading
+                isGenerateDisabled || isLoading || isImageLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white'
               }`}

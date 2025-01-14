@@ -48,8 +48,7 @@ export default function People({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const isFirstRender = useRef(true) // Tracks if it's the first render
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
-  const [isImageUploading, setIsImageUploading] = useState(false); // Track image upload state
-
+  const [isImageUploading, setIsImageUploading] = useState(false) // Track image upload state
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -107,10 +106,10 @@ export default function People({
       })
       return
     }
-  
+
     // Set image uploading state
-    setIsImageUploading(true);  // Set global state to true when image upload starts
-  
+    setIsImageUploading(true) // Set global state to true when image upload starts
+
     setPeople((prevPeople) => {
       const updatedPeople = [...prevPeople]
       updatedPeople[index].loading = true // Set loading to true for the current person
@@ -137,7 +136,7 @@ export default function People({
       })
     } finally {
       // Set image uploading state to false after the upload finishes
-      setIsImageUploading(false); // Reset the uploading state
+      setIsImageUploading(false) // Reset the uploading state
     }
   }
 
@@ -182,6 +181,9 @@ export default function People({
   })()
 
   const handleGenerateSlide = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     setIsLoading(true)
 
@@ -373,7 +375,7 @@ export default function People({
           <div className=" flex w-full  justify-end ">
             <button
               onClick={(e) => {
-                if (!isGenerateDisabled&&!isImageUploading) {
+                if (!isGenerateDisabled && !isImageUploading) {
                   handleGenerateSlide()
                 } else {
                   e.preventDefault() // Prevent action when disabled

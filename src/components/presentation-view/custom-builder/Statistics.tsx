@@ -78,7 +78,11 @@ export default function Statistics({
     )
 
   const handleGenerateSlide = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
+
     setLoading(true)
     try {
       const response = await axios.post(
@@ -222,7 +226,7 @@ export default function Statistics({
               <div className="flex-1 relative">
                 <button
                   onClick={(e) => {
-                    if (!isGenerateDisabled&&!isImageLoading) {
+                    if (!isGenerateDisabled && !isImageLoading) {
                       handleGenerateSlide()
                     } else {
                       e.preventDefault() // Prevent action when disabled
@@ -233,7 +237,7 @@ export default function Statistics({
                   }
                   onMouseLeave={() => setShowTooltip(false)}
                   className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-                    isGenerateDisabled||isImageLoading
+                    isGenerateDisabled || isImageLoading
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
                   }`}
@@ -266,7 +270,7 @@ export default function Statistics({
             <div className="flex-1 relative">
               <button
                 onClick={(e) => {
-                  if (!isGenerateDisabled&&!isImageLoading) {
+                  if (!isGenerateDisabled && !isImageLoading) {
                     handleGenerateSlide()
                   } else {
                     e.preventDefault() // Prevent action when disabled
@@ -275,7 +279,7 @@ export default function Statistics({
                 onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
                 className={`flex-1 py-2 rounded-md w-full ${
-                  isGenerateDisabled||isImageLoading
+                  isGenerateDisabled || isImageLoading
                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     : 'bg-[#3667B2] text-white'
                 }`}

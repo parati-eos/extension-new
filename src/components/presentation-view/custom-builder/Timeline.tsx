@@ -74,6 +74,9 @@ export default function Timeline({
     ).length < 3
 
   const handleGenerateSlide = async () => {
+    if (outlineID === sessionStorage.getItem('newOutline')) {
+      sessionStorage.removeItem('newOutline')
+    }
     setIsSlideLoading()
     setLoading(true)
     try {
@@ -222,7 +225,7 @@ export default function Timeline({
             />
             <button
               onClick={(e) => {
-                if (!isGenerateDisabled&&!isLoading) {
+                if (!isGenerateDisabled && !isLoading) {
                   handleGenerateSlide()
                 } else {
                   e.preventDefault() // Block click when disabled
@@ -231,7 +234,7 @@ export default function Timeline({
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
-                isGenerateDisabled || loading||isLoading
+                isGenerateDisabled || loading || isLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
               }`}
@@ -260,7 +263,7 @@ export default function Timeline({
 
             <button
               onClick={(e) => {
-                if (!isGenerateDisabled&&!isLoading) {
+                if (!isGenerateDisabled && !isLoading) {
                   handleGenerateSlide()
                 } else {
                   e.preventDefault() // Prevent action when disabled
