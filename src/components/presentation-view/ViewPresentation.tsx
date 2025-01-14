@@ -978,9 +978,10 @@ export default function ViewPresentation() {
               ...prev[currentOutline],
               isLoading: false,
               isNoGeneratedSlide:
-                slideStates[currentOutline].genSlideID === null ||
-                totalSlides === 0 ||
-                !slidesArray[currentOutline],
+                (slideStates[currentOutline].genSlideID === null ||
+                  totalSlides === 0 ||
+                  !slidesArray[currentOutline]) &&
+                displayModes[currentOutline] === 'slides',
             },
           }
         })
