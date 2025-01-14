@@ -61,6 +61,11 @@ export default function MobileOutlineModal({
   const [isAddingSlide, setIsAddingSlide] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const buttonRef = useRef<HTMLDivElement | null>(null)
+
+  const generateOutlineID = () => {
+    return `outlineID-${window.crypto.randomUUID()}`
+  }
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -78,6 +83,7 @@ export default function MobileOutlineModal({
   }, [])
 
   const handleAddSlide = async () => {
+    const newOutlineID = generateOutlineID()
     setIsAddingSlide(true)
     if (newSlideTitle && newSlidePosition) {
       const outlineIndex = Number(newSlidePosition) - 1
@@ -97,13 +103,16 @@ export default function MobileOutlineModal({
       )
       const result = response.data
       if (result.type && result.title) {
+        sessionStorage.setItem('newOutlineID', newOutlineID)
+
         setIsAddSlideModalOpen(false)
         toast.success('Outline Added', {
           position: 'top-right',
           autoClose: 3000,
         })
+        window.location.reload()
         setIsAddingSlide(false)
-        fetchOutlines()
+        // fetchOutlines()
       }
     }
   }

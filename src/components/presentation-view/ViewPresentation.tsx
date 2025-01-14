@@ -620,6 +620,11 @@ export default function ViewPresentation() {
     }
   }
 
+  // Function to check if slides exist for an outline
+  const hasSlidesForOutline = (outlineTitle: string) => {
+    return slidesArray[outlineTitle]?.length > 0
+  }
+
   // Render Slide Content
   const renderContent = ({
     isMobile,
@@ -913,29 +918,56 @@ export default function ViewPresentation() {
 
       // Set initial loading state
       setSlideStates((prev) => {
-        const isNoGeneratedSlide = prev[currentOutline]?.isNoGeneratedSlide
-        const hasSlidesData = slidesArray[currentOutline]?.length > 0
+        const currentState = prev[currentOutline]
+        const hasExistingSlides = hasSlidesForOutline(currentOutline)
 
-        // Keep loading true if isNewSlideLoading is true and no slides exist
-        const shouldKeepLoading =
-          isNewSlideLoading[currentOutline] && !hasSlidesData
+        // Don't set loading if we already have slides
+        if (hasExistingSlides) {
+          return {
+            ...prev,
+            [currentOutline]: {
+              ...currentState,
+              isLoading: false,
+              isNoGeneratedSlide: false,
+              lastUpdated: Date.now(),
+            },
+          }
+        }
 
-        console.log('Slides Array Initial: ', slidesArray[currentOutline])
+        // Only set loading if we need new slides
+        const shouldBeLoading =
+          isNewSlideLoading[currentOutline] ||
+          (!currentState?.genSlideID && !hasExistingSlides)
 
-        const loadingTrue =
-          !slidesArray[currentOutline] &&
-          (shouldKeepLoading ||
-            (isNoGeneratedSlide === false && !hasSlidesData))
-        // Only update isLoading to true if it is not already true
         return {
           ...prev,
           [currentOutline]: {
-            ...prev[currentOutline],
-            isLoading: loadingTrue ? true : false,
+            ...currentState,
+            isLoading: shouldBeLoading,
+            isNoGeneratedSlide: false,
             lastUpdated: Date.now(),
           },
         }
       })
+
+      if (currentOutlineID === sessionStorage.getItem('newOutlineID')) {
+        console.log('Reached New Outline Initial State')
+
+        setSlideStates((prev) => ({
+          ...prev,
+          [currentOutline]: {
+            ...prev[currentOutline],
+            isLoading: false,
+          },
+        }))
+
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]: 'newContent',
+        }))
+
+        setNewVersionBackDisabled(true)
+      }
 
       // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
@@ -1119,6 +1151,7 @@ export default function ViewPresentation() {
       )
       const fetchedOutlines = response.data.outline
       setOutlines(fetchedOutlines)
+
       if (fetchedOutlines.length > 0 && !currentOutline && !currentOutlineID) {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)

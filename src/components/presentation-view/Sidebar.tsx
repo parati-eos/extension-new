@@ -39,17 +39,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [hasVisited, setHasVisited] = useState(false)
 
+  const generateOutlineID = () => {
+    return `outlineID-${window.crypto.randomUUID()}`
+  }
+
   // Retrieve `hasVisited` from local storage on mount
   useEffect(() => {
     const visited = localStorage.getItem('hasVisited') === 'true'
     setHasVisited(visited)
   }, []) // Runs only once when the component mounts
 
-  // Function to set `hasVisited` in local storage
-  const markAsVisited = () => {
-    localStorage.setItem('hasVisited', 'true')
-    setHasVisited(true)
-  }
   useEffect(() => {
     setOutlines(fetchedOutlines)
   }, [fetchedOutlines])
@@ -70,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [selectedOutline, outlines])
 
   const handleAddOutline = async (index: number) => {
-    console.log('Adding Outline')
+    const newOutlineID = generateOutlineID()
 
     setNewOutlineLoading(true)
     if (!newOutline.trim()) {
@@ -87,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           documentId: documentID,
           title: updatedOutline.title,
           position: index + 1,
-          outlineID: `outlineID-${window.crypto.randomUUID()}`,
+          outlineID: newOutlineID,
         },
         {
           headers: {
@@ -97,6 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       )
       const result = response.data
       if (result.title && result.type) {
+        sessionStorage.setItem('newOutlineID', newOutlineID)
         toast.success('Outline Successfully Added', {
           position: 'top-right',
           autoClose: 3000,
@@ -181,11 +181,17 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <div
                   className="relative"
                   onMouseEnter={() => {
-                    if (isDisabled && userPlan === 'free'|| userPlan !== 'free')
+                    if (
+                      (isDisabled && userPlan === 'free') ||
+                      userPlan !== 'free'
+                    )
                       setIsDialogVisible(true)
                   }}
                   onMouseLeave={() => {
-                    if (isDisabled && userPlan === 'free' || userPlan !== 'free')
+                    if (
+                      (isDisabled && userPlan === 'free') ||
+                      userPlan !== 'free'
+                    )
                       setIsDialogVisible(false)
                   }}
                 >
@@ -203,7 +209,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   {/* Tooltip */}
                   {isDialogVisible && isDisabled && userPlan === 'free' && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                                    <p className="text-sm text-center text-gray-800">Add New Section</p>
+                      <p className="text-sm text-center text-gray-800">
+                        Add New Section
+                      </p>
                       <p className="text-sm text-center text-gray-800">
                         Please{' '}
                         <button
@@ -216,8 +224,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                       </p>
                     </div>
                   )}
-                    {/* Tooltip */}
-                    { isDialogVisible && userPlan !== 'free' && (
+                  {/* Tooltip */}
+                  {isDialogVisible && userPlan !== 'free' && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[10rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
                       <p className="text-sm text-center text-gray-800">
                         Add New Section
