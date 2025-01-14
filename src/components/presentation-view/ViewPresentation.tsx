@@ -516,10 +516,6 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
-    if (sessionStorage.getItem('newOutlineID') === currentOutlineID) {
-      sessionStorage.removeItem('newOutlineID')
-    }
-
     // Set loading state at the start
     setSlideStates((prev) => {
       return {
@@ -889,6 +885,16 @@ export default function ViewPresentation() {
       }
     )
 
+    if (!slidesArray[currentOutline]) {
+      setSlideStates(initialStates)
+      setDisplayModes(initialModes)
+    } else if (slidesArray[currentOutline]?.length > 0) {
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]: 'slides',
+      }))
+    }
+
     if (currentOutlineID === sessionStorage.getItem('newOutlineID')) {
       console.log('Reached New Outline Initial State')
 
@@ -906,18 +912,6 @@ export default function ViewPresentation() {
       }))
 
       setNewVersionBackDisabled(true)
-
-      return
-    }
-
-    if (!slidesArray[currentOutline]) {
-      setSlideStates(initialStates)
-      setDisplayModes(initialModes)
-    } else if (slidesArray[currentOutline]?.length > 0) {
-      setDisplayModes((prev) => ({
-        ...prev,
-        [currentOutline]: 'slides',
-      }))
     }
   }, [outlines])
 
@@ -941,6 +935,40 @@ export default function ViewPresentation() {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
       console.info('Connecting to WebSocket server...')
 
+      // Set initial loading state
+      setSlideStates((prev) => {
+        const currentState = prev[currentOutline]
+        const hasExistingSlides = hasSlidesForOutline(currentOutline)
+
+        // Don't set loading if we already have slides
+        if (hasExistingSlides) {
+          return {
+            ...prev,
+            [currentOutline]: {
+              ...currentState,
+              isLoading: false,
+              isNoGeneratedSlide: false,
+              lastUpdated: Date.now(),
+            },
+          }
+        }
+
+        // Only set loading if we need new slides
+        const shouldBeLoading =
+          isNewSlideLoading[currentOutline] ||
+          (!currentState?.genSlideID && !hasExistingSlides)
+
+        return {
+          ...prev,
+          [currentOutline]: {
+            ...currentState,
+            isLoading: shouldBeLoading,
+            isNoGeneratedSlide: false,
+            lastUpdated: Date.now(),
+          },
+        }
+      })
+
       if (currentOutlineID === sessionStorage.getItem('newOutlineID')) {
         console.log('Reached New Outline Initial State')
 
@@ -958,40 +986,6 @@ export default function ViewPresentation() {
         }))
 
         setNewVersionBackDisabled(true)
-      } else {
-        // Set initial loading state
-        setSlideStates((prev) => {
-          const currentState = prev[currentOutline]
-          const hasExistingSlides = hasSlidesForOutline(currentOutline)
-
-          // Don't set loading if we already have slides
-          if (hasExistingSlides) {
-            return {
-              ...prev,
-              [currentOutline]: {
-                ...currentState,
-                isLoading: false,
-                isNoGeneratedSlide: false,
-                lastUpdated: Date.now(),
-              },
-            }
-          }
-
-          // Only set loading if we need new slides
-          const shouldBeLoading =
-            isNewSlideLoading[currentOutline] ||
-            (!currentState?.genSlideID && !hasExistingSlides)
-
-          return {
-            ...prev,
-            [currentOutline]: {
-              ...currentState,
-              isLoading: shouldBeLoading,
-              isNoGeneratedSlide: false,
-              lastUpdated: Date.now(),
-            },
-          }
-        })
       }
 
       // Clear loading state and set error screen after timeout if no data received
@@ -1369,7 +1363,6 @@ export default function ViewPresentation() {
   const yearlyPlanId = yearlyPlan?.id
 
   console.log('Slide States: ', slideStates)
-  console.log('Slides Array: ', slidesArray)
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
