@@ -1407,6 +1407,7 @@ export default function ViewPresentation() {
           {/* MEDIUM LARGE SCREEN: ACTION BUTTONS */}
           <div className="flex items-center justify-between ml-12">
             <DesktopButtonSection
+              userPlan={userPlan}
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
