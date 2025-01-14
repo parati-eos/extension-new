@@ -516,6 +516,10 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
+    if (sessionStorage.getItem('newOutlineID') === currentOutlineID) {
+      sessionStorage.removeItem('newOutlineID')
+    }
+
     // Set loading state at the start
     setSlideStates((prev) => {
       return {
@@ -885,6 +889,27 @@ export default function ViewPresentation() {
       }
     )
 
+    if (currentOutlineID === sessionStorage.getItem('newOutlineID')) {
+      console.log('Reached New Outline Initial State')
+
+      setSlideStates((prev) => ({
+        ...prev,
+        [currentOutline]: {
+          ...prev[currentOutline],
+          isLoading: false,
+        },
+      }))
+
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]: 'newContent',
+      }))
+
+      setNewVersionBackDisabled(true)
+
+      return
+    }
+
     if (!slidesArray[currentOutline]) {
       setSlideStates(initialStates)
       setDisplayModes(initialModes)
@@ -916,40 +941,6 @@ export default function ViewPresentation() {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
       console.info('Connecting to WebSocket server...')
 
-      // Set initial loading state
-      setSlideStates((prev) => {
-        const currentState = prev[currentOutline]
-        const hasExistingSlides = hasSlidesForOutline(currentOutline)
-
-        // Don't set loading if we already have slides
-        if (hasExistingSlides) {
-          return {
-            ...prev,
-            [currentOutline]: {
-              ...currentState,
-              isLoading: false,
-              isNoGeneratedSlide: false,
-              lastUpdated: Date.now(),
-            },
-          }
-        }
-
-        // Only set loading if we need new slides
-        const shouldBeLoading =
-          isNewSlideLoading[currentOutline] ||
-          (!currentState?.genSlideID && !hasExistingSlides)
-
-        return {
-          ...prev,
-          [currentOutline]: {
-            ...currentState,
-            isLoading: shouldBeLoading,
-            isNoGeneratedSlide: false,
-            lastUpdated: Date.now(),
-          },
-        }
-      })
-
       if (currentOutlineID === sessionStorage.getItem('newOutlineID')) {
         console.log('Reached New Outline Initial State')
 
@@ -967,6 +958,40 @@ export default function ViewPresentation() {
         }))
 
         setNewVersionBackDisabled(true)
+      } else {
+        // Set initial loading state
+        setSlideStates((prev) => {
+          const currentState = prev[currentOutline]
+          const hasExistingSlides = hasSlidesForOutline(currentOutline)
+
+          // Don't set loading if we already have slides
+          if (hasExistingSlides) {
+            return {
+              ...prev,
+              [currentOutline]: {
+                ...currentState,
+                isLoading: false,
+                isNoGeneratedSlide: false,
+                lastUpdated: Date.now(),
+              },
+            }
+          }
+
+          // Only set loading if we need new slides
+          const shouldBeLoading =
+            isNewSlideLoading[currentOutline] ||
+            (!currentState?.genSlideID && !hasExistingSlides)
+
+          return {
+            ...prev,
+            [currentOutline]: {
+              ...currentState,
+              isLoading: shouldBeLoading,
+              isNoGeneratedSlide: false,
+              lastUpdated: Date.now(),
+            },
+          }
+        })
       }
 
       // Clear loading state and set error screen after timeout if no data received
@@ -1153,7 +1178,16 @@ export default function ViewPresentation() {
       const fetchedOutlines = response.data.outline
       setOutlines(fetchedOutlines)
 
-      if (fetchedOutlines.length > 0 && !currentOutline && !currentOutlineID) {
+      const newOutline = sessionStorage.getItem('newOutlineID')
+      if (newOutline) {
+        const outline = fetchedOutlines.find(
+          (outline: any) => outline.outlineID === newOutline
+        )
+        if (outline) {
+          setCurrentOutline(outline.title)
+          setCurrentOutlineID(outline.outlineID)
+        }
+      } else {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)
       }
@@ -1335,6 +1369,7 @@ export default function ViewPresentation() {
   const yearlyPlanId = yearlyPlan?.id
 
   console.log('Slide States: ', slideStates)
+  console.log('Slides Array: ', slidesArray)
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">

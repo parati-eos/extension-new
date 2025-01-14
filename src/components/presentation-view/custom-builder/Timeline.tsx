@@ -74,8 +74,8 @@ export default function Timeline({
     ).length < 3
 
   const handleGenerateSlide = async () => {
-    if (outlineID === sessionStorage.getItem('newOutline')) {
-      sessionStorage.removeItem('newOutline')
+    if (outlineID === sessionStorage.getItem('newOutlineID')) {
+      sessionStorage.removeItem('newOutlineID')
     }
     setIsSlideLoading()
     setLoading(true)

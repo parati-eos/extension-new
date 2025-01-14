@@ -162,8 +162,8 @@ export default function Table({
   }
 
   const handleGenerateSlide = async () => {
-    if (outlineID === sessionStorage.getItem('newOutline')) {
-      sessionStorage.removeItem('newOutline')
+    if (outlineID === sessionStorage.getItem('newOutlineID')) {
+      sessionStorage.removeItem('newOutlineID')
     }
     setIsSlideLoading()
     setIsLoading(true)
