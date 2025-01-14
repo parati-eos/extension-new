@@ -940,17 +940,23 @@ export default function ViewPresentation() {
       // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
         setSlideStates((prev) => {
-          const genSlideID = prev[currentOutline]?.genSlideID
           return {
             ...prev,
             [currentOutline]: {
               ...prev[currentOutline],
               isLoading: false,
               isNoGeneratedSlide:
-                totalSlides === 0 && (!genSlideID || genSlideID === ''),
+                slideStates[currentOutline].genSlideID === null ||
+                totalSlides === 0 ||
+                !slidesArray[currentOutline],
             },
           }
         })
+
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]: 'slides',
+        }))
 
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
@@ -1293,6 +1299,8 @@ export default function ViewPresentation() {
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
+
+  console.log('Slide States: ', slideStates)
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
