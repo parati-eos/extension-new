@@ -103,7 +103,15 @@ export default function MobileOutlineModal({
       )
       const result = response.data
       if (result.type && result.title) {
-        sessionStorage.setItem('newOutlineID', newOutlineID)
+        // Retrieve the existing outlineIDs array from sessionStorage
+        const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+        let outlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
+
+        // Add the new outlineID to the array
+        outlineIDs.push(newOutlineID)
+
+        // Save the updated array back to sessionStorage
+        sessionStorage.setItem('outlineIDs', JSON.stringify(outlineIDs))
 
         setIsAddSlideModalOpen(false)
         toast.success('Outline Added', {

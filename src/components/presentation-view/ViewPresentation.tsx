@@ -554,9 +554,20 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
-    const newOutlineID = sessionStorage.getItem('newOutlineID')
-    if (currentOutlineID === newOutlineID) {
-      sessionStorage.removeItem('newOutlineID')
+    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+    if (storedOutlineIDs) {
+      const outlineIDs = JSON.parse(storedOutlineIDs)
+
+      // Check if currentOutlineID exists in the array
+      if (outlineIDs.includes(currentOutlineID)) {
+        // Remove currentOutlineID from the array
+        const updatedOutlineIDs = outlineIDs.filter(
+          (id: string) => id !== currentOutlineID
+        )
+
+        // Update the sessionStorage with the modified array
+        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
+      }
     }
     // Set loading state at the start
     setSlideStates((prev) => {
@@ -891,6 +902,15 @@ export default function ViewPresentation() {
     []
   )
 
+  const isOutlineIDInSessionStorage = (currentOutlineID: string): boolean => {
+    // Retrieve and parse the array from sessionStorage
+    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+    const outlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
+
+    // Check if the currentOutlineID exists in the array
+    return outlineIDs.includes(currentOutlineID)
+  }
+
   // TODO: WEB SOCKET
   // Monitor State Changes to Utilize in Socket
   useEffect(() => {
@@ -905,42 +925,66 @@ export default function ViewPresentation() {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
       console.info('Connecting to WebSocket server...')
 
-      console.log('Reached Socket Effect')
-
       // Set initial loading state
-      setSlideStates((prev) => {
-        const currentState = prev[currentOutline]
-        const hasExistingSlides = hasSlidesForOutline(currentOutline)
+      if (!isOutlineIDInSessionStorage(currentOutlineID)) {
+        setSlideStates((prev) => {
+          const currentState = prev[currentOutline]
+          const hasExistingSlides = hasSlidesForOutline(currentOutline)
 
-        // Don't set loading if we already have slides
-        if (hasExistingSlides) {
+          // Don't set loading if we already have slides
+          if (hasExistingSlides) {
+            return {
+              ...prev,
+              [currentOutline]: {
+                ...currentState,
+                genSlideID: slidesArray[currentOutline][0],
+                isLoading: false,
+                isNoGeneratedSlide: false,
+                lastUpdated: Date.now(),
+              },
+            }
+          }
+
+          // Only set loading if we need new slides
+          const shouldBeLoading =
+            isNewSlideLoading[currentOutline] ||
+            (!currentState?.genSlideID && !hasExistingSlides)
+
           return {
             ...prev,
             [currentOutline]: {
               ...currentState,
-              genSlideID: slidesArray[currentOutline][0],
-              isLoading: false,
+              isLoading: shouldBeLoading,
               isNoGeneratedSlide: false,
               lastUpdated: Date.now(),
             },
           }
-        }
+        })
+      }
 
-        // Only set loading if we need new slides
-        const shouldBeLoading =
-          isNewSlideLoading[currentOutline] ||
-          (!currentState?.genSlideID && !hasExistingSlides)
+      if (isOutlineIDInSessionStorage(currentOutlineID)) {
+        console.log('Reached Session Storage Socket OutlineID')
 
-        return {
+        setSlideStates((prev) => {
+          return {
+            ...prev,
+            [currentOutline]: {
+              isLoading: false,
+              isNoGeneratedSlide: false,
+              genSlideID: null,
+              retryCount: 0,
+              lastUpdated: Date.now(),
+            },
+          }
+        })
+
+        setDisplayModes((prev) => ({
           ...prev,
-          [currentOutline]: {
-            ...currentState,
-            isLoading: shouldBeLoading,
-            isNoGeneratedSlide: false,
-            lastUpdated: Date.now(),
-          },
-        }
-      })
+          [currentOutline]: 'newContent',
+        }))
+
+        setNewVersionBackDisabled(true)
+      }
 
       // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
@@ -1106,11 +1150,16 @@ export default function ViewPresentation() {
       const fetchedOutlines = response.data.outline
       setOutlines(fetchedOutlines)
 
-      const newOutline = sessionStorage.getItem('newOutlineID')
-      const outline = fetchedOutlines.find(
-        (outline: any) => outline.outlineID === newOutline
+      // Retrieve the array of new outlineIDs from sessionStorage
+      const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+      const newOutlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
+
+      // Find the first outline in fetchedOutlines that matches an ID in newOutlineIDs
+      const outline = fetchedOutlines.find((outline: any) =>
+        newOutlineIDs.includes(outline.outlineID)
       )
-      if (newOutline && outline) {
+
+      if (outline) {
         setCurrentOutline(outline.title)
         setCurrentOutlineID(outline.outlineID)
       } else {

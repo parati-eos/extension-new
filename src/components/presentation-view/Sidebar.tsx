@@ -96,7 +96,15 @@ const Sidebar: React.FC<SidebarProps> = ({
       )
       const result = response.data
       if (result.title && result.type) {
-        sessionStorage.setItem('newOutlineID', newOutlineID)
+        // Retrieve the existing outlineIDs array from sessionStorage
+        const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+        let outlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
+
+        // Add the new outlineID to the array
+        outlineIDs.push(newOutlineID)
+
+        // Save the updated array back to sessionStorage
+        sessionStorage.setItem('outlineIDs', JSON.stringify(outlineIDs))
         toast.success('Outline Successfully Added', {
           position: 'top-right',
           autoClose: 3000,

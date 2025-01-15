@@ -74,8 +74,20 @@ export default function Timeline({
     ).length < 3
 
   const handleGenerateSlide = async () => {
-    if (outlineID === sessionStorage.getItem('newOutlineID')) {
-      sessionStorage.removeItem('newOutlineID')
+    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+    if (storedOutlineIDs) {
+      const outlineIDs = JSON.parse(storedOutlineIDs)
+
+      // Check if currentOutlineID exists in the array
+      if (outlineIDs.includes(outlineID)) {
+        // Remove currentOutlineID from the array
+        const updatedOutlineIDs = outlineIDs.filter(
+          (id: string) => id !== outlineID
+        )
+
+        // Update the sessionStorage with the modified array
+        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
+      }
     }
     setIsSlideLoading()
     setLoading(true)
