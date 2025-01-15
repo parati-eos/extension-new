@@ -232,8 +232,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                       <p className="text-sm text-center text-gray-800">
                         Add New Section.
                       </p>
-                      <br />
-                      <br />
                     </div>
                   )}
                 </div>
