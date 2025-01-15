@@ -29,7 +29,15 @@ const App: React.FC = () => {
     // Check if 3 hours of inactivity have passed
     const checkInactivity = () => {
       const lastActivity = sessionStorage.getItem('lastActivity')
+      const currentPath = window.location.pathname
+
+      // Exclude specific paths from inactivity logic
+      const excludedPaths = ['/share', '/presentation']
+      const isExcludedPath = excludedPaths.some((path) =>
+        currentPath.startsWith(path)
+      )
       if (
+        !isExcludedPath &&
         lastActivity &&
         Date.now() - parseInt(lastActivity, 10) > INACTIVITY_THRESHOLD
       ) {
