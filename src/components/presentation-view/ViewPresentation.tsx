@@ -113,6 +113,8 @@ export default function ViewPresentation() {
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
   const [displayBoxLoading, setDisplayBoxLoading] = useState(true)
+  const slidesArrayRef = useRef(slidesArray)
+  const slideStatesRef = useRef(slideStates)
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -889,6 +891,13 @@ export default function ViewPresentation() {
     []
   )
 
+  // Monitor State Changes
+  useEffect(() => {
+    slidesArrayRef.current = slidesArray
+  }, [slidesArray])
+  useEffect(() => {
+    slideStatesRef.current = slideStates
+  }, [slideStates])
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   // TODO: WEB SOCKET
   useEffect(() => {
@@ -934,19 +943,66 @@ export default function ViewPresentation() {
       })
 
       // Clear loading state and set error screen after timeout if no data received
+      // const timeoutId = setTimeout(() => {
+      //   console.log('Error Screen: ', slidesArray[currentOutline])
+      //   console.log('Error Screen Slide State: ', slideStates[currentOutline])
+
+      //   setSlideStates((prev) => {
+      //     return {
+      //       ...prev,
+      //       [currentOutline]: {
+      //         ...prev[currentOutline],
+      //         isLoading: false,
+      //         isNoGeneratedSlide:
+      //           slidesArray[currentOutline]?.length === 0 ||
+      //           !slidesArray[currentOutline]
+      //             ? true
+      //             : false,
+      //       },
+      //     }
+      //   })
+
+      //   setDisplayModes((prev) => ({
+      //     ...prev,
+      //     [currentOutline]: 'slides',
+      //   }))
+
+      //   setIsNewSlideLoading((prev) => {
+      //     if (prev[currentOutline]) {
+      //       setNewSlideGenerated((prev) => ({
+      //         ...prev,
+      //         [currentOutline]: 'No',
+      //       }))
+      //       toast.error(`New Slide Not Generated`, {
+      //         position: 'top-right',
+      //         autoClose: 3000,
+      //       })
+      //       return {
+      //         ...prev,
+      //         [currentOutline]: false,
+      //       }
+      //     }
+      //     return prev
+      //   })
+      // }, 120000)
+      // Set up timeout
       const timeoutId = setTimeout(() => {
-        setSlideStates((prev) => {
-          return {
-            ...prev,
-            [currentOutline]: {
-              ...prev[currentOutline],
-              isLoading: false,
-              isNoGeneratedSlide:
-                !slidesArray[currentOutline] ||
-                slidesArray[currentOutline]?.length < 1,
-            },
-          }
-        })
+        console.log('Error Screen: ', slidesArrayRef.current[currentOutline])
+        console.log(
+          'Error Screen Slide State: ',
+          slideStatesRef.current[currentOutline]
+        )
+
+        setSlideStates((prev) => ({
+          ...prev,
+          [currentOutline]: {
+            ...prev[currentOutline],
+            isLoading: false,
+            isNoGeneratedSlide:
+              slidesArrayRef.current[currentOutline]?.length === 0 ||
+              !slidesArrayRef.current[currentOutline],
+          },
+        }))
 
         setDisplayModes((prev) => ({
           ...prev,
@@ -1037,6 +1093,10 @@ export default function ViewPresentation() {
                 position: 'top-right',
                 autoClose: 3000,
               })
+              setDisplayModes((prev) => ({
+                ...prev,
+                [currentOutline]: 'slides',
+              }))
             }
 
             // Check if newSlides array has only one object and its display key is false
