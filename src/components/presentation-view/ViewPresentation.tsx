@@ -526,7 +526,9 @@ export default function ViewPresentation() {
         ...prev,
         [currentOutline]: {
           ...prev[currentOutline],
-          isLoading: slidesArray[currentOutline]?.length === 0,
+          isLoading:
+            slidesArray[currentOutline]?.length === 0 ||
+            !slidesArray[currentOutline],
           isNoGeneratedSlide: false,
           lastUpdated: Date.now(),
         },
@@ -904,11 +906,8 @@ export default function ViewPresentation() {
               ...prev[currentOutline],
               isLoading: false,
               isNoGeneratedSlide:
-                !slidesArray[currentOutline] &&
-                (slideStates[currentOutline]?.genSlideID === null ||
-                  totalSlides === 0 ||
-                  !slidesArray[currentOutline]) &&
-                displayModes[currentOutline] === 'slides',
+                !slidesArray[currentOutline] ||
+                slidesArray[currentOutline]?.length < 1,
             },
           }
         })

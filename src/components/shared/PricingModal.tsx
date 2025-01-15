@@ -1,7 +1,10 @@
+import React from 'react'
+import { io, Socket } from 'socket.io-client'
 import axios from 'axios'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setUserPlan } from '../../redux/slices/userSlice'
 
 interface PricingModalProps {
   closeModal: () => void
@@ -63,6 +66,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     'monthly'
   )
   const userPlan = useSelector((state: any) => state.user.userPlan)
+  const SOCKET_SERVER_URL = process.env.REACT_APP_SOCKET_URL // Replace with your server URL
+  const userEmail = sessionStorage.getItem('userEmail')
+  const dispatch = useDispatch()
   const plans = [
     {
       name: 'FREE',
@@ -331,6 +337,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             start_at: startAtUnix,
             quantity: 1,
             orgId: orgId,
+            userId: userEmail,
           },
           {
             headers: {
@@ -384,6 +391,36 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       }
     }
   }
+
+  useEffect(() => {
+    const socket: Socket = io(SOCKET_SERVER_URL)
+
+    // Join the room
+    const userId: string = userEmail! // Test with the userId from your webhook payload
+    socket.emit('join-room', userId)
+
+    console.log('Room Joined')
+
+    // Listen for Razorpay events
+    socket.on('subscription.authenticated', (data: any) => {
+      console.log('Received subscription.authenticated:', data)
+    })
+
+    socket.on('subscription.activated', (data: any) => {
+      console.log('Received subscription.activated:', data)
+    })
+
+    socket.on('payment.authorized', (data: any) => {
+      console.log('Received payment.authorized:', data)
+      // window.location.reload()
+      dispatch(setUserPlan(data))
+    })
+
+    // Cleanup on unmount
+    return () => {
+      socket.disconnect()
+    }
+  }, [userEmail])
 
   return (
     <div
