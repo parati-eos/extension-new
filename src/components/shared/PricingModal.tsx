@@ -6,6 +6,22 @@ import { FaCheckCircle } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice'
 
+interface SubscriptionUpdate {
+  event: string
+  orgId: string
+  status: string
+}
+
+interface PaymentUpdate {
+  event: string
+  paymentId: string
+}
+
+interface RefundUpdate {
+  event: string
+  refundId: string
+}
+
 interface PricingModalProps {
   closeModal: () => void
   heading: string
@@ -391,6 +407,52 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       }
     }
   }
+
+  // const [subscriptionUpdates, setSubscriptionUpdates] = useState<
+  //   SubscriptionUpdate[]
+  // >([])
+  // const [paymentUpdates, setPaymentUpdates] = useState<PaymentUpdate[]>([])
+  // const [refundUpdates, setRefundUpdates] = useState<RefundUpdate[]>([])
+  // const [connected, setConnected] = useState<boolean>(false)
+
+  // useEffect(() => {
+  //   const socket: Socket = io(SOCKET_SERVER_URL) // Adjust the URL as per your server
+
+  //   // Handle connection
+  //   socket.on('connect', () => {
+  //     console.log('Connected to /payment namespace')
+  //     setConnected(true)
+  //   })
+
+  //   // Handle disconnection
+  //   socket.on('disconnect', () => {
+  //     console.log('Disconnected from /payment namespace')
+  //     setConnected(false)
+  //   })
+
+  //   // Listen for subscription updates
+  //   socket.on('subscription-update', (data: SubscriptionUpdate) => {
+  //     console.log('Received subscription update:', data)
+  //     setSubscriptionUpdates((prev) => [...prev, data])
+  //   })
+
+  //   // Listen for payment authorization events
+  //   socket.on('payment-authorized', (data: PaymentUpdate) => {
+  //     console.log('Received payment authorization:', data)
+  //     setPaymentUpdates((prev) => [...prev, data])
+  //   })
+
+  //   // Listen for refund updates
+  //   socket.on('refund-update', (data: RefundUpdate) => {
+  //     console.log('Received refund update:', data)
+  //     setRefundUpdates((prev) => [...prev, data])
+  //   })
+
+  //   // Cleanup connection on component unmount
+  //   return () => {
+  //     socket.disconnect()
+  //   }
+  // }, [])
 
   return (
     <div
