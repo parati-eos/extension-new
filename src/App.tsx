@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -18,6 +18,48 @@ import PricingPage from './pages/PricingPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
 
 const App: React.FC = () => {
+  useEffect(() => {
+    const INACTIVITY_THRESHOLD = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
+
+    // Store the current timestamp of user activity
+    const storeActivityTimestamp = () => {
+      sessionStorage.setItem('lastActivity', Date.now().toString())
+    }
+
+    // Check if 3 hours of inactivity have passed
+    const checkInactivity = () => {
+      const lastActivity = sessionStorage.getItem('lastActivity')
+      if (
+        lastActivity &&
+        Date.now() - parseInt(lastActivity, 10) > INACTIVITY_THRESHOLD
+      ) {
+        // 2 hours of inactivity detected, redirect to login page
+        window.location.href = '/auth/login' // Use window.location for redirect
+        sessionStorage.clear()
+      }
+    }
+
+    // Add event listeners for user activity
+    const activityEvents = ['click', 'mousemove', 'keypress', 'scroll']
+    activityEvents.forEach((event) => {
+      window.addEventListener(event, storeActivityTimestamp)
+    })
+
+    // Set the initial timestamp when the app loads
+    storeActivityTimestamp()
+
+    // Check inactivity every minute (or adjust interval as needed)
+    const inactivityInterval = setInterval(checkInactivity, 60 * 1000)
+
+    // Cleanup event listeners and intervals on component unmount
+    return () => {
+      activityEvents.forEach((event) => {
+        window.removeEventListener(event, storeActivityTimestamp)
+      })
+      clearInterval(inactivityInterval)
+    }
+  }, [])
+
   return (
     <>
       <Router>
