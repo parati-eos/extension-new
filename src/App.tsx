@@ -32,7 +32,7 @@ const App: React.FC = () => {
       const currentPath = window.location.pathname
 
       // Exclude specific paths from inactivity logic
-      const excludedPaths = ['/share', '/presentation']
+      const excludedPaths = ['/share', '/presentation-share']
       const isExcludedPath = excludedPaths.some((path) =>
         currentPath.startsWith(path)
       )
@@ -103,7 +103,7 @@ const App: React.FC = () => {
               </ProtectedRoutes>
             }
           />
-          <Route path="/presentation" element={<PresentationShare />} />
+          <Route path="/presentation-share" element={<PresentationShare />} />
           <Route path="/share" element={<PitchZynthShare />} />
           <Route path="/test" element={<Test />} />
         </Routes>

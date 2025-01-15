@@ -209,7 +209,7 @@ const HistoryContainer: React.FC = () => {
 
   // Handle Share Button Click
   const handleShare = async () => {
-    const url = `/presentation?formId=${documentID}`
+    const url = `/presentation-share?formId=${documentID}`
     window.open(url, '_blank') // Opens the URL in a new tab
   }
 
