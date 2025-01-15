@@ -92,7 +92,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   {/* Info Button */}
   <div className="absolute top-2 right-2">
   <button
-      className="w-4 h-4 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full hover:bg-blue-600 shadow-md transition duration-200 focus:outline-none"
+      className="w-4 h-4 flex items-center justify-center bg-[#3667B2] text-white font-bold rounded-full hover:bg-blue-600 shadow-md transition duration-200 focus:outline-none"
       onMouseEnter={handleMouseEnterQuick}
       onMouseLeave={handleMouseLeaveQuick}
     >
@@ -101,7 +101,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
 
     {/* Tooltip */}
     {isDialogVisibleQuick && (
-      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg z-50">
+      <div className="absolute top-full left-[1.2rem] transform -translate-x-1/2 mt-2 w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg z-50">
         <p className="text-xs text-center text-gray-800">
         Generate a new version without providing any input. Useful when you need slide ideas for a section.
         </p>
@@ -125,7 +125,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                {/* Info Button */}
   <div className="absolute top-2 right-2">
   <button
-      className="w-4 h-4 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full hover:bg-blue-600 shadow-md transition duration-200 focus:outline-none"
+      className="w-4 h-4 flex items-center justify-center bg-[#3667B2] text-white font-bold rounded-full hover:bg-blue-600 shadow-md transition duration-200 focus:outline-none"
       onMouseEnter={handleMouseEnterNarrative}
       onMouseLeave={handleMouseLeaveNarrative}
     >
@@ -168,9 +168,9 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                 <span className="text-xs lg:text-sm">Custom Builder</span>
               </button>
               {isDialogVisible && userPlan==='free'&&(
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[8rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+                <div className="absolute  left-[0.1rem] transform -translate-x-1/2 w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                   <p className="text-xs text-center text-gray-800">
-                  Choose a slide type and provide information in a structured manner to generate a new version in line with the provided content.<br></br> Please{' '}
+                 <p>Choose a slide type and provide information in a structured format to get more control over the final output.</p> <br></br> Please{' '}
                     <button
                       className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
                       onClick={() => setIsPricingModalOpen(true)}
@@ -184,7 +184,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                     {/* Info Button */}
   <div className="absolute top-2 right-2">
   <button
-      className="w-4 h-4 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full hover:bg-blue-600 shadow-md transition duration-200 focus:outline-none"
+      className="w-4 h-4 flex items-center justify-center bg-[#3667B2] text-white font-bold rounded-full hover:bg-blue-600 shadow-md transition duration-200 focus:outline-none"
       onMouseEnter={() => {
         if (userPlan === 'free'|| userPlan !== 'free')
           setIsDialogVisible(true)
@@ -199,9 +199,9 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
 
     {/* Tooltip */}
     {isDialogVisible && userPlan !=='free'&& (
-      <div className="absolute   transform -translate-x-[80%] w-[10rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+      <div className="absolute   transform -translate-x-[85%] w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
         <p className="text-xs text-center text-gray-800">
-        Choose a slide type and provide information in a structured format to get more control over the final output
+        Choose a slide type and provide information in a structured format to get more control over the final output.
         </p>
       </div>
     )}
@@ -288,9 +288,9 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               How would you like to create a new slide?
             </h3>
           </div>
-          <div className="relative flex   justify-between mt-8 w-full overflow-hidden p-4">
+          <div className="relative flex   justify-between mt-8 w-full  p-4">
             <div
-              className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
+              className="relative flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
               style={{ width: '30%', height: '12rem' }}
               onMouseEnter={handleMouseEnterQuick}
               onMouseLeave={handleMouseLeaveQuick}
@@ -307,7 +307,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 <span className="text-base font-medium">Quick Generate</span>
               </button>
               {isDialogVisibleQuick && (
-                <div className="absolute w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+               <div className="absolute top-[10rem]   w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                   <p className="text-sm text-center text-gray-800">
                   Generate a new version without providing any input. Useful when you need slide ideas for a section.
                   </p>
@@ -315,7 +315,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               )}
             </div>
             <div
-              className="flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
+              className="relative flex flex-col items-center border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
               style={{ width: '30%', height: '12rem' }}
               onMouseEnter={handleMouseEnterNarrative}
               onMouseLeave={handleMouseLeaveNarrative}
@@ -332,7 +332,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 <span className="text-base font-medium">Slide Narrative</span>
               </button>
               {isDialogVisibleNarrative && (
-                <div className="absolute w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+               <div className="absolute top-[10rem]   w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                   <p className="text-sm text-center text-gray-800">
                   Provide more context around the slide to generate a new version.
                   </p>
@@ -366,9 +366,9 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 <span className="text-base font-medium">Custom Builder</span>
               </button>
               {isDialogVisible && userPlan==='free' &&(
-                <div className="absolute w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+                <div className="absolute top-[10rem]   w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                   <p className="text-sm text-center text-gray-800">
-                  Choose a slide type and provide information in a structured format to get more control over the final output<br></br> Please{' '}
+                 <p>Choose a slide type and provide information in a structured format to get more control over the final output.</p> <br></br> Please{' '}
                     <button
                       className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
                       onClick={() => setIsPricingModalOpen(true)}
@@ -381,7 +381,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
               )}
                {/* Tooltip */}
                { isDialogVisible && userPlan !== 'free' && (
-                    <div className="absolute w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
+                   <div className="absolute top-[10rem]   w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                       <p className="text-sm text-center text-gray-800">
                       Choose a slide type and provide information in a structured format to get more control over the final output
                       </p>
