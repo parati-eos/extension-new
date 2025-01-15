@@ -825,6 +825,8 @@ export default function ViewPresentation() {
       }
     )
 
+    console.log('Reached Outlines Effect')
+
     setSlideStates(initialStates)
     setDisplayModes(initialModes)
   }, [outlines])
@@ -849,6 +851,7 @@ export default function ViewPresentation() {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
       console.info('Connecting to WebSocket server...')
 
+      console.log('Reached Socket Effect')
       // Set initial loading state
       setSlideStates((prev) => {
         const currentState = prev[currentOutline]

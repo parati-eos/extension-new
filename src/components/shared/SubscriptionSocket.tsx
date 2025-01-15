@@ -12,15 +12,15 @@ const SocketTest: React.FC = () => {
     socket.emit('join-room', userId)
 
     // Listen for Razorpay events
-    socket.on('subscription.authenticated', (data: unknown) => {
+    socket.on('subscription.authenticated', (data: any) => {
       console.log('Received subscription.authenticated:', data)
     })
 
-    socket.on('subscription.activated', (data: unknown) => {
+    socket.on('subscription.activated', (data: any) => {
       console.log('Received subscription.activated:', data)
     })
 
-    socket.on('payment.authorized', (data: unknown) => {
+    socket.on('payment.authorized', (data: any) => {
       console.log('Received payment.authorized:', data)
     })
 
