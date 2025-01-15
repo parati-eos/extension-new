@@ -203,7 +203,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                   {/* Tooltip */}
                   {isDialogVisible && isDisabled && userPlan === 'free' && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                                    <p className="text-sm text-center text-gray-800">Add New Section</p>
+                                    <p className="text-sm text-center text-gray-800">Add New Section.</p> 
+                                    
+                                    <br/>
                       <p className="text-sm text-center text-gray-800">
                         Please{' '}
                         <button
@@ -220,8 +222,10 @@ const Sidebar: React.FC<SidebarProps> = ({
                     { isDialogVisible && userPlan !== 'free' && (
                     <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-[10rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
                       <p className="text-sm text-center text-gray-800">
-                        Add New Section
+                        Add New Section.
                       </p>
+                      <br/>
+                      <br/>
                     </div>
                   )}
                 </div>
