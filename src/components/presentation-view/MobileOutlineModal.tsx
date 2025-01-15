@@ -110,7 +110,6 @@ export default function MobileOutlineModal({
           position: 'top-right',
           autoClose: 3000,
         })
-        // window.location.reload()
         setIsAddingSlide(false)
         fetchOutlines()
       }

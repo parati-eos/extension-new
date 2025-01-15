@@ -891,7 +891,8 @@ export default function ViewPresentation() {
     []
   )
 
-  // Monitor State Changes
+  // TODO: WEB SOCKET
+  // Monitor State Changes to Utilize in Socket
   useEffect(() => {
     slidesArrayRef.current = slidesArray
   }, [slidesArray])
@@ -899,7 +900,6 @@ export default function ViewPresentation() {
     slideStatesRef.current = slideStates
   }, [slideStates])
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
-  // TODO: WEB SOCKET
   useEffect(() => {
     if (currentOutline !== '' && documentID !== null) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
@@ -943,49 +943,6 @@ export default function ViewPresentation() {
       })
 
       // Clear loading state and set error screen after timeout if no data received
-      // const timeoutId = setTimeout(() => {
-      //   console.log('Error Screen: ', slidesArray[currentOutline])
-      //   console.log('Error Screen Slide State: ', slideStates[currentOutline])
-
-      //   setSlideStates((prev) => {
-      //     return {
-      //       ...prev,
-      //       [currentOutline]: {
-      //         ...prev[currentOutline],
-      //         isLoading: false,
-      //         isNoGeneratedSlide:
-      //           slidesArray[currentOutline]?.length === 0 ||
-      //           !slidesArray[currentOutline]
-      //             ? true
-      //             : false,
-      //       },
-      //     }
-      //   })
-
-      //   setDisplayModes((prev) => ({
-      //     ...prev,
-      //     [currentOutline]: 'slides',
-      //   }))
-
-      //   setIsNewSlideLoading((prev) => {
-      //     if (prev[currentOutline]) {
-      //       setNewSlideGenerated((prev) => ({
-      //         ...prev,
-      //         [currentOutline]: 'No',
-      //       }))
-      //       toast.error(`New Slide Not Generated`, {
-      //         position: 'top-right',
-      //         autoClose: 3000,
-      //       })
-      //       return {
-      //         ...prev,
-      //         [currentOutline]: false,
-      //       }
-      //     }
-      //     return prev
-      //   })
-      // }, 120000)
-      // Set up timeout
       const timeoutId = setTimeout(() => {
         console.log('Error Screen: ', slidesArrayRef.current[currentOutline])
         console.log(
@@ -1124,9 +1081,6 @@ export default function ViewPresentation() {
         outlineID: currentOutlineID,
       })
 
-      console.log('Socket Effect Slide State: ', slideStates)
-      console.log('Socket Effect Slide Array: ', slidesArray)
-      console.log('Socket Effect Display Mode: ', displayModes)
       // Cleanup function
       return () => {
         clearTimeout(timeoutId)
