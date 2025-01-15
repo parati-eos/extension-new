@@ -1058,14 +1058,12 @@ export default function ViewPresentation() {
       setOutlines(fetchedOutlines)
 
       const newOutline = sessionStorage.getItem('newOutlineID')
-      if (newOutline) {
-        const outline = fetchedOutlines.find(
-          (outline: any) => outline.outlineID === newOutline
-        )
-        if (outline) {
-          setCurrentOutline(outline.title)
-          setCurrentOutlineID(outline.outlineID)
-        }
+      const outline = fetchedOutlines.find(
+        (outline: any) => outline.outlineID === newOutline
+      )
+      if (newOutline && outline) {
+        setCurrentOutline(outline.title)
+        setCurrentOutlineID(outline.outlineID)
       } else {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)
