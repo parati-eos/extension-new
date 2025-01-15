@@ -392,36 +392,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     }
   }
 
-  useEffect(() => {
-    const socket: Socket = io(SOCKET_SERVER_URL)
-
-    // Join the room
-    const userId: string = userEmail! // Test with the userId from your webhook payload
-    socket.emit('join-room', userId)
-
-    console.log('Room Joined')
-
-    // Listen for Razorpay events
-    socket.on('subscription.authenticated', (data: any) => {
-      console.log('Received subscription.authenticated:', data)
-    })
-
-    socket.on('subscription.activated', (data: any) => {
-      console.log('Received subscription.activated:', data)
-    })
-
-    socket.on('payment.authorized', (data: any) => {
-      console.log('Received payment.authorized:', data)
-      // window.location.reload()
-      dispatch(setUserPlan(data))
-    })
-
-    // Cleanup on unmount
-    return () => {
-      socket.disconnect()
-    }
-  }, [userEmail])
-
   return (
     <div
       className={`${
