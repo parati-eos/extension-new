@@ -158,6 +158,34 @@ export default function ViewPresentation() {
       // const response = await fetch(
       //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
       // )
+
+      // 2. Then, call the additional API to get presentationID
+      const callAdditionalApi = async () => {
+        if (presentationID) {
+          // Call the second API with the extracted presentationID
+          const secondApiResponse = await fetch(
+            `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
+          )
+          const secondApiText = await secondApiResponse.text()
+          console.log('Raw second API response:', secondApiText)
+
+          try {
+            const secondApiResult = JSON.parse(secondApiText)
+            console.log('Second API parsed response:', secondApiResult)
+          } catch (jsonError) {
+            console.error(
+              'Error parsing second API response as JSON:',
+              jsonError
+            )
+          }
+        } else {
+          throw new Error('PresentationID not found in the response')
+        }
+      }
+
+      // Call additional API
+      await callAdditionalApi()
+
       const url = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`
       const response = await fetch(url, {
         headers: {
@@ -447,9 +475,17 @@ export default function ViewPresentation() {
       setDisplayModes((prev) => ({
         ...prev,
         [currentOutline]:
-          slidesArray[title]?.length === 0
+          slidesArray[currentOutline]?.length === 0
             ? 'newContent'
             : prev[currentOutline],
+      }))
+    } else {
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]:
+          slidesArray[currentOutline]?.length === 0 && totalSlides === 0
+            ? 'newContent'
+            : 'slides',
       }))
     }
 
