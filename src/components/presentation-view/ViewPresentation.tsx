@@ -826,6 +826,9 @@ export default function ViewPresentation() {
     )
 
     console.log('Reached Outlines Effect')
+    console.log('Outlines Effect Slide State: ', slideStates)
+    console.log('Outlines Effect Slide Array: ', slidesArray)
+    console.log('Outlines Effect Display Mode: ', displayModes)
 
     setSlideStates(initialStates)
     setDisplayModes(initialModes)
@@ -852,6 +855,7 @@ export default function ViewPresentation() {
       console.info('Connecting to WebSocket server...')
 
       console.log('Reached Socket Effect')
+
       // Set initial loading state
       setSlideStates((prev) => {
         const currentState = prev[currentOutline]
@@ -863,6 +867,7 @@ export default function ViewPresentation() {
             ...prev,
             [currentOutline]: {
               ...currentState,
+              genSlideID: slidesArray[currentOutline][0],
               isLoading: false,
               isNoGeneratedSlide: false,
               lastUpdated: Date.now(),
@@ -1020,6 +1025,9 @@ export default function ViewPresentation() {
         outlineID: currentOutlineID,
       })
 
+      console.log('Socket Effect Slide State: ', slideStates)
+      console.log('Socket Effect Slide Array: ', slidesArray)
+      console.log('Socket Effect Display Mode: ', displayModes)
       // Cleanup function
       return () => {
         clearTimeout(timeoutId)
