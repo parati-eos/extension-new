@@ -516,6 +516,10 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
+    const newOutlineID = sessionStorage.getItem('newOutlineID')
+    if (currentOutlineID === newOutlineID) {
+      sessionStorage.removeItem('newOutlineID')
+    }
     // Set loading state at the start
     setSlideStates((prev) => {
       return {
