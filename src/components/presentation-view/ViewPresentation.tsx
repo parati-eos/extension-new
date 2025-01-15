@@ -538,6 +538,14 @@ export default function ViewPresentation() {
               ? 'newContent'
               : prev[currentOutline],
         }))
+      } else {
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]:
+            slidesArray[currentOutline]?.length === 0 && totalSlides === 0
+              ? 'newContent'
+              : 'slides',
+        }))
       }
 
       setIsNewSlideLoading((prev) => ({
@@ -902,16 +910,13 @@ export default function ViewPresentation() {
     []
   )
 
+  // Check if outlineID exists in sessionStorage
   const isOutlineIDInSessionStorage = (currentOutlineID: string): boolean => {
-    // Retrieve and parse the array from sessionStorage
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     const outlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
 
-    // Check if the currentOutlineID exists in the array
     return outlineIDs.includes(currentOutlineID)
   }
-
-  // TODO: WEB SOCKET
   // Monitor State Changes to Utilize in Socket
   useEffect(() => {
     slidesArrayRef.current = slidesArray
@@ -920,6 +925,7 @@ export default function ViewPresentation() {
     slideStatesRef.current = slideStates
   }, [slideStates])
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
+  // TODO: WEB SOCKET
   useEffect(() => {
     if (currentOutline !== '' && documentID !== null) {
       const socket = io(SOCKET_URL, { transports: ['websocket'] })
