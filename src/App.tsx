@@ -31,20 +31,29 @@ const App: React.FC = () => {
       const lastActivity = sessionStorage.getItem('lastActivity')
       const currentPath = window.location.pathname
 
-      // Exclude specific paths from inactivity logic
-      const excludedPaths = ['/share', '/presentation-share']
-      const isExcludedPath = excludedPaths.some((path) =>
+      // Define paths for exclusion
+      const exactExcludedPaths = ['/'] // Paths that require an exact match
+      const prefixExcludedPaths = ['/share', '/presentation-share', '/auth'] // Paths that start with these prefixes
+
+      // Check if current path matches any excluded paths
+      const isExactExcludedPath = exactExcludedPaths.includes(currentPath)
+      const isPrefixExcludedPath = prefixExcludedPaths.some((path) =>
         currentPath.startsWith(path)
       )
+
+      // Skip inactivity logic if the path is excluded
       if (
-        !isExcludedPath &&
-        lastActivity &&
-        Date.now() - parseInt(lastActivity, 10) > INACTIVITY_THRESHOLD
+        (isExactExcludedPath || isPrefixExcludedPath) ||
+        !lastActivity ||
+        Date.now() - parseInt(lastActivity, 10) <= INACTIVITY_THRESHOLD
       ) {
-        // 2 hours of inactivity detected, redirect to login page
-        window.location.href = '/auth/login' // Use window.location for redirect
-        sessionStorage.clear()
+        return
       }
+
+      // Inactivity detected, show alert and redirect
+      alert('You have been logged out due to inactivity.')
+      sessionStorage.clear()
+      window.location.href = '/' // Redirect to login page
     }
 
     // Add event listeners for user activity

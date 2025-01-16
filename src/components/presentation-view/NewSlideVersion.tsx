@@ -383,7 +383,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                { isDialogVisible && userPlan !== 'free' && (
                    <div className="absolute top-[10rem]   w-[16rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
                       <p className="text-sm text-center text-gray-800">
-                      Choose a slide type and provide information in a structured format to get more control over the final output
+                      Choose a slide type and provide information in a structured format to get more control over the final output.
                       </p>
                     </div>
                   )}
