@@ -32,7 +32,7 @@ const ShareSidebar: React.FC<ShareSidebarProps> = ({
     }
   }, [selectedOutline, outlines])
   return (
-    <div className="no-scrollbar no-scrollbar::-webkit-scrollbar hidden lg:block w-[22%] h-[85%] p-4 bg-gray-50 ml-4 rounded-xl border border-gray-300 overflow-y-auto">
+    <div className="no-scrollbar no-scrollbar::-webkit-scrollbar hidden lg:block w-[22%] h-[87%] p-4 bg-gray-50 ml-4 rounded-xl border border-gray-300 overflow-y-auto">
       <ul className="space-y-2 relative">
         {outlines.map((outline: string, idx: any) => (
           <React.Fragment key={idx}>
