@@ -81,7 +81,7 @@ export const DesktopButtonSection: React.FC<ButtonSectionProps> = ({
       {isDialogVisible &&(
               <div className="absolute transform translate-x-1/2 -translate-y-full w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
               <p className="text-sm text-center text-gray-800">
-              Finalize the selected slide version to add it to the final presentation
+              Finalize the selected slide version to add it to the final presentation.
               </p>
             </div>
             
