@@ -1,124 +1,44 @@
-import React, { useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 
-interface SubscriptionUpdate {
-  event: string
-  orgId: string
-  status: string
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL // Replace with your server URL
+
+interface SocketContextValue {
+  socket: Socket | null
 }
 
-interface PaymentUpdate {
-  event: string
-  paymentId: string
-}
+const SocketContext = createContext<SocketContextValue>({ socket: null })
 
-interface RefundUpdate {
-  event: string
-  refundId: string
-}
-
-const WebSocketComponent: React.FC = () => {
-  const [subscriptionUpdates, setSubscriptionUpdates] = useState<
-    SubscriptionUpdate[]
-  >([])
-  const [paymentUpdates, setPaymentUpdates] = useState<PaymentUpdate[]>([])
-  const [refundUpdates, setRefundUpdates] = useState<RefundUpdate[]>([])
-  const [connected, setConnected] = useState<boolean>(false)
+export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [socket, setSocket] = useState<Socket | null>(null)
 
   useEffect(() => {
-    const socket: Socket = io('http://localhost:5002/payment') // Adjust the URL as per your server
-
-    // Handle connection
-    socket.on('connect', () => {
-      console.log('Connected to /payment namespace')
-      setConnected(true)
+    const razorpaySocket: Socket = io(`${SOCKET_URL}/razorpay-webhooks`, {
+      transports: ['websocket'],
     })
 
-    // Handle disconnection
-    socket.on('disconnect', () => {
-      console.log('Disconnected from /payment namespace')
-      setConnected(false)
+    razorpaySocket.on('connect', () => {
+      console.log('Connected to Razorpay Webhooks namespace')
     })
 
-    // Listen for subscription updates
-    socket.on('subscription-update', (data: SubscriptionUpdate) => {
-      console.log('Received subscription update:', data)
-      setSubscriptionUpdates((prev) => [...prev, data])
+    razorpaySocket.on('disconnect', () => {
+      console.log('Disconnected from Razorpay Webhooks namespace')
     })
 
-    // Listen for payment authorization events
-    socket.on('payment-authorized', (data: PaymentUpdate) => {
-      console.log('Received payment authorization:', data)
-      setPaymentUpdates((prev) => [...prev, data])
-    })
+    setSocket(razorpaySocket)
 
-    // Listen for refund updates
-    socket.on('refund-update', (data: RefundUpdate) => {
-      console.log('Received refund update:', data)
-      setRefundUpdates((prev) => [...prev, data])
-    })
-
-    // Cleanup connection on component unmount
     return () => {
-      socket.disconnect()
+      razorpaySocket.disconnect()
     }
   }, [])
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>WebSocket Updates</h1>
-      <p>Status: {connected ? 'Connected' : 'Disconnected'}</p>
-
-      <section>
-        <h2>Subscription Updates</h2>
-        {subscriptionUpdates.length === 0 ? (
-          <p>No subscription updates yet.</p>
-        ) : (
-          <ul>
-            {subscriptionUpdates.map((update, index) => (
-              <li key={index}>
-                <strong>Event:</strong> {update.event} |{' '}
-                <strong>Org ID:</strong> {update.orgId} |{' '}
-                <strong>Status:</strong> {update.status}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2>Payment Updates</h2>
-        {paymentUpdates.length === 0 ? (
-          <p>No payment updates yet.</p>
-        ) : (
-          <ul>
-            {paymentUpdates.map((update, index) => (
-              <li key={index}>
-                <strong>Event:</strong> {update.event} |{' '}
-                <strong>Payment ID:</strong> {update.paymentId}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2>Refund Updates</h2>
-        {refundUpdates.length === 0 ? (
-          <p>No refund updates yet.</p>
-        ) : (
-          <ul>
-            {refundUpdates.map((update, index) => (
-              <li key={index}>
-                <strong>Event:</strong> {update.event} |{' '}
-                <strong>Refund ID:</strong> {update.refundId}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </div>
+    <SocketContext.Provider value={{ socket }}>
+      {children}
+    </SocketContext.Provider>
   )
 }
 
-export default WebSocketComponent
+export const useSocket = () => useContext(SocketContext)

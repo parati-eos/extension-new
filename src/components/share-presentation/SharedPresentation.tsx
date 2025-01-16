@@ -1,28 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Googleslides from './GoogleSlides'
 import ZynthLogo from '../../assets/zynth-text.png'
 import { GooglePresentationProps } from '../../types/types.ts'
-import './presentationshare.css'
+import '../presentation-view/viewpresentation.css'
 
 interface SharedPresentationProps {
   formId: string
 }
 
 const GooglePresentation: React.FC<GooglePresentationProps> = ({ formId }) => {
-  return (
-    <div className="PresentationContainer">
-      <div>
-        <Googleslides formId={formId} />
-      </div>
-    </div>
-  )
+  return <Googleslides formId={formId} />
 }
 
 const SharedPresentation = ({ formId }: SharedPresentationProps) => {
-  const [currentSlideKey, setCurrentSlideKey] = useState<number>(0)
   return (
-    <div className="main-container h-screen overflow-hidden ">
-      <div className="flex flex-col items-center justify-center">
+    <div className="w-full h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
+      <div className="flex flex-col items-center justify-center py-2 bg-gray-50">
         <a
           href="/"
           target="_blank"
@@ -36,14 +29,7 @@ const SharedPresentation = ({ formId }: SharedPresentationProps) => {
           />
         </a>
       </div>
-      <div className="presentationshare-viewing-container">
-        <div className="presentationshare-viewing-center">
-          <div className="presentationshare-view-slides">
-            <GooglePresentation key={currentSlideKey} formId={formId} />
-          </div>
-        </div>
-        <div className="presentationshare-viewing-side"></div>
-      </div>
+      <GooglePresentation formId={formId} />
     </div>
   )
 }

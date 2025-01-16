@@ -457,109 +457,6 @@ export default function ViewPresentation() {
     })
   }
 
-  // MEDIUM LARGE SCREENS: Sidebar Outline Select
-  const handleOutlineSelect = (title: string) => {
-    setCurrentOutline(title)
-    setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!)
-    const slideIndex = outlines.findIndex((o) => o.title === title)
-    setCurrentSlide(slideIndex)
-    slideRefs.current[slideIndex]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-    })
-    setCurrentSlideIndex(0)
-
-    // Only execute setDisplayModes if isNewSlideLoading[title] is false or undefined
-    if (
-      isNewSlideLoading[title] === false ||
-      isNewSlideLoading[title] === undefined
-    ) {
-      setDisplayModes((prev) => ({
-        ...prev,
-        [currentOutline]:
-          slidesArray[currentOutline]?.length === 0
-            ? 'newContent'
-            : prev[currentOutline],
-      }))
-    } else {
-      setDisplayModes((prev) => ({
-        ...prev,
-        [currentOutline]:
-          slidesArray[currentOutline]?.length === 0 && totalSlides === 0
-            ? 'newContent'
-            : 'slides',
-      }))
-    }
-
-    setIsNewSlideLoading((prev) => ({
-      ...prev,
-      [currentOutline]: prev[currentOutline],
-    }))
-
-    setNewSlideGenerated((prev) => ({
-      ...prev,
-      [title]: prev[title] && '',
-    }))
-  }
-
-  // MEDIUM LARGE SCREENS: Slide Scroll
-  const debounce = (fn: Function, delay: number) => {
-    let timer: NodeJS.Timeout
-    return (...args: any[]) => {
-      clearTimeout(timer)
-      timer = setTimeout(() => fn(...args), delay)
-    }
-  }
-  const handleScroll = debounce(() => {
-    if (!scrollContainerRef.current) return
-    // setCurrentSlideIndex(0)
-    const scrollTop = scrollContainerRef.current.scrollTop || 0
-    const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
-      if (!slideRef) return false
-
-      const offset = slideRef.offsetTop - scrollTop
-      return offset >= 0 && offset < slideRef.offsetHeight
-    })
-
-    if (
-      closestIndex !== -1 &&
-      outlines[closestIndex]?.title !== currentOutline
-    ) {
-      setCurrentOutline(outlines[closestIndex]?.title)
-      setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
-      if (
-        isNewSlideLoading[currentOutline] === false ||
-        isNewSlideLoading[currentOutline] === undefined
-      ) {
-        setDisplayModes((prev) => ({
-          ...prev,
-          [currentOutline]:
-            slidesArray[currentOutline]?.length === 0
-              ? 'newContent'
-              : prev[currentOutline],
-        }))
-      } else {
-        setDisplayModes((prev) => ({
-          ...prev,
-          [currentOutline]:
-            slidesArray[currentOutline]?.length === 0 && totalSlides === 0
-              ? 'newContent'
-              : 'slides',
-        }))
-      }
-
-      setIsNewSlideLoading((prev) => ({
-        ...prev,
-        [currentOutline]: prev[currentOutline],
-      }))
-
-      setNewSlideGenerated((prev) => ({
-        ...prev,
-        [currentOutline]: prev[currentOutline] && '',
-      }))
-    }
-  }, 100)
-
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -682,6 +579,109 @@ export default function ViewPresentation() {
       }))
     }
   }
+
+  // MEDIUM LARGE SCREENS: Sidebar Outline Select
+  const handleOutlineSelect = (title: string) => {
+    setCurrentOutline(title)
+    setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!)
+    const slideIndex = outlines.findIndex((o) => o.title === title)
+    setCurrentSlide(slideIndex)
+    slideRefs.current[slideIndex]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    })
+    setCurrentSlideIndex(0)
+
+    // Only execute setDisplayModes if isNewSlideLoading[title] is false or undefined
+    if (
+      isNewSlideLoading[title] === false ||
+      isNewSlideLoading[title] === undefined
+    ) {
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]:
+          slidesArray[currentOutline]?.length === 0
+            ? 'newContent'
+            : prev[currentOutline],
+      }))
+    } else {
+      setDisplayModes((prev) => ({
+        ...prev,
+        [currentOutline]:
+          slidesArray[currentOutline]?.length === 0 && totalSlides === 0
+            ? 'newContent'
+            : 'slides',
+      }))
+    }
+
+    setIsNewSlideLoading((prev) => ({
+      ...prev,
+      [currentOutline]: prev[currentOutline],
+    }))
+
+    setNewSlideGenerated((prev) => ({
+      ...prev,
+      [title]: prev[title] && '',
+    }))
+  }
+
+  // MEDIUM LARGE SCREENS: Slide Scroll
+  const debounce = (fn: Function, delay: number) => {
+    let timer: NodeJS.Timeout
+    return (...args: any[]) => {
+      clearTimeout(timer)
+      timer = setTimeout(() => fn(...args), delay)
+    }
+  }
+  const handleScroll = debounce(() => {
+    if (!scrollContainerRef.current) return
+    // setCurrentSlideIndex(0)
+    const scrollTop = scrollContainerRef.current.scrollTop || 0
+    const closestIndex = slideRefs.current.findIndex((slideRef, index) => {
+      if (!slideRef) return false
+
+      const offset = slideRef.offsetTop - scrollTop
+      return offset >= 0 && offset < slideRef.offsetHeight
+    })
+
+    if (
+      closestIndex !== -1 &&
+      outlines[closestIndex]?.title !== currentOutline
+    ) {
+      setCurrentOutline(outlines[closestIndex]?.title)
+      setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
+      if (
+        isNewSlideLoading[currentOutline] === false ||
+        isNewSlideLoading[currentOutline] === undefined
+      ) {
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]:
+            slidesArray[currentOutline]?.length === 0
+              ? 'newContent'
+              : prev[currentOutline],
+        }))
+      } else {
+        setDisplayModes((prev) => ({
+          ...prev,
+          [currentOutline]:
+            slidesArray[currentOutline]?.length === 0 && totalSlides === 0
+              ? 'newContent'
+              : 'slides',
+        }))
+      }
+
+      setIsNewSlideLoading((prev) => ({
+        ...prev,
+        [currentOutline]: prev[currentOutline],
+      }))
+
+      setNewSlideGenerated((prev) => ({
+        ...prev,
+        [currentOutline]: prev[currentOutline] && '',
+      }))
+    }
+  }, 100)
 
   // Function to check if slides exist for an outline
   const hasSlidesForOutline = (outlineTitle: string) => {
@@ -887,11 +887,6 @@ export default function ViewPresentation() {
         initialModes: {} as { [key: string]: DisplayMode },
       }
     )
-
-    console.log('Reached Outlines Effect')
-    console.log('Outlines Effect Slide State: ', slideStates)
-    console.log('Outlines Effect Slide Array: ', slidesArray)
-    console.log('Outlines Effect Display Mode: ', displayModes)
 
     setSlideStates(initialStates)
     setDisplayModes(initialModes)

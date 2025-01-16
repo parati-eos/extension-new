@@ -3,23 +3,26 @@ import { io, Socket } from 'socket.io-client'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
-import { useSelector, useDispatch } from 'react-redux'
-import { setUserPlan } from '../../redux/slices/userSlice'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import {
+  connectWebSocket,
+  listenToEvent,
+  disconnectWebSocket,
+} from './webSocketService'
 
-interface SubscriptionUpdate {
-  event: string
+interface RazorpayWebhooksProps {
   orgId: string
-  status: string
 }
 
-interface PaymentUpdate {
-  event: string
-  paymentId: string
+interface PaymentData {
+  // Define the shape of the payment data based on your backend response
+  [key: string]: any
 }
 
-interface RefundUpdate {
-  event: string
-  refundId: string
+interface SubscriptionData {
+  // Define the shape of the subscription data based on your backend response
+  [key: string]: any
 }
 
 interface PricingModalProps {
@@ -82,9 +85,10 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     'monthly'
   )
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  const SOCKET_SERVER_URL = process.env.REACT_APP_SOCKET_URL // Replace with your server URL
   const userEmail = sessionStorage.getItem('userEmail')
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [subscriptionData, setSubscriptionData] =
+    useState<SubscriptionData | null>(null)
   const plans = [
     {
       name: 'FREE',
@@ -338,10 +342,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     const startAtTime = currentTime + 10 * 60 * 1000 // 10 minutes in milliseconds
     const startAtUnix = Math.floor(startAtTime / 1000) // Convert to Unix timestamp in seconds
 
-    // Set expire_by to 1 hour (3600 seconds) after start_at
-    const expireByTime = startAtTime + 60 * 60 * 1000 // 1 hour in milliseconds
-    const expireByUnix = Math.floor(expireByTime / 1000) // Convert to Unix timestamp in seconds
-
     if (userPlan === 'free') {
       try {
         const response = await axios.post(
@@ -354,6 +354,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             quantity: 1,
             orgId: orgId,
             userId: userEmail,
+            notes: {
+              OrgId: orgId,
+            },
           },
           {
             headers: {
@@ -408,51 +411,32 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     }
   }
 
-  // const [subscriptionUpdates, setSubscriptionUpdates] = useState<
-  //   SubscriptionUpdate[]
-  // >([])
-  // const [paymentUpdates, setPaymentUpdates] = useState<PaymentUpdate[]>([])
-  // const [refundUpdates, setRefundUpdates] = useState<RefundUpdate[]>([])
-  // const [connected, setConnected] = useState<boolean>(false)
+  useEffect(() => {
+    if (!orgId) {
+      console.error('orgId is required to connect WebSocket')
+      return
+    }
 
-  // useEffect(() => {
-  //   const socket: Socket = io(SOCKET_SERVER_URL) // Adjust the URL as per your server
+    // Connect to WebSocket
+    connectWebSocket(orgId)
 
-  //   // Handle connection
-  //   socket.on('connect', () => {
-  //     console.log('Connected to /payment namespace')
-  //     setConnected(true)
-  //   })
+    // Listen to payment authorization events
+    listenToEvent('payment.authorized', (data: PaymentData) => {
+      console.log('Payment authorized:', data)
+    })
 
-  //   // Handle disconnection
-  //   socket.on('disconnect', () => {
-  //     console.log('Disconnected from /payment namespace')
-  //     setConnected(false)
-  //   })
+    // Listen to subscription events
+    listenToEvent('subscription.authenticated', (data: SubscriptionData) => {
+      console.log('Subscription authenticated:', data)
+      setSubscriptionData(data)
+      window.location.reload()
+    })
 
-  //   // Listen for subscription updates
-  //   socket.on('subscription-update', (data: SubscriptionUpdate) => {
-  //     console.log('Received subscription update:', data)
-  //     setSubscriptionUpdates((prev) => [...prev, data])
-  //   })
-
-  //   // Listen for payment authorization events
-  //   socket.on('payment-authorized', (data: PaymentUpdate) => {
-  //     console.log('Received payment authorization:', data)
-  //     setPaymentUpdates((prev) => [...prev, data])
-  //   })
-
-  //   // Listen for refund updates
-  //   socket.on('refund-update', (data: RefundUpdate) => {
-  //     console.log('Received refund update:', data)
-  //     setRefundUpdates((prev) => [...prev, data])
-  //   })
-
-  //   // Cleanup connection on component unmount
-  //   return () => {
-  //     socket.disconnect()
-  //   }
-  // }, [])
+    // Cleanup WebSocket on unmount
+    return () => {
+      disconnectWebSocket()
+    }
+  }, [orgId])
 
   return (
     <div
