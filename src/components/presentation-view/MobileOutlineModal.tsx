@@ -186,7 +186,6 @@ export default function MobileOutlineModal({
               >
                 Back
               </button>
-              {/* Add Slide Button with Tooltip */}
               <div ref={buttonRef} className="relative inline-block">
                 <button
                   id="outline-mobile"
@@ -203,8 +202,6 @@ export default function MobileOutlineModal({
                 >
                   <FaPlus />
                 </button>
-
-                {/* Tooltip */}
                 {isDialogVisible && userPlan === 'free' && (
                   <div className="absolute top-full transform -translate-x-[78%] w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
                     <p className="text-sm text-center text-gray-800">
@@ -224,45 +221,43 @@ export default function MobileOutlineModal({
           </div>
 
           {/* Outlines List */}
-          <ul className="space-y-2">
-            {outlines.map((outline, index) => (
-              <li
-                key={index}
-                className="py-2 font-medium text-[#091220] flex items-center justify-between"
-                onClick={() => {
-                  onSelectOutline(outline.title)
-                  setIsOutlinesOpen(false)
-                }}
-              >
-                <span>
-                  {index + 1}. {outline.title}
-                </span>
-                <span>
-                  {isNewSlideLoading[outline.title] && (
-                    <div className="flex items-center justify-center ml-2 mt-1">
-                      <div className="w-6 h-6 border-4 border-t-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
-                    </div>
-                  )}
-                  {newSlideGenerated[outline.title] === 'Yes' &&
-                    !isNewSlideLoading[outline.title] && (
-                      // <div className="flex items-center justify-center ml-2 mt-1">
-                      <div className="w-5 h-5">
-                        <FaCheck className="text-green-600" />
+          <div className="overflow-y-auto max-h-[80vh]">
+            <ul className="space-y-2">
+              {outlines.map((outline, index) => (
+                <li
+                  key={index}
+                  className="py-2 font-medium text-[#091220] flex items-center justify-between"
+                  onClick={() => {
+                    onSelectOutline(outline.title)
+                    setIsOutlinesOpen(false)
+                  }}
+                >
+                  <span>
+                    {index + 1}. {outline.title}
+                  </span>
+                  <span>
+                    {isNewSlideLoading[outline.title] && (
+                      <div className="flex items-center justify-center ml-2 mt-1">
+                        <div className="w-6 h-6 border-4 border-t-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
                       </div>
-                      // </div>
                     )}
-                  {newSlideGenerated[outline.title] === 'No' &&
-                    !isNewSlideLoading[outline.title] && (
-                      // <div className="flex items-center justify-center ml-2 mt-1">
-                      <div className="w-5 h-5">
-                        <FaExclamation className="text-red-700" />
-                      </div>
-                      // </div>
-                    )}
-                </span>
-              </li>
-            ))}
-          </ul>
+                    {newSlideGenerated[outline.title] === 'Yes' &&
+                      !isNewSlideLoading[outline.title] && (
+                        <div className="w-5 h-5">
+                          <FaCheck className="text-green-600" />
+                        </div>
+                      )}
+                    {newSlideGenerated[outline.title] === 'No' &&
+                      !isNewSlideLoading[outline.title] && (
+                        <div className="w-5 h-5">
+                          <FaExclamation className="text-red-700" />
+                        </div>
+                      )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
 
