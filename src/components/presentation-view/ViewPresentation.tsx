@@ -114,6 +114,7 @@ export default function ViewPresentation() {
   const dispatch = useDispatch()
   const [displayBoxLoading, setDisplayBoxLoading] = useState(true)
   const slidesArrayRef = useRef(slidesArray)
+  const newSlideLoadingRef = useRef(isNewSlideLoading)
   const slideStatesRef = useRef(slideStates)
 
   // Handle Share Button Click
@@ -919,6 +920,9 @@ export default function ViewPresentation() {
   useEffect(() => {
     slideStatesRef.current = slideStates
   }, [slideStates])
+  useEffect(() => {
+    newSlideLoadingRef.current = isNewSlideLoading
+  }, [isNewSlideLoading])
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   // TODO: WEB SOCKET
   useEffect(() => {
@@ -1082,7 +1086,17 @@ export default function ViewPresentation() {
               }))
             }
 
-            if (isNewSlideLoading[currentOutline] && newSlides.length === 1) {
+            console.log(
+              'Current Slide New Loading: ',
+              isNewSlideLoading[currentOutline]
+            )
+
+            if (
+              newSlideLoadingRef.current[currentOutline] &&
+              newSlides.length === 1
+            ) {
+              console.log('Reached Socket Fifth IF')
+
               setIsNewSlideLoading((prev) => ({
                 ...prev,
                 [currentOutline]: false,
@@ -1108,6 +1122,8 @@ export default function ViewPresentation() {
               (newSlides.length > 1 &&
                 newSlides.every((slide) => !slide.display))
             ) {
+              console.log('Reached Socket Sixth IF')
+
               setDisplayModes((prev) => ({
                 ...prev,
                 [currentOutline]: 'newContent',
@@ -1229,6 +1245,8 @@ export default function ViewPresentation() {
         slidesArray[currentOutline] &&
         slidesArray[currentOutline].length >= 1
       ) {
+        console.log('Reached Total Slides Second IF')
+
         setDisplayModes((prev) => ({
           ...prev,
           [currentOutline]: prev[currentOutline], // Preserve the previous state
@@ -1238,6 +1256,8 @@ export default function ViewPresentation() {
       if (totalSlides !== 0) {
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
+            console.log('Reached Total Slides Fourth IF')
+
             setNewSlideGenerated((prev) => ({
               ...prev,
               [currentOutline]: 'Yes',

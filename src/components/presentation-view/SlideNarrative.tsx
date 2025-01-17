@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { BackButton } from './custom-builder/shared/BackButton';
-import { DisplayMode } from '../../types/presentationView';
-import AttachImage from '../presentation-view/custom-builder/shared/attachimage';
-import { toast } from 'react-toastify';
-import uploadLogoToS3 from '../../utils/uploadLogoToS3';
-import Select, { components } from 'react-select';
-import PointsIcon from '../../assets/points.svg';
-import TimelineIcon from '../../assets/Presentation.svg';
-import ImagesIcon from '../../assets/images.svg';
-import TableIcon from '../../assets/table.svg';
-import PeopleIcon from '../../assets/people.svg';
-import StatisticsIcon from '../../assets/statistics.svg';
-import GraphIcon from '../../assets/graphs.svg';
+import React, { useState } from 'react'
+import axios from 'axios'
+import { BackButton } from './custom-builder/shared/BackButton'
+import { DisplayMode } from '../../types/presentationView'
+import AttachImage from '../presentation-view/custom-builder/shared/attachimage'
+import { toast } from 'react-toastify'
+import uploadLogoToS3 from '../../utils/uploadLogoToS3'
+import Select, { components } from 'react-select'
+import PointsIcon from '../../assets/points.svg'
+import TimelineIcon from '../../assets/Presentation.svg'
+import ImagesIcon from '../../assets/images.svg'
+import TableIcon from '../../assets/table.svg'
+import PeopleIcon from '../../assets/people.svg'
+import StatisticsIcon from '../../assets/statistics.svg'
+import GraphIcon from '../../assets/graphs.svg'
 
 interface SlideNarrativeProps {
   heading: string
@@ -35,19 +35,19 @@ export default function SlideNarrative({
   setIsSlideLoading,
   outlineID,
 }: SlideNarrativeProps) {
-  const [narrative, setNarrative] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [narrative, setNarrative] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [fileName, setFileName] = useState<string | null>(null)
+  const [uploadCompleted, setUploadCompleted] = useState(false)
   const [selectedOption, setSelectedOption] = useState<{
-    value: string;
-    label: string;
-    icon: string;
-  } | null>(null);
+    value: string
+    label: string
+    icon: string
+  } | null>(null)
 
   const CustomOption = (props: any) => {
-    const { data, innerRef, innerProps } = props;
+    const { data, innerRef, innerProps } = props
     return (
       <div
         ref={innerRef}
@@ -67,13 +67,10 @@ export default function SlideNarrative({
             marginRight: '4px',
           }}
         />
-        <span
-        className='ml-2'
-        >{data.label}</span>
+        <span className="ml-2">{data.label}</span>
       </div>
-    );
-  };
-  
+    )
+  }
 
   const options = [
     { value: 'Points', label: 'Points', icon: PointsIcon },
@@ -83,7 +80,7 @@ export default function SlideNarrative({
     { value: 'People', label: 'People', icon: PeopleIcon },
     { value: 'Statistics', label: 'Statistics', icon: StatisticsIcon },
     { value: 'Graphs', label: 'Graphs', icon: GraphIcon },
-  ];
+  ]
 
   const handleFileSelect = async (file: File | null) => {
     setIsLoading(true)
@@ -106,7 +103,7 @@ export default function SlideNarrative({
   }
 
   const handleGenerateSlide = async () => {
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs');
+    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     if (storedOutlineIDs) {
       const outlineIDs = JSON.parse(storedOutlineIDs)
 
@@ -127,7 +124,7 @@ export default function SlideNarrative({
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}`,
         {
-          type: slideType.charAt(0).toUpperCase() + slideType.slice(1),
+          type: selectedOption?.value,
           title: heading,
           documentID: documentID,
           input: narrative,
@@ -172,8 +169,8 @@ export default function SlideNarrative({
   const handleSelectChange = (
     selected: { value: string; label: string; icon: string } | null
   ) => {
-    setSelectedOption(selected);
-  };
+    setSelectedOption(selected)
+  }
 
   return (
     <div className="flex flex-col p-2 lg:p-4 h-full">
@@ -185,41 +182,40 @@ export default function SlideNarrative({
 
       {/* Slide Type Dropdown */}
       <div className="py-2">
-      <Select
-  options={options}
-  getOptionLabel={(e) => (e ? e.label : '')}
-  components={{ Option: CustomOption }}
-  placeholder="Select Slide Type"
-  value={selectedOption}
-  onChange={handleSelectChange}
-  className="w-full lg:w-[25%] items-center"
-  styles={{
-    control: (provided) => ({
-      ...provided,
-      display: 'flex',
-      alignItems: 'center',
-      cursor: 'pointer', // Make cursor a pointer
-    }),
-    option: (provided) => ({
-      ...provided,
-      display: 'flex',
-      alignItems: 'center',
-      cursor: 'pointer', // Make options clickable
-      padding: '10px', // Increase padding
-      fontSize: '20px', // Increase text size
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      display: 'flex',
-      alignItems: 'center',
-      fontSize: '15px', // Match text size with options
-    }),
-  }}
-/>
-
-</div>
-   {/* Input Section for Desktop */}
-   <div className="hidden h-full w-full md:block flex-1 p-2 ">
+        <Select
+          options={options}
+          getOptionLabel={(e) => (e ? e.label : '')}
+          components={{ Option: CustomOption }}
+          placeholder="Select Slide Type"
+          value={selectedOption}
+          onChange={handleSelectChange}
+          className="w-full lg:w-[25%] items-center"
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer', // Make cursor a pointer
+            }),
+            option: (provided) => ({
+              ...provided,
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer', // Make options clickable
+              padding: '10px', // Increase padding
+              fontSize: '20px', // Increase text size
+            }),
+            singleValue: (provided) => ({
+              ...provided,
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: '15px', // Match text size with options
+            }),
+          }}
+        />
+      </div>
+      {/* Input Section for Desktop */}
+      <div className="hidden h-full w-full md:block flex-1 p-2 ">
         <div className="flex flex-col items-center justify-center h-full w-full ">
           <textarea
             value={narrative}
