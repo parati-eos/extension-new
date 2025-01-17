@@ -57,6 +57,7 @@ export default function Images({
   // Refs for file inputs
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const replaceInputRefs = useRef<HTMLInputElement[]>([])
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -128,7 +129,7 @@ export default function Images({
         data: {
           slideName: heading,
           ...transformedHeaders, // Spread the dynamic headers here
-          title: heading,
+          title: slideTitle,
           imageurl: images, // Pass the original image URLs
         },
         outlineID: outlineID,
@@ -184,9 +185,16 @@ export default function Images({
             <h3 className="text-semibold">Images</h3>
             <BackButton onClick={onBack} />
           </div>
-          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
+            {/* Editable Slide Title */}
+            <div className="hidden lg:block">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
+            />
+          </div>
 
           {/* Mobile Images Input and Display Section */}
           <div className="flex flex-col lg:hidden w-full h-full md:mt-4">

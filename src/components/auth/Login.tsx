@@ -64,13 +64,12 @@ function Login() {
 
   const saveUserData = async (userData: Record<string, any>) => {
     setIsLoading(true)
+    const signupLink = localStorage.getItem('sign_up_link') || ''
     try {
       const ipInfoResponse = await fetch(
         'https://ipinfo.io/json?token=f0e9cf876d422e'
       )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
-
-      const signupLink = `${window.location.origin}/signup/${generatedOrgId}`
 
       const userPayload = {
         userId: userData.email,

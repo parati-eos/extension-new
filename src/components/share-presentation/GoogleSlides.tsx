@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Grid } from 'react-loader-spinner'
-import ShareSidebar from './ShareSidebar'
-import ShareOutlineModal from './ShareOutlineModal'
+import ShareSidebar from './ShareSidebar.tsx'
+import ShareOutlineModal from './ShareOutlineModal.tsx'
 import '../presentation-view/viewpresentation.css'
 
 interface GoogleSlidesProps {
@@ -15,12 +15,17 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
   const [presentationID, setPresentationID] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [currentOutline, setCurrentOutline] = useState<string>('')
-  const slideRefs = useRef<HTMLDivElement[]>([])
+  const desktopSlideRefs = useRef<HTMLDivElement[]>([])
+  const desktopScrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const mobileSlideRefs = useRef<HTMLDivElement[]>([])
+  const mobileScrollContainerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const authToken = sessionStorage.getItem('authToken')
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
-  const handleOutlineSelect = (title: string) => {
+  const handleOutlineSelect = (title: string, isMobile: boolean) => {
+    const slideRefs = isMobile ? mobileSlideRefs : desktopSlideRefs
     const slideIndex = slidesData.findIndex((o) => o.title === title)
     if (slideIndex !== -1) {
       slideRefs.current[slideIndex]?.scrollIntoView({
@@ -32,12 +37,16 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
   }
 
   // Handle scroll events to update the sidebar selection
-  const handleScroll = () => {
+  const handleScroll = (isMobile: boolean) => {
+    const scrollContainerRef = isMobile
+      ? mobileScrollContainerRef
+      : desktopScrollContainerRef
     if (!scrollContainerRef.current) return
     const scrollTop = scrollContainerRef.current.scrollTop || 0
     let closestIndex = -1
     let minDistance = Number.MAX_VALUE
 
+    const slideRefs = isMobile ? mobileSlideRefs : desktopSlideRefs
     slideRefs.current.forEach((slideRef, index) => {
       if (!slideRef) return
       const distance = Math.abs(slideRef.offsetTop - scrollTop)
@@ -104,33 +113,63 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
           to be displayed here.
         </div>
       ) : (
-        <div className="flex flex-row w-full h-full">
-          <ShareSidebar
-            onOutlineSelect={handleOutlineSelect}
-            selectedOutline={currentOutline}
-            outlines={slidesData.map((slide) => slide.title)}
-          />
-          <div
-            className="no-scrollbar rounded-lg shadow-lg relative w-[85%] ml-[1.85rem] lg:ml-2 lg:mr-4 bg-white border border-gray-200 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
-            style={{ height: 'calc(100vh - 100px)' }}
-            onScroll={handleScroll}
-            ref={scrollContainerRef}
-          >
-            {slidesData.map((outline, index) => (
-              <div
-                key={outline.title}
-                ref={(el) => (slideRefs.current[index] = el!)}
-                className="snap-start w-full h-[50vh] lg:h-full mb-4"
-              >
-                <iframe
-                  className="w-full h-full bg-black border-[1px] border-[#3667B2] rounded-lg mb-2 pointer-events-none"
-                  title={`Google slide - ${outline.title}`}
-                  src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${outline.genSlideIDs[0]}`}
-                ></iframe>
-              </div>
-            ))}
+        <>
+          {/* DESKTOP */}
+          <div className="hidden lg:flex flex-row w-full h-full">
+            <ShareSidebar
+              onOutlineSelect={(title) => handleOutlineSelect(title, false)}
+              selectedOutline={currentOutline}
+              outlines={slidesData.map((slide) => slide.title)}
+            />
+            <div
+              className="no-scrollbar rounded-lg shadow-lg relative w-[85%] ml-[1.85rem] lg:ml-2 lg:mr-4 bg-white border border-gray-200 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
+              style={{ height: 'calc(100vh - 100px)' }}
+              onScroll={() => handleScroll(false)}
+              ref={desktopScrollContainerRef}
+            >
+              {slidesData.map((outline, index) => (
+                <div
+                  key={outline.title}
+                  ref={(el) => (desktopSlideRefs.current[index] = el!)}
+                  className="snap-start w-full h-[50vh] lg:h-full mb-4"
+                >
+                  <iframe
+                    className="w-full h-full bg-black border-[1px] border-[#3667B2] rounded-lg mb-2 pointer-events-none"
+                    title={`Google slide - ${outline.title}`}
+                    src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${outline.genSlideIDs[0]}`}
+                  ></iframe>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+          {/* MOBILE*/}
+          <div className="lg:hidden flex flex-col mt-[5rem]">
+            <ShareOutlineModal
+              onSelectOutline={(title) => handleOutlineSelect(title, true)}
+              selectedOutline={currentOutline}
+              outlines={slidesData.map((slide) => slide.title)}
+            />
+            <div
+              onScroll={() => handleScroll(true)}
+              ref={mobileScrollContainerRef}
+              className="no-scrollbar mt-8 h-[50.5vh] rounded-lg shadow-lg relative  w-full bg-white border border-gray-200 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
+            >
+              {slidesData.map((outline, index) => (
+                <div
+                  key={outline.title}
+                  className="snap-start w-full h-[50vh] lg:h-full mb-4"
+                  ref={(el) => (mobileSlideRefs.current[index] = el!)}
+                >
+                  <iframe
+                    className="w-full h-full bg-black border-[1px] border-[#3667B2] rounded-lg mb-2 pointer-events-none"
+                    title={`Google slide - ${outline.title}`}
+                    src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${outline.genSlideIDs[0]}`}
+                  ></iframe>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )

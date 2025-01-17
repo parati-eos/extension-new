@@ -2,17 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { FaChevronDown } from 'react-icons/fa'
 
 interface MobileShareOutlineModalProps {
-  onOutlineSelect: (option: string) => void
-  selectedOutline: string
-  isLoading: boolean
   outlines: string[]
+  onSelectOutline: (outline: string) => void
+  selectedOutline: string
 }
 
 export default function ShareOutlineModal({
   outlines,
-  onOutlineSelect,
+  onSelectOutline,
   selectedOutline,
-  isLoading,
 }: MobileShareOutlineModalProps) {
   const [isOutlinesOpen, setIsOutlinesOpen] = useState(false)
 
@@ -30,24 +28,18 @@ export default function ShareOutlineModal({
       {/* Dropdown Button */}
       <div
         id="dropdown-mobile"
-        className="border w-full rounded-lg p-4 bg-white cursor-pointer"
+        className="border w-[98%] ml-1 rounded-lg p-4 bg-white cursor-pointer"
         onClick={() => setIsOutlinesOpen(true)}
       >
-        {isLoading ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <span className="text-[#091220] flex items-center">
-              <span> {selectedOutline || 'Select Outline'}</span>
-            </span>
-            <span>
-              {' '}
-              <FaChevronDown className="text-gray-500 ml-2" />
-            </span>
-          </div>
-        )}
+        <div className="flex items-center justify-between">
+          <span className="text-[#091220] flex items-center">
+            <span> {selectedOutline || 'Select Outline'}</span>
+          </span>
+          <span>
+            {' '}
+            <FaChevronDown className="text-gray-500 ml-2" />
+          </span>
+        </div>
       </div>
 
       {/* Full-Screen Outlines List */}
@@ -73,7 +65,7 @@ export default function ShareOutlineModal({
                 key={index}
                 className="py-2 font-medium text-[#091220] flex items-center justify-between"
                 onClick={() => {
-                  onOutlineSelect(outline)
+                  onSelectOutline(outline)
                   setIsOutlinesOpen(false)
                 }}
               >

@@ -114,6 +114,7 @@ export default function ViewPresentation() {
   const dispatch = useDispatch()
   const [displayBoxLoading, setDisplayBoxLoading] = useState(true)
   const slidesArrayRef = useRef(slidesArray)
+  const newSlideLoadingRef = useRef(isNewSlideLoading)
   const slideStatesRef = useRef(slideStates)
 
   // Handle Share Button Click
@@ -169,11 +170,8 @@ export default function ViewPresentation() {
             `https://script.google.com/macros/s/AKfycbyUR5SWxE4IHJ6uVr1eVTS7WhJywnbCNBs2zlJsUFbafyCsaNWiGxg7HQbyB3zx7R6z/exec?presentationID=${presentationID}`
           )
           const secondApiText = await secondApiResponse.text()
-          console.log('Raw second API response:', secondApiText)
-
           try {
             const secondApiResult = JSON.parse(secondApiText)
-            console.log('Second API parsed response:', secondApiResult)
           } catch (jsonError) {
             console.error(
               'Error parsing second API response as JSON:',
@@ -320,8 +318,6 @@ export default function ViewPresentation() {
     const requestType = isFinalized ? 'post' : 'patch'
 
     axios[requestType](
-      //`${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/displayfalse/${slideId}`
-      // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`,
       url,
       {},
       {
@@ -500,8 +496,6 @@ export default function ViewPresentation() {
         slidesArray[currentOutline] &&
         slidesArray[currentOutline].length > 0
       ) {
-        console.log('Quick Generate Display State')
-
         return {
           ...prev,
           [currentOutline]: 'slides',
@@ -876,22 +870,48 @@ export default function ViewPresentation() {
   }
 
   useEffect(() => {
-    const { initialStates, initialModes } = outlines.reduce(
-      (acc, outline) => {
-        acc.initialStates[outline.title] = createInitialSlideState()
-        acc.initialModes[outline.title] = 'slides'
-        return acc
-      },
-      {
-        initialStates: {} as { [key: string]: SlideState },
-        initialModes: {} as { [key: string]: DisplayMode },
+    // Get stored outline IDs from sessionStorage
+    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+    const outlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
+
+    setSlideStates((prev) => {
+      const updatedStates = { ...prev }
+      for (const outline of outlines) {
+        if (!updatedStates[outline.title]) {
+          // Initialize slide state if it doesn't exist
+          updatedStates[outline.title] = createInitialSlideState()
+        } else if (
+          outline.title === currentOutline &&
+          outlineIDs.includes(currentOutlineID) && // Only modify if currentOutlineID is in sessionStorage
+          updatedStates[outline.title].isLoading
+        ) {
+          updatedStates[outline.title] = {
+            ...updatedStates[outline.title],
+            isLoading: false, // Set loading to false only for the matching outline
+          }
+        }
       }
-    )
+      return updatedStates
+    })
 
-    setSlideStates(initialStates)
-    setDisplayModes(initialModes)
-  }, [outlines])
+    setDisplayModes((prev) => {
+      const updatedModes = { ...prev }
+      for (const outline of outlines) {
+        if (!updatedModes[outline.title]) {
+          updatedModes[outline.title] = 'slides'
+        } else if (
+          outline.title === currentOutline &&
+          outlineIDs.includes(currentOutlineID) && // Ensure we only update displayMode for valid outlines
+          updatedModes[outline.title] === 'slides'
+        ) {
+          updatedModes[outline.title] = 'newContent'
+        }
+      }
+      return updatedModes
+    })
+  }, [outlines, currentOutline, currentOutlineID])
 
+  // Slide State Update Function
   const updateSlideState = useCallback(
     (outlineTitle: string, updates: Partial<SlideState>) => {
       setSlideStates((prev) => ({
@@ -919,6 +939,9 @@ export default function ViewPresentation() {
   useEffect(() => {
     slideStatesRef.current = slideStates
   }, [slideStates])
+  useEffect(() => {
+    newSlideLoadingRef.current = isNewSlideLoading
+  }, [isNewSlideLoading])
   const newSlidesRef = useRef<any[]>([]) // Ref to store newSlides persistently
   // TODO: WEB SOCKET
   useEffect(() => {
@@ -964,8 +987,6 @@ export default function ViewPresentation() {
       }
 
       if (isOutlineIDInSessionStorage(currentOutlineID)) {
-        console.log('Reached Session Storage Socket OutlineID')
-
         setSlideStates((prev) => {
           return {
             ...prev,
@@ -989,12 +1010,6 @@ export default function ViewPresentation() {
 
       // Clear loading state and set error screen after timeout if no data received
       const timeoutId = setTimeout(() => {
-        console.log('Error Screen: ', slidesArrayRef.current[currentOutline])
-        console.log(
-          'Error Screen Slide State: ',
-          slideStatesRef.current[currentOutline]
-        )
-
         setSlideStates((prev) => ({
           ...prev,
           [currentOutline]: {
@@ -1031,8 +1046,6 @@ export default function ViewPresentation() {
       }, 120000)
 
       const processSlides = (newSlides: any[]) => {
-        console.log('Socket Data', newSlides)
-
         newSlidesRef.current = newSlides
 
         if (newSlides.length > 0) {
@@ -1082,7 +1095,10 @@ export default function ViewPresentation() {
               }))
             }
 
-            if (isNewSlideLoading[currentOutline] && newSlides.length === 1) {
+            if (
+              newSlideLoadingRef.current[currentOutline] &&
+              newSlides.length === 1
+            ) {
               setIsNewSlideLoading((prev) => ({
                 ...prev,
                 [currentOutline]: false,
@@ -1156,13 +1172,35 @@ export default function ViewPresentation() {
       const newOutlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : []
 
       // Find the first outline in fetchedOutlines that matches an ID in newOutlineIDs
-      const outline = fetchedOutlines.find((outline: any) =>
+      const newOutlineIndex = fetchedOutlines.findIndex((outline: any) =>
         newOutlineIDs.includes(outline.outlineID)
       )
 
-      if (outline) {
-        setCurrentOutline(outline.title)
-        setCurrentOutlineID(outline.outlineID)
+      if (newOutlineIndex > -1) {
+        // Find the outline just before the new outline
+        const targetOutlineIndex = newOutlineIndex > 0 ? newOutlineIndex - 1 : 0
+        const targetOutline = fetchedOutlines[targetOutlineIndex]
+
+        setCurrentOutline(targetOutline.title)
+        setCurrentOutlineID(targetOutline.outlineID)
+
+        // Immediately set state for the new outline
+        const newOutline = fetchedOutlines[newOutlineIndex]
+        setSlideStates((prev) => ({
+          ...prev,
+          [newOutline.title]: {
+            ...prev[newOutline.title],
+            isLoading: false,
+            isNoGeneratedSlide: false,
+            genSlideID: null,
+            retryCount: 0,
+            lastUpdated: Date.now(),
+          },
+        }))
+        setDisplayModes((prev) => ({
+          ...prev,
+          [newOutline.title]: 'newContent',
+        }))
       } else {
         setCurrentOutline(fetchedOutlines[0].title)
         setCurrentOutlineID(fetchedOutlines[0].outlineID)
@@ -1401,16 +1439,20 @@ export default function ViewPresentation() {
           const country = ipInfoData!.country!
 
           if (country !== 'IN' && country !== 'India' && country !== 'In') {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
+            // setMonthlyPlan(response.data.items[4])
+            // setYearlyPlan(response.data.items[2])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('USD')
           } else if (
             country === 'IN' ||
             country === 'India' ||
             country === 'In'
           ) {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
+            // setMonthlyPlan(response.data.items[5])
+            // setYearlyPlan(response.data.items[3])
+            setMonthlyPlan(response.data.items[1])
+            setYearlyPlan(response.data.items[0])
             setCurrency('INR')
           }
         })
