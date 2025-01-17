@@ -44,7 +44,7 @@ export default function Table({
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [isRowAdded, setIsRowAdded] = useState(false)
-
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
   useEffect(() => {
     // Count fully completed rows
     const completedRows = tableData.rows.filter((row) =>
@@ -220,7 +220,7 @@ export default function Table({
           outlineID: outlineID,
           data: {
             slideName: heading,
-            title: heading,
+            title: slideTitle,
             ...filteredTablePayload,
           },
         },
@@ -261,9 +261,16 @@ export default function Table({
             <h3 className="text-semibold">Table</h3>
             <BackButton onClick={onBack} />
           </div>
-          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
+         {/* Editable Slide Title */}
+         <div className="hidden lg:block">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
+            />
+          </div>
           <div
             ref={containerRef}
             className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-4 py-2 "

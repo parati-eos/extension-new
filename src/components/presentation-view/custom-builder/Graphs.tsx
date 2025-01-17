@@ -162,7 +162,7 @@ export default function Graphs({
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
           {
             type: 'Graphs',
-            title: heading,
+            title: slideTitle,
             documentID: documentID,
             outlineID: outlineID,
             data: {
@@ -201,7 +201,7 @@ export default function Graphs({
   }
 
   const [showTooltip, setShowTooltip] = useState(false)
-
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
       {isLoading ? (
@@ -214,9 +214,16 @@ export default function Graphs({
             <h3>Graphs</h3>
             <BackButton onClick={onBack} />
           </div>
-          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
+             {/* Editable Slide Title */}
+             <div className="hidden lg:block">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
+            />
+          </div>
           {currentScreen === 'chartSelection' ? (
             <div className="w-full h-full flex-row lg:flex-col lg:p-4 lg:sm:p-8 ml-2 mt-2 lg:mt-10">
               <h3 className="text-semibold">Select Graph Type</h3>

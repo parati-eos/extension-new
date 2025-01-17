@@ -25,6 +25,27 @@ const LogoForm: React.FC<LogoFormProps> = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
+      // Validation logic
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      const maxSize = 5 * 1024 * 1024; // 5 MB
+      const validType = allowedTypes.includes(file.type);
+      const validSize = file.size <= maxSize;
+  
+      if (!validType) {
+        toast.error('Invalid file type. Please upload a PNG or JPEG image.', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+        return;
+      }
+  
+      if (!validSize) {
+        toast.error('File size exceeds 2 MB. Please upload a smaller file.', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+        return;
+      }
       setIsUploading(true) // Indicate uploading
 
       try {
