@@ -174,15 +174,19 @@ const EditProfile: React.FC = () => {
         industry: industryData,
         logo: logo || formData.logo,
       }
-      await axios.patch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-        updatedData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
+      await axios
+        .patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          updatedData,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((response) => {
+          setLoading(false)
+        })
       navigate('/organization-profile')
     } catch (error: any) {
       console.error('Failed to update profile', error)
@@ -481,20 +485,20 @@ const EditProfile: React.FC = () => {
                     alt="Organization Logo"
                     className="w-28 h-28 rounded-full"
                   />
-           
-  <button
-     className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
-    onClick={handleButtonClick}
-  >
-    {isUploading ? 'Uploading...' : 'Change Logo'}
-  </button>
-  <input
-    type="file"
-    id="changeLogoInput"
-    accept="image/*"
-    onChange={handleFileChange}
-    className="hidden"
-  />
+
+                  <button
+                    className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
+                    onClick={handleButtonClick}
+                  >
+                    {isUploading ? 'Uploading...' : 'Change Logo'}
+                  </button>
+                  <input
+                    type="file"
+                    id="changeLogoInput"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                 </div>
               </div>
 
