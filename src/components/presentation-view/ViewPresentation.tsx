@@ -318,8 +318,6 @@ export default function ViewPresentation() {
     const requestType = isFinalized ? 'post' : 'patch'
 
     axios[requestType](
-      //`${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/displayfalse/${slideId}`
-      // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`,
       url,
       {},
       {
@@ -900,14 +898,12 @@ export default function ViewPresentation() {
       const updatedModes = { ...prev }
       for (const outline of outlines) {
         if (!updatedModes[outline.title]) {
-          console.log('Reached If')
           updatedModes[outline.title] = 'slides'
         } else if (
           outline.title === currentOutline &&
           outlineIDs.includes(currentOutlineID) && // Ensure we only update displayMode for valid outlines
           updatedModes[outline.title] === 'slides'
         ) {
-          console.log('Reached Else If')
           updatedModes[outline.title] = 'newContent'
         }
       }
@@ -991,8 +987,6 @@ export default function ViewPresentation() {
       }
 
       if (isOutlineIDInSessionStorage(currentOutlineID)) {
-        console.log('Reached Socket Check')
-
         setSlideStates((prev) => {
           return {
             ...prev,
