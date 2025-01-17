@@ -16,8 +16,11 @@ import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import Test from './test/test.tsx'
 import PricingPage from './pages/PricingPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
+import { SocketProvider } from './components/shared/SubscriptionSocket.tsx'
+import RazorpayWebhooks from './components/shared/RazorPayWebHooks.tsx'
 
 const App: React.FC = () => {
+  const orgId = sessionStorage.getItem('orgId')
   useEffect(() => {
     const INACTIVITY_THRESHOLD = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
     const CURRENT_USER_EMAIL = sessionStorage.getItem('userEmail') // Replace with actual logic to get logged-in user's email
@@ -90,45 +93,51 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoutes>
-                <Routes>
-                  <Route path="onboarding" element={<OnboardingPage />} />
-                  <Route
-                    path="organization-profile"
-                    element={<ViewOrganizationProfilePage />}
-                  />
-                  <Route
-                    path="edit-organization-profile"
-                    element={<EditOrganizationProfilePage />}
-                  />
-                  <Route
-                    path="new-presentation"
-                    element={<PresentationTypePage />}
-                  />
-                  <Route
-                    path="presentation-view"
-                    element={<PresentationViewPage />}
-                  />
-                  <Route path="history" element={<HistoryPage />} />
-                </Routes>
-              </ProtectedRoutes>
-            }
-          />
-          <Route path="/presentation-share" element={<PresentationShare />} />
-          <Route path="/share" element={<PitchZynthShare />} />
-          <Route path="/test" element={<Test />} />
-        </Routes>
-      </Router>
-      <ToastContainer />
+      <SocketProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoutes>
+                  <Routes>
+                    <Route path="onboarding" element={<OnboardingPage />} />
+                    <Route
+                      path="organization-profile"
+                      element={<ViewOrganizationProfilePage />}
+                    />
+                    <Route
+                      path="edit-organization-profile"
+                      element={<EditOrganizationProfilePage />}
+                    />
+                    <Route
+                      path="new-presentation"
+                      element={<PresentationTypePage />}
+                    />
+                    <Route
+                      path="presentation-view"
+                      element={<PresentationViewPage />}
+                    />
+                    <Route path="history" element={<HistoryPage />} />
+                  </Routes>
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/razorpay"
+              element={<RazorpayWebhooks orgId={orgId!} />}
+            />
+            <Route path="/presentation-share" element={<PresentationShare />} />
+            <Route path="/share" element={<PitchZynthShare />} />
+            <Route path="/test" element={<Test />} />
+          </Routes>
+        </Router>
+        <ToastContainer />
+      </SocketProvider>
     </>
   )
 }
