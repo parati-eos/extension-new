@@ -104,33 +104,63 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
           to be displayed here.
         </div>
       ) : (
-        <div className="flex flex-row w-full h-full">
-          <ShareSidebar
-            onOutlineSelect={handleOutlineSelect}
-            selectedOutline={currentOutline}
-            outlines={slidesData.map((slide) => slide.title)}
-          />
-          <div
-            className="no-scrollbar rounded-lg shadow-lg relative w-[85%] ml-[1.85rem] lg:ml-2 lg:mr-4 bg-white border border-gray-200 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
-            style={{ height: 'calc(100vh - 100px)' }}
-            onScroll={handleScroll}
-            ref={scrollContainerRef}
-          >
-            {slidesData.map((outline, index) => (
-              <div
-                key={outline.title}
-                ref={(el) => (slideRefs.current[index] = el!)}
-                className="snap-start w-full h-[50vh] lg:h-full mb-4"
-              >
-                <iframe
-                  className="w-full h-full bg-black border-[1px] border-[#3667B2] rounded-lg mb-2 pointer-events-none"
-                  title={`Google slide - ${outline.title}`}
-                  src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${outline.genSlideIDs[0]}`}
-                ></iframe>
-              </div>
-            ))}
+        <>
+          {/* DESKTOP */}
+          <div className="hidden lg:flex flex-row w-full h-full">
+            <ShareSidebar
+              onOutlineSelect={handleOutlineSelect}
+              selectedOutline={currentOutline}
+              outlines={slidesData.map((slide) => slide.title)}
+            />
+            <div
+              className="no-scrollbar rounded-lg shadow-lg relative w-[85%] ml-[1.85rem] lg:ml-2 lg:mr-4 bg-white border border-gray-200 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
+              style={{ height: 'calc(100vh - 100px)' }}
+              onScroll={handleScroll}
+              ref={scrollContainerRef}
+            >
+              {slidesData.map((outline, index) => (
+                <div
+                  key={outline.title}
+                  ref={(el) => (slideRefs.current[index] = el!)}
+                  className="snap-start w-full h-[50vh] lg:h-full mb-4"
+                >
+                  <iframe
+                    className="w-full h-full bg-black border-[1px] border-[#3667B2] rounded-lg mb-2 pointer-events-none"
+                    title={`Google slide - ${outline.title}`}
+                    src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${outline.genSlideIDs[0]}`}
+                  ></iframe>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+          {/* MOBILE*/}
+          <div className="lg:hidden flex flex-col mt-[5rem]">
+            <ShareOutlineModal
+              onSelectOutline={handleOutlineSelect}
+              selectedOutline={currentOutline}
+              outlines={slidesData.map((slide) => slide.title)}
+            />
+            <div
+              onScroll={handleScroll}
+              ref={scrollContainerRef}
+              className="no-scrollbar mt-8 h-[50.5vh] rounded-lg shadow-lg relative  w-full bg-white border border-gray-200 overflow-y-scroll snap-y scroll-smooth snap-mandatory"
+            >
+              {slidesData.map((outline, index) => (
+                <div
+                  key={outline.title}
+                  className="snap-start w-full h-[50vh] lg:h-full mb-4"
+                  ref={(el) => (slideRefs.current[index] = el!)}
+                >
+                  <iframe
+                    className="w-full h-full bg-black border-[1px] border-[#3667B2] rounded-lg mb-2 pointer-events-none"
+                    title={`Google slide - ${outline.title}`}
+                    src={`https://docs.google.com/presentation/d/${presentationID}/embed?rm=minimal&start=false&loop=false&slide=id.${outline.genSlideIDs[0]}`}
+                  ></iframe>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
