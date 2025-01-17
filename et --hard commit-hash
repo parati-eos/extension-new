@@ -1,0 +1,2413 @@
+[33mcommit 314a4bb19c93e9777e795914e2cabe19939639bf[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Merge: d31ecbd 255a474
+Author: Adarsha Halder <pradiphalder70@gmail.com>
+Date:   Wed Jan 15 15:44:21 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE
+
+[33mcommit 255a474cbc2730bfe2c1cf5e4b9029b1232bd16d[m[33m ([m[1;31morigin/suvigya-dev[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 14:09:54 2025 +0530
+
+    Updates
+
+[33mcommit 7fd8a27aa36d15a2856095bd815ee795122e5561[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 13:56:07 2025 +0530
+
+    Changes & Fixes
+
+[33mcommit 33f13f0eecf30991771437759269e51e7f42ab5a[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:54:26 2025 +0530
+
+    New Outline Setting to Current Outline Fix
+
+[33mcommit bc1c2648941dc6420be61bf8ed9b27e5c7c33c12[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:51:16 2025 +0530
+
+    Remove outlineID from SessionStorage on Slide Generate
+
+[33mcommit 4a5665a517ea48ba79a92f12e01aee2986ec4ad3[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:40:07 2025 +0530
+
+    White Screen Without Reloading Fixed
+
+[33mcommit 10a5ef7aefd10caf6bb8b0b9450ff2023f21e4e3[m
+Merge: 2ee1d21 d5cc0b9
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:24:06 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 2ee1d211a61dfd6cc708e9fe6fda79f361fc75b3[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:23:23 2025 +0530
+
+    Changes
+
+[33mcommit d5cc0b9369401950bb2090dfa944e71a932cbf79[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 15 12:22:58 2025 +0530
+
+    sidebar-fix
+
+[33mcommit ab4b4f188e739f9fd5240c154df2cbef7ce2b307[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:17:05 2025 +0530
+
+    Auto Logout Fix
+
+[33mcommit 10e56c35275e8706b21e1e2f006c27c114b547b4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:08:31 2025 +0530
+
+    Auto Logout After 3hrs
+
+[33mcommit 1b5b739f084acf9e82afaf40c4629ec605a96e3e[m
+Merge: 72b91e2 7b67147
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:06:30 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 72b91e2863aa41f41ea5c7c95f2f018812f658fa[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 15 12:05:53 2025 +0530
+
+    Updates
+
+[33mcommit 7b671472330fba8aa35622c8b19eaee09dccce1f[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 15 11:40:18 2025 +0530
+
+    tooltip-fixes
+
+[33mcommit d31ecbd90c2dbf1ee718f51272678773be38f7d7[m
+Merge: 939b41a 83d57ed
+Author: Adarsha Halder <pradiphalder70@gmail.com>
+Date:   Tue Jan 14 20:39:16 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE
+
+[33mcommit 83d57ed4702e1960cc983c4d909e2ffc0dadd6c0[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 20:37:23 2025 +0530
+
+    Changes
+
+[33mcommit c060a750032b248563370a0141b39b2c9ada9811[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 20:16:19 2025 +0530
+
+    Updates
+
+[33mcommit aa1f004bb02a154f81721f65339d628d77a56a68[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 19:31:05 2025 +0530
+
+    Update
+
+[33mcommit fc2dd7b00c5455c3c2cf335eedf353aad254acbf[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 19:29:51 2025 +0530
+
+    Update
+
+[33mcommit 7f7f71153b1fb2f003904dd161b98de9ef5a9603[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 14:32:49 2025 +0530
+
+    Fix Error Screen
+
+[33mcommit 4e79a3776d92b5ee91132ec75eed35a66d992482[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 14:16:14 2025 +0530
+
+    Merged Code
+
+[33mcommit 41e93aa534e6f475e29bfb03808047c3623bfb8b[m
+Merge: cd04547 fcd6f03
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 14:16:04 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit cd045476df9117b351ca14e812e8777bcd8fa7ae[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 14 14:14:46 2025 +0530
+
+    Updates
+
+[33mcommit fcd6f037257fc0e3f4f612d08361554f31132026[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 14 14:14:26 2025 +0530
+
+    tooltips
+
+[33mcommit 939b41a84068cac799a70770c24c72f04c7ac420[m
+Author: Adarsha Halder <pradiphalder70@gmail.com>
+Date:   Mon Jan 13 21:04:58 2025 +0530
+
+    build
+
+[33mcommit 6d124ec80af54ee7fdb4023ff5adbd4c6e505088[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 20:57:33 2025 +0530
+
+    499 Payment
+
+[33mcommit 51740ff2a713d209973e19cb0eee8ced2c234c97[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 20:50:25 2025 +0530
+
+    Pricing Plans
+
+[33mcommit 6de391829a57816a07465848a94e364d601a11d4[m
+Merge: 3921cc5 30fa2bb
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 20:05:11 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 30fa2bbc157d49d23b775685bb91aa8e0c0e1aac[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 20:04:19 2025 +0530
+
+    fix
+
+[33mcommit 3921cc5fa2259b8970f962f0d6db235a5cbbd37e[m
+Merge: 6c81e0b b404d0d
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 20:03:15 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit b404d0d513001d84d7049a3662e89e4e6c5c3730[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 20:01:03 2025 +0530
+
+    updatesss
+
+[33mcommit 6c81e0b98d23386b2f0686bbd8bcab04277f492c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 19:54:43 2025 +0530
+
+    API Change Old Share
+
+[33mcommit 836d56d3bdc2f4c8794a1a1cbfe36c028dfad931[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 19:50:39 2025 +0530
+
+    CHanges
+
+[33mcommit 48f57ee7e041cf6151e3e6c31903c27025f97d33[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 19:18:03 2025 +0530
+
+    Updates
+
+[33mcommit d81d60070f2270a2e98e817c6863084ac675e406[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 17:33:40 2025 +0530
+
+    Changes
+
+[33mcommit 439c348ba85205f693afaec87bdab50bfae74a5a[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 17:21:17 2025 +0530
+
+    Updates
+
+[33mcommit 64c2c7ced350d9c70fd89142aed9307a331197a1[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 16:43:09 2025 +0530
+
+    Changes
+
+[33mcommit 4e509b65d51e6c1d59e79104c5ce89d9dbd215d5[m
+Merge: 5c98942 e48404b
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 16:23:44 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 5c98942ce2aaaffa0e918a4966779ab7d364b852[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 16:22:42 2025 +0530
+
+    Update
+
+[33mcommit e48404bcb0deb7d3dd3ad57fb0936f2c25fb0ad8[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 16:22:25 2025 +0530
+
+    fix
+
+[33mcommit 176a70077256d1f6bcf010ae750944f97678485f[m
+Merge: f9eb93b 368399b
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 16:08:19 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit f9eb93b30c5875208ea503f90bab769ed0ff6bdc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 16:07:56 2025 +0530
+
+    Updates
+
+[33mcommit 368399bb4ae7aa528cb45bf43c3f04f1312a06b5[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 15:52:27 2025 +0530
+
+    organization-logo fix
+
+[33mcommit f8a8ec37b29e31a719f343a5f9528820f372aab7[m
+Merge: 764089b 49b9274
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 15:40:14 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 49b9274dde685980c10e5012caf7ff471692463f[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 15:39:12 2025 +0530
+
+    slide-narrative-fix
+
+[33mcommit ad7e2a464692dfbeb502ed81c8c2b95da6b0fa21[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 13:41:24 2025 +0530
+
+    Generate slide-fix
+
+[33mcommit 764089b0e097d3ccbd1b0d7ac8f463b0beb65766[m
+Merge: c8e4348 0bd657b
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 13:20:01 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit c8e4348f5a488f87dbd5b56398cabf54cde6a3cc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 13:19:43 2025 +0530
+
+    Changes
+
+[33mcommit 0bd657bed322897a9c1bcf221fcb02ee58e08276[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 13:10:19 2025 +0530
+
+    tutorial-fix
+
+[33mcommit a77fdb060c604bae788811b96389c1233e84e091[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 12:43:38 2025 +0530
+
+    Slide Narrative Fix
+
+[33mcommit 33e9497265bd369ebe242cdb1354a5ee6ca0c153[m
+Merge: 5b860a4 4987082
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 12:15:20 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 5b860a46eb0fadd1f9175fcd736f7766496cbf38[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 12:14:34 2025 +0530
+
+    Error Fix
+
+[33mcommit 4987082141409bbefcbbc588398f419497bffa04[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 12:13:58 2025 +0530
+
+    mobile-ui-fixes
+
+[33mcommit 1319181d87bf7fc5b33fac4b55fd441c57832772[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 11:38:43 2025 +0530
+
+    Update - Image Payload Null
+
+[33mcommit 024eaea62a1d6470fd71b3b3308f6643c977af0d[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 10:48:28 2025 +0530
+
+    PPT Name
+
+[33mcommit 9bd22c979a0f8fccc5b3459600282f212f5f43b2[m
+Merge: f4361ce 240aedb
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 10:29:23 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 240aedb4e6cae2b2d8a4a4599862e628e7714e25[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 13 10:28:47 2025 +0530
+
+    updates
+
+[33mcommit f4361ced8aaf5e2fff0c26d97a36c5c5b050159c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 10:28:34 2025 +0530
+
+    ppt name
+
+[33mcommit 2128973a784099bcbafedf8d17bb30ff5530b9e3[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 10:06:08 2025 +0530
+
+    Merged Changes
+
+[33mcommit 6ce5ea30ffe18b6072d392d00c586f249a49b0c2[m
+Merge: be3d5ba a39813b
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 13 10:06:02 2025 +0530
+
+    Changes
+
+[33mcommit a39813bbade22fe8c72cf7b8a8f8cfbc2797acdd[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sat Jan 11 04:25:06 2025 +0530
+
+    mobile-ui
+
+[33mcommit be3d5baea0bde08c7d176f36008ca5dbfe3f0ed6[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 19:45:29 2025 +0530
+
+    Merged Code
+
+[33mcommit 5e34eeae2ac25a5f90428e900775a2cb21a8ff82[m
+Merge: 993e343 62897ed
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 19:44:13 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 993e3431421233f33620e7dced83fc5559c0642b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 19:43:54 2025 +0530
+
+    Update
+
+[33mcommit 62897ed8670455f69cf3ff8b5aef3b6bec9607b8[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 10 19:38:41 2025 +0530
+
+    backbutton fix-cover
+
+[33mcommit c73af22ff89bf8538613d3afa0733776dad1c3dc[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 10 19:19:10 2025 +0530
+
+    organization-profile-fix
+
+[33mcommit 7e96cd8d98acb7d6bd6ae51bb95a5f9460249d61[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 10 18:08:44 2025 +0530
+
+    share-mobile-ui-fix
+
+[33mcommit d1a13e19408132ca49e0f9c42e6289a5c49b2dca[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 10 17:55:15 2025 +0530
+
+    mobile-ui-fix
+
+[33mcommit fdd6b40de691cc0d4bcb5272343c71f42133a78b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 16:46:38 2025 +0530
+
+    Changes
+
+[33mcommit d4e39479307a79061962922ca401a19172a85b92[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 16:31:26 2025 +0530
+
+    Sheet Changes
+
+[33mcommit 0d89c5cf19980a0fe204e5da4b86c0a8a6d8cba4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 15:59:34 2025 +0530
+
+    Changes
+
+[33mcommit 0ace9b0788851e620890a2c244125e218606033c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 15:41:27 2025 +0530
+
+    Merged Changes
+
+[33mcommit 494fa2e526476b4b91a4f562aed4f8c6e5eb641c[m
+Merge: 3ddf208 61d69e8
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 14:25:17 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 3ddf2089e66a0a7ee74a8d9075b77aaa4355c367[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 10 14:24:27 2025 +0530
+
+    Updates
+
+[33mcommit 61d69e86b02cb381053af0514870945952ac8ad7[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 10 11:48:34 2025 +0530
+
+    mobile-ui changes
+
+[33mcommit c379a053d504a0b91e8b5c6b14b072f71207866a[m
+Merge: 2d38831 f054bbc
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 20:13:04 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit f054bbcf8bc4cec8a4f7f276514d08d2a854cb2f[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 20:12:43 2025 +0530
+
+    mobile-tutorial
+
+[33mcommit 2d38831cbb7d71c0137a1415c6bd2da4e2de0147[m
+Merge: 3eaf858 f6a519e
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 20:12:19 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit f6a519ed3d701822498bc2f7564118a4f64afaa0[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 20:11:45 2025 +0530
+
+    mobile-tutorial
+
+[33mcommit 3eaf858ba9d0ab8ed6f07d9007689c745c33d86c[m
+Merge: 19bcd40 387af39
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 20:10:57 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 19bcd4045fd6885b164b1de755b335a44162288f[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 20:10:36 2025 +0530
+
+    Changes
+
+[33mcommit 387af396a74760ab0c2e43ad788995d75ccc8af8[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 19:20:55 2025 +0530
+
+    joyride-avoid-mobile
+
+[33mcommit 6a3f9fde3ee5678c63b14a69090628a658d6f852[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 19:11:56 2025 +0530
+
+    tutorial fix -spotlight
+
+[33mcommit 2f8c9c53a73ce986af26fc92a9276a6c4ee68ee3[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 18:02:58 2025 +0530
+
+    Tutorial FInal Fix
+
+[33mcommit dfae86c571ce7ada08863b875eaa9b0542901a29[m
+Merge: 21fc0f7 05bbae7
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 14:29:03 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit 21fc0f71c997b6316e0105fb09266bed0bc3df87[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 14:28:10 2025 +0530
+
+    updates
+
+[33mcommit 05bbae7d0ec8ddb5b22e39dfafd1e894f8b34acd[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 14:27:34 2025 +0530
+
+    Changes
+
+[33mcommit 4a721ff19f9340f443149650a2dcdc039e019fb2[m
+Merge: 629f7b8 dc446cc
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 13:16:41 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit 629f7b8d2993f47ad0328326ed709423f4e96f2a[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 13:15:47 2025 +0530
+
+    commits
+
+[33mcommit dc446cc1343e0d09005e0ad84cb6cc7b100879d6[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 13:14:46 2025 +0530
+
+    Update
+
+[33mcommit 9229e86c4c75d415b58e9b0cd3d30c1cb59227f9[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 12:56:35 2025 +0530
+
+    Update
+
+[33mcommit f53418617f9b2e6b5ce10ad5a296bf1d710a38bd[m
+Merge: 4e07e5a 171cc00
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 12:56:05 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 171cc007057122e6e4ce830336b4d31fbd0ed641[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 12:50:17 2025 +0530
+
+    mobile-padding-fix
+
+[33mcommit 4e07e5acf6898c1435d5544caef6ff007fa4e331[m
+Merge: 891c401 cae967d
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 12:47:37 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 891c401e6bfa38b1bf02b0f8779815fe186bf49d[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 12:47:14 2025 +0530
+
+    Updates
+
+[33mcommit cae967dbc29bf5c553e9b3033f5a40b0020f1097[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 12:43:55 2025 +0530
+
+    mobile-view-share-screen
+
+[33mcommit a1460b484c50f1d7c30176b10d67327571456c20[m
+Merge: 51da812 bc5298e
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 11:56:13 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 51da81256eaad05948988d5add0ecf79f825592e[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 11:54:46 2025 +0530
+
+    Update
+
+[33mcommit 8d75111c14921143c58fb3bc09b8622f0858f6b5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 9 11:54:11 2025 +0530
+
+    Update
+
+[33mcommit bc5298e72c19883c12964c8d9e37e6e6f7b3d6da[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 9 11:51:04 2025 +0530
+
+    guided tour
+
+[33mcommit 8b34de1257fa23009dd2c2a14e52117cceea0da6[m
+Merge: 4acda1e 9909a34
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 19:58:28 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 4acda1eb7fa6e8e300b6fb0bd5336a9da6adb8d8[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 19:58:01 2025 +0530
+
+    Updates
+
+[33mcommit 9909a3447b881481694202633b8c6ec1a3cacdb1[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 19:54:36 2025 +0530
+
+    pricing spacing
+
+[33mcommit 5d428e29a10ccd51bacede8920189804ed6f5fcb[m
+Merge: 615f7d6 9522404
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 19:12:55 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 615f7d6c0b787348f371b00387a9d68d2636389b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 19:12:35 2025 +0530
+
+    Presentation View Changes
+
+[33mcommit 9522404ee3b6320e7841fbc85ddfa128f2b5b9eb[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 18:47:24 2025 +0530
+
+    landing-page navbar
+
+[33mcommit e701164acb46459fde1110d1976a084ae6cd6298[m
+Merge: a8f6f3a db82e8d
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 17:15:43 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit a8f6f3ac43116413da71cd79b5988ddc3f9f12e4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 17:15:22 2025 +0530
+
+    Changes
+
+[33mcommit db82e8d13eeda88aa2ed6ea0dd74cda9060cff86[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 16:46:22 2025 +0530
+
+    filename slice image api
+
+[33mcommit 62f232547150910bdb87c74367f27c7cc78eb018[m
+Merge: cae0983 9446e02
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 14:52:17 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit cae098349bb88d5047aa65d5bf4843f8aaeea947[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Jan 8 14:51:02 2025 +0530
+
+    Changes
+
+[33mcommit 9446e028c484cd2bb94699464ffb46cd19f30a46[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 14:50:39 2025 +0530
+
+    payload issues
+
+[33mcommit 136b441a2960c1c08c646768a408dfc31e9452f0[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 14:25:43 2025 +0530
+
+    joride new version fix
+
+[33mcommit 5a8948c1b85f81a57aa975c57166fbdbdf7d96b1[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 11:16:37 2025 +0530
+
+    tour finally fix
+
+[33mcommit 515451f972335a240d49b8cdca7d5e993d203ae7[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Jan 8 10:55:22 2025 +0530
+
+    fixes
+
+[33mcommit 29ad6db8c9249afea0d8ac92f316f3ef63692a45[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 20:34:51 2025 +0530
+
+    joyride final fix
+
+[33mcommit a58efa1431bd64336a701ac1310faaa945d9cb3d[m
+Merge: 0ff64bd cc31ab2
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 7 19:15:37 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 0ff64bddee6b5dd954dab1146cea5ed090e83f20[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 7 19:15:14 2025 +0530
+
+    Updates
+
+[33mcommit cc31ab22ae88bc233433334f58c7fb79b846a881[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 18:09:09 2025 +0530
+
+    tutorial (usestate) false
+
+[33mcommit a5a02ea1a420d476127bfb6c375ea8f279dc5c2a[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 18:08:25 2025 +0530
+
+    joyride fixed
+
+[33mcommit a6882202acf87cd6996bd45c168b3da7f256ac8c[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 15:08:52 2025 +0530
+
+    mobile ui pagination fixed
+
+[33mcommit b36ba6f74c1c6ca5369dc58dea5a218c7db23397[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Jan 7 14:31:36 2025 +0530
+
+    Updates
+
+[33mcommit 796ca682e8329f084be1af5b9ec71d8fed0dd6a4[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 13:45:20 2025 +0530
+
+    joyride
+
+[33mcommit ad843c93759e755e65097bfeaa7787fcc062419e[m
+Merge: aa2ac2c f757b68
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 10:37:20 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit aa2ac2ced27cc96427fb63903a08878486a75b24[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Jan 7 10:36:49 2025 +0530
+
+    joyride
+
+[33mcommit f757b684c8dddf6fad58b6b9c73e8d5d8022b0b5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 21:14:36 2025 +0530
+
+    Changes
+
+[33mcommit 15cfd35463cfcd41376b7e989ac3c3edd270d111[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 18:38:26 2025 +0530
+
+    Attach Image - Cover Contact
+
+[33mcommit bd57398a5aca851af4e9c8be36912422597b35ca[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 18:26:17 2025 +0530
+
+    Graphs Fix
+
+[33mcommit 32a6d87f7df7ca78873dbc9f1940758dee6bd98e[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 16:38:03 2025 +0530
+
+    Merge
+
+[33mcommit 8fdaae08507840566c9a4cd192adcda438b06c95[m
+Merge: 3fa8666 a83f9c7
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 16:37:57 2025 +0530
+
+    Merge branches 'suvigya-dev' and 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit a83f9c7b2500e3732d9c89c684a858d4f7dca872[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 6 16:29:07 2025 +0530
+
+    graph fix
+
+[33mcommit 3fa8666d6e49c041599818988941d024589a3bc4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 14:19:32 2025 +0530
+
+    Finalize Logic
+
+[33mcommit e70933a90112c5e090cc8f6291d65e0c204157df[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 14:09:48 2025 +0530
+
+    Share Scroll White
+
+[33mcommit 81a0398aa7dcb20bb95d01438b24f38a735eecac[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 14:04:42 2025 +0530
+
+    Changes
+
+[33mcommit 43effafa4858e85b5e31961d7c259156bb5cb397[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 11:19:44 2025 +0530
+
+    Changes
+
+[33mcommit 797a58bfd6b580d29d9d11e181bd579a0e1bf743[m
+Merge: 17ef105 59789fb
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 11:19:38 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 17ef105689a57af40671edd57588e4af51ea1aaa[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Jan 6 10:47:53 2025 +0530
+
+    Update
+
+[33mcommit 59789fb5820fca80c59af489d295c3b4264ba34e[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Jan 6 10:47:24 2025 +0530
+
+    mapping fix
+
+[33mcommit 422b536d23f09abee6e2583d17e7efbe0db58e91[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sat Jan 4 05:25:21 2025 +0530
+
+    Attach image fix
+
+[33mcommit 19271971b74c3cade477e7fc5759aebbaf4726ff[m
+Merge: 8c9828b f93f9a0
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sat Jan 4 01:10:01 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit 8c9828b35296404500b5783be7fe89d2c171be9b[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sat Jan 4 01:09:02 2025 +0530
+
+    history changes
+
+[33mcommit f93f9a0ade27019b29c2428b73048dde90dc789b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Sat Jan 4 01:04:33 2025 +0530
+
+    Attach Image
+
+[33mcommit 6a492a51624eece255ac50528174680f615d2dba[m
+Merge: aa2644d 96dd354
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Sat Jan 4 00:25:00 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit aa2644d558f9a97158440e163a3c111e3b4b2ea0[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Sat Jan 4 00:24:37 2025 +0530
+
+    Share, History Google Slide, Upgrade Pro
+
+[33mcommit 96dd354263e039124444afaeba491e855172c8f8[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sat Jan 4 00:24:25 2025 +0530
+
+    refine updates
+
+[33mcommit 8118b372c7929d9ca0fd55052de05fc62285b697[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 3 23:47:14 2025 +0530
+
+    refine presentation updates
+
+[33mcommit 63547647ed4760486d14476dd86f5f62bcbf44cb[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 19:47:27 2025 +0530
+
+    Finalize
+
+[33mcommit 51a73c4a3cd00cedead216246e3183bbb5d4213b[m
+Merge: 41c1554 e146826
+Author: PrathameshParati <prathamesh.nigade@parati.in>
+Date:   Fri Jan 3 19:42:03 2025 +0530
+
+    Merge pull request #1 from parati-eos/prthmsh
+    
+    Prthmsh
+
+[33mcommit e146826e3b74a788e00e375dc8399bb01f49ab39[m
+Merge: d5ba38a 41c1554
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Fri Jan 3 19:40:07 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into prthmsh
+
+[33mcommit d5ba38a4f73c752d9e90fe1ec8883eb1d0af65e6[m
+Merge: e2c33a8 d81b44b
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Fri Jan 3 19:39:23 2025 +0530
+
+    pw
+
+[33mcommit 41c15542c8d05b9c9b46074a7934169b11edf47e[m
+Merge: 6321e40 e02668f
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 19:32:43 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit e02668f92a55cb03f9699632cba9b0a219f14329[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 3 19:31:36 2025 +0530
+
+    padding mobile view
+
+[33mcommit 6321e40e2531867402eda5205eab739537c22957[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 19:08:28 2025 +0530
+
+    Merged Code
+
+[33mcommit 96eea4b607a1abb892b2d1245038922cd4950db8[m
+Merge: d81b44b 0f7063e
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 18:48:35 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 0f7063e2e97206af41b15fb1c01d85d431ac22b0[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 3 18:43:09 2025 +0530
+
+    design updates
+
+[33mcommit e2c33a866bf3d7a7498c652e8be010821727ccae[m
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Fri Jan 3 18:17:23 2025 +0530
+
+    chw
+
+[33mcommit d81b44b76de7d017403c74c62b9b8efa5c159304[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 17:13:58 2025 +0530
+
+    Merge Washid's Changes
+
+[33mcommit 93949ea715877a2d84e1550d63a0cd15be9e86e9[m
+Merge: c19f240 a721aa9
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 17:11:38 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit c19f240690719c3a8725cf38127b18be1785b319[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 17:11:16 2025 +0530
+
+    IP Pricing Updates
+
+[33mcommit a721aa987a78e16c10b5630d43ce30412cbc6efd[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 3 16:55:16 2025 +0530
+
+    video embedded and testimonials
+
+[33mcommit 2711c4844f294315358a801726386b1ee57d6dbe[m
+Merge: 638f5ab 0fde74c
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 3 16:54:46 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit 861a61cea16580cffff1be002f37178b1be2bfb4[m
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Fri Jan 3 15:48:50 2025 +0530
+
+    ch
+
+[33mcommit 638f5abd025d0bf7ca3dcb3a760638ac5b9a251d[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Jan 3 15:44:26 2025 +0530
+
+    updates
+
+[33mcommit 0fde74c53f508e45864e6fcc78118a2c6ee5d30f[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 14:34:19 2025 +0530
+
+    Pricing IP Fix
+
+[33mcommit d42fdbc9b28262960592900389891e4c612f9389[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Jan 3 14:02:57 2025 +0530
+
+    Pricing and Add Outline Updates
+
+[33mcommit f1ecff984b968ad4b9c626e7073e4d3ef6600417[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 20:55:44 2025 +0530
+
+    Export Button Updates
+
+[33mcommit 43d6981cdb38c00112dd5509f88a694a6a066eab[m
+Merge: 4af1005 45ed470
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 19:56:16 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 4af100514e42bb1c8b4767f7f90faf8d60a12260[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 19:55:03 2025 +0530
+
+    Export Payment Success
+
+[33mcommit 45ed470d8035a3055b0441b9ae46b9a8141611f7[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 2 19:37:49 2025 +0530
+
+    Tooltip
+
+[33mcommit 5f1827ba95fffc3f59d777a8cd67a6896bc8a88c[m
+Merge: 4663769 4245d23
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 18:12:58 2025 +0530
+
+    Merge branch 'main' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 4245d2379910ea90773f154d80fca43eea7a11a9[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: Adarsha Halder <pradiphalder70@gmail.com>
+Date:   Thu Jan 2 18:12:30 2025 +0530
+
+    payment
+
+[33mcommit 466376974e449c89a2dc5d13ece2b55fdc196714[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 18:10:42 2025 +0530
+
+    Changes
+
+[33mcommit 9e2167de99905efe4d547842ec8f60527cb52ca2[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 2 12:54:43 2025 +0530
+
+    history changes
+
+[33mcommit 459aa8c43f6f84f21fadfe1e2ee87cb00563c4b3[m
+Merge: 0fd36d1 f100f80
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 12:26:29 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 0fd36d18381eecfd98d6fc0232c09e0c00effe30[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 12:25:32 2025 +0530
+
+    Updates
+
+[33mcommit f100f807bf27bb6279df8a148377e85f5b6b5a71[m
+Merge: 4123712 0fcec2e
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 2 12:16:24 2025 +0530
+
+    merge
+
+[33mcommit 4123712661ff303eaa1eac210b252d1a55ed443b[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 2 12:16:06 2025 +0530
+
+    history changes
+
+[33mcommit 0fcec2eff6457ab96c3071c073c157c45c280366[m
+Merge: 5cda5e8 a60a1cd
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 11:40:57 2025 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 5cda5e873911b1ff05ebe538dcc6908f77db1a0b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Jan 2 11:40:41 2025 +0530
+
+    Updates
+
+[33mcommit 8c255f9e1025afa1c623ae86f3eec648639ae201[m
+Merge: 29ce159 b8a5a11
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Thu Jan 2 11:30:52 2025 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into prthmsh
+
+[33mcommit a60a1cd031f2149c614858be202f94118811e43e[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Jan 2 10:30:16 2025 +0530
+
+    sort modal added-mobile ui
+
+[33mcommit 29ce15932c4410ebe78031e0396b196b612af5f8[m
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Thu Jan 2 10:20:30 2025 +0530
+
+    pv
+
+[33mcommit 9c3c800d18ebfbd6b91659445276224aab0b79ea[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 19:20:49 2024 +0530
+
+    history hidden show
+
+[33mcommit b8a5a11360933e782349fe835788c1017d4160ca[m
+Merge: 1dbb662 2ff50d8
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 19:16:07 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 00a44e76cfadc3bf681f87d45d54b107c22eb9dc[m
+Merge: 2ff50d8 1dbb662
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 19:16:06 2024 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit 1dbb662531bfafbc7676cbf8226e2847b797ba12[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 19:15:43 2024 +0530
+
+    Updates
+
+[33mcommit 2ff50d8369ba3774f97121c5786b3d19bf24cc4e[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 19:15:07 2024 +0530
+
+    scrollbar issue fix
+
+[33mcommit 616932efb8fb787515dada0d229c4c0e1f087463[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 18:41:07 2024 +0530
+
+    Pricing Modal Changes
+
+[33mcommit cb271e991cd43ac2ef718be5dd66ca8450724a77[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 18:29:26 2024 +0530
+
+    design fix
+
+[33mcommit f2459b49ae42827744d61db4fff6075407692ff1[m
+Merge: 47ffbff 66ce250
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Tue Dec 31 18:15:16 2024 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into prthmsh
+
+[33mcommit 47ffbfff3d5549abdd8f67f5040adda5c17736ca[m
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Tue Dec 31 18:14:44 2024 +0530
+
+    ch2
+
+[33mcommit d4b56c6e25e840d711c9e470d5dfdd716962ff3b[m
+Merge: ef152e1 66ce250
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 18:10:15 2024 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit ef152e15f251943d9b5d968ac789e20a754da9e4[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 18:08:12 2024 +0530
+
+    fix
+
+[33mcommit ed02c874d8db6f6022f51be5a3637d8af2586609[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 18:07:22 2024 +0530
+
+    commits
+
+[33mcommit 447b7579837bf7bf1ef54f683a82f5b66c6c8124[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 18:03:28 2024 +0530
+
+    updates blog
+
+[33mcommit 66ce250fc46d17e64debe25b81830958a5651493[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 17:45:09 2024 +0530
+
+    Redux Changes
+
+[33mcommit faf74df4a838f8f3f0afacc0ad719d14d390e6ed[m
+Merge: 5dd38e9 c803042
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Tue Dec 31 17:42:16 2024 +0530
+
+    ch
+
+[33mcommit 5dd38e90852ec11a62f62a4e5088e9efaf77d627[m
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Tue Dec 31 17:40:47 2024 +0530
+
+    ch
+
+[33mcommit c803042d4147b2b4855fe3be8622990a2639bf28[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 17:20:40 2024 +0530
+
+    Uncomment Redux userPlan
+
+[33mcommit 2924d2e08bf4055b32cbe4fd72c43b899e1d0f35[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 16:48:02 2024 +0530
+
+    Push Updated Code
+
+[33mcommit 4e98c44f948a56c5cecdac86765de9b9656a5e5a[m
+Merge: 6abdc36 982bfb6
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 14:18:11 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 6abdc36573d2f5b6f2d866eb34e82dca846dca07[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 14:16:37 2024 +0530
+
+    History Updates
+
+[33mcommit 982bfb631680afbe31bd09fa7434fc2b1454cd3b[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 14:16:15 2024 +0530
+
+    updatess
+
+[33mcommit 96ca08c55507daf70ca53acff87e10f68b53d317[m
+Merge: 215d97b 3fb9eb6
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 10:33:32 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 215d97b87f76b445047f5da7c4375f56b1affa5c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 31 10:33:05 2024 +0530
+
+    Updates
+
+[33mcommit f0737171a6332c7cd431e5c6a9bd120d7abf4b24[m
+Merge: 198a06c 74a1a6e
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Tue Dec 31 09:38:35 2024 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into prthmsh
+
+[33mcommit 198a06c2a150de1bb617bbd219207c94951dcdc7[m
+Author: prthmsh77 <prathameshdnigade@gmail.com>
+Date:   Tue Dec 31 09:38:12 2024 +0530
+
+    ch
+
+[33mcommit 3fb9eb64f763fe75bb58f0919a8127243c39aec2[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 31 01:03:38 2024 +0530
+
+    Image and cover design fixes(final)
+
+[33mcommit 74a1a6ebc9311e8278b5da1143ea5305ac4a09f1[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 30 19:02:12 2024 +0530
+
+    Merged Code
+
+[33mcommit 1d0e8f2b25974bda1b773ccac7d20d0260225e29[m
+Merge: c382016 d141233
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 30 16:04:49 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit c3820169c2957cb837326173597262b700f27bce[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 30 16:04:25 2024 +0530
+
+    Add Redux
+
+[33mcommit d1412337908e8533bb0481c894b4ad267b5747f4[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 30 14:37:33 2024 +0530
+
+    updatessss
+
+[33mcommit 8d08f6f75d481cdd9aef964d9fa04f5624c136ce[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 19:44:06 2024 +0530
+
+    Images Progress
+
+[33mcommit 9098d8ec6c3da55cba93f480314ea03885e9e3fe[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 18:10:10 2024 +0530
+
+    Updates
+
+[33mcommit 14093826861334cec799b816c208c59779f8a53a[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 11:58:53 2024 +0530
+
+    Login Updates
+
+[33mcommit 73c015df121042f2f8323526b6e7fea19323f0f8[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 11:50:33 2024 +0530
+
+    Updates
+
+[33mcommit 362258b6a4fbea446fc5bd8140e8b0770b29575e[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 11:49:14 2024 +0530
+
+    Changes
+
+[33mcommit 2415c6453a5da487c9d1d6eb46a989ffb981e6bf[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 11:36:07 2024 +0530
+
+    Add loader - Null SlideId
+
+[33mcommit 7819c59ff8a44b3c3263f322c54c30ef69e020c1[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 11:16:36 2024 +0530
+
+    Fix Socket Code
+
+[33mcommit 5292bf1b2b129cfe0a31f40b6ede234e55539fa4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 11:16:01 2024 +0530
+
+    Update Loader
+
+[33mcommit b3cbef17597431cb63c51b7580771e053161e4a0[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 10:59:06 2024 +0530
+
+    Update
+
+[33mcommit a857b9ece82eaf9565b310b9fa73cb6a90f605b6[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 10:54:41 2024 +0530
+
+    Update Loaders
+
+[33mcommit 907d9756e232f707e1185a9b1481a2c44d7a3531[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 10:41:47 2024 +0530
+
+    Changes
+
+[33mcommit e63d1e364f7de6b7ca3c5d99b587553f5e1dfbf5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 10:15:11 2024 +0530
+
+    Update
+
+[33mcommit 43d280a094b7f7298ca68339985b4a7f039745c9[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 27 10:08:22 2024 +0530
+
+    Merged Code
+
+[33mcommit 1ef8f7fffdace9134587fc026730c2a3f82c2a88[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 27 07:49:14 2024 +0530
+
+    mobile view modal changes
+
+[33mcommit f836a133517c6aaaaa502aa91da0b6669c97affc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 26 20:24:39 2024 +0530
+
+    Merged Code
+
+[33mcommit fe701a4e6d4c1954bb392b6ded306afe4d621ef4[m
+Merge: 84828de 52445c5
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 26 20:24:31 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 84828de9400de3eb959b5eab9e7ae62dc1dacb38[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 26 20:21:07 2024 +0530
+
+    Updates
+
+[33mcommit 52445c5751f1ed77105a8c75faa59b8ae5a44007[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 26 20:20:57 2024 +0530
+
+    design updates
+
+[33mcommit eb744b9101aa733f503374e299ada30e6cf6ffc3[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 26 16:15:11 2024 +0530
+
+    Changes
+
+[33mcommit 4f9858cf7e36ab67218436d3d0561166e3dc9b74[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 26 12:18:50 2024 +0530
+
+    Updates
+
+[33mcommit d0a95788273d5e64345b11ca3ee89c60d9734ad9[m
+Merge: 47ff180 242a86d
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 26 12:18:44 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 242a86dfecf64aa8d573037f75e45c582ec6fec3[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 26 12:14:38 2024 +0530
+
+    subscription-plan modal
+
+[33mcommit 47ff180c5ba774136f68876ddb0c17ff7053b22a[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 19:59:42 2024 +0530
+
+    Update
+
+[33mcommit c80462a4240aedf9be906bccde830ce14d4d3875[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 19:43:35 2024 +0530
+
+    Update
+
+[33mcommit 21f6d80529c05435df16c928fdbc1e91b095483f[m
+Merge: 4baf35d 6ad58b7
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 19:35:33 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 4baf35d140b23f9bc819b073ae7ac045e5e7a09e[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 19:35:06 2024 +0530
+
+    Updates
+
+[33mcommit 6ad58b7f60fd51e5fad53cc1c2e66fc5ed602ce5[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 24 19:27:35 2024 +0530
+
+    gradient-fix
+
+[33mcommit deae2044a58807eec8dfab2360bf41b84129c894[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 24 19:08:46 2024 +0530
+
+    updates
+
+[33mcommit 6d2720391d974741004ff377f04c4c1528a0a663[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 16:43:09 2024 +0530
+
+    Updates
+
+[33mcommit 57454607edcd783775258dbebb95300c4532e2f1[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 14:21:30 2024 +0530
+
+    Changes
+
+[33mcommit 6fbd05f490b0cc4707e7c05ffe5892e6ed205849[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 13:57:24 2024 +0530
+
+    Working
+
+[33mcommit 308d24162b1d4dc462fecd69c7cf874ad85afa04[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 10:33:42 2024 +0530
+
+    Changes
+
+[33mcommit f2cf0765ea3a618094f2f22bedbd217a49f4fa5d[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 10:30:01 2024 +0530
+
+    Change
+
+[33mcommit 6106d57198d699a46869fdee34b0e65e00cd32ba[m
+Merge: 197b68d daa9823
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 10:19:29 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit daa9823f4ba751c8648e973613d2737716b28c2b[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 24 10:17:38 2024 +0530
+
+    updatessss
+
+[33mcommit 197b68d851a4efec459d33ac1e20f66990038f2c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 24 10:17:04 2024 +0530
+
+    Updates
+
+[33mcommit ef2bd9a1e372c15476bb523b346ab3c2f6b9a810[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 23:12:13 2024 +0530
+
+    Google Slide API Test
+
+[33mcommit 1c6da0f28c33fbb7c0905b05a4802c867963011c[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 20:34:02 2024 +0530
+
+    issues fix
+
+[33mcommit 55b4e2f727bc17ef45c0448cf6fd80acd538957e[m
+Merge: 569bf08 7c9ac29
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 19:53:21 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 569bf08f0ab9fbe3219b02dae145b31de167051b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 19:52:35 2024 +0530
+
+    Loading Updates
+
+[33mcommit 7c9ac293d3b0881c40db281b4324411ab4aa41c4[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 19:32:06 2024 +0530
+
+    updates
+
+[33mcommit 886c1c79026a7c081a44a3e2e6f662f392846af9[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 18:58:58 2024 +0530
+
+    onboarding fix
+
+[33mcommit 8f2560b3729e87ea5669507ac3ceea1634f617e5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 17:05:23 2024 +0530
+
+    Merged Code
+
+[33mcommit 073c59a68dfdd9f8ef6a9b137f5bad701e5d77b0[m
+Merge: bc96749 4def962
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 17:05:14 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 4def962c5ba3ea2fe4d4b844856e6c842a2eb2fe[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 13:52:47 2024 +0530
+
+    updates
+
+[33mcommit bc96749af8d07a27ccfceebb086d3fdf584b8031[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 13:48:24 2024 +0530
+
+    Pricing Modal Fix
+
+[33mcommit 48baeb2d4ee191363fdfb42a955c37215f01b131[m
+Merge: f2f0ec1 d85c7da
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 13:15:33 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit f2f0ec19b0275e843fd38a14981a59939c4372c5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 13:15:17 2024 +0530
+
+    Update
+
+[33mcommit d85c7da58966a99fcb6a9c333b4d478ed969caf3[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 13:00:51 2024 +0530
+
+    updates
+
+[33mcommit f8560f94153bc46b7b585219ac5c01dde30dd011[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 10:09:29 2024 +0530
+
+    updates
+
+[33mcommit f9fbf1a08e4838b4019141f7904cc194b8053ab7[m
+Merge: 52044e0 d7c766f
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 23 10:07:37 2024 +0530
+
+    Merge with Washid's Code
+
+[33mcommit d7c766f791cec616b3c3bf847a3581c1f5f64379[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 23 00:05:29 2024 +0530
+
+    alignment and other issues
+
+[33mcommit 52044e07766ca9774e95a37eeaf89dd349daac32[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 20 14:24:53 2024 +0530
+
+    Updates
+
+[33mcommit e2e43380bc6f7a6ed769bed928a10cf2663baee4[m
+Merge: a7c0274 a566a6b
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 19:24:14 2024 +0530
+
+    Merge Changes
+
+[33mcommit a7c02748a0a05acd2e5579603ed3884518f34c75[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 19:22:41 2024 +0530
+
+    Updates
+
+[33mcommit a566a6b49c74e5d134a17fb9b029bd5299a94ee7[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 19 19:22:21 2024 +0530
+
+    updates
+
+[33mcommit 9f5ac5cd80c9ac52a246d38701ae5232a25e64cc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 18:42:19 2024 +0530
+
+    Updates
+
+[33mcommit 2f7cbd5a8c9a83aabb3a82530c13fbda2ba8ddf0[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 16:37:29 2024 +0530
+
+    Changes
+
+[33mcommit 2e862329510e38381a492d6c26035b8229ef59cf[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 14:36:02 2024 +0530
+
+    Presentation View Changes & Onboarding Loader
+
+[33mcommit 8dfd809dfc9e8f2600c530aa7f2b6613cbe613fc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 11:32:15 2024 +0530
+
+    Update
+
+[33mcommit 7a8eac5e4955308d99e605f731f6869088203f24[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 10:51:40 2024 +0530
+
+    Update Presentation View
+
+[33mcommit ce85926323c19e9b263b73ca4bbfb0df90985512[m
+Merge: 09ad911 ec79792
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 10:12:39 2024 +0530
+
+    Merged Code
+
+[33mcommit 09ad9116d40745d426d765e6d942c8f2fb146817[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 19 10:10:39 2024 +0530
+
+    Updates
+
+[33mcommit ec797928a2a8fc64c7342f764ffcef3aaca945ea[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 19 10:09:59 2024 +0530
+
+    updates
+
+[33mcommit 7368013fec9a631467538b3a8ab9acca5834f8a8[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 18 20:57:52 2024 +0530
+
+    Add Remove Background
+
+[33mcommit 750948b85607a1de5a12f325b5ad1c05f6b46b3f[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 18 19:59:21 2024 +0530
+
+    pull
+
+[33mcommit edd02cb27df0f16da1c39fa426a5de0b1820a579[m
+Merge: fef7ebe 9822d54
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 18 19:34:58 2024 +0530
+
+    Merged Code
+
+[33mcommit 9822d54f8e1df692460ae1dfb31f9c6ee3146f63[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 18 19:31:34 2024 +0530
+
+    updates
+
+[33mcommit fef7ebe4245005a0c956e8d7d46dffad0c51379b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 18 19:30:54 2024 +0530
+
+    Updates
+
+[33mcommit caa758676b21a1236ad8b2fe096dc56c6de2ad81[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 18 11:35:57 2024 +0530
+
+    Merge
+
+[33mcommit 1962484b13b0b4ece50651ccff85a3d0f70e0faf[m
+Merge: 3a1433b 95ac2d1
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 18 11:34:37 2024 +0530
+
+    Merge
+
+[33mcommit 3a1433b2c383d547447402232a180c5877a1444e[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 18 11:32:56 2024 +0530
+
+    Updates
+
+[33mcommit 95ac2d15a17adc7c13fb4c29b2b943b4d3996f3c[m
+Merge: 7f320a1 732d35f
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 18 10:12:40 2024 +0530
+
+    Merge branch 'suvigya-dev' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into WASHID--DEV
+
+[33mcommit 7f320a1d11b73815e9065ec7f5ab0024bb7df88f[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 18 10:09:56 2024 +0530
+
+    updates
+
+[33mcommit 732d35ff59a7056c547253abee2c41318f042532[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 19:37:42 2024 +0530
+
+    Update
+
+[33mcommit 4c9a681bd046aa66fb1ccc2c41a94f1c714e2154[m
+Merge: 7696221 00ee63e
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 19:32:31 2024 +0530
+
+    Merge Updates
+
+[33mcommit 7696221fbec18ede2cbc4d8411ac4e7eac023374[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 19:28:32 2024 +0530
+
+    Updates
+
+[33mcommit 00ee63e3ded916adcbbfaf1aea768cb8587d13c2[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 17 19:27:38 2024 +0530
+
+    updates
+
+[33mcommit 37918b17a76cf1c77dc150cdd8551c43a35715f5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 18:39:10 2024 +0530
+
+    Updates
+
+[33mcommit 8eb1e6f94200ef43fb12f37cc5ee37f41f44595b[m
+Merge: 098b477 73b07aa
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 18:38:59 2024 +0530
+
+    Updates
+
+[33mcommit 4eaad97ad08ac401ee0798a7dafbfbe93f280d1e[m
+Merge: b784f9f 098b477
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 17 13:32:37 2024 +0530
+
+    updates
+
+[33mcommit b784f9f7d292d3d12cdc4eb66710b8837aa2e3d5[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 17 13:27:58 2024 +0530
+
+    outline blue
+
+[33mcommit 098b477e2c53476d544e79e0f165b37c0b5e9dbb[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 10:32:54 2024 +0530
+
+    Updates
+
+[33mcommit 73b07aa98f770d4832514360a0b78f49f7b7c575[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 17 10:20:53 2024 +0530
+
+    scroll issue ref fix
+
+[33mcommit 05004e386bf7d14286af8cbfdb8705b166328903[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 17 09:56:55 2024 +0530
+
+    Updates
+
+[33mcommit d0a0d3074b0a680c17fff9797a2c364254daec08[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 20:08:11 2024 +0530
+
+    Update
+
+[33mcommit dc8bebdf03ca2a86ef43bbb116d04a7ec2d24a45[m
+Merge: b2b17b1 90990a2
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 20:07:53 2024 +0530
+
+    Updates
+
+[33mcommit b2b17b13e459f5db3c0e339b57e63def221ddff2[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 20:01:49 2024 +0530
+
+    Update
+
+[33mcommit 90990a2bd17ccdece700947ea400c3bcd81bf84a[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 16 19:50:16 2024 +0530
+
+    login page fix
+
+[33mcommit 908a21fdce689dc01f443fcfc258320490232cba[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 18:55:04 2024 +0530
+
+    Changes
+
+[33mcommit c45b21072edd79d2fcceba643c2951754a713e5b[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 16 18:41:41 2024 +0530
+
+    Pricing page mobile
+
+[33mcommit f532e2bcd333dac5915de12d71787d9a0e4c49f3[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 18:29:25 2024 +0530
+
+    Update
+
+[33mcommit add11690ec0f1898019552a2c23275384659d446[m
+Merge: 97784bb 63daa49
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 18:29:21 2024 +0530
+
+    Updates
+
+[33mcommit 97784bb7b6e445ae17705f61890c404e2b44f5e0[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 16 16:06:41 2024 +0530
+
+    Updates
+
+[33mcommit 1324cbbd7492780556be5553c48c72f5723c088d[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 16 16:02:03 2024 +0530
+
+    alignment
+
+[33mcommit 63daa49b308495c971fb56e4ec80434c2dc057cc[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 16 13:49:30 2024 +0530
+
+    pricing page fixes
+
+[33mcommit 473cda4dc1bca73b99a355c3990cd0130e688534[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sun Dec 15 05:10:43 2024 +0530
+
+    statistics generate slide button fix
+
+[33mcommit 450c781f6a35670bfbff34b66e08dafa81d78462[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Sun Dec 15 04:56:46 2024 +0530
+
+    hover-logic
+
+[33mcommit a693853627af893c6825b787b52d85eb3f1fd242[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 13 20:09:26 2024 +0530
+
+    merge with suvigya
+
+[33mcommit 349a91585b04ac33217d8b0c07c9aa3ab89af5dc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 13 20:06:05 2024 +0530
+
+    Merge
+
+[33mcommit e06ed69b6837ea3f85b666b26d6aad8a4ea383b8[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 13 20:04:42 2024 +0530
+
+    Update
+
+[33mcommit 497a1937508f8f8bbf556f98e3a7a3300b19386c[m
+Merge: 972c3b2 850f795
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 13 19:31:12 2024 +0530
+
+    Merge - Without Pricing Table UI Alignment
+
+[33mcommit 972c3b2bbb50b3e8589f90a74fcb4acb9c172f60[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 13 19:28:59 2024 +0530
+
+    UI Changes & Dialog Box Add
+
+[33mcommit 850f795f8b6d89223d0a5551d0eb04517aa48b76[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 13 19:02:31 2024 +0530
+
+    presentation
+
+[33mcommit 12ab773129774b8593a2ac85a240b354e9d43917[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 13 18:54:12 2024 +0530
+
+    updates
+
+[33mcommit 3c6c30ea445516d7d5b2c8f8a2284d831e1a5f49[m
+Merge: 8e70ed7 e5f6fe1
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 13 12:12:46 2024 +0530
+
+    merge
+
+[33mcommit 8e70ed749fa882c48b6105c1f90f087d7d36c1c1[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 13 12:10:46 2024 +0530
+
+    updates
+
+[33mcommit e5f6fe1b5762eb38076e2c2e8b36df9a66dd13d7[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 13 12:09:06 2024 +0530
+
+    Updates
+
+[33mcommit 78b12a2227749779992aec675d7f4b0579a40783[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 12 20:13:30 2024 +0530
+
+    MERGE
+
+[33mcommit 232c07e4cc6fd93bd79c10b742a51b5301e6c09c[m
+Merge: 9e493ce 6b00a2e
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 12 20:13:18 2024 +0530
+
+    Update Merge
+
+[33mcommit 6b00a2ee70c3661ccdf53a8c6a4673f0a4d985d8[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 12 19:56:12 2024 +0530
+
+    fixes-custom builder
+
+[33mcommit 9e493cecc70cf646f7b62f00f2b47be604d9c763[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 12 19:56:09 2024 +0530
+
+    Updates
+
+[33mcommit 6c60f0b749c70dccba892dfbb8b3cb3d4893c2c5[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 12 10:23:27 2024 +0530
+
+    Update
+
+[33mcommit c322befdee94dedeb36b3af93b6c2b07731f3c9a[m
+Merge: 42c4526 de78da5
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 12 10:23:20 2024 +0530
+
+    Merge branch 'WASHID--DEV' of https://github.com/parati-eos/ZYNTH_BUSINESS_V6_FE into suvigya-dev
+
+[33mcommit 42c4526371a39e23d14dd9ea576514c3b1d2a09d[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 12 10:20:33 2024 +0530
+
+    Updates
+
+[33mcommit de78da5ec112e3f1cbffc1bdb96df03add7a5288[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 12 10:17:38 2024 +0530
+
+    mobile-view
+
+[33mcommit 1d968ee93098bbcf3bbdb5b99b3ea9cc9a169418[m
+Merge: fb08de8 e56eaac
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 11 20:14:45 2024 +0530
+
+    UI UX - Washid & API - Suvigya Changes
+
+[33mcommit fb08de8f47243a0933b0e199f0f2a85032279fd7[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 11 19:58:43 2024 +0530
+
+    Multiple Changes & Updates
+
+[33mcommit e56eaacc9ca073a14644621fbfd6e777c91f411f[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 11 19:58:22 2024 +0530
+
+    scroll issues
+
+[33mcommit b155001d5592d641b18e443bc34ae5c707c60bb2[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 10 20:02:18 2024 +0530
+
+    mobileview-price
+
+[33mcommit 29e55ec779edc0b5e5951a43fa6a0be6cfdbd9d1[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 10 16:11:50 2024 +0530
+
+    Update
+
+[33mcommit 1577fe8a0161a518105cb6dfa113f5d78fdbe416[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 10 15:54:42 2024 +0530
+
+    UPDATE
+
+[33mcommit 8a4a98fb53113e055c5cff6b1e99b15a677bd453[m
+Merge: 06844f9 54fa13c
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 10 15:54:25 2024 +0530
+
+    Merge With Washid's Code
+
+[33mcommit 06844f96d1b312803b6112f1c90ea284d2ab8b33[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Dec 10 15:44:21 2024 +0530
+
+    UPDATES
+
+[33mcommit 54fa13c8ab33e4773efac05141ef84923efcde27[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 10 15:43:24 2024 +0530
+
+    pricing page
+
+[33mcommit a65e57426bfbe0134a3c51a8995bda790f956c4a[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 9 18:02:40 2024 +0530
+
+    pricing page
+
+[33mcommit c62245c216821ac8e60559c2af4691c68fbbddf1[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 6 19:45:57 2024 +0530
+
+    logo fix
+
+[33mcommit ada1586aecb3f09c3a67d49166943c5d41ba20fc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 6 19:33:56 2024 +0530
+
+    Changes
+
+[33mcommit 39c2f6cd7daaf5155f886bee69c31f5e7e2a3087[m
+Merge: fb4e0b8 0568c9c
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 6 19:33:48 2024 +0530
+
+    CHANGES
+
+[33mcommit fb4e0b8caafe2a9297e4479c0dafb5740d5c7f64[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Dec 6 19:08:46 2024 +0530
+
+    Changes
+
+[33mcommit 0568c9c801101e32a952176a5af639e5edec4533[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Fri Dec 6 19:08:12 2024 +0530
+
+    custom builder fixes
+
+[33mcommit ffaa154e51d3633b0b83b593fdc9291f7e8d3d8f[m
+Merge: 0cf0563 6f6d6d7
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 5 18:56:42 2024 +0530
+
+    final commit
+
+[33mcommit 0cf0563ec0f2cbceadfc83ed295e07f192add1a5[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 5 18:44:31 2024 +0530
+
+    latest commit
+
+[33mcommit 6f6d6d7cf997833d276737215f016272ecbf487c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 5 18:41:42 2024 +0530
+
+    UPDATE
+
+[33mcommit 5d2acab8b884119e2ea00fbadf430f8db2c18121[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 5 18:32:59 2024 +0530
+
+    Comit
+
+[33mcommit e1b5ab2804604b02b27741c94a7a45ce0ae32b97[m
+Merge: 118cfe5 0d4d6a9
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 5 18:32:53 2024 +0530
+
+    Comit
+
+[33mcommit 118cfe59ba9882b57fd2ac2defc2622f32a7e0e6[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 5 18:08:12 2024 +0530
+
+    UPDATE
+
+[33mcommit 0d4d6a92dfafbb1b1d99c603519de0584e162324[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 5 17:19:42 2024 +0530
+
+    landing-page-fixes
+
+[33mcommit 67e262e94ae6f9ab5b88ba467800b47902e96e7d[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Dec 5 16:07:17 2024 +0530
+
+    Update
+
+[33mcommit 7210fba22d599608cb3f033c0558de39176204a4[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 5 16:05:46 2024 +0530
+
+    landing page
+
+[33mcommit 7e4a4b24853a543ec16741b58c8667779140df95[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Dec 5 16:04:04 2024 +0530
+
+    sevonth commit
+
+[33mcommit 16ff06c9c98f2830aab300d67376f6c724aa547a[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 4 17:18:19 2024 +0530
+
+    sixth commit
+
+[33mcommit bbecf8546f84df505c5b999f6bc59de1e761cb5b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Dec 4 16:38:01 2024 +0530
+
+    UPDATES
+
+[33mcommit f9ef8216300b607af9a6d31336873905dbf2f0fb[m[33m ([m[1;31morigin/WASHID--DEV[m[33m)[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Wed Dec 4 11:14:17 2024 +0530
+
+    fifth commit
+
+[33mcommit 5da4d690a385b81c825ccc366901de50fd5bbea8[m
+Merge: 03dafa8 7b39bb1
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Dec 3 13:32:34 2024 +0530
+
+    Fourth Commit
+
+[33mcommit 3b79be9d4fc8e234deb9d1c2650c9d4f236a49a8[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 2 16:11:51 2024 +0530
+
+    UPDATE
+
+[33mcommit 03dafa8c74feab04dbf0716340a3f6ad59b45372[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 2 15:36:27 2024 +0530
+
+    third commit
+
+[33mcommit 7b39bb186348e8cac5eae4907d6b5d9f00f252f3[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Dec 2 15:30:17 2024 +0530
+
+    UPDATE
+
+[33mcommit 2b34b8032bbcba25b5ac0fb20f18a994eee7d6a9[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Mon Dec 2 13:22:35 2024 +0530
+
+    Second Commit
+
+[33mcommit 352e1bbb69a50c5da4847e5f1c49c5ff9a29a474[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Nov 29 19:29:07 2024 +0530
+
+    UPDATE
+
+[33mcommit 33ddfe77c4afcbe72aef2b75371805c8d9733128[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Nov 29 19:08:41 2024 +0530
+
+    UPDATE: Socket Payload
+
+[33mcommit 5954c01b5e11a93178ce7528c485ba3be3a72246[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Nov 29 19:07:30 2024 +0530
+
+    ADD: Types Folder
+
+[33mcommit 6936afcd70bb9958cdc55c46edd73a820489ede4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Nov 29 18:32:48 2024 +0530
+
+    UPDATE: Presentation View Page APIs
+
+[33mcommit 1d66c925d9fecdfdaa75683a278a7b34f95f1f33[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Thu Nov 28 18:14:18 2024 +0530
+
+    first commit
+
+[33mcommit 47a092ffc219f5ab1d293344f74ee8a24a0a986f[m
+Author: Adarsha Halder <pradiphalder70@gmail.com>
+Date:   Thu Nov 28 13:22:41 2024 +0530
+
+    fh
+
+[33mcommit 08360bbada463461fe5bbb8bbc0c6a34c0fba4e0[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Nov 28 10:44:53 2024 +0530
+
+    UPDATE
+
+[33mcommit 53a248dbdd70a4c9355c430e0058a26d9b848d0b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Nov 27 18:44:45 2024 +0530
+
+    UPDATE
+
+[33mcommit 2bfed47e3510a9a2f031ec4a79900f56a29e9c7c[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Nov 27 18:30:29 2024 +0530
+
+    ADD: Quickgenerate Outline API
+
+[33mcommit 0dee40511145f9e741f939ecde84db5ecb061f67[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Nov 27 13:59:37 2024 +0530
+
+    REMOVE: id from SessionStorage
+
+[33mcommit dce453ada830f617cb752b7fa29ac9eb33958ba2[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Nov 27 13:55:08 2024 +0530
+
+    UPDATE: Generate Button OnClick
+
+[33mcommit b958cb1a575a5d67d097afee1372d909a77b1c27[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Nov 27 13:49:45 2024 +0530
+
+    UPDATE
+
+[33mcommit 43bd59f8a6474730e1f09d0ca0fb3520c60c5adb[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Nov 26 17:00:16 2024 +0530
+
+    TEST2
+
+[33mcommit 1b2dc1b32b4ca5fef9d7f229ed89e123e36ed62e[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Nov 26 16:59:18 2024 +0530
+
+    ADD
+
+[33mcommit 0b9b11405bc31a440254e2761997cd0b4402a682[m
+Author: WASHIDHUSSAIN825 <washid.hussain@parati.in>
+Date:   Tue Nov 26 16:58:31 2024 +0530
+
+    TEST
+
+[33mcommit 9e1d31409abc04955d4c51e036441dfcc60f51ba[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Nov 26 16:42:41 2024 +0530
+
+    UPDATE: UI & API
+
+[33mcommit 21269c589952709f02d8484c9bc6f57125839394[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Nov 22 16:23:33 2024 +0530
+
+    UPDATE: UI and Add New Pages
+
+[33mcommit 0a011a35c71d44079138e0a569e8f9055a682e2b[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Tue Nov 19 13:05:18 2024 +0530
+
+    ADD & UPDATE: Profile & Presentation Page
+
+[33mcommit 97a802a0e1cb77bd29276bac7dce5dc42aa33244[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Fri Nov 15 12:34:54 2024 +0530
+
+    UPDATE: Edit Profile & View Profile
+
+[33mcommit f7f4fd10577710ccc6ffadb643dd707d26f7ea73[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Nov 14 17:17:21 2024 +0530
+
+    UPDATE: Profile Page & ADD: Edit Profile
+
+[33mcommit 47fc313620f2a9c28859735cda4d28d2796430f4[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Nov 14 13:42:46 2024 +0530
+
+    UPDATE: Profile Component Name
+
+[33mcommit 263ec9fe098beabf4a6ce01837beca52263a46ba[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Nov 14 13:41:13 2024 +0530
+
+    ADD: Navbar & ViewProfile
+
+[33mcommit 64b71d895da64e6d92a914844bd5f4ffda0d858d[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Thu Nov 14 12:00:41 2024 +0530
+
+    UPDATE: Onboarding: Integrate API
+
+[33mcommit be2f50842215ae42847836e2a945d578701ff287[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Wed Nov 13 16:08:32 2024 +0530
+
+    UPDATE: Onboarding UI UX & Input Validation
+
+[33mcommit c7b793f8c7d6a14797984173f0b2783d20f59a77[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Nov 11 20:00:05 2024 +0530
+
+    ADD: Onboarding UI UX
+
+[33mcommit 7152cd50e8e5291d5b18233af3ea3da27580d5dc[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Nov 11 14:17:03 2024 +0530
+
+    SETUP: React Project
+
+[33mcommit bb553e052344a69bcbc1ef0232e4014d20d9a900[m
+Author: suvigya-mishra <suvigya.mishra@parati.in>
+Date:   Mon Nov 11 14:15:45 2024 +0530
+
+    Initialize project using Create React App
