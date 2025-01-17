@@ -49,6 +49,8 @@ export default function People({
   const isFirstRender = useRef(true) // Tracks if it's the first render
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
   const [isImageUploading, setIsImageUploading] = useState(false) // Track image upload state
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -210,7 +212,7 @@ export default function People({
           documentID: documentID,
           data: {
             slideName: heading,
-            title: heading,
+            title: slideTitle,
             people: payloadPeople,
           },
           outlineID: outlineID,
@@ -266,9 +268,16 @@ export default function People({
             <h3 className="text-semibold">People</h3>
             <BackButton onClick={onBack} />
           </div>
-          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
+           {/* Editable Slide Title */}
+           <div className="hidden lg:block">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
+            />
+          </div>
           <div
             ref={containerRef}
             className={`flex-1 lg:px-2 overflow-y-auto scrollbar-none md:mt-1 ${

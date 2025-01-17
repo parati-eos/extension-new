@@ -36,6 +36,7 @@ export default function Timeline({
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...timeline]
@@ -101,7 +102,7 @@ export default function Timeline({
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/phases`,
         {
           type: 'Phases',
-          title: heading,
+          title: slideTitle,
           documentID: documentID,
           data: {
             slideName: heading,
@@ -174,9 +175,16 @@ export default function Timeline({
             <h3 className="text-semibold">Timeline</h3>
             <BackButton onClick={onBack} />
           </div>
-          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
+          {/* Editable Slide Title */}
+          <div className="hidden lg:block">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
+            />
+          </div>
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}

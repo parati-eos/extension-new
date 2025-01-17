@@ -96,7 +96,7 @@ export default function Points({
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/points`,
         {
           type: 'Points',
-          title: heading,
+          title: slideTitle,
           documentID: documentID,
           data: {
             slideName: heading,
@@ -139,6 +139,7 @@ export default function Points({
 
   const isGenerateDisabled = points.every((point) => point.trim() === '')
   const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
 
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">
@@ -153,9 +154,16 @@ export default function Points({
             <h3 className="text-semibold">Points</h3>
             <BackButton onClick={onBack} />
           </div>
-          <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
-            {heading}
-          </h2>
+            {/* Editable Slide Title */}
+            <div className="hidden lg:block">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
+            />
+          </div>
           {/* Input Section with Scrolling */}
           <div
             ref={containerRef}
