@@ -51,23 +51,20 @@ const PitchZynthShare = () => {
   return (
     <div className="pitch-main-container">
       <div className="pitch-presentationshare-viewing-container">
-        <div className="pitch-presentationshare-viewing-side">
-          <div className="lpitch-ogo-icon">
-            <img
-              src={ZynthLogo}
-              alt="Parati Logo"
-              width={150}
-              className="pitch-branding-logo"
-              onClick={handleLogoClicked}
-            ></img>
-          </div>
+        <div className="lpitch-ogo-icon">
+          <img
+            src={ZynthLogo}
+            alt="Parati Logo"
+            width={150}
+            className="pitch-branding-logo"
+            onClick={handleLogoClicked}
+          ></img>
         </div>
         <div className="pitch-presentationshare-viewing-center">
           <div className="pitch-presentationshare-view-slides">
             <GooglePresentation key={currentSlideKey} />
           </div>
         </div>
-        <div className="pitch-presentationshare-viewing-side"></div>
       </div>
     </div>
   )

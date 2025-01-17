@@ -144,10 +144,6 @@ const SelectPresentationType: React.FC = () => {
   }
 
   const handleGenerate = () => {
-    // Navigate immediately with initial placeholders
-    // navigate(
-    //   `/presentation-view?documentID=loading&slideType=${selectedTypeName}`
-    // )
     navigate(
       `/presentation-view?documentID=${generatedDocumentID}&slideType=${selectedTypeName}`
     )
