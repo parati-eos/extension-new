@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Grid } from 'react-loader-spinner'
-import ShareSidebar from './ShareSidebar'
-import ShareOutlineModal from './ShareOutlineModal'
+import ShareSidebar from './ShareSidebar.tsx'
+import ShareOutlineModal from './ShareOutlineModal.tsx'
 import '../presentation-view/viewpresentation.css'
 
 interface GoogleSlidesProps {
