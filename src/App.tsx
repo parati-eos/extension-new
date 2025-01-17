@@ -20,17 +20,18 @@ import BlogPage from './pages/BlogPage.tsx'
 const App: React.FC = () => {
   useEffect(() => {
     const INACTIVITY_THRESHOLD = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
-
-    // Store the current timestamp of user activity
+    const CURRENT_USER_EMAIL = sessionStorage.getItem('userEmail') // Replace with actual logic to get logged-in user's email
+    // Store the current timestamp of user activity in localStorage with the email as key
     const storeActivityTimestamp = () => {
-      sessionStorage.setItem('lastActivity', Date.now().toString())
+      localStorage.setItem(
+        `lastActivity_${CURRENT_USER_EMAIL}`,
+        Date.now().toString()
+      )
     }
-
     // Check if 3 hours of inactivity have passed
     const checkInactivity = () => {
-      const lastActivity = sessionStorage.getItem('lastActivity')
+      const lastActivity = localStorage.getItem(`lastActivity_${CURRENT_USER_EMAIL}`);
       const currentPath = window.location.pathname
-
       // Define paths for exclusion
       const exactExcludedPaths = ['/'] // Paths that require an exact match
       const prefixExcludedPaths = ['/share', '/presentation-share', '/auth'] // Paths that start with these prefixes
@@ -49,31 +50,41 @@ const App: React.FC = () => {
       ) {
         return
       }
-
       // Inactivity detected, show alert and redirect
       alert('You have been logged out due to inactivity.')
-      sessionStorage.clear()
-      window.location.href = '/' // Redirect to login page
+      localStorage.removeItem(`lastActivity_${CURRENT_USER_EMAIL}`)
+      window.location.href = '/'// Redirect to login page
     }
-
     // Add event listeners for user activity
-    const activityEvents = ['click', 'mousemove', 'keypress', 'scroll']
+    const activityEvents = ['click', 'mousemove', 'keypress', 'scroll'];
     activityEvents.forEach((event) => {
-      window.addEventListener(event, storeActivityTimestamp)
-    })
-
+      window.addEventListener(event, storeActivityTimestamp);
+    });
     // Set the initial timestamp when the app loads
     storeActivityTimestamp()
 
     // Check inactivity every minute (or adjust interval as needed)
     const inactivityInterval = setInterval(checkInactivity, 60 * 1000)
-
+  
+    // Listen for storage events to synchronize activity between tabs for the same email
+    const handleStorageEvent = (event: StorageEvent) => {
+      if (
+        event.key === `lastActivity_${CURRENT_USER_EMAIL}` &&
+        event.newValue
+      ) {
+        checkInactivity(); // Recheck inactivity when another tab updates the timestamp
+      }
+    };
+  
+    window.addEventListener('storage', handleStorageEvent);
+  
     // Cleanup event listeners and intervals on component unmount
     return () => {
       activityEvents.forEach((event) => {
         window.removeEventListener(event, storeActivityTimestamp)
       })
       clearInterval(inactivityInterval)
+      window.removeEventListener('storage', handleStorageEvent)
     }
   }, [])
 
