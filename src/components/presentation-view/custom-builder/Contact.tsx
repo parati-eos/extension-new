@@ -110,17 +110,17 @@ export default function Contact({
       data: {
         slideName: heading,
         websiteLink,
-        email,
-        phone,
-        linkedin,
-        image: selectedImage || '',
+        contactEmail: email,
+        contactPhone: phone,
+        linkedinLink: linkedin,
+        ...(selectedImage && { image: selectedImage }),
       },
       outlineID: outlineID,
     }
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/contact`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/Contact`,
         {
           method: 'POST',
           headers: {

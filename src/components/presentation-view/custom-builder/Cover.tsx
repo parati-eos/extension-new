@@ -1,5 +1,5 @@
 import { FaImage } from 'react-icons/fa'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
 import axios from 'axios'
 import { DisplayMode } from '../../../types/presentationView'
@@ -35,6 +35,8 @@ export default function Cover({
   const [isImageLoading, setIsImageLoading] = useState(false)
   const [fileName, setFileName] = useState('')
   const [uploadCompleted, setUploadCompleted] = useState(false)
+  const [tagline, setTagline] = useState('')
+  const [companyName, setCompanyName] = useState('')
 
   // Ref for file input to trigger on button click
   const logoUploadInputRef = useRef<HTMLInputElement | null>(null)
@@ -87,7 +89,7 @@ export default function Cover({
     setIsLoading(true)
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/cover`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/Cover`,
         {
           type: 'Cover',
           title: heading,
@@ -95,7 +97,9 @@ export default function Cover({
           data: {
             slideName: heading,
             logo,
-            image: selectedImage || '',
+            tagline: tagline,
+            companyName: companyName,
+            ...(selectedImage && { image: selectedImage }),
           },
           outlineID,
         },
@@ -124,6 +128,22 @@ export default function Cover({
     setDisplayMode('newContent')
   }
 
+  useEffect(() => {
+    axios
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      .then((response) => {
+        setCompanyName(response.data.companyName)
+        setIsLoading(false)
+      })
+  }, [])
+
   return (
     <div className="flex flex-col h-full w-full p-2 lg:p-4">
       {/* Header Section */}
@@ -136,6 +156,7 @@ export default function Cover({
         <input
           type="text"
           placeholder="Enter your tagline"
+          onChange={(e) => setTagline(e.target.value)}
           className=" py-1 px-2 lg:w-[50%] w-full border border-gray-300 rounded-lg "
         />
       </div>
