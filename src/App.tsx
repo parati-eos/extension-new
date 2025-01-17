@@ -22,6 +22,22 @@ import RazorpayWebhooks from './components/shared/RazorPayWebHooks.tsx'
 const App: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   useEffect(() => {
+    const currentUrl = window.location.href
+    const normalizedUrl = currentUrl.endsWith('/')
+      ? currentUrl.slice(0, -1)
+      : currentUrl
+
+    // Check if 'sign_up_link' is already in localStorage
+    const storedUrl = localStorage.getItem('sign_up_link')
+
+    // Store the full URL in localStorage if it's not already set
+    if (!storedUrl) {
+      localStorage.setItem('sign_up_link', normalizedUrl)
+      console.log('Initial URL stored:', normalizedUrl)
+    } else {
+      console.log('URL already stored:', storedUrl)
+    }
+
     const INACTIVITY_THRESHOLD = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
     const CURRENT_USER_EMAIL = sessionStorage.getItem('userEmail') // Replace with actual logic to get logged-in user's email
     // Store the current timestamp of user activity in localStorage with the email as key
@@ -33,7 +49,9 @@ const App: React.FC = () => {
     }
     // Check if 3 hours of inactivity have passed
     const checkInactivity = () => {
-      const lastActivity = localStorage.getItem(`lastActivity_${CURRENT_USER_EMAIL}`);
+      const lastActivity = localStorage.getItem(
+        `lastActivity_${CURRENT_USER_EMAIL}`
+      )
       const currentPath = window.location.pathname
       // Define paths for exclusion
       const exactExcludedPaths = ['/'] // Paths that require an exact match
@@ -47,7 +65,8 @@ const App: React.FC = () => {
 
       // Skip inactivity logic if the path is excluded
       if (
-        (isExactExcludedPath || isPrefixExcludedPath) ||
+        isExactExcludedPath ||
+        isPrefixExcludedPath ||
         !lastActivity ||
         Date.now() - parseInt(lastActivity, 10) <= INACTIVITY_THRESHOLD
       ) {
@@ -56,31 +75,31 @@ const App: React.FC = () => {
       // Inactivity detected, show alert and redirect
       alert('You have been logged out due to inactivity.')
       localStorage.removeItem(`lastActivity_${CURRENT_USER_EMAIL}`)
-      window.location.href = '/'// Redirect to login page
+      window.location.href = '/' // Redirect to login page
     }
     // Add event listeners for user activity
-    const activityEvents = ['click', 'mousemove', 'keypress', 'scroll'];
+    const activityEvents = ['click', 'mousemove', 'keypress', 'scroll']
     activityEvents.forEach((event) => {
-      window.addEventListener(event, storeActivityTimestamp);
-    });
+      window.addEventListener(event, storeActivityTimestamp)
+    })
     // Set the initial timestamp when the app loads
     storeActivityTimestamp()
 
     // Check inactivity every minute (or adjust interval as needed)
     const inactivityInterval = setInterval(checkInactivity, 60 * 1000)
-  
+
     // Listen for storage events to synchronize activity between tabs for the same email
     const handleStorageEvent = (event: StorageEvent) => {
       if (
         event.key === `lastActivity_${CURRENT_USER_EMAIL}` &&
         event.newValue
       ) {
-        checkInactivity(); // Recheck inactivity when another tab updates the timestamp
+        checkInactivity() // Recheck inactivity when another tab updates the timestamp
       }
-    };
-  
-    window.addEventListener('storage', handleStorageEvent);
-  
+    }
+
+    window.addEventListener('storage', handleStorageEvent)
+
     // Cleanup event listeners and intervals on component unmount
     return () => {
       activityEvents.forEach((event) => {
