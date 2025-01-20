@@ -6,8 +6,6 @@ import { Grid } from 'react-loader-spinner'
 const GoogleslidesShare = () => {
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
-
-  // Get the value of the submissionId parameter from the search string
   const formId = searchParams.get('submissionId')
   const [slidesData, setSlidesData] = useState([])
   const [slidesId, setSlidesId] = useState('')
@@ -17,8 +15,8 @@ const GoogleslidesShare = () => {
   useEffect(() => {
     const fetchSlidesData = async () => {
       try {
-        const serverurl = process.env.REACT_APP_SERVER_URL
-        const url = `https://zynth.ai/api/slides?&formId=${formId}`
+        const serverurl = process.env.REACT_APP_BACKEND_URL
+        const url = `${serverurl}/slides?&formId=${formId}`
         const response = await fetch(url)
         if (!response.ok) {
           throw new Error('Failed to fetch slides data')
@@ -75,7 +73,7 @@ const GoogleslidesShare = () => {
     )
   } catch (error) {
     console.error('Error rendering slides:', error)
-    return <div className="error-txt">Error displaying slides....</div>
+    return <div className="pitch-error-txt">Error displaying slides....</div>
   }
 }
 

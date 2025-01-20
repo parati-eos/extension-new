@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './presentationshare.css'
-import './HistoryOverlay.css'
 import GoogleslidesShare from './googlepresentationShare-helper.jsx'
-import ZynthLogo from '../../assets/zynth-text.png'
+import ParatiLogo from '../../assets/zynth-text.png'
 
 const GooglePresentation = ({ url }) => {
   return (
-    <div className="PresentationContainer">
+    <div className="pitch-PresentationContainer">
       <div>
         <GoogleslidesShare />
       </div>
@@ -15,7 +14,7 @@ const GooglePresentation = ({ url }) => {
   )
 }
 
-const PitchZynthShare = () => {
+const PitchDeckShare = () => {
   const historyTimeout = useRef(null)
   const [currentSlideKey, setCurrentSlideKey] = useState(0)
   const location = useLocation()
@@ -51,23 +50,26 @@ const PitchZynthShare = () => {
   return (
     <div className="pitch-main-container">
       <div className="pitch-presentationshare-viewing-container">
-        <div className="lpitch-ogo-icon">
-          <img
-            src={ZynthLogo}
-            alt="Parati Logo"
-            width={150}
-            className="pitch-branding-logo"
-            onClick={handleLogoClicked}
-          ></img>
+        <div className="pitch-presentationshare-viewing-side">
+          <div className="pitch-logo-icon">
+            <img
+              src={ParatiLogo}
+              alt="Parati Logo"
+              width={150}
+              className="pitch-branding-logo"
+              onClick={handleLogoClicked}
+            ></img>
+          </div>
         </div>
         <div className="pitch-presentationshare-viewing-center">
           <div className="pitch-presentationshare-view-slides">
             <GooglePresentation key={currentSlideKey} />
           </div>
         </div>
+        <div className="pitch-presentationshare-viewing-side"></div>
       </div>
     </div>
   )
 }
 
-export default PitchZynthShare
+export default PitchDeckShare

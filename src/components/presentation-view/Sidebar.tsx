@@ -207,11 +207,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <button
                     id={idx === 0 ? 'outline' : undefined} // Add id to the first button for tutorial targeting
-                    className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 ${
-                      isDisabled ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 `}
                     onClick={() => setInputIndex(idx)}
-                    disabled={isDisabled}
                   >
                     +
                   </button>
