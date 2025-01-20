@@ -189,7 +189,7 @@ export default function Images({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="hidden lg:block">
+          <div>
             <input
               type="text"
               value={slideTitle}
@@ -328,9 +328,9 @@ export default function Images({
           <div className="hidden mt-auto lg:flex w-full justify-between lg:justify-end lg:w-auto">
             <button
               onClick={handleSubmit}
-              disabled={images.length === 0}
+              disabled={images.length === 0 && !slideTitle}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-                images.length
+                images.length > 0 && slideTitle
                   ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
               }`}
@@ -340,13 +340,14 @@ export default function Images({
           </div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden  gap-2 justify-end  ">
+          <div className="flex lg:hidden  gap-2 justify-end">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
                   onClick={handleSubmit}
+                  disabled={images.length === 0 && !slideTitle}
                   className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
-                    images.length
+                    images.length > 0 && slideTitle
                       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
                       : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
                   }`}
