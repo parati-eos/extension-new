@@ -170,36 +170,12 @@ const HistoryContainer: React.FC = () => {
 
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
-    // try {
-    //   const response = await fetch(
-    //     `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${documentID}`
-    //   )
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! Status: ${response.status}`)
-    //   }
-
-    //   const data = await response.json()
-    //   console.log('API response data:', data) // Debugging line
-
-    //   if (data && data.paymentStatus === 1) {
-    //     // Payment has already been made, run handleDownload
-    //     handleDownload()
-    //   } else if (data && data.paymentStatus === 0) {
-    // Payment is not made, open the payment gateway
     const paymentButton = document.getElementById('payment-button')
     if (paymentButton) {
       paymentButton.click()
     } else {
       console.error('Payment button not found')
     }
-    //   } else {
-    //     alert('Unable to determine payment status.')
-    //   }
-    // } catch (error) {
-    //   console.error('Error checking payment status:', error)
-    //   alert('Error checking payment status. Please try again.')
-    // }
   }
 
   const presentationsToShow = filteredData?.slice(
@@ -245,7 +221,7 @@ const HistoryContainer: React.FC = () => {
     }
   }, [activeDropdown]) // Effect runs when activeDropdown changes
 
-  // API CALL TO GET HISTORY DATA
+  // API CALL TO GET HISTORY DATA & API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
   useEffect(() => {
     setIsLoading(true)
     const fetchHistoryData = async () => {
@@ -281,35 +257,6 @@ const HistoryContainer: React.FC = () => {
       }
     }
     fetchHistoryData()
-  }, [userId, historyUrl, authToken])
-
-  // Apply Filter and Sort Logic
-  useEffect(() => {
-    let updatedData = [...historyData]
-
-    if (selectedFilter !== 'all') {
-      updatedData = updatedData.filter(
-        (item) => item.ppt_type === selectedFilter
-      )
-    }
-
-    if (selectedSort === 'recent') {
-      updatedData.sort(
-        (a, b) =>
-          new Date(b.currentTime).getTime() - new Date(a.currentTime).getTime()
-      )
-    } else if (selectedSort === 'oldest') {
-      updatedData.sort(
-        (a, b) =>
-          new Date(a.currentTime).getTime() - new Date(b.currentTime).getTime()
-      )
-    }
-
-    setFilteredData(updatedData)
-  }, [selectedFilter, selectedSort, historyData])
-
-  // API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
-  useEffect(() => {
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
         'https://ipinfo.io/json?token=f0e9cf876d422e'
@@ -370,7 +317,33 @@ const HistoryContainer: React.FC = () => {
 
     fetchUserPlan()
     getPricingData()
-  }, [])
+  }, [userId, historyUrl, authToken])
+
+  // Apply Filter and Sort Logic
+  useEffect(() => {
+    let updatedData = [...historyData]
+
+    if (selectedFilter !== 'all') {
+      updatedData = updatedData.filter(
+        (item) => item.ppt_type === selectedFilter
+      )
+    }
+
+    if (selectedSort === 'recent') {
+      updatedData.sort(
+        (a, b) =>
+          new Date(b.currentTime).getTime() - new Date(a.currentTime).getTime()
+      )
+    } else if (selectedSort === 'oldest') {
+      updatedData.sort(
+        (a, b) =>
+          new Date(a.currentTime).getTime() - new Date(b.currentTime).getTime()
+      )
+    }
+
+    setFilteredData(updatedData)
+  }, [selectedFilter, selectedSort, historyData])
+
   const monthlyPlanAmount = monthlyPlan?.item.amount! / 100
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100

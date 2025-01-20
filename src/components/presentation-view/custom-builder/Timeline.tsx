@@ -16,6 +16,7 @@ interface TimelineProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Timeline({
@@ -27,6 +28,7 @@ export default function Timeline({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: TimelineProps) {
   const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
@@ -36,7 +38,7 @@ export default function Timeline({
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...timeline]
@@ -125,14 +127,11 @@ export default function Timeline({
       })
       setDisplayMode('slides')
     } catch (error) {
-      toast.error('Error generating slide', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
-      toast.error('Failed to generate slide.', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
+      setFailed()
     } finally {
       setLoading(false)
     }

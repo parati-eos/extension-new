@@ -348,27 +348,25 @@ export default function ViewPresentation() {
   }
 
   // Handle Add New Slide Version Button
-const handlePlusClick = (outlineTitle: string) => {
-  updateSlideState(outlineTitle, {
-    isLoading: false,
-    isNoGeneratedSlide: false,
-    lastUpdated: Date.now(),
-  });
+  const handlePlusClick = (outlineTitle: string) => {
+    updateSlideState(outlineTitle, {
+      isLoading: false,
+      isNoGeneratedSlide: false,
+      lastUpdated: Date.now(),
+    })
 
-  setDisplayModes((prev) => ({
-    ...prev,
-    [outlineTitle]:
-      outlineTitle === outlines[0].title // Check if it's the Cover outline
-        ? 'Cover'
-        : outlineTitle === outlines[outlines.length - 1].title // Check if it's the Contact outline
-        ? 'Contact'
-        : prev[outlineTitle] === 'slides'
-        ? 'newContent'
-        : 'slides',
-  }));
-};
-
-
+    setDisplayModes((prev) => ({
+      ...prev,
+      [outlineTitle]:
+        outlineTitle === outlines[0].title // Check if it's the Cover outline
+          ? 'Cover'
+          : outlineTitle === outlines[outlines.length - 1].title // Check if it's the Contact outline
+          ? 'Contact'
+          : prev[outlineTitle] === 'slides'
+          ? 'newContent'
+          : 'slides',
+    }))
+  }
 
   // Paginate Back
   const handlePaginatePrev = () => {
@@ -450,7 +448,7 @@ const handlePlusClick = (outlineTitle: string) => {
         newMode = 'newContent'
       } else if (currentMode === 'Cover') {
         newMode = 'slides'
-      }else if (currentMode === 'Contact') {
+      } else if (currentMode === 'Contact') {
         newMode = 'slides'
       } else if (currentMode === 'newContent') {
         newMode = 'slides'
@@ -843,6 +841,25 @@ const handlePlusClick = (outlineTitle: string) => {
               }))
             }}
             outlineID={currentOutlineID}
+            setFailed={() => {
+              setIsNewSlideLoading((prev) => {
+                if (prev[currentOutline]) {
+                  setNewSlideGenerated((prev) => ({
+                    ...prev,
+                    [currentOutline]: 'No',
+                  }))
+                  toast.error(`New Slide Not Generated`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                  })
+                  return {
+                    ...prev,
+                    [currentOutline]: false,
+                  }
+                }
+                return prev
+              })
+            }}
             setIsSlideLoading={() => {
               setSlideStates((prev) => {
                 return {
@@ -1028,11 +1045,6 @@ const handlePlusClick = (outlineTitle: string) => {
 
         console.log('Timeout Slides')
 
-        // setDisplayModes((prev) => ({
-        //   ...prev,
-        //   [currentOutline]: 'slides',
-        // }))
-
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
             setNewSlideGenerated((prev) => ({
@@ -1064,6 +1076,33 @@ const handlePlusClick = (outlineTitle: string) => {
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
+            if (
+              newSlideLoadingRef.current[currentOutline] &&
+              newSlides.length === 1 &&
+              !slidesArrayRef.current[currentOutline] &&
+              newSlides[0].display
+            ) {
+              setIsNewSlideLoading((prev) => ({
+                ...prev,
+                [currentOutline]: false,
+              }))
+              setNewSlideGenerated((prev) => ({
+                ...prev,
+                [currentOutline]: 'Yes',
+              }))
+              toast.success(`Slide Generated`, {
+                position: 'top-right',
+                autoClose: 3000,
+              })
+
+              console.log('Socket IF Slides')
+
+              setDisplayModes((prev) => ({
+                ...prev,
+                [currentOutline]: 'slides',
+              }))
+            }
+
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
@@ -1099,31 +1138,6 @@ const handlePlusClick = (outlineTitle: string) => {
               setFinalizedSlides((prev) => ({
                 ...prev,
                 [currentOutline]: selectedSlide.GenSlideID,
-              }))
-            }
-
-            if (
-              newSlideLoadingRef.current[currentOutline] &&
-              newSlides.length === 1
-            ) {
-              setIsNewSlideLoading((prev) => ({
-                ...prev,
-                [currentOutline]: false,
-              }))
-              setNewSlideGenerated((prev) => ({
-                ...prev,
-                [currentOutline]: 'Yes',
-              }))
-              toast.success(`Slide Generated`, {
-                position: 'top-right',
-                autoClose: 3000,
-              })
-
-              console.log('Socket IF Slides')
-
-              setDisplayModes((prev) => ({
-                ...prev,
-                [currentOutline]: 'slides',
               }))
             }
 

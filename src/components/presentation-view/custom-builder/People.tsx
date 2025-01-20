@@ -15,6 +15,7 @@ interface PeopleProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function People({
@@ -25,6 +26,7 @@ export default function People({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: PeopleProps) {
   const [people, setPeople] = useState([
     {
@@ -49,8 +51,7 @@ export default function People({
   const isFirstRender = useRef(true) // Tracks if it's the first render
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
   const [isImageUploading, setIsImageUploading] = useState(false) // Track image upload state
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
-
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -231,10 +232,11 @@ export default function People({
       setDisplayMode('slides')
       console.log('Server response:', response.data)
     } catch (error) {
-      toast.error('Error sending data', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
     }
   }
 
@@ -268,8 +270,8 @@ export default function People({
             <h3 className="text-semibold">People</h3>
             <BackButton onClick={onBack} />
           </div>
-           {/* Editable Slide Title */}
-           <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div className="hidden lg:block">
             <input
               type="text"
               value={slideTitle}

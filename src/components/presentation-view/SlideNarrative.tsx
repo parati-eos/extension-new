@@ -23,6 +23,7 @@ interface SlideNarrativeProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   setIsSlideLoading: () => void
   outlineID: string
+  setFailed: () => void
 }
 
 export default function SlideNarrative({
@@ -34,6 +35,7 @@ export default function SlideNarrative({
   setDisplayMode,
   setIsSlideLoading,
   outlineID,
+  setFailed,
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -74,7 +76,7 @@ export default function SlideNarrative({
 
   const options = [
     { value: 'Points', label: 'Points', icon: PointsIcon },
-    { value: 'Timeline', label: 'Timeline', icon: TimelineIcon },
+    { value: 'Phases', label: 'Timeline', icon: TimelineIcon },
     { value: 'Images', label: 'Images', icon: ImagesIcon },
     { value: 'Table', label: 'Table', icon: TableIcon },
     { value: 'People', label: 'People', icon: PeopleIcon },
@@ -155,12 +157,13 @@ export default function SlideNarrative({
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
       setDisplayMode('slides')
     } finally {
     }
   }
 
-  const isGenerateDisabled = narrative.trim() === ''
+  const isGenerateDisabled = narrative.trim() === '' && !slideType
 
   const onBack = () => {
     setDisplayMode('newContent')

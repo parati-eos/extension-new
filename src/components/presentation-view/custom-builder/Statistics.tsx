@@ -16,6 +16,7 @@ interface StatisticProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Statistics({
@@ -27,6 +28,7 @@ export default function Statistics({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: StatisticProps) {
   const [title, setTitle] = useState(['', '', '']) // Initialize with 3 empty strings
   const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
@@ -37,7 +39,7 @@ export default function Statistics({
   const [isImageLoading, setIsImageLoading] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...title]
@@ -126,14 +128,11 @@ export default function Statistics({
       })
       setDisplayMode('slides')
     } catch (error) {
-      toast.error('Error generating slide', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
-      toast.error('Failed to generate slide.', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
+      setFailed()
     } finally {
       setLoading(false)
     }

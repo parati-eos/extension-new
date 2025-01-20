@@ -21,6 +21,7 @@ interface TableProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Table({
@@ -32,6 +33,7 @@ export default function Table({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
@@ -44,7 +46,7 @@ export default function Table({
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [isRowAdded, setIsRowAdded] = useState(false)
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   useEffect(() => {
     // Count fully completed rows
     const completedRows = tableData.rows.filter((row) =>
@@ -212,36 +214,40 @@ export default function Table({
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/tables`,
-        {
-          type: 'Tables',
-          documentID: documentID,
-          outlineID: outlineID,
-          data: {
-            slideName: heading,
-            title: slideTitle,
-            ...filteredTablePayload,
+      const response = await axios
+        .post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/tables`,
+          {
+            type: 'Tables',
+            documentID: documentID,
+            outlineID: outlineID,
+            data: {
+              slideName: heading,
+              title: slideTitle,
+              ...filteredTablePayload,
+            },
           },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.info('Data submitted successfully!', {
+            position: 'top-right',
+            autoClose: 3000,
+          })
+          setIsLoading(false)
+          setDisplayMode('slides')
+        })
       console.log(response)
-      toast.info('Data submitted successfully!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setIsLoading(false)
-      setDisplayMode('slides')
     } catch (error) {
-      toast.error('Error sending data', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
     }
   }
 
@@ -261,8 +267,8 @@ export default function Table({
             <h3 className="text-semibold">Table</h3>
             <BackButton onClick={onBack} />
           </div>
-         {/* Editable Slide Title */}
-         <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div className="hidden lg:block">
             <input
               type="text"
               value={slideTitle}

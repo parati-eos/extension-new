@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './presentationshare.css'
 import GoogleslidesShare from './googlepresentationShare-helper.jsx'
-import ParatiLogo from '../../assets/zynth-text.png'
+import ParatiLogo from '../../assets/parati-logo.png'
 
 const GooglePresentation = ({ url }) => {
   return (
@@ -44,14 +44,17 @@ const PitchDeckShare = () => {
   }, [formId])
 
   const handleLogoClicked = () => {
-    navigate('/')
+    window.open('https://zynth.ai', '_blank')
   }
 
   return (
     <div className="pitch-main-container">
       <div className="pitch-presentationshare-viewing-container">
         <div className="pitch-presentationshare-viewing-side">
-          <div className="pitch-logo-icon">
+          <div
+            onClick={handleLogoClicked}
+            className="pitch-logo-icon mt-3 hover:scale-105 hover:cursor-pointer"
+          >
             <img
               src={ParatiLogo}
               alt="Parati Logo"

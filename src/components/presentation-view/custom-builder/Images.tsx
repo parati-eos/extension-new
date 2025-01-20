@@ -15,6 +15,7 @@ interface ImagesProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Images({
@@ -26,6 +27,7 @@ export default function Images({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
@@ -57,7 +59,7 @@ export default function Images({
   // Refs for file inputs
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const replaceInputRefs = useRef<HTMLInputElement[]>([])
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -151,10 +153,11 @@ export default function Images({
       })
       setDisplayMode('slides')
     } catch (error) {
-      toast.error('Submit failed', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
     } finally {
       setIsLoading(false)
     }
@@ -185,8 +188,8 @@ export default function Images({
             <h3 className="text-semibold">Images</h3>
             <BackButton onClick={onBack} />
           </div>
-            {/* Editable Slide Title */}
-            <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div className="hidden lg:block">
             <input
               type="text"
               value={slideTitle}
