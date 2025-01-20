@@ -72,7 +72,7 @@ export default function Timeline({
   const isGenerateDisabled =
     timeline.filter(
       (point, index) => point.trim() !== '' && description[index].trim() !== ''
-    ).length < 3
+    ).length < 3|| !slideTitle.trim()
 
   const handleGenerateSlide = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -176,7 +176,7 @@ export default function Timeline({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="hidden lg:block">
+          <div>
             <input
               type="text"
               value={slideTitle}
