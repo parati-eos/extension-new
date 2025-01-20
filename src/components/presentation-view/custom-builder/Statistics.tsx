@@ -78,7 +78,7 @@ export default function Statistics({
     title.length < 3 ||
     title.some(
       (point, index) => point.trim() === '' || description[index].trim() === ''
-    )
+    ) || !slideTitle.trim()
 
   const handleGenerateSlide = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -111,7 +111,7 @@ export default function Statistics({
             ...(selectedImage && { image: selectedImage }),
             stats: title.map((label, index) => ({
               label,
-              value: Number(description[index] || 0), // Adjusted to include all rows
+              value: (description[index] || 0), // Adjusted to include all rows
             })),
           },
           outlineID: outlineID,
@@ -176,7 +176,7 @@ export default function Statistics({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="hidden lg:block">
+          <div>
             <input
               type="text"
               value={slideTitle}

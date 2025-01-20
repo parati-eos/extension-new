@@ -18,7 +18,7 @@ const Pricing: React.FC = () => {
   const categories = [
     {
       title: 'Access',
-      features: ['Generate Presentations', 'Presentation Uploads'],
+      features: ['Generate or Refine Presentations'],
     },
     {
       title: 'Features',
@@ -82,245 +82,233 @@ const Pricing: React.FC = () => {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
 
   const plans = [
-    {
+     {
       name: 'FREE',
       buttonText: 'Get Started for Free',
-      description: (
-        <div className="mb-[5.5rem]">
-          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-            Perfect for exploring Zynth.
-          </span>
-        </div>
-      ),
-
-      price: null,
-      features: [
-        {
-          text: 'Unlimited',
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4 ',
-          margin: '',
-        },
-
-        {
-          text: '-',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-3 ',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-7 ',
-          margin: '',
-        },
-
-        {
-          text: '✔',
-          bgColor: '#F5F7FA',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-1 ',
-          margin: '',
-        },
-        {
-          text: '-',
-          bgColor: 'white',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '-',
-          bgColor: '#F5F7FA',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '-',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '-',
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4',
-          margin: '',
-        },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
-        {
-          text: '-',
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-1 ',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-
-        {
-          text: `${currency === 'INR' ? '₹499' : '$9'} Export`,
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4',
-          margin: '',
-        },
-      ],
-    },
-    {
-      name: 'PRO',
-      buttonText: 'Sign up for Pro',
-      description: (
-        <div className="mb-[2.5rem]">
-          <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
-            Ideal for professionals and businesses.
-          </span>
-        </div>
-      ),
-      price:
-        billingCycle === 'monthly' ? (
-          <>
-            {monthlyPlanAmount} {currency}
-            <span className="text-2xl font-bold ml-2">per month</span>
-          </>
-        ) : (
-          <>
-            {yearlyPlanAmount} {currency}
-            <span className="text-2xl font-bold ml-2">per year</span>
-          </>
-        ),
-      features: [
-        {
-          text: 'Unlimited',
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4 ',
-          margin: '',
-        },
-        {
-          text: 'Unlimited',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-3 ',
-          margin: '',
-          textColor: 'text-black',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-[1.9rem] ',
-          margin: '',
-        },
-
-        {
-          text: '✔',
-          bgColor: '#F5F7FA',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-1 ',
-          margin: '',
-        },
-        {
-          text: '-',
-          bgColor: 'white',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: '#F5F7FA',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-
-        {
-          text: '-',
-          bgColor: 'white',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-1 ',
-          margin: '',
-        },
-        {
-          text: '-',
-          bgColor: '#F5F7FA',
-          icon: FaCheckCircle,
-          spacing: 'py-5',
-          margin: '',
-        },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
-        {
-          text: '-',
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-1 ',
-          margin: '',
-        },
-        {
-          text: '',
-          bgColor: 'white',
-          icon: FaCheckCircle,
-          spacing: 'py-4',
-          margin: '',
-        },
-
-        {
-          text: 'Unlimited',
-          bgColor: '#F5F7FA',
-          icon: null,
-          spacing: 'py-4',
-          margin: '',
-        },
-      ],
-    },
-  ]
+       description: (
+         <div className="mb-[5.5rem]">
+           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+             Perfect for exploring Zynth.
+           </span>
+         </div>
+       ),
+ 
+       price: null,
+       features: [
+         {
+           text: '5 per month',
+           bgColor: '#F5F7FA',
+           icon: null,
+           spacing: 'py-4 ',
+           margin: '',
+         },
+ 
+       
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-7 ',
+           margin: '',
+         },
+ 
+         {
+           text: '✔',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-1 ',
+           margin: '',
+         },
+         {
+           text: '-',
+           bgColor: 'white',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '-',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '-',
+           bgColor: 'white',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '-',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         { text: '', bgColor: 'white', icon: null, spacing: 'py-8', margin: '' },
+         {
+           text: '-',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-1 ',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+ 
+         {
+           text: `${currency === 'INR' ? '₹499' : '$9'} per Export`,
+           bgColor: '#F5F7FA',
+           icon: null,
+           spacing: 'py-4',
+           margin: '',
+         },
+       ],
+     },
+     {
+       name: 'PRO',
+       buttonText: 'Sign up for Pro',
+ 
+       description: (
+         <div className="lg:mb-[2.5rem]">
+           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
+             Ideal for professionals and businesses.
+           </span>
+         </div>
+       ),
+       price:
+         billingCycle === 'monthly' ? (
+           <>
+             {monthlyPlanAmount} {currency}
+             <span className="text-2xl font-bold ml-2">per month</span>
+           </>
+         ) : (
+           <>
+             {yearlyPlanAmount} {currency}
+             <span className="text-2xl font-bold ml-2">per year</span>
+           </>
+         ),
+       features: [
+         {
+           text: 'Unlimited',
+           bgColor: '#F5F7FA',
+           icon: null,
+           spacing: 'py-4 ',
+           margin: '',
+         },
+       
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-[1.8rem] ',
+           margin: '',
+         },
+ 
+         {
+           text: '✔',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-1 ',
+           margin: '',
+         },
+         {
+           text: '-',
+           bgColor: 'white',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+ 
+         {
+           text: '-',
+           bgColor: 'white',
+           icon: FaCheckCircle,
+           spacing: 'py-3',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-1 ',
+           margin: '',
+         },
+         {
+           text: '-',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         { text: '', bgColor: 'white', icon: null, spacing: 'py-8', margin: '' },
+         {
+           text: '-',
+           bgColor: '#F5F7FA',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: null,
+           spacing: 'py-1 ',
+           margin: '',
+         },
+         {
+           text: '',
+           bgColor: 'white',
+           icon: FaCheckCircle,
+           spacing: 'py-4',
+           margin: '',
+         },
+ 
+         {
+           text: 'Unlimited',
+           bgColor: '#F5F7FA',
+           icon: null,
+           spacing: 'py-4',
+           margin: '',
+         },
+       ],
+     },
+   ]
 
   return (
     <>
@@ -483,11 +471,11 @@ const Pricing: React.FC = () => {
               <ul className="text-gray-700 ">
                 <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full ">
                   General Presentations
-                  <span className="font-medium">Unlimited</span>
+                  <span className="font-medium">5 per month</span>
                 </li>
                 <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                   Presentation Uploads
-                  <span className="font-medium mr-2 text-black">-</span>
+                  <span className="font-medium ">5 per month</span>
                 </li>
               </ul>
             </div>
@@ -517,11 +505,11 @@ const Pricing: React.FC = () => {
                 </li>
                 <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                   Add Custom Slides
-                  <span className="font-medium mr-2 text-black">-</span>
+                  <FaCheckCircle className="h-6 w-6 font-medium text-green-500" />
                 </li>
                 <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full ">
                   Custom Slide Builder
-                  <span className="font-medium mr-2 text-black">-</span>
+                  <FaCheckCircle className="h-6 w-6 font-medium text-green-500" />
                 </li>
               </ul>
             </div>
@@ -539,7 +527,7 @@ const Pricing: React.FC = () => {
                 </li>
                 <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
                   PDF Exports
-                  <span className="font-medium mr-2 text-black">-</span>
+                  <span className="font-medium mr-2 text-black">    {currency === 'INR' ? '₹499' : '$9'} Export</span>
                 </li>
               </ul>
             </div>
@@ -647,7 +635,7 @@ const Pricing: React.FC = () => {
                 <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                   Google Slides Exports
                   <span className="font-medium  text-black">
-                    {currency === 'INR' ? '₹499' : '$9'} Export
+                Unlimited
                   </span>
                 </li>
               </ul>

@@ -247,12 +247,13 @@ export default function People({
   }
 
   const [showTooltip, setShowTooltip] = useState(false)
-  const isGenerateDisabled = !(
-    people[0].name.trim() &&
-    people[0].description.trim() &&
-    people[1].name.trim() &&
-    people[1].description.trim()
-  )
+  const isGenerateDisabled =
+    !(
+      people[0].name.trim() &&
+      people[0].description.trim() &&
+      people[1].name.trim() &&
+      people[1].description.trim()
+    ) || !slideTitle.trim()
 
   const onBack = () => {
     setDisplayMode('customBuilder')
@@ -271,7 +272,7 @@ export default function People({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="hidden lg:block">
+          <div>
             <input
               type="text"
               value={slideTitle}

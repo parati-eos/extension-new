@@ -173,15 +173,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                       Choose a slide type and provide information in a
                       structured format to get more control over the final
                       output.
-                    </p>{' '}
-                    <br></br> Please{' '}
-                    <button
-                      className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                      onClick={() => setIsPricingModalOpen(true)}
-                    >
-                      upgrade to Pro
-                    </button>{' '}
-                    plan to access this feature.
+                    </p>
                   </p>
                 </div>
               )}
@@ -378,15 +370,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                       Choose a slide type and provide information in a
                       structured format to get more control over the final
                       output.
-                    </p>{' '}
-                    <br></br> Please{' '}
-                    <button
-                      className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                      onClick={() => setIsPricingModalOpen(true)}
-                    >
-                      upgrade to Pro
-                    </button>{' '}
-                    plan to access this feature.
+                    </p>
                   </p>
                 </div>
               )}

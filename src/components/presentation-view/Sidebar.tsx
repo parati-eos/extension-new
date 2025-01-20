@@ -220,17 +220,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         Add new section.
                       </p>
 
-                      <br />
-                      <p className="text-sm text-center text-gray-800">
-                        Please{' '}
-                        <button
-                          className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                          onClick={() => setIsPricingModalOpen(true)}
-                        >
-                          upgrade to Pro
-                        </button>{' '}
-                        plan to access this feature.
-                      </p>
+                      
                     </div>
                   )}
                   {/* Tooltip */}
