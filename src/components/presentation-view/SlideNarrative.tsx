@@ -190,6 +190,7 @@ export default function SlideNarrative({
           value={selectedOption}
           onChange={handleSelectChange}
           className="w-full lg:w-[25%] items-center"
+          isSearchable={false} // Disable search to prevent keypad
           styles={{
             control: (provided) => ({
               ...provided,

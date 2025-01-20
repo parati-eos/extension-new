@@ -348,17 +348,27 @@ export default function ViewPresentation() {
   }
 
   // Handle Add New Slide Version Button
-  const handlePlusClick = (outlineTitle: string) => {
-    updateSlideState(outlineTitle, {
-      isLoading: false,
-      isNoGeneratedSlide: false,
-      lastUpdated: Date.now(),
-    })
-    setDisplayModes((prev) => ({
-      ...prev,
-      [outlineTitle]: prev[outlineTitle] === 'slides' ? 'newContent' : 'slides',
-    }))
-  }
+const handlePlusClick = (outlineTitle: string) => {
+  updateSlideState(outlineTitle, {
+    isLoading: false,
+    isNoGeneratedSlide: false,
+    lastUpdated: Date.now(),
+  });
+
+  setDisplayModes((prev) => ({
+    ...prev,
+    [outlineTitle]:
+      outlineTitle === outlines[0].title // Check if it's the Cover outline
+        ? 'Cover'
+        : outlineTitle === outlines[outlines.length - 1].title // Check if it's the Contact outline
+        ? 'Contact'
+        : prev[outlineTitle] === 'slides'
+        ? 'newContent'
+        : 'slides',
+  }));
+};
+
+
 
   // Paginate Back
   const handlePaginatePrev = () => {
@@ -439,7 +449,9 @@ export default function ViewPresentation() {
       } else if (currentMode === 'customBuilder') {
         newMode = 'newContent'
       } else if (currentMode === 'Cover') {
-        newMode = 'newContent'
+        newMode = 'slides'
+      }else if (currentMode === 'Contact') {
+        newMode = 'slides'
       } else if (currentMode === 'newContent') {
         newMode = 'slides'
       } else {

@@ -1,6 +1,6 @@
 import { FaClock, FaPlus, FaUser } from 'react-icons/fa'
 import ZynthLogoText from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { PricingModal } from './PricingModal'
 import { Plan } from '../../types/pricingTypes'
@@ -28,6 +28,8 @@ const Navbar: React.FC<NavbarProps> = ({
   const userProfileRef = useRef<HTMLDivElement | null>(null) // Reference to the profile image to handle click toggles
   const [subId, setSubId] = useState('')
   const navigate = useNavigate()
+  // Get current location
+  const location = useLocation()
 
   const handleLogout = () => {
     sessionStorage.clear()
@@ -146,18 +148,21 @@ const Navbar: React.FC<NavbarProps> = ({
 
         {/* Menu */}
         <div className="flex items-center space-x-4">
-          <button
-            onClick={() => navigate('/new-presentation')}
-            className="bg-[#3667B2] border border-[#3667B2] lg:h-[2.5rem] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
-          >
-            <span className="sm:hidden text-base">
-              <FaPlus />
-            </span>
-            <span className="hidden sm:flex items-center space-x-2">
-              <FaPlus />
-              <span>New Presentation</span>
-            </span>
-          </button>
+          {/* Conditionally hide the "New Presentation" button on '/new-presentation' */}
+          {location.pathname !== '/new-presentation' && (
+           <button
+           onClick={() => navigate('/new-presentation')}
+           className="bg-[#3667B2] border border-[#3667B2] lg:h-[2.5rem] text-white hover:bg-white hover:text-[#3667B2] hover:border-[#3667B2] hover:border text-base font-medium px-4 py-4 lg:py-2 rounded-md active:scale-95 transition transform duration-300"
+         >
+           <span className="sm:hidden text-base">
+             <FaPlus />
+           </span>
+           <span className="hidden sm:flex items-center space-x-2">
+             <FaPlus />
+             <span>New Presentation</span>
+           </span>
+         </button>
+          )}
           <button
             id={showHistoryId ? 'history' : undefined} // Conditionally apply the ID
             onClick={() => navigate('/history')}
