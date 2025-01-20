@@ -796,7 +796,7 @@ const HistoryContainer: React.FC = () => {
           {filteredData?.length > 10 && (
             <div className="flex justify-between items-center mt-6">
               <button
-                className="flex gap-2 items-center bg-[#F3F4F6] px-4 py-2 active:scale-95 transition transform duration-300 rounded-md disabled:bg-[#E4E7EB]"
+                className="flex gap-2 items-center hover:scale-105 px-4 py-2 active:scale-95 transition transform duration-300 rounded-md disabled:bg-[#ffffff] disabled:cursor-not-allowed disabled:hover:scale-100"
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => prev - 1)}
               >
@@ -807,7 +807,7 @@ const HistoryContainer: React.FC = () => {
                 Page {currentPage} of {Math.ceil(filteredData?.length / 10)}
               </span>
               <button
-                className="flex gap-2 items-center bg-[#F3F4F6] active:scale-95 transition transform duration-300 px-4 py-2 rounded-md disabled:bg-[#E4E7EB]"
+                className="flex gap-2 items-center hover:scale-105 active:scale-95 transition transform duration-300 px-4 py-2 rounded-md disabled:bg-[#ffffff] disabled:cursor-not-allowed disabled:hover:scale-100"
                 disabled={currentPage === Math.ceil(filteredData?.length / 10)}
                 onClick={() => setCurrentPage((prev) => prev + 1)}
               >
