@@ -189,9 +189,7 @@ export default function MobileOutlineModal({
               <div ref={buttonRef} className="relative inline-block">
                 <button
                   id="outline-mobile"
-                  className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline ${
-                    userPlan === 'free' ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline`}
                   onClick={() => {
                     if (userPlan === 'free') {
                       setIsDialogVisible(!isDialogVisible)

@@ -242,11 +242,7 @@ const SelectPresentationType: React.FC = () => {
     selectedType === 8 ? !customTypeInput.trim() : !selectedType
 
   const refineButtonDisabled =
-    userPlan === 'free'
-      ? true
-      : selectedType === 8
-      ? !customTypeInput.trim()
-      : !selectedType
+    selectedType === 8 ? !customTypeInput.trim() : !selectedType
 
   // API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
   useEffect(() => {

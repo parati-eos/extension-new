@@ -57,6 +57,9 @@ const EditProfile: React.FC = () => {
     contactEmail?: string
     websiteLink?: string
   }>({})
+  const [originalData, setOriginalData] = useState<OrganizationData | null>(
+    null
+  )
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -74,7 +77,6 @@ const EditProfile: React.FC = () => {
       }
     }
   }
-  const [websiteLink, setWebsiteLink] = useState('')
   const [error, setError] = useState('')
   const handleButtonClick = () => {
     document.getElementById('changeLogoInput')?.click()
@@ -166,16 +168,50 @@ const EditProfile: React.FC = () => {
     try {
       const sectorData = sector === 'Other' ? otherSector : sector
       const industryData = industry === 'Other' ? otherIndustry : industry
-      const updatedData = {
-        ...formData,
-        orgId: orgId,
-        userId: userId,
-        sector: sectorData,
-        industry: industryData,
-        logo: logo || formData.logo,
+
+      // Create an object to store only the changed fields
+      const changedFields: Partial<OrganizationData> = {}
+
+      // Compare current values with original values
+      if (originalData) {
+        if (formData.companyName !== originalData.companyName) {
+          changedFields.companyName = formData.companyName
+        }
+        if (formData.tagline !== originalData.tagline) {
+          changedFields.tagline = formData.tagline
+        }
+        if (sectorData !== originalData.sector) {
+          changedFields.sector = sectorData
+        }
+        if (industryData !== originalData.industry) {
+          changedFields.industry = industryData
+        }
+        if (formData.websiteLink !== originalData.websiteLink) {
+          changedFields.websiteLink = formData.websiteLink
+        }
+        if (formData.contactPhone !== originalData.contactPhone) {
+          changedFields.contactPhone = formData.contactPhone
+        }
+        if (formData.contactEmail !== originalData.contactEmail) {
+          changedFields.contactEmail = formData.contactEmail
+        }
+        if (formData.linkedinLink !== originalData.linkedinLink) {
+          changedFields.linkedinLink = formData.linkedinLink
+        }
+        if (logo && logo !== originalData.logo) {
+          changedFields.logo = logo
+        }
       }
-      await axios
-        .patch(
+
+      // Only make the API call if there are actually changed fields
+      if (Object.keys(changedFields).length > 0) {
+        const updatedData = {
+          ...changedFields,
+          orgId: orgId,
+          userId: userId,
+        }
+
+        await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
           updatedData,
           {
@@ -184,10 +220,15 @@ const EditProfile: React.FC = () => {
             },
           }
         )
-        .then((response) => {
-          setLoading(false)
+        setLoading(false)
+        navigate('/organization-profile')
+      } else {
+        setLoading(false)
+        toast.info('No changes detected', {
+          position: 'top-right',
+          autoClose: 3000,
         })
-      navigate('/organization-profile')
+      }
     } catch (error: any) {
       console.error('Failed to update profile', error)
       if (error.response?.status === 404) {
@@ -219,6 +260,7 @@ const EditProfile: React.FC = () => {
         )
         const data = response.data
         setFormData(data)
+        setOriginalData(data) // Store the original data
 
         if (
           !Object.keys(industrySectorMap).includes(data.sector) &&

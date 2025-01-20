@@ -753,23 +753,16 @@ export default function ViewPresentation() {
               await handleQuickGenerate()
             }}
             handleCustomBuilderClick={() => {
-              if (featureDisabled) {
-                toast.info('Upgrade to pro to access this feature', {
-                  position: 'top-right',
-                  autoClose: 3000,
-                })
-              } else {
-                const newMode =
-                  outlineTitle === outlines[0].title
-                    ? 'Cover'
-                    : outlineTitle === outlines[outlines.length - 1].title
-                    ? 'Contact'
-                    : 'customBuilder'
-                setDisplayModes((prev) => ({
-                  ...prev,
-                  [outlineTitle]: newMode,
-                }))
-              }
+              const newMode =
+                outlineTitle === outlines[0].title
+                  ? 'Cover'
+                  : outlineTitle === outlines[outlines.length - 1].title
+                  ? 'Contact'
+                  : 'customBuilder'
+              setDisplayModes((prev) => ({
+                ...prev,
+                [outlineTitle]: newMode,
+              }))
             }}
             handleSlideNarrative={() => {
               setDisplayModes((prev) => ({
@@ -1021,10 +1014,12 @@ export default function ViewPresentation() {
           },
         }))
 
-        setDisplayModes((prev) => ({
-          ...prev,
-          [currentOutline]: 'slides',
-        }))
+        console.log('Timeout Slides')
+
+        // setDisplayModes((prev) => ({
+        //   ...prev,
+        //   [currentOutline]: 'slides',
+        // }))
 
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
@@ -1111,6 +1106,9 @@ export default function ViewPresentation() {
                 position: 'top-right',
                 autoClose: 3000,
               })
+
+              console.log('Socket IF Slides')
+
               setDisplayModes((prev) => ({
                 ...prev,
                 [currentOutline]: 'slides',
