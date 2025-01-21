@@ -354,9 +354,9 @@ export default function Images({
     {showTooltip && (
       <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
         {images.length === 0
-          ? 'Please upload an image'
+          ? 'Please upload an image.'
           : slideTitle.trim() === ''
-          ? 'Slide title is required'
+          ? 'Slide title is required.'
           : ''}
       </div>
     )}
@@ -385,8 +385,8 @@ export default function Images({
     {showTooltip && (
       <div className="absolute top-[-35px] w-max left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
         {images.length === 0
-          ? 'Please upload an image'
-          : 'Slide title is required'}
+          ? 'Please upload an image.'
+          : 'Slide title is required.'}
       </div>
     )}
   </div>

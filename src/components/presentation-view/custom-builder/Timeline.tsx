@@ -268,12 +268,15 @@ export default function Timeline({
 
   {/* Tooltip */}
   {isGenerateDisabled && showTooltip && (
-    <span className="absolute top-[-40px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-      {slideTitle.trim() === ''
-        ? 'Slide title is required'
-        : 'Minimum 3 timelines are required'}
-    </span>
-  )}
+  <span className="absolute top-[-40px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+    {timeline.length < 3
+      ? 'Minimum 3 timelines are required.'
+      : slideTitle.trim() === ''
+      ? 'Slide title is required.'
+      : ''}
+  </span>
+)}
+
 </button>
 
           </div>
@@ -310,9 +313,11 @@ export default function Timeline({
               {/* Tooltip */}
               {isGenerateDisabled && showTooltip && (
                 <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  {slideTitle.trim() === ''
-        ? 'Slide title is required'
-        : 'Minimum 3 timelines are required'}
+                  {timeline.length < 3
+      ? 'Minimum 3 timelines are required.'
+      : slideTitle.trim() === ''
+      ? 'Slide title is required.'
+      : ''}
                 </span>
               )}
             </button>

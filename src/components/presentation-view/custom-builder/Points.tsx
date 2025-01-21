@@ -229,7 +229,7 @@ export default function Points({
             {/* Generate Slide Button */}
             <div
   className="relative"
-  onMouseEnter={() => setShowTooltip(!slideTitle)}
+  onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
   onMouseLeave={() => setShowTooltip(false)}
 >
   <button
@@ -245,12 +245,14 @@ export default function Points({
   </button>
 
   {/* Tooltip */}
-  {showTooltip && !slideTitle && (
+  {showTooltip && (
     <span
       className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 mt-2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md z-50"
       style={{ whiteSpace: 'nowrap' }} // Prevent text wrapping
     >
-      Slide title is required
+      {points.every((point) => point.trim() === '')
+        ? 'Minimum 1 point required.'
+        : 'Slide title is required.'}
     </span>
   )}
 </div>
@@ -259,7 +261,7 @@ export default function Points({
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-2 gap-2  w-full relative "
           
-          onMouseEnter={() => setShowTooltip(!slideTitle)}
+          onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
   onMouseLeave={() => setShowTooltip(false)}
           >
             <div className="flex-1  items-center justify-center gap-2">
@@ -276,17 +278,19 @@ export default function Points({
               disabled={isGenerateDisabled || isLoading || isImageLoading}
               className={`flex-1 py-2 rounded-md ${
                 isGenerateDisabled || isLoading || isImageLoading
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+                  ? 'bg-gray-200 text-gray-500'
+        : 'bg-[#3667B2] text-white'
               }`}
             >
               Generate Slide
             </button>
 
             {/* Tooltip for Slide Type */}
-            {showTooltip && !slideTitle && (
+            {showTooltip &&  (
               <div className="absolute -top-12 left-[75%] w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md">
-                Slide title is required
+                  {points.every((point) => point.trim() === '')
+        ? 'Minimum 1 point required.'
+        : 'Slide title is required.'}
               </div>
             )}
 

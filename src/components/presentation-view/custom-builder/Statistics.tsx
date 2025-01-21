@@ -213,7 +213,7 @@ export default function Statistics({
                     handleInputDescription(e.target.value, index)
                   }
                   placeholder={`Enter Value ${index + 1}`}
-                  className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:mr-2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             ))}
@@ -267,10 +267,16 @@ export default function Statistics({
 
                 {/* Tooltip */}
                 {isGenerateDisabled && showTooltip && (
-                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-                    Minimum 3 data points required.<br></br> Please fill all
-                    cells.
-                  </span>
+                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
+                  dangerouslySetInnerHTML={{
+                    __html: title.length < 3 ||
+                      title.some(
+                        (point, index) => point.trim() === '' || description[index].trim() === ''
+                      )
+                      ? 'Minimum 3 data points required.<br>Please fill all cells.'
+                      : 'Slide title is required.',
+                  }}
+                />
                 )}
               </div>
             </div>
@@ -309,11 +315,17 @@ export default function Statistics({
 
               {/* Tooltip */}
               {isGenerateDisabled && showTooltip && (
-                <span className="absolute top-[-45px] left-1/2 -translate-x-[55%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-                  Minimum 3 data points required.<br></br> Please fill all
-                  cells.
-                </span>
-              )}
+                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
+                  dangerouslySetInnerHTML={{
+                    __html: title.length < 3 ||
+                      title.some(
+                        (point, index) => point.trim() === '' || description[index].trim() === ''
+                      )
+                      ? 'Minimum 3 data points required.<br>Please fill all cells.'
+                      : 'Slide title is required.',
+                  }}
+                />
+                )}
             </div>
           </div>
         </>

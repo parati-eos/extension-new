@@ -267,18 +267,20 @@ export default function Graphs({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="w-full lg:p-1 ">
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          {currentScreen === 'inputScreen' && (
+  <div className="w-full lg:p-1">
+    <input
+      type="text"
+      value={slideTitle}
+      onChange={(e) => setSlideTitle(e.target.value)}
+      placeholder="Add Slide Title"
+      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+)}
           {currentScreen === 'chartSelection' ? (
             <div className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
-              <h3 className="text-semibold">Select Graph Type</h3>
+          
               <div className="grid  grid-cols-3 lg:grid-cols-4 gap-4 mt-4 mr-5 h-28 ">
                 {['Line', 'Bar', 'Pie'].map((chart) => (
                   <div

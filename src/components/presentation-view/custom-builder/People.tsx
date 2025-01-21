@@ -255,6 +255,14 @@ export default function People({
       people[1].description.trim()
     ) || !slideTitle.trim()
 
+    const isTooltipSwitch =
+    !(
+      people[0].name.trim() &&
+      people[0].description.trim() &&
+      people[1].name.trim() &&
+      people[1].description.trim()
+    ) 
+
   const onBack = () => {
     setDisplayMode('customBuilder')
   }
@@ -396,33 +404,37 @@ export default function People({
             ))}
           </div>
 
-          <div className=" flex w-full  justify-end ">
-            <button
-              onClick={(e) => {
-                if (!isGenerateDisabled && !isImageUploading) {
-                  handleGenerateSlide()
-                } else {
-                  e.preventDefault() // Prevent action when disabled
-                }
-              }}
-              disabled={isGenerateDisabled && !slideTitle}
-              onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              className={`lg:w-[180px] py-2 px-5 justify-end  rounded-md active:scale-95 transition transform duration-300 ${
-                isGenerateDisabled || isImageUploading || !slideTitle
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-              }`}
-            >
-              Generate Slide
-              {/* Tooltip */}
-              {isGenerateDisabled && showTooltip && (
-                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Minimum 2 people required
-                </span>
-              )}
-            </button>
-          </div>
+          <div className="flex w-full justify-end relative">
+  <button
+    onClick={(e) => {
+      if (!isGenerateDisabled && !isImageUploading) {
+        handleGenerateSlide();
+      } else {
+        e.preventDefault(); // Prevent action when disabled
+      }
+    }}
+    onMouseEnter={() => {
+      if (isGenerateDisabled || isAddMoreDisabled) setShowTooltip(true); // Show tooltip for relevant condition
+    }}
+    onMouseLeave={() => setShowTooltip(false)} // Hide tooltip on mouse leave
+    className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
+      isGenerateDisabled || isImageUploading || !slideTitle
+        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+        : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+    }`}
+  >
+    Generate Slide
+
+    {/* Tooltip */}
+    {showTooltip && (
+      <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+        {isTooltipSwitch
+          ? 'Minimum 2 people required.'
+          : 'Slide title is required.'}
+      </span>
+    )}
+  </button>
+</div>
         </>
       )}
     </div>
