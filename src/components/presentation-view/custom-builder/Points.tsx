@@ -36,6 +36,7 @@ export default function Points({
   const [isImageLoading, setIsImageLoading] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
+  const [showTooltip, setShowTooltip] = useState(false) // Tooltip visibility state
 
   const handleInputChange = (value: string, index: number) => {
     const updatedPoints = [...points]
@@ -226,20 +227,41 @@ export default function Points({
             />
 
             {/* Generate Slide Button */}
-            <button
-              onClick={handleGenerateSlide}
-              disabled={isGenerateDisabled || isLoading || isImageLoading}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
-                isGenerateDisabled || isLoading || isImageLoading
-                  ? 'bg-gray-200 text-gray-500'
-                  : 'bg-[#3667B2] text-white'
-              }`}
-            >
-              {isLoading ? 'Loading...' : 'Generate Slide'}
-            </button>
+            <div
+  className="relative"
+  onMouseEnter={() => setShowTooltip(!slideTitle)}
+  onMouseLeave={() => setShowTooltip(false)}
+>
+  <button
+    onClick={handleGenerateSlide}
+    disabled={isGenerateDisabled || isLoading || isImageLoading}
+    className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+      isGenerateDisabled || isLoading || isImageLoading
+        ? 'bg-gray-200 text-gray-500'
+        : 'bg-[#3667B2] text-white'
+    }`}
+  >
+    {isLoading ? 'Loading...' : 'Generate Slide'}
+  </button>
+
+  {/* Tooltip */}
+  {showTooltip && !slideTitle && (
+    <span
+      className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 mt-2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md z-50"
+      style={{ whiteSpace: 'nowrap' }} // Prevent text wrapping
+    >
+      Slide title is required
+    </span>
+  )}
+</div>
+
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-2 gap-2  w-full ">
+          <div className="flex lg:hidden mt-2 gap-2  w-full relative "
+          
+          onMouseEnter={() => setShowTooltip(!slideTitle)}
+  onMouseLeave={() => setShowTooltip(false)}
+          >
             <div className="flex-1  items-center justify-center gap-2">
               <AttachImage
                 onFileSelected={handleFileSelect}
@@ -255,12 +277,21 @@ export default function Points({
               className={`flex-1 py-2 rounded-md ${
                 isGenerateDisabled || isLoading || isImageLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
               }`}
             >
               Generate Slide
             </button>
+
+            {/* Tooltip for Slide Type */}
+            {showTooltip && !slideTitle && (
+              <div className="absolute -top-12 left-[75%] w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md">
+                Slide title is required
+              </div>
+            )}
+
           </div>
+          
         </>
       )}
     </div>

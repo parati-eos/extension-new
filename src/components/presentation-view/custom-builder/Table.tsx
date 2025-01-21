@@ -39,8 +39,8 @@ export default function Table({
     rows: Array(2)
       .fill(null)
       .map(() => Array(2).fill('')),
-    columnHeaders: ['Column 1', 'Column 2'],
-    rowHeaders: ['Row 1', 'Row 2'],
+    columnHeaders: ['',''],
+    rowHeaders: ['', ''],
   })
   const [canGenerate, setCanGenerate] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -69,11 +69,32 @@ export default function Table({
       setTableData((prev) => ({
         ...prev,
         rows: [...prev.rows, Array(prev.columnHeaders.length).fill('')],
-        rowHeaders: [...prev.rowHeaders, `Row ${prev.rowHeaders.length + 1}`],
-      }))
-      setIsRowAdded(true) // Trigger scrolling ONLY when adding rows
+        rowHeaders: [...prev.rowHeaders, ''], // Use an empty string for placeholder
+      }));
+      setIsRowAdded(true); // Trigger scrolling ONLY when adding rows
     }
-  }
+  };
+  useEffect(() => {
+    // Check if all mandatory fields (minimum 2 rows and 2 columns) are filled
+    const areMandatoryFieldsFilled =
+      tableData.columnHeaders.length >= 2 &&
+      tableData.rowHeaders.length >= 2 &&
+      tableData.columnHeaders.slice(0, 2).every((header) => header.trim() !== '') &&
+      tableData.rowHeaders.slice(0, 2).every((header) => header.trim() !== '');
+  
+    // Check if all rendered fields (headers and table cells) are filled
+    const areAllFieldsFilled =
+      tableData.columnHeaders.every((header) => header.trim() !== '') &&
+      tableData.rowHeaders.every((header) => header.trim() !== '') &&
+      tableData.rows.every((row) => row.every((cell) => cell.trim() !== ''));
+  
+    // Enable generation only if both conditions are met
+    setCanGenerate(areMandatoryFieldsFilled && areAllFieldsFilled);
+  }, [tableData]);
+  
+
+  
+  
 
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
@@ -97,14 +118,12 @@ export default function Table({
     if (tableData.columnHeaders.length < 5) {
       setTableData((prev) => ({
         ...prev,
-        columnHeaders: [
-          ...prev.columnHeaders,
-          `Column ${prev.columnHeaders.length + 1}`,
-        ],
-        rows: prev.rows.map((row) => [...row, '']),
-      }))
+        columnHeaders: [...prev.columnHeaders, ''], // Use an empty string for placeholder
+        rows: prev.rows.map((row) => [...row, '']), // Add empty cell for the new column
+      }));
     }
-  }
+  };
+  
 
   const handleRemoveColumn = () => {
     if (tableData.columnHeaders.length > 2) {
@@ -283,109 +302,123 @@ export default function Table({
           >
             <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
               <table className="table-auto w-full  ">
-                <thead>
-                  <tr>
-                    <th className="bg-gray-100 p-2 lg:w-1/5 lg:min-w-0 min-w-[27vw]">
-                      {' '}
-                      {/* First Column */}
-                      <input
-                        type="text"
-                        value="Row Headers"
-                        className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
-                        readOnly
-                      />
-                    </th>
-                    {tableData.columnHeaders.map((header, index) => (
-                      <th
-                        key={index}
-                        className={`bg-gray-100 lg:p-2 p-1 ${
-                          index === 0
-                            ? 'lg:min-w-[0vw] min-w-[20vw]'
+              <thead>
+  <tr>
+    <th className="bg-gray-100 p-2 lg:w-1/5 lg:min-w-0 ">
+
+    {' '}
+    {/* First Column */}
+       <input
+        type="text"
+                
+        className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+      />
+    </th>
+    {tableData.columnHeaders.map((header, index) => (
+       <th
+       key={index}
+       className={`bg-gray-100 lg:p-2 p-1 ${
+         index === 0
+         ? 'lg:min-w-[0vw] min-w-[20vw]'
                             : 'lg:min-w-[0vw] min-w-[22vw]'
-                        }`} // Set width for first and other columns
-                      >
-                        <input
-                          type="text"
-                          value={header}
-                          onChange={(e) =>
-                            handleHeaderChange(index, e.target.value, true)
-                          }
-                          className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
-                          readOnly
-                        />
-                      </th>
-                    ))}
-                    <th className="bg-gray-50 lg:p-2 p-1 lg:min-w-[0vw] min-w-[10vw]">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={handleAddColumn}
-                          disabled={tableData.columnHeaders.length >= 5}
-                          className={`${
-                            tableData.columnHeaders.length >= 5
-                              ? 'text-gray-400 cursor-not-allowed'
-                              : 'text-[#3667B2]'
-                          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
-                        >
-                          <FaPlus />
-                        </button>
-                        <button
-                          onClick={handleRemoveColumn}
-                          disabled={tableData.columnHeaders.length <= 2}
-                          className={`${
-                            tableData.columnHeaders.length <= 2
-                              ? 'text-gray-400 cursor-not-allowed'
-                              : 'text-[#3667B2]'
-                          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
-                        >
-                          <FaMinus />
-                        </button>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.rows.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      <td className="bg-gray-100 lg:min-w-[0vw] min-w-[22vw]">
-                        <input
-                          type="text"
-                          value={tableData.rowHeaders[rowIndex]}
-                          onChange={(e) =>
-                            handleHeaderChange(rowIndex, e.target.value, false)
-                          }
-                          className="w-full font-medium text-center border-none bg-transparent focus:outline-none"
-                        />
-                      </td>
-                      {row.map((cell, colIndex) => (
-                        <td
-                          key={colIndex}
-                          className={`border border-gray-300 p-2 ${
-                            colIndex === 0
-                              ? 'lg:min-w-[0vw] min-w-[20vw]'
-                              : 'lg:min-w-[0vw] min-w-[22vw]'
-                          }`}
-                        >
-                          <input
-                            type="text"
-                            value={cell}
-                            onChange={(e) =>
-                              handleCellChange(
-                                rowIndex,
-                                colIndex,
-                                e.target.value
-                              )
-                            }
-                            className="w-full text-center border-none bg-transparent focus:outline-none"
-                          />
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
+       }`} // Set width for first and other columns
+     >
+        <input
+          type="text"
+          value={header}
+          placeholder={`Enter Column ${index + 1}`} // Dynamic placeholder
+          onChange={(e) =>
+            handleHeaderChange(index, e.target.value, true)
+          }
+          className="hidden lg:block w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+        />
+           <input
+          type="text"
+          value={header}
+          placeholder={`Column ${index + 1}`} // Dynamic placeholder
+          onChange={(e) =>
+            handleHeaderChange(index, e.target.value, true)
+          }
+          className="lg:hidden w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+        />
+      </th>
+    ))}
+    <th className="bg-gray-50 lg:p-2 p-1 lg:min-w-[0vw] min-w-[10vw]">
+      <div className="flex justify-center gap-2">
+        <button
+          onClick={handleAddColumn}
+          disabled={tableData.columnHeaders.length >= 5}
+          className={`${
+            tableData.columnHeaders.length >= 5
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'text-[#3667B2]'
+          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-blue-100`}
+        >
+          <FaPlus />
+        </button>
+        <button
+          onClick={handleRemoveColumn}
+          disabled={tableData.columnHeaders.length <= 2}
+          className={`${
+            tableData.columnHeaders.length <= 2
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'text-[#3667B2]'
+          } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full p-1 hover:bg-red-100`}
+        >
+          <FaMinus />
+        </button>
+      </div>
+    </th>
+  </tr>
+</thead>
+<tbody>
+  {tableData.rows.map((row, rowIndex) => (
+    <tr key={rowIndex}>
+      <td className="bg-gray-100 lg:min-w-[0vw] ">
+        <input
+          type="text"
+          value={tableData.rowHeaders[rowIndex]}
+          placeholder={`Enter Row ${rowIndex + 1}`} // Dynamic placeholder
+          onChange={(e) =>
+            handleHeaderChange(rowIndex, e.target.value, false)
+          }
+          className="hidden lg:block w-full font-medium text-center border-none bg-transparent focus:outline-none"
+        />
+         <input
+          type="text"
+          value={tableData.rowHeaders[rowIndex]}
+          placeholder={`Row ${rowIndex + 1}`} // Dynamic placeholder
+          onChange={(e) =>
+            handleHeaderChange(rowIndex, e.target.value, false)
+          }
+          className="lg:hidden w-full font-medium text-center border-none bg-transparent focus:outline-none"
+        />
+      </td>
+      {row.map((cell, colIndex) => (
+        <td
+        key={colIndex}
+        className={`border border-gray-300 p-2 ${
+          colIndex === 0
+            ? 'lg:min-w-[0vw] '
+            : 'lg:min-w-[0vw] '
+        }`}>
+          <input
+            type="text"
+            value={cell}
+            onChange={(e) =>
+              handleCellChange(rowIndex, colIndex, e.target.value)
+            }
+            className="w-full text-center border-none bg-transparent focus:outline-none"
+          />
+        </td>
+      ))}
+    </tr>
+  ))}
+</tbody>
                 <tfoot>
                   <tr>
                     {/* Add and Remove Row Buttons */}
-                    <td className="bg-gray-50 w-full p-1 flex items-center justify-center lg:min-w-[0vw] min-w-[20vw]">
+                    <td className="bg-gray-50 w-full p-1 flex items-center justify-center lg:min-w-[0vw] ">
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={handleAddRow}
@@ -416,70 +449,87 @@ export default function Table({
               </table>
             </div>
           </div>
-          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto">
+          <div className="hidden  mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto">
             {/* Generate Slide Button */}
             <button
-              onClick={(e) => {
-                if (canGenerate) {
-                  handleGenerateSlide()
-                } else {
-                  e.preventDefault() // Prevent action when disabled
-                }
-              }}
-              disabled={!canGenerate && !slideTitle}
-              onMouseEnter={() => !canGenerate && setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-                canGenerate && slideTitle
-                  ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Generate Slide
-              {/* Tooltip */}
-              {!canGenerate && showTooltip && (
-                <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Minimum 2 rows and 2 columns required.<br></br> Please fill
-                  all cells.
-                </span>
-              )}
-            </button>
+  onClick={(e) => {
+    if (canGenerate && slideTitle) {
+      handleGenerateSlide();
+    } else {
+      e.preventDefault(); // Prevent action when disabled
+    }
+  }}
+  
+  onMouseEnter={() => {
+    if (!slideTitle || !canGenerate) setShowTooltip(true);
+  }}
+  onMouseLeave={() => setShowTooltip(false)}
+  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+    canGenerate && slideTitle
+      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+      : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+  }`}
+>
+  Generate Slide
+
+  {/* Tooltip for table validation */}
+  {!canGenerate && showTooltip && (
+    <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+      Minimum 2 rows and 2 columns required.<br /> Please fill all cells & headers.
+    </span>
+  )}
+
+  {/* Tooltip for missing slide title */}
+  {!canGenerate || !slideTitle && showTooltip && (
+    <span className="absolute top-[-30px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+      Slide title is required.
+    </span>
+  )}
+</button>
+
           </div>
           {/* Generate Slide Buttons for Mobile */}
+          <div className="flex lg:hidden gap-2 justify-end">
+  <div className="justify-end">
+    <div className="relative inline-block">
+      <button
+        onClick={(e) => {
+          if (canGenerate && slideTitle) {
+            handleGenerateSlide();
+          } else {
+            e.preventDefault(); // Prevent action when disabled
+          }
+        }}
+        
+        onMouseEnter={() => {
+          if (!slideTitle || !canGenerate) setShowTooltip(true);
+        }}
+        onMouseLeave={() => setShowTooltip(false)}
+        className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
+          canGenerate && slideTitle
+            ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
+            : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
+        }`}
+      >
+        Generate Slide
+      </button>
 
-          <div className="flex lg:hidden  gap-2 justify-end">
-            <div className="justify-end">
-              <div className="relative inline-block">
-                <button
-                  onClick={(e) => {
-                    if (canGenerate) {
-                      handleGenerateSlide()
-                    } else {
-                      e.preventDefault() // Block action when disabled
-                    }
-                  }}
-                  disabled={!canGenerate && !slideTitle}
-                  onMouseEnter={() => !canGenerate && setShowTooltip(true)} // Show tooltip
-                  onMouseLeave={() => setShowTooltip(false)} // Hide tooltip
-                  className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
-                    canGenerate && slideTitle
-                      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
-                      : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
-                  }`}
-                >
-                  Generate Slide
-                </button>
+      {/* Tooltip for table validation */}
+      {!canGenerate && showTooltip && (
+        <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+          Minimum 2 rows and 2 columns required.<br /> Please fill all cells & headers.
+        </span>
+      )}
 
-                {/* Tooltip */}
-                {!canGenerate && showTooltip && (
-                  <span className="absolute top-[-60px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                    Minimum 2 rows and <br></br> 2 columns required.<br></br>{' '}
-                    Please fill all cells.
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
+      {/* Tooltip for missing slide title */}
+      {!canGenerate || !slideTitle && showTooltip && (
+        <span className="absolute top-[-30px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+          Slide title is required.
+        </span>
+      )}
+    </div>
+  </div>
+</div>
         </>
       )}
     </div>

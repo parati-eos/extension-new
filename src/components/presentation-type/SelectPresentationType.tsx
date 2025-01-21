@@ -420,7 +420,7 @@ const SelectPresentationType: React.FC = () => {
               onMouseLeave={handleMouseLeaveGenerate}
             >
               <p className="text-sm text-center text-gray-800">
-                Please select a presentation type to generate
+                Please select a presentation type.
               </p>
             </div>
           )}
@@ -450,7 +450,7 @@ const SelectPresentationType: React.FC = () => {
               onMouseLeave={handleMouseLeave}
             >
               <p className="text-sm text-center text-gray-800">
-                Please select a presentation type to refine
+                Please select a presentation type.
               </p>
             </div>
           )}
