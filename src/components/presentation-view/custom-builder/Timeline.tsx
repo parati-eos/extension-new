@@ -39,6 +39,8 @@ export default function Timeline({
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const [showTitleTooltip, setShowTitleTooltip] = useState(false) // Tooltip for slide title
+
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...timeline]
@@ -242,31 +244,38 @@ export default function Timeline({
               fileName={fileName}
               uploadCompleted={uploadCompleted}
             />
-            <button
-              onClick={(e) => {
-                if (!isGenerateDisabled && !isLoading) {
-                  handleGenerateSlide()
-                } else {
-                  e.preventDefault() // Block click when disabled
-                }
-              }}
-              onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform active:scale-95 ${
-                isGenerateDisabled || loading || isLoading
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg'
-              }`}
-            >
-              {loading ? 'Generating...' : 'Generate Slide'}
+          <button
+  onClick={(e) => {
+    if (!isGenerateDisabled && !isLoading) {
+      handleGenerateSlide();
+    } else {
+      e.preventDefault(); // Prevent action when disabled
+    }
+  }}
+  onMouseEnter={() => {
+    if (isGenerateDisabled) {
+      setShowTooltip(true);
+    }
+  }}
+  onMouseLeave={() => setShowTooltip(false)}
+  className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 ${
+    isGenerateDisabled || loading || isLoading
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
+      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
+  }`}
+>
+  {loading ? 'Generating...' : 'Generate Slide'}
 
-              {/* Tooltip */}
-              {isGenerateDisabled && showTooltip && (
-                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Minimum 3 timelines required
-                </span>
-              )}
-            </button>
+  {/* Tooltip */}
+  {isGenerateDisabled && showTooltip && (
+    <span className="absolute top-[-40px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+      {slideTitle.trim() === ''
+        ? 'Slide title is required'
+        : 'Minimum 3 timelines are required'}
+    </span>
+  )}
+</button>
+
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-2 gap-2  w-full">

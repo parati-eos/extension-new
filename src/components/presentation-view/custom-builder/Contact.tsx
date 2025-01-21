@@ -35,6 +35,8 @@ export default function Contact({
   const [isImageLoading, setIsImageLoading] = useState(false)
   const [fileName, setFileName] = useState('')
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const [errors, setErrors] = useState({
     websiteLink: '',
     email: '',
@@ -64,6 +66,7 @@ export default function Contact({
       validatePhone(value); // Validate the current input value
     }
   };
+  
   const validatePhone = (value: string) => {
     const regex = /^[1-9]\d{9}$/;
     if (value && !regex.test(value)) {
@@ -144,8 +147,9 @@ export default function Contact({
   }
 
   const isButtonDisabled =
-    !(websiteLink || email || phone || linkedin) ||
-    Object.values(errors).some((error) => error !== '')
+  !email || // Ensure email is mandatory
+  Object.values(errors).some((error) => error !== ''); // Check for validation errors
+
 
   const handleSubmit = async () => {
     setIsSlideLoading()
@@ -226,7 +230,15 @@ export default function Contact({
   const onBack = () => {
     setDisplayMode('slides')
   }
+  const handleMouseEnter = () => {
+    if (isButtonDisabled) {
+      setShowTooltip(true)
+    }
+  }
 
+  const handleMouseLeave = () => {
+    setShowTooltip(false)
+  }
   return (
     <div className="flex flex-col p-4 h-full w-full">
       {/* Heading */}
@@ -316,7 +328,11 @@ export default function Contact({
           fileName={fileName}
           uploadCompleted={uploadCompleted}
         />
-
+ <div
+          className="relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
         {/* Generate Slide Button */}
         <button
           onClick={handleSubmit}
@@ -333,34 +349,55 @@ export default function Contact({
             'Generate Slide'
           )}
         </button>
-      </div>
-      {/* Attach Image and Generate Slide Buttons for Mobile */}
-      <div className="flex lg:hidden mt-2 gap-2  w-full ">
-        <div className="flex-1  items-center justify-center gap-2">
-          <AttachImage
-            onFileSelected={handleFileSelect}
-            isLoading={isImageLoading}
-            fileName={fileName}
-            uploadCompleted={uploadCompleted}
-          />
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          disabled={isButtonDisabled}
-          className={`flex items-center justify-center flex-1 py-2 rounded-md transition-all duration-200 ${
-            isButtonDisabled
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
-          }`}
-        >
-          {isLoading ? (
-            <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> // Spinner here
-          ) : (
-            'Generate Slide'
-          )}
-        </button>
-      </div>
+        {/* Tooltip for Desktop */}
+  {showTooltip && !email && (
+    <div className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+      Please enter email address
     </div>
+  )}
+        </div>
+      </div>
+     {/* Attach Image and Generate Slide Buttons for Mobile */}
+<div className="flex lg:hidden mt-2 gap-2 w-full relative"
+ onMouseEnter={handleMouseEnter}
+ onMouseLeave={handleMouseLeave}
+>
+  <div className="flex-1 items-center justify-center gap-2">
+    <AttachImage
+      onFileSelected={handleFileSelect}
+      isLoading={isImageLoading}
+      fileName={fileName}
+      uploadCompleted={uploadCompleted}
+    />
+  </div>
+
+  <button
+    onClick={handleSubmit}
+   
+    disabled={isButtonDisabled}
+    className={`flex items-center justify-center flex-1 py-2 rounded-md transition-all duration-200 ${
+      isButtonDisabled
+        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+        : 'bg-[#3667B2] text-white'
+    }`}
+  >
+    {isLoading ? (
+      <div className="w-6 h-6 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> // Spinner here
+    ) : (
+      'Generate Slide'
+    )}
+  </button>
+
+  {/* Tooltip: Only show when email is not entered and tooltip is triggered */}
+  {showTooltip && !email && (
+    <span className="absolute  left-[52%] bottom-full mb-2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
+      Please enter email address
+    </span>
+  )}
+</div>
+
+        </div>
+  
+
   )
 }

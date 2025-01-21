@@ -279,7 +279,7 @@ export default function SlideNarrative({
           {/* Tooltip */}
           {showTooltip && !selectedOption && (
             <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-              Select Slide Type
+              Select Slide Type.
             </span>
           )}
           <button
@@ -316,7 +316,7 @@ export default function SlideNarrative({
           {/* Tooltip */}
           {showTooltip && !selectedOption && (
             <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-              Select slide type
+                  Select Slide Type.
             </div>
           )}
           <button

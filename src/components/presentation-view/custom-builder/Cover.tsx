@@ -37,7 +37,17 @@ export default function Cover({
   const [uploadCompleted, setUploadCompleted] = useState(false)
   const [tagline, setTagline] = useState('')
   const [companyName, setCompanyName] = useState('')
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
+  const handleMouseEnter = () => {
+    setIsTooltipVisible(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsTooltipVisible(false)
+  }
+  const handleTouchStart = () => setIsTooltipVisible(true)
+  const handleTouchEnd = () => setIsTooltipVisible(false)
   // Ref for file input to trigger on button click
   const logoUploadInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -215,42 +225,80 @@ export default function Cover({
         />
 
         {/* Generate Slide Button */}
-        <button
-          onClick={handleGenerateSlide}
-          disabled={!logo}
-          className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
-            !logo
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
-          }`}
-        >
-          {isLoading ? 'Loading...' : 'Generate Slide'}
-        </button>
-      </div>
+        <div className="relative">
+      <button
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleGenerateSlide}
+ 
+        className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
+          !logo || !tagline.trim()
+            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+        }`}
+      >
+        {isLoading ? 'Loading...' : 'Generate Slide'}
+      </button>
 
-      {/* Attach Image and Generate Slide Buttons for Mobile */}
-      <div className="flex lg:hidden mt-2 gap-2  w-full ">
-        <div className="flex-1  items-center justify-center gap-2">
-          <AttachImage
-            onFileSelected={handleFileSelect}
-            isLoading={isUploading}
-            fileName={fileName}
-            uploadCompleted={uploadCompleted}
-          />
+      {/* Tooltip */}
+      {isTooltipVisible && (!logo || !tagline.trim()) && (
+        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-max bg-black text-white text-sm px-3 py-2 rounded-md shadow-md">
+          {!logo
+            ? 'Please upload a logo'
+            : !tagline.trim()
+            ? 'Please enter a tagline'
+            : ''}
         </div>
+      )}
 
-        <button
-          onClick={handleGenerateSlide}
-          disabled={!logo}
-          className={`flex-1 py-2 rounded-md ${
-            !logo
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
-          }`}
-        >
-          {isLoading ? 'Loading...' : 'Generate Slide'}
-        </button>
+</div>
+
+
       </div>
+
+    {/* Attach Image and Generate Slide Buttons for Mobile */}
+<div className="flex lg:hidden mt-2 gap-2 w-full relative">
+  <div className="flex-1 items-center justify-center gap-2">
+    <AttachImage
+      onFileSelected={handleFileSelect}
+      isLoading={isUploading}
+      fileName={fileName}
+      uploadCompleted={uploadCompleted}
+    />
+  </div>
+
+  <div className="relative flex-1">
+    <button
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onClick={handleGenerateSlide}
+      disabled={!logo || !tagline.trim()}
+      className={`w-full py-2 rounded-md ${
+        !logo || !tagline.trim()
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+      }`}
+    >
+      {isLoading ? 'Loading...' : 'Generate Slide'}
+    </button>
+
+    {/* Tooltip */}
+    {isTooltipVisible && (!logo || !tagline.trim()) && (
+      <div
+        className="absolute -top-12 left-1/2 w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md"
+      >
+        {!logo
+          ? 'Please upload a logo'
+          : !tagline.trim()
+          ? 'Please enter a tagline'
+          : ''}
+      </div>
+    )}
+  </div>
+</div>
+
     </div>
   )
 }

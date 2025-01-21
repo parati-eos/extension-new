@@ -444,7 +444,7 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         onMouseLeave={handleMouseLeaveGenerate}
       >
         <p className="text-sm text-center text-gray-800">
-          Please select a presentation type to generate
+          Please select a presentation type.
         </p>
       </div>
     )}
@@ -474,7 +474,7 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
           onMouseLeave={handleMouseLeave}
         >
           <p className="text-sm text-center text-gray-800">
-            Please select a presentation type to refine
+            Please select a presentation type.
           </p>
         </div>
       )}
