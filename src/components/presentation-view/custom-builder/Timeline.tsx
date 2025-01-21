@@ -310,7 +310,9 @@ export default function Timeline({
               {/* Tooltip */}
               {isGenerateDisabled && showTooltip && (
                 <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Minimum 3 timelines required
+                  {slideTitle.trim() === ''
+        ? 'Slide title is required'
+        : 'Minimum 3 timelines are required'}
                 </span>
               )}
             </button>
