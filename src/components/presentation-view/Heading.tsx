@@ -12,6 +12,7 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
   userPlan,
   openPricingModal,
   exportPaid,
+  buttonsDisabled,
 }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -66,7 +67,8 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
           <button
             id="share"
             onClick={handleShare}
-            className="text-[#5D5F61] gap-2 hover:text-[#3667B2] border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center active:scale-95 transition transform duration-300"
+            disabled={buttonsDisabled}
+            className="text-[#5D5F61] gap-2 hover:text-[#3667B2] border border-[#E1E3E5] bg-white p-2 py-1 rounded-md flex items-center active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
           >
             <FaShare className="h-3 w-3" />
             <span>Share</span>
@@ -79,8 +81,8 @@ export const DesktopHeading: React.FC<HeadingProps> = ({
             <button
               id="export"
               onClick={handleDownload}
-              disabled={userPlan === 'free' && !exportPaid}
-              className={`text-[#5D5F61] gap-2 ${
+              disabled={buttonsDisabled || (userPlan === 'free' && !exportPaid)}
+              className={`text-[#5D5F61] gap-2 disabled:cursor-not-allowed ${
                 userPlan !== 'free' && 'hover:text-[#3667B2]'
               } border border-[#E1E3E5] bg-white disabled:bg-gray-300 p-2 py-1 rounded-md flex items-center active:scale-95 transition transform duration-300`}
             >
@@ -122,6 +124,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
   userPlan,
   openPricingModal,
   exportPaid,
+  buttonsDisabled,
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const tooltipRef = useRef<HTMLDivElement | null>(null) // Ref for the tooltip
@@ -164,7 +167,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
           <button
             id="export-mobile"
             ref={buttonRef}
-            disabled={userPlan === 'free' && !exportPaid}
+            disabled={buttonsDisabled || (userPlan === 'free' && !exportPaid)}
             onClick={() => {
               if (userPlan === 'free' && !exportPaid) {
                 setIsTooltipVisible((prev) => !prev) // Toggle tooltip visibility if user is on 'free' plan
@@ -174,7 +177,7 @@ export const MobileHeading: React.FC<HeadingProps> = ({
                 setIsTooltipVisible(false) // Hide tooltip if user is not on 'free' plan
               }
             }}
-            className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
+            className="text-[#5D5F61] hover:text-blue-600 border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
           >
             <FaDownload className="h-4 w-4" />
           </button>
@@ -202,7 +205,8 @@ export const MobileHeading: React.FC<HeadingProps> = ({
         <button
           id="share-mobile"
           onClick={handleShare}
-          className="text-[#5D5F61] disabled:bg-gray-300  border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300"
+          disabled={buttonsDisabled}
+          className="text-[#5D5F61] disabled:bg-gray-300  border border-gray-300 p-2 rounded-md active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
         >
           <FaShare className="h-4 w-4" />
         </button>

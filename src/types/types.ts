@@ -44,6 +44,7 @@ export interface HeadingProps {
   userPlan: string
   openPricingModal: () => void
   exportPaid: boolean
+  buttonsDisabled: boolean
 }
 
 export interface Outlines {

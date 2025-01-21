@@ -1491,7 +1491,7 @@ export default function ViewPresentation() {
 
   const deleteFinalizeDisabled =
     isDocumentIDLoading || !slidesArrayRef.current[currentOutline]
-  const newVersionDisabled = isDocumentIDLoading
+  const buttonsDisabled = isDocumentIDLoading
 
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
@@ -1546,6 +1546,7 @@ export default function ViewPresentation() {
         userPlan={userPlan!}
         openPricingModal={() => setIsPricingModalOpen(true)}
         exportPaid={isExportPaid}
+        buttonsDisabled={buttonsDisabled}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -1616,7 +1617,7 @@ export default function ViewPresentation() {
               }
               currentSlideId={slidesArray[currentOutline]?.[currentSlideIndex]}
               deleteFinalizeDisabled={deleteFinalizeDisabled}
-              newVersionDisabled={newVersionDisabled}
+              newVersionDisabled={buttonsDisabled}
             />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
@@ -1671,6 +1672,7 @@ export default function ViewPresentation() {
           userPlan={userPlan!}
           openPricingModal={() => setIsPricingModalOpen(true)}
           exportPaid={isExportPaid}
+          buttonsDisabled={buttonsDisabled}
         />
 
         {/* MOBILE: OUTLINE Modal */}
@@ -1764,7 +1766,7 @@ export default function ViewPresentation() {
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
               deleteFinalizeDisabled={deleteFinalizeDisabled}
-              newVersionDisabled={newVersionDisabled}
+              newVersionDisabled={buttonsDisabled}
               finalized={
                 finalizedSlides[currentOutline] ===
                 slidesArray[currentOutline]?.[currentSlideIndex]

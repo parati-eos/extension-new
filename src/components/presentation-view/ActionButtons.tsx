@@ -35,7 +35,7 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
         id="delete"
         onClick={onDelete}
         disabled={deleteFinalizeDisabled}
-        className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
+        className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
         onMouseEnter={() => {
           if (userPlan === 'free' || userPlan !== 'free')
             setIsDialogVisibledelete(true)
@@ -61,7 +61,7 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
         id="finalize"
         onClick={onFinalize}
         disabled={deleteFinalizeDisabled}
-        className={`p-2 rounded-md flex items-center border active:scale-95 transition transform duration-300 ${
+        className={`p-2 rounded-md flex items-center border active:scale-95 transition transform duration-300 disabled:cursor-not-allowed ${
           currentSlideId && finalized
             ? 'border-[#0A8568] bg-[#36fa810a]'
             : 'border-gray-300'
@@ -96,7 +96,7 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
         onClick={onNewVersion}
         id="new-version"
         disabled={newVersionDisabled}
-        className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center active:scale-95 transition transform duration-300"
+        className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
         onMouseEnter={() => {
           if (userPlan === 'free' || userPlan !== 'free')
             setIsDialogVisibleNew(true)
@@ -149,7 +149,7 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
         id="delete-mobile"
         disabled={deleteFinalizeDisabled}
         onClick={onDelete}
-        className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center"
+        className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center disabled:cursor-not-allowed"
       >
         <FaTrash className="h-4 w-4 text-[#5D5F61]" />
       </button>
@@ -159,7 +159,7 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
         id="finalize-mobile"
         onClick={onFinalize}
         disabled={deleteFinalizeDisabled}
-        className={`border ${
+        className={`border disabled:cursor-not-allowed ${
           currentSlideId && finalized
             ? 'border-[#0A8568] bg-[#36fa810a]'
             : 'border-gray-300'
@@ -177,7 +177,7 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
         id="new-version-mobile"
         onClick={onNewVersion}
         disabled={newVersionDisabled}
-        className={`hover:text-blue-600 border ${
+        className={`hover:text-blue-600 border disabled:cursor-not-allowed ${
           displayMode === 'newContent' ? 'border-gray-300' : 'border-[#3667B2]'
         } p-2 rounded-md flex items-center`}
       >
