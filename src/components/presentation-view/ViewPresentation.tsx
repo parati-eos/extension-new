@@ -157,11 +157,6 @@ export default function ViewPresentation() {
       // Call payment status update
       await updatePaymentStatus()
 
-      // 3. Finally, call the original slides URL API
-      // const response = await fetch(
-      //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
-      // )
-
       // 2. Then, call the additional API to get presentationID
       const callAdditionalApi = async () => {
         if (presentationID) {

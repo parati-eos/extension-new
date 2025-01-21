@@ -85,9 +85,7 @@
 .pitch-presentationshareContainer {
   background-color: black;
 }
-.pitch-presentationshare-viewing-side .logo-icon {
-  transform: translateY(2vh);
-}
+
 .pitch-presentationshare-view-slides::-webkit-scrollbar {
   width: 12px;
   background-color: black;
