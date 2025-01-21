@@ -56,7 +56,6 @@ export default function MobileOutlineModal({
   const [isAddSlideModalOpen, setIsAddSlideModalOpen] = useState(false)
   const [newSlideTitle, setNewSlideTitle] = useState('')
   const [newSlidePosition, setNewSlidePosition] = useState('')
-  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const authToken = sessionStorage.getItem('authToken')
   const [isAddingSlide, setIsAddingSlide] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
@@ -67,14 +66,7 @@ export default function MobileOutlineModal({
   }
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setIsDialogVisible(false)
-      }
-    }
+    const handleClickOutside = (event: MouseEvent) => {}
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
@@ -191,35 +183,17 @@ export default function MobileOutlineModal({
                   id="outline-mobile"
                   className={`text-sm border border-[#3667B2] px-2 py-2 rounded-md text-[#3667B2] hover:underline`}
                   onClick={() => {
-                    if (userPlan === 'free') {
-                      setIsDialogVisible(!isDialogVisible)
-                    } else {
-                      setIsAddSlideModalOpen(true)
-                    }
+                    setIsAddSlideModalOpen(true)
                   }}
                 >
                   <FaPlus />
                 </button>
-                {isDialogVisible && userPlan === 'free' && (
-                  <div className="absolute top-full transform -translate-x-[78%] w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                    <p className="text-sm text-center text-gray-800">
-                      Please{' '}
-                      <button
-                        className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                        onClick={() => setIsPricingModalOpen(true)}
-                      >
-                        upgrade to Pro
-                      </button>{' '}
-                      plan to access this feature.
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
 
           {/* Outlines List */}
-          <div className="overflow-y-auto max-h-[80vh]">
+          <div className="overflow-y-auto h-dvh">
             <ul className="space-y-2">
               {outlines.map((outline, index) => (
                 <li
