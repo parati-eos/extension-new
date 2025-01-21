@@ -32,6 +32,7 @@ export default function Images({
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
+  const [showTooltip, setShowTooltip] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const transformData = (imageUrls: string[]) => {
     const headers: Record<string, string> = {} // Initialize an empty object for dynamic headers
@@ -60,7 +61,15 @@ export default function Images({
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const replaceInputRefs = useRef<HTMLInputElement[]>([])
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const handleMouseEnter = () => {
+    if (images.length === 0 || slideTitle.trim() === '') {
+      setShowTooltip(true)
+    }
+  }
 
+  const handleMouseLeave = () => {
+    setShowTooltip(false)
+  }
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     replaceIndex?: number
@@ -323,39 +332,66 @@ export default function Images({
             </div>
           </div>
 
-          {/* Generate Slide Buttons */}
-          <div className="hidden mt-auto lg:flex w-full justify-between lg:justify-end lg:w-auto">
-            <button
-              onClick={handleSubmit}
-              disabled={images.length === 0 && !slideTitle}
-              className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-                images.length > 0 && slideTitle
-                  ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Generate Slide
-            </button>
-          </div>
-          {/* Generate Slide Buttons for Mobile */}
+         {/* Generate Slide Buttons for Desktop */}
+<div className="hidden mt-auto lg:flex w-full justify-between lg:justify-end lg:w-auto">
+  <div className="relative"
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}
+  >
+    <button
+      onClick={handleSubmit}
+      disabled={images.length === 0 || !slideTitle}
+      
+      className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+        images.length > 0 && slideTitle
+          ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
+          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      }`}
+    >
+      Generate Slide
+    </button>
+    {/* Tooltip */}
+    {showTooltip && (
+      <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
+        {images.length === 0
+          ? 'Please upload an image'
+          : slideTitle.trim() === ''
+          ? 'Slide title is required'
+          : ''}
+      </div>
+    )}
+  </div>
+</div>
 
-          <div className="flex lg:hidden  gap-2 justify-end">
-            <div className="justify-end">
-              <div className="relative inline-block">
-                <button
-                  onClick={handleSubmit}
-                  disabled={images.length === 0 && !slideTitle}
-                  className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
-                    images.length > 0 && slideTitle
-                      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
-                      : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
-                  }`}
-                >
-                  Generate Slide
-                </button>
-              </div>
-            </div>
-          </div>
+{/* Generate Slide Buttons for Mobile */}
+<div className="flex lg:hidden gap-2 justify-end">
+  <div className="relative"
+   onMouseEnter={handleMouseEnter}
+   onMouseLeave={handleMouseLeave}
+  >
+    <button
+      onClick={handleSubmit}
+      disabled={images.length === 0 || !slideTitle}
+     
+      className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
+        images.length > 0 && slideTitle
+          ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
+          : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
+      }`}
+    >
+      Generate Slide
+    </button>
+    {/* Tooltip */}
+    {showTooltip && (
+      <div className="absolute top-[-35px] w-max left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
+        {images.length === 0
+          ? 'Please upload an image'
+          : 'Slide title is required'}
+      </div>
+    )}
+  </div>
+</div>
+
         </>
       )}
     </div>
