@@ -1502,7 +1502,7 @@ export default function ViewPresentation() {
   const yearlyPlanId = yearlyPlan?.id
 
   const deleteFinalizeDisabled =
-    isDocumentIDLoading || !slidesArrayRef.current[currentOutline]
+    isDocumentIDLoading || !slidesArray[currentOutline]
   const buttonsDisabled = isDocumentIDLoading
 
   return (

@@ -87,8 +87,8 @@
 }
 
 .pitch-presentationshare-view-slides::-webkit-scrollbar {
-  width: 12px;
-  background-color: black;
+  width: 13px;
+  background-color: white;
   border-radius: 4cqb; /* Adjust as needed */
 }
 .pitch-presentationshare-view-slides::-webkit-scrollbar-thumb {
