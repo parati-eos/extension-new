@@ -68,7 +68,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
     const fetchSlidesData = async () => {
       try {
         const serverurl = process.env.REACT_APP_BACKEND_URL
-        const url = `${serverurl}/api/v1/data/slidedisplay/genSlideIDs/${formId}`
+        const url = `${serverurl}/api/v1/data/appscripts/genSlideIDs/${formId}`
         const response = await fetch(url, {
           method: 'GET',
           headers: {
