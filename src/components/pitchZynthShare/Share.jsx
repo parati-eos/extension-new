@@ -53,7 +53,7 @@ const PitchDeckShare = () => {
         <div className="pitch-presentationshare-viewing-side">
           <div
             onClick={handleLogoClicked}
-            className="pitch-logo-icon mt-3 hover:scale-105 hover:cursor-pointer"
+            className="pitch-logo-icon mt-3 hover:scale-105 hover:cursor-pointer transition transform"
           >
             <img
               src={ParatiLogo}
