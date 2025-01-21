@@ -111,7 +111,7 @@ export default function Cover({
           },
         }
       )
-      toast.info('Slide generation started', {
+      toast.info(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })

@@ -38,7 +38,10 @@ export default function Graphs({
   const [isAddRowDisabled, setIsAddRowDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const tableRef = useRef<HTMLDivElement | null>(null)
-  const [headers, setHeaders] = useState<string[]>(['Enter Series 1', 'Enter Series 2'])
+  const [headers, setHeaders] = useState<string[]>([
+    'Enter Series 1',
+    'Enter Series 2',
+  ])
 
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
@@ -116,9 +119,6 @@ export default function Graphs({
     setHeaders(updatedHeaders)
   }
 
-
-  
-
   const handleSubmit = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     if (storedOutlineIDs) {
@@ -174,7 +174,7 @@ export default function Graphs({
           }
         )
         .then((response) => {
-          toast.info('Data submitted successfully!', {
+          toast.info(`Data submitted successfully for ${heading}`, {
             position: 'top-right',
             autoClose: 3000,
           })
@@ -192,35 +192,35 @@ export default function Graphs({
 
   const onBack = () => {
     if (currentScreen === 'chartSelection') {
-      setDisplayMode('customBuilder');
+      setDisplayMode('customBuilder')
     } else if (currentScreen === 'inputScreen') {
-      setCurrentScreen('chartSelection');
-      setSeries(1); // Reset series to default
-      setHeaders(['Enter Series 1', 'Enter Series 2']); // Reset headers
+      setCurrentScreen('chartSelection')
+      setSeries(1) // Reset series to default
+      setHeaders(['Enter Series 1', 'Enter Series 2']) // Reset headers
     }
-  };
+  }
 
   const [showTooltip, setShowTooltip] = useState(false)
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const validateData = () => {
-    const isSlideTitleValid = slideTitle && slideTitle.trim() !== ""; // Ensure slideTitle is valid
-    const isSlideTypeValid = slideType && slideType.trim() !== ""; // Ensure slideType is valid
-    const isRowValid = rows.every((row) => row.label && row.services); // Validate rows
-  
-    setIsAddRowDisabled(!isRowValid); // Enable/disable Add Row button
-  
-    const filledCells = rows.filter((row) => row.label && row.services);
-    const hasMinimumRows = filledCells.length >=2; // Ensure at least two rows are filled
-  
+    const isSlideTitleValid = slideTitle && slideTitle.trim() !== '' // Ensure slideTitle is valid
+    const isSlideTypeValid = slideType && slideType.trim() !== '' // Ensure slideType is valid
+    const isRowValid = rows.every((row) => row.label && row.services) // Validate rows
+
+    setIsAddRowDisabled(!isRowValid) // Enable/disable Add Row button
+
+    const filledCells = rows.filter((row) => row.label && row.services)
+    const hasMinimumRows = filledCells.length >= 2 // Ensure at least two rows are filled
+
     // Update button disabled state based on all validations
     setIsButtonDisabled(
       !(isSlideTitleValid && isSlideTypeValid && hasMinimumRows)
-    );
-  };
+    )
+  }
 
   useEffect(() => {
-    validateData();
-  }, [slideTitle, slideType, rows, series]);
+    validateData()
+  }, [slideTitle, slideType, rows, series])
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
       {isLoading ? (
@@ -233,16 +233,16 @@ export default function Graphs({
             <h3>Graphs</h3>
             <BackButton onClick={onBack} />
           </div>
-         {/* Editable Slide Title */}
-         <div className="w-full lg:p-1 ">
-  <input
-    type="text"
-    value={slideTitle}
-    onChange={(e) => setSlideTitle(e.target.value)}
-    placeholder="Add Slide Title"
-    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+          {/* Editable Slide Title */}
+          <div className="w-full lg:p-1 ">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           {currentScreen === 'chartSelection' ? (
             <div className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
               <h3 className="text-semibold">Select Graph Type</h3>

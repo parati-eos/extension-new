@@ -147,7 +147,7 @@ export default function Images({
           },
         }
       )
-      toast.info('Images submitted successfully!', {
+      toast.info(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })
@@ -189,14 +189,14 @@ export default function Images({
             <BackButton onClick={onBack} />
           </div>
           <div className="w-full p-1 ">
-  <input
-    type="text"
-    value={slideTitle}
-    onChange={(e) => setSlideTitle(e.target.value)}
-    placeholder="Add Slide Title"
-    className="border  w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="border  w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           {/* Mobile Images Input and Display Section */}
           <div className="flex flex-col lg:hidden w-full h-full md:mt-4 p-1">

@@ -539,10 +539,16 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          toast.info('Slide Generation Started', {
-            position: 'top-right',
-            autoClose: 3000,
-          })
+          toast.info(
+            `Slide Generation Started for ${currentOutline.replace(
+              /^\d+\.\s*/,
+              ''
+            )}`,
+            {
+              position: 'top-right',
+              autoClose: 3000,
+            }
+          )
         })
         .catch((error) => {
           toast.error('Error while generating slide', {

@@ -190,7 +190,7 @@ export default function Contact({
         throw new Error('Failed to submit contact details')
       }
 
-      toast.success('Contact details submitted successfully', {
+      toast.success(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })
