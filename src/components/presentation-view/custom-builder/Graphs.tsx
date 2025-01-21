@@ -38,10 +38,7 @@ export default function Graphs({
   const [isAddRowDisabled, setIsAddRowDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const tableRef = useRef<HTMLDivElement | null>(null)
-  const [headers, setHeaders] = useState<string[]>([
-    'Enter Series 1',
-    'Enter Series 2',
-  ])
+  const [headers, setHeaders] = useState<string[]>(['', ''])
 
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
@@ -90,7 +87,7 @@ export default function Graphs({
     const maxSeries = selectedChart === 'Pie' ? 1 : 2
     if (series < maxSeries) {
       setSeries(series + 1)
-      setHeaders([...headers, `Enter Series ${series + 2}`])
+      setHeaders([...headers, ''])
     } else {
       alert(
         `Maximum of ${maxSeries} series allowed for ${selectedChart} charts.`
@@ -196,16 +193,29 @@ export default function Graphs({
     } else if (currentScreen === 'inputScreen') {
       setCurrentScreen('chartSelection')
       setSeries(1) // Reset series to default
-      setHeaders(['Enter Series 1', 'Enter Series 2']) // Reset headers
+      setHeaders(['', '']) // Reset headers
     }
   }
 
   const [showTooltip, setShowTooltip] = useState(false)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const [tooltipMessage, setTooltipMessage] = useState<JSX.Element | null>(null)
+
   const validateData = () => {
     const isSlideTitleValid = slideTitle && slideTitle.trim() !== '' // Ensure slideTitle is valid
     const isSlideTypeValid = slideType && slideType.trim() !== '' // Ensure slideType is valid
-    const isRowValid = rows.every((row) => row.label && row.services) // Validate rows
+
+    // Check if Series 1 and Series 2 headers are filled
+    const areHeadersValid =
+      headers[0] &&
+      headers[0].trim() !== '' &&
+      headers[1] &&
+      headers[1].trim() !== ''
+
+    // Check if required fields in rows are filled
+    const isRowValid = rows.every(
+      (row) => row.label.trim() !== '' && row.services.trim() !== ''
+    )
 
     setIsAddRowDisabled(!isRowValid) // Enable/disable Add Row button
 
@@ -214,13 +224,36 @@ export default function Graphs({
 
     // Update button disabled state based on all validations
     setIsButtonDisabled(
-      !(isSlideTitleValid && isSlideTypeValid && hasMinimumRows)
+      !(
+        isSlideTitleValid &&
+        isSlideTypeValid &&
+        hasMinimumRows &&
+        areHeadersValid
+      )
     )
+
+    // Set tooltip message based on validation
+    if (!areHeadersValid) {
+      setTooltipMessage(
+        <>
+          Enter Series 1 and
+          <br />
+          Series 2 placeholders.
+        </>
+      )
+    } else if (!hasMinimumRows) {
+      setTooltipMessage(<span>Minimum 2 Datapoints Required.</span>)
+    } else if (!isSlideTitleValid) {
+      setTooltipMessage(<span>Slide title is required.</span>)
+    } else {
+      setTooltipMessage(null) // No message if all is valid
+    }
   }
 
   useEffect(() => {
     validateData()
-  }, [slideTitle, slideType, rows, series])
+  }, [slideTitle, slideType, rows, series, headers])
+
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
       {isLoading ? (
@@ -275,7 +308,7 @@ export default function Graphs({
                 className="mt-4 overflow-y-auto scrollbar-none  "
                 ref={tableRef}
               >
-                <table className="table-auto border-collapse  w-full">
+                <table className="table-auto border-collapse overflow-x-auto  w-full">
                   <thead>
                     <tr className="bg-[#F5F7FA]">
                       {headers.map((header, index) => (
@@ -288,7 +321,6 @@ export default function Graphs({
                               handleHeaderChange(index, e.target.value)
                             }
                             className=" lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
-                            readOnly
                           />
                         </th>
                       ))}
@@ -381,7 +413,7 @@ export default function Graphs({
                   </button>
                 </div>
               )}
-              <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
+              <div className="hidden mt-auto lg:flex w-full justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
                 <button
                   onClick={(e) => {
                     if (!isButtonDisabled) {
@@ -390,9 +422,9 @@ export default function Graphs({
                       e.preventDefault() // Prevent action when disabled
                     }
                   }}
-                  onMouseEnter={() => isButtonDisabled && setShowTooltip(true)}
+                  onMouseEnter={() => setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
-                  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
+                  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
                     isButtonDisabled
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-[#3667B2] text-white'
@@ -400,9 +432,9 @@ export default function Graphs({
                 >
                   Generate Slide
                   {/* Tooltip */}
-                  {isButtonDisabled && showTooltip && (
-                    <span className="absolute top-[-35px] left-[45%] -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                      Minimum 2 Datapoints Required
+                  {isButtonDisabled && showTooltip && tooltipMessage && (
+                    <span className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                      {tooltipMessage}
                     </span>
                   )}
                 </button>
@@ -410,37 +442,40 @@ export default function Graphs({
             </div>
           )}
           {/* Generate Slide Buttons for Mobile */}
-
-          <div className="flex lg:hidden   gap-2  justify-end ">
-            <div className="justify-end">
-              <div className="relative inline-block">
-                <button
-                  onClick={(e) => {
-                    if (!isButtonDisabled) {
-                      handleSubmit()
-                    } else {
-                      e.preventDefault() // Prevent action when disabled
+          {currentScreen === 'inputScreen' && (
+            <div className="flex lg:hidden   gap-2  justify-end ">
+              <div className="justify-end">
+                <div className="relative inline-block">
+                  <button
+                    onClick={(e) => {
+                      if (!isButtonDisabled) {
+                        handleSubmit()
+                      } else {
+                        e.preventDefault() // Prevent action when disabled
+                      }
+                    }}
+                    onMouseEnter={() =>
+                      isButtonDisabled && setShowTooltip(true)
                     }
-                  }}
-                  onMouseEnter={() => isButtonDisabled && setShowTooltip(true)}
-                  onMouseLeave={() => setShowTooltip(false)}
-                  className={`flex-1 py-2 px-5 rounded-md ${
-                    isButtonDisabled
-                      ? 'bg-gray-200 text-gray-500'
-                      : 'bg-[#3667B2] text-white'
-                  }`}
-                >
-                  Generate Slide
-                  {/* Tooltip */}
-                  {isButtonDisabled && showTooltip && (
-                    <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                      Minimum Two <br></br> Datapoints Required
-                    </span>
-                  )}
-                </button>
+                    onMouseLeave={() => setShowTooltip(false)}
+                    className={`flex-1 py-2 px-5 rounded-md ${
+                      isButtonDisabled
+                        ? 'bg-gray-200 text-gray-500'
+                        : 'bg-[#3667B2] text-white'
+                    }`}
+                  >
+                    Generate Slide
+                    {/* Tooltip */}
+                    {isButtonDisabled && showTooltip && tooltipMessage && (
+                      <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                        {tooltipMessage}
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </>
       )}
     </div>
