@@ -91,19 +91,13 @@ const SelectPresentationType: React.FC = () => {
   }
   const generatedDocumentID = generateDocumentID()
 
-
-
-
-
-
-
   const handleGenerateMouseEnter = () => {
     // Clear the timeout to keep the dialog visible while hovered
     if (dialogTimeoutRef.current) {
       clearTimeout(dialogTimeoutRef.current)
     }
   }
-  
+
   const handleDialogMouseEnter = () => {
     // Clear the timeout to keep the dialog visible while hovered
     if (dialogTimeoutRef.current) {
@@ -111,56 +105,59 @@ const SelectPresentationType: React.FC = () => {
     }
   }
 
+  const MAX_FILE_SIZE_MB = 20 // Limit file size to 20MB
 
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPDFUploading(true)
 
-  const MAX_FILE_SIZE_MB = 20; // Limit file size to 20MB
+    if (event.target.files && event.target.files[0]) {
+      const uploadedFile = event.target.files[0]
 
-const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  setPDFUploading(true);
+      // Check file type
+      if (uploadedFile.type !== 'application/pdf') {
+        toast.info('Please upload a valid PDF', {
+          position: 'top-right',
+          autoClose: 3000,
+        })
+        setPDFUploading(false)
+        return
+      }
 
-  if (event.target.files && event.target.files[0]) {
-    const uploadedFile = event.target.files[0];
+      // Check file size
+      const fileSizeMB = uploadedFile.size / (1024 * 1024)
+      if (fileSizeMB > MAX_FILE_SIZE_MB) {
+        toast.error(
+          `File size exceeds ${MAX_FILE_SIZE_MB}MB. Please upload a smaller file.`,
+          {
+            position: 'top-right',
+            autoClose: 3000,
+          }
+        )
+        setPDFUploading(false)
+        return
+      }
 
-    // Check file type
-    if (uploadedFile.type !== "application/pdf") {
-      toast.info("Please upload a valid PDF", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      setPDFUploading(false);
-      return;
+      setFile(uploadedFile)
+
+      try {
+        // Handle upload
+        const pdfLink = await uploadLogoToS3(uploadedFile)
+        setPdfLink(pdfLink)
+      } catch (error) {
+        console.error('Error uploading file:', error)
+        toast.error('Failed to upload file. Please try again.', {
+          position: 'top-right',
+          autoClose: 3000,
+        })
+      } finally {
+        setPDFUploading(false)
+      }
+    } else {
+      setPDFUploading(false)
     }
-
-    // Check file size
-    const fileSizeMB = uploadedFile.size / (1024 * 1024);
-    if (fileSizeMB > MAX_FILE_SIZE_MB) {
-      toast.error(`File size exceeds ${MAX_FILE_SIZE_MB}MB. Please upload a smaller file.`, {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      setPDFUploading(false);
-      return;
-    }
-
-    setFile(uploadedFile);
-
-    try {
-      // Handle upload
-      const pdfLink = await uploadLogoToS3(uploadedFile);
-      setPdfLink(pdfLink);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Failed to upload file. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    } finally {
-      setPDFUploading(false);
-    }
-  } else {
-    setPDFUploading(false);
   }
-};
 
   const handleGenerate = () => {
     navigate(
@@ -171,10 +168,8 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}/${generatedDocumentID}`,
-          // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}`,
-          {
-            // documentID: generatedDocumentID,
-          },
+
+          {},
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -183,14 +178,6 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         )
 
         await response.data
-
-        // if (result.documentID && result.documentID !== '') {
-        //   // Update the URL with actual query parameters
-        //   navigate(
-        //     `/presentation-view?documentID=${result.documentID}&slideType=${selectedTypeName}`,
-        //     { replace: true }
-        //   )
-        // }
       } catch (error: any) {
         if (error.response?.status === 404) {
           toast.error('Error generating ppt', {
@@ -234,15 +221,6 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         )
 
         await response.data
-        // if (
-        //   result.documentData.documentID &&
-        //   result.documentData.documentID !== ''
-        // ) {
-        //   setRefineLoading(false)
-        //   navigate(
-        //     `/presentation-view?documentID=${result.documentData.documentID}&presentationName=${result.documentData.documentName}`
-        //   )
-        // }
       } catch (error: any) {
         if (error.response?.status === 404) {
           toast.error('Error generating ppt', {
@@ -330,25 +308,25 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
-  const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null);
+  const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null)
   const handleMouseEnterGenerate = () => {
-    setVisibleTooltip('generate');
-  };
-  
+    setVisibleTooltip('generate')
+  }
+
   const handleMouseLeaveGenerate = () => {
-    if (visibleTooltip === 'generate') setVisibleTooltip(null);
-  };
-  
+    if (visibleTooltip === 'generate') setVisibleTooltip(null)
+  }
+
   const handleMouseEnter = () => {
-    setVisibleTooltip('refine');
-  };
-  
+    setVisibleTooltip('refine')
+  }
+
   const handleMouseLeave = () => {
-    if (visibleTooltip === 'refine') setVisibleTooltip(null);
-  };
-  
-  const isGenerateVisible = visibleTooltip === 'generate';
-  const isDialogVisible = visibleTooltip === 'refine';
+    if (visibleTooltip === 'refine') setVisibleTooltip(null)
+  }
+
+  const isGenerateVisible = visibleTooltip === 'generate'
+  const isDialogVisible = visibleTooltip === 'refine'
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
       {/* Heading */}
@@ -417,70 +395,67 @@ const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
       </div>
 
       {/* Generate Buttons for medium and large screens */}
-      <div className="hidden relative group lg:flex w-max justify-center mt-4 ml-16"
-       
-      >
-         <div
-      className="relative group"
-      onMouseEnter={handleMouseEnterGenerate}
-      onMouseLeave={handleMouseLeaveGenerate}
-    >
-    <button
-      id="generate-presentation"
-      onClick={handleGenerate}
-      disabled={!selectedType || isButtonDisabled}
-      className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
-        !selectedType || isButtonDisabled
-          ? 'bg-gray-300 cursor-not-allowed'
-          : 'bg-[#3667B2] hover:bg-[#0A8568]'
-      }`}
-    >
-      Generate Presentation
-    </button>
-    {isButtonDisabled && isGenerateVisible && (
-      <div
-        className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
-        onMouseEnter={handleMouseEnterGenerate}
-        onMouseLeave={handleMouseLeaveGenerate}
-      >
-        <p className="text-sm text-center text-gray-800">
-          Please select a presentation type to generate
-        </p>
-      </div>
-    )}
-    </div>
-    <div
-      className="relative group"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button
-        id="refine-presentation"
-        disabled={!selectedType || refineButtonDisabled}
-        onClick={() => setIsRefineModalOpen(true)}
-        className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
-          !selectedType || refineButtonDisabled
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
-        }`}
-      >
-        Refine Presentation
-      </button>
-
-      {refineButtonDisabled && isDialogVisible && (
+      <div className="hidden relative group lg:flex w-max justify-center mt-4 ml-16">
         <div
-          className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+          className="relative group"
+          onMouseEnter={handleMouseEnterGenerate}
+          onMouseLeave={handleMouseLeaveGenerate}
+        >
+          <button
+            id="generate-presentation"
+            onClick={handleGenerate}
+            disabled={!selectedType || isButtonDisabled}
+            className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
+              !selectedType || isButtonDisabled
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-[#3667B2] hover:bg-[#0A8568]'
+            }`}
+          >
+            Generate Presentation
+          </button>
+          {isButtonDisabled && isGenerateVisible && (
+            <div
+              className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+              onMouseEnter={handleMouseEnterGenerate}
+              onMouseLeave={handleMouseLeaveGenerate}
+            >
+              <p className="text-sm text-center text-gray-800">
+                Please select a presentation type to generate
+              </p>
+            </div>
+          )}
+        </div>
+        <div
+          className="relative group"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <p className="text-sm text-center text-gray-800">
-            Please select a presentation type to refine
-          </p>
-        </div>
-      )}
-    </div>
-  </div>
+          <button
+            id="refine-presentation"
+            disabled={!selectedType || refineButtonDisabled}
+            onClick={() => setIsRefineModalOpen(true)}
+            className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
+              !selectedType || refineButtonDisabled
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
+            }`}
+          >
+            Refine Presentation
+          </button>
 
+          {refineButtonDisabled && isDialogVisible && (
+            <div
+              className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <p className="text-sm text-center text-gray-800">
+                Please select a presentation type to refine
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (

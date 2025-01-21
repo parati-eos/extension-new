@@ -78,7 +78,7 @@ export default function SlideNarrative({
     { value: 'Points', label: 'Points', icon: PointsIcon },
     { value: 'Phases', label: 'Timeline', icon: TimelineIcon },
     { value: 'Images', label: 'Images', icon: ImagesIcon },
-    { value: 'Table', label: 'Table', icon: TableIcon },
+    { value: 'Tables', label: 'Table', icon: TableIcon },
     { value: 'People', label: 'People', icon: PeopleIcon },
     { value: 'Statistics', label: 'Statistics', icon: StatisticsIcon },
     { value: 'Graphs', label: 'Graphs', icon: GraphIcon },
@@ -147,13 +147,13 @@ export default function SlideNarrative({
         setDisplayMode('slides')
       }
       if (response) {
-        toast.info('Slide Generation Started', {
+        toast.info(`Slide Generation Started for ${heading}`, {
           position: 'top-right',
           autoClose: 3000,
         })
       }
     } catch (error) {
-      toast.error('Failed to send narrative.', {
+      toast.error(`Failed to send narrative for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })

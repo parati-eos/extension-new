@@ -34,7 +34,7 @@ const App: React.FC = () => {
 
     // Construct the full URL including UTM parameters
     const fullUrlWithUtm = urlParams.toString()
-      ? `${normalizedUrl}?${urlParams.toString()}`
+      ? `${normalizedUrl}`
       : normalizedUrl
 
     // Debug: Check if UTM parameters are present

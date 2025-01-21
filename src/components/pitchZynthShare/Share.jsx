@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import './presentationshare.css'
 import GoogleslidesShare from './googlepresentationShare-helper.jsx'
-import ParatiLogo from '../../assets/parati-logo.png'
+import ParatiLogo from '../../assets/zynth-text.png'
 
 const GooglePresentation = ({ url }) => {
   return (
@@ -15,13 +15,10 @@ const GooglePresentation = ({ url }) => {
 }
 
 const PitchDeckShare = () => {
-  const historyTimeout = useRef(null)
   const [currentSlideKey, setCurrentSlideKey] = useState(0)
   const location = useLocation()
   const searchParams = new URLSearchParams(location.search)
   const formId = searchParams.get('submissionId')
-  const navigate = useNavigate()
-  // Company Name--------------->>
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,14 +50,13 @@ const PitchDeckShare = () => {
         <div className="pitch-presentationshare-viewing-side">
           <div
             onClick={handleLogoClicked}
-            className="pitch-logo-icon mt-3 hover:scale-105 hover:cursor-pointer"
+            className="pitch-logo-icon hover:scale-105 hover:cursor-pointer transition transform"
           >
             <img
               src={ParatiLogo}
               alt="Parati Logo"
               width={150}
               className="pitch-branding-logo"
-              onClick={handleLogoClicked}
             ></img>
           </div>
         </div>

@@ -78,7 +78,8 @@ export default function Statistics({
     title.length < 3 ||
     title.some(
       (point, index) => point.trim() === '' || description[index].trim() === ''
-    ) || !slideTitle.trim()
+    ) ||
+    !slideTitle.trim()
 
   const handleGenerateSlide = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -111,7 +112,7 @@ export default function Statistics({
             ...(selectedImage && { image: selectedImage }),
             stats: title.map((label, index) => ({
               label,
-              value: (description[index] || 0), // Adjusted to include all rows
+              value: description[index] || 0, // Adjusted to include all rows
             })),
           },
           outlineID: outlineID,
@@ -122,7 +123,7 @@ export default function Statistics({
           },
         }
       )
-      toast.info('Data submitted successfully!', {
+      toast.info(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })
@@ -175,16 +176,16 @@ export default function Statistics({
             <h3 className="text-semibold">Statistics</h3>
             <BackButton onClick={onBack} />
           </div>
-         {/* Editable Slide Title */}
-         <div className="w-full p-1 ">
-  <input
-    type="text"
-    value={slideTitle}
-    onChange={(e) => setSlideTitle(e.target.value)}
-    placeholder="Add Slide Title"
-    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+          {/* Editable Slide Title */}
+          <div className="w-full p-1 ">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           {/* Content container with flex-grow */}
           <div

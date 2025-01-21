@@ -16,6 +16,7 @@ interface CoverProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Cover({
@@ -27,6 +28,7 @@ export default function Cover({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: CoverProps) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -109,16 +111,17 @@ export default function Cover({
           },
         }
       )
-      toast.info('Slide generation started', {
+      toast.info(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })
       console.log(response.data)
     } catch (error) {
-      toast.error('Error while generating slide', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
     } finally {
       setIsLoading(false)
     }

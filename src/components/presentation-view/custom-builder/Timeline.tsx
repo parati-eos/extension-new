@@ -74,7 +74,7 @@ export default function Timeline({
   const isGenerateDisabled =
     timeline.filter(
       (point, index) => point.trim() !== '' && description[index].trim() !== ''
-    ).length < 3|| !slideTitle.trim()
+    ).length < 3 || !slideTitle.trim()
 
   const handleGenerateSlide = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -121,7 +121,7 @@ export default function Timeline({
       )
 
       console.log('PATCH Response:', response.data)
-      toast.info('Data submitted successfully!', {
+      toast.info(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })
@@ -174,16 +174,16 @@ export default function Timeline({
             <h3 className="text-semibold">Timeline</h3>
             <BackButton onClick={onBack} />
           </div>
-         {/* Editable Slide Title */}
-<div className="w-full p-1 ">
-  <input
-    type="text"
-    value={slideTitle}
-    onChange={(e) => setSlideTitle(e.target.value)}
-    placeholder="Add Slide Title"
-    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+          {/* Editable Slide Title */}
+          <div className="w-full p-1 ">
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}

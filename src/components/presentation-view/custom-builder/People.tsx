@@ -224,7 +224,7 @@ export default function People({
           },
         }
       )
-      toast.info('Data submitted successfully!', {
+      toast.info(`Data submitted successfully for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
       })
@@ -273,14 +273,14 @@ export default function People({
           </div>
           {/* Editable Slide Title */}
           <div className="w-full p-1 ">
-  <input
-    type="text"
-    value={slideTitle}
-    onChange={(e) => setSlideTitle(e.target.value)}
-    placeholder="Add Slide Title"
-    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
-</div>
+            <input
+              type="text"
+              value={slideTitle}
+              onChange={(e) => setSlideTitle(e.target.value)}
+              placeholder="Add Slide Title"
+              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <div
             ref={containerRef}
             className={`flex-1  overflow-y-auto scrollbar-none md:mt-1 ${

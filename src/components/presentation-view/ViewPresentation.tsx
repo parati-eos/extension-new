@@ -157,11 +157,6 @@ export default function ViewPresentation() {
       // Call payment status update
       await updatePaymentStatus()
 
-      // 3. Finally, call the original slides URL API
-      // const response = await fetch(
-      //   `${process.env.REACT_APP_BACKEND_URL}/slides/url?formId=${formId}`
-      // )
-
       // 2. Then, call the additional API to get presentationID
       const callAdditionalApi = async () => {
         if (presentationID) {
@@ -312,6 +307,21 @@ export default function ViewPresentation() {
     const slideId = slidesArray[currentOutline]?.[currentSlideIndex]
     const isFinalized = finalizedSlides[currentOutline] === slideId
 
+    setFinalizedSlides((prevFinalizedSlides) => {
+      const updatedFinalizedSlides = { ...prevFinalizedSlides }
+
+      // Check if currentOutline is already present and its value is the same as slideId
+      if (updatedFinalizedSlides[currentOutline] === slideId) {
+        // Remove the value but keep the key
+        updatedFinalizedSlides[currentOutline] = ''
+      } else {
+        // Update the value of currentOutline to slideId
+        updatedFinalizedSlides[currentOutline] = slideId
+      }
+
+      return updatedFinalizedSlides
+    })
+
     const url = isFinalized
       ? `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/displayfalse/${slideId}`
       : `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`
@@ -326,7 +336,9 @@ export default function ViewPresentation() {
         },
       }
     )
-      .then((response) => {
+      .then((response) => {})
+      .catch((error) => {
+        console.log('Error finalizing the slide')
         setFinalizedSlides((prevFinalizedSlides) => {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
@@ -334,16 +346,10 @@ export default function ViewPresentation() {
           if (updatedFinalizedSlides[currentOutline] === slideId) {
             // Remove the value but keep the key
             updatedFinalizedSlides[currentOutline] = ''
-          } else {
-            // Update the value of currentOutline to slideId
-            updatedFinalizedSlides[currentOutline] = slideId
           }
 
           return updatedFinalizedSlides
         })
-      })
-      .catch((error) => {
-        console.log('Error finalizing the slide')
       })
   }
 
@@ -533,10 +539,16 @@ export default function ViewPresentation() {
           }
         )
         .then((response) => {
-          toast.info('Slide Generation Started', {
-            position: 'top-right',
-            autoClose: 3000,
-          })
+          toast.info(
+            `Slide Generation Started for ${currentOutline.replace(
+              /^\d+\.\s*/,
+              ''
+            )}`,
+            {
+              position: 'top-right',
+              autoClose: 3000,
+            }
+          )
         })
         .catch((error) => {
           toast.error('Error while generating slide', {
@@ -1489,6 +1501,10 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
 
+  const deleteFinalizeDisabled =
+    isDocumentIDLoading || !slidesArrayRef.current[currentOutline]
+  const buttonsDisabled = isDocumentIDLoading
+
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Export Countdown */}
@@ -1542,6 +1558,7 @@ export default function ViewPresentation() {
         userPlan={userPlan!}
         openPricingModal={() => setIsPricingModalOpen(true)}
         exportPaid={isExportPaid}
+        buttonsDisabled={buttonsDisabled}
       />
 
       {/*MEDIUM LARGE SCREEN: MAIN CONTAINER*/}
@@ -1611,6 +1628,8 @@ export default function ViewPresentation() {
                 slidesArray[currentOutline]?.[currentSlideIndex]
               }
               currentSlideId={slidesArray[currentOutline]?.[currentSlideIndex]}
+              deleteFinalizeDisabled={deleteFinalizeDisabled}
+              newVersionDisabled={buttonsDisabled}
             />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
@@ -1665,6 +1684,7 @@ export default function ViewPresentation() {
           userPlan={userPlan!}
           openPricingModal={() => setIsPricingModalOpen(true)}
           exportPaid={isExportPaid}
+          buttonsDisabled={buttonsDisabled}
         />
 
         {/* MOBILE: OUTLINE Modal */}
@@ -1757,6 +1777,8 @@ export default function ViewPresentation() {
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
+              deleteFinalizeDisabled={deleteFinalizeDisabled}
+              newVersionDisabled={buttonsDisabled}
               finalized={
                 finalizedSlides[currentOutline] ===
                 slidesArray[currentOutline]?.[currentSlideIndex]
