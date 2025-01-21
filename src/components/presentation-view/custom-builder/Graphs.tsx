@@ -38,7 +38,7 @@ export default function Graphs({
   const [isAddRowDisabled, setIsAddRowDisabled] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const tableRef = useRef<HTMLDivElement | null>(null)
-  const [headers, setHeaders] = useState<string[]>(['Series 1', 'Series 2'])
+  const [headers, setHeaders] = useState<string[]>(['Enter Series 1', 'Enter Series 2'])
 
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
@@ -87,7 +87,7 @@ export default function Graphs({
     const maxSeries = selectedChart === 'Pie' ? 1 : 2
     if (series < maxSeries) {
       setSeries(series + 1)
-      setHeaders([...headers, `Series ${series + 2}`])
+      setHeaders([...headers, `Enter Series ${series + 2}`])
     } else {
       alert(
         `Maximum of ${maxSeries} series allowed for ${selectedChart} charts.`
@@ -116,16 +116,8 @@ export default function Graphs({
     setHeaders(updatedHeaders)
   }
 
-  const validateData = () => {
-    const isRowValid = rows.every((row) => row.label && row.services)
-    setIsAddRowDisabled(!isRowValid)
-    const filledCells = rows.filter((row) => row.label && row.services)
-    setIsButtonDisabled(filledCells.length < 2)
-  }
 
-  useEffect(() => {
-    validateData()
-  }, [rows, series])
+  
 
   const handleSubmit = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -200,14 +192,35 @@ export default function Graphs({
 
   const onBack = () => {
     if (currentScreen === 'chartSelection') {
-      setDisplayMode('customBuilder')
+      setDisplayMode('customBuilder');
     } else if (currentScreen === 'inputScreen') {
-      setCurrentScreen('chartSelection')
+      setCurrentScreen('chartSelection');
+      setSeries(1); // Reset series to default
+      setHeaders(['Enter Series 1', 'Enter Series 2']); // Reset headers
     }
-  }
+  };
 
   const [showTooltip, setShowTooltip] = useState(false)
-  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const validateData = () => {
+    const isSlideTitleValid = slideTitle && slideTitle.trim() !== ""; // Ensure slideTitle is valid
+    const isSlideTypeValid = slideType && slideType.trim() !== ""; // Ensure slideType is valid
+    const isRowValid = rows.every((row) => row.label && row.services); // Validate rows
+  
+    setIsAddRowDisabled(!isRowValid); // Enable/disable Add Row button
+  
+    const filledCells = rows.filter((row) => row.label && row.services);
+    const hasMinimumRows = filledCells.length >=2; // Ensure at least two rows are filled
+  
+    // Update button disabled state based on all validations
+    setIsButtonDisabled(
+      !(isSlideTitleValid && isSlideTypeValid && hasMinimumRows)
+    );
+  };
+
+  useEffect(() => {
+    validateData();
+  }, [slideTitle, slideType, rows, series]);
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
       {isLoading ? (
@@ -220,18 +233,18 @@ export default function Graphs({
             <h3>Graphs</h3>
             <BackButton onClick={onBack} />
           </div>
-          {/* Editable Slide Title */}
-          <div>
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
-            />
-          </div>
+         {/* Editable Slide Title */}
+         <div className="w-full lg:p-1 ">
+  <input
+    type="text"
+    value={slideTitle}
+    onChange={(e) => setSlideTitle(e.target.value)}
+    placeholder="Add Slide Title"
+    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
           {currentScreen === 'chartSelection' ? (
-            <div className="w-full h-full flex-row lg:flex-col lg:p-4 lg:sm:p-8 ml-2 mt-2 lg:mt-10">
+            <div className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
               <h3 className="text-semibold">Select Graph Type</h3>
               <div className="grid  grid-cols-3 lg:grid-cols-4 gap-4 mt-4 mr-5 h-28 ">
                 {['Line', 'Bar', 'Pie'].map((chart) => (
@@ -257,7 +270,7 @@ export default function Graphs({
               </div>
             </div>
           ) : (
-            <div className="flex flex-col w-full h-full bg-white   overflow-x-auto scrollbar-none">
+            <div className="flex flex-col w-full h-full bg-white   overflow-x-auto scrollbar-none lg:p-1">
               <div
                 className="mt-4 overflow-y-auto scrollbar-none  "
                 ref={tableRef}
@@ -270,11 +283,12 @@ export default function Graphs({
                           <input
                             type="text"
                             value={header}
-                            placeholder={`Series ${index + 1}`}
+                            placeholder={`Enter Series ${index + 1}`}
                             onChange={(e) =>
                               handleHeaderChange(index, e.target.value)
                             }
                             className=" lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
+                            readOnly
                           />
                         </th>
                       ))}
@@ -378,9 +392,8 @@ export default function Graphs({
                   }}
                   onMouseEnter={() => isButtonDisabled && setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
-                  disabled={isButtonDisabled && !slideTitle}
                   className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
-                    isButtonDisabled && !slideTitle
+                    isButtonDisabled
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-[#3667B2] text-white'
                   }`}
@@ -388,7 +401,7 @@ export default function Graphs({
                   Generate Slide
                   {/* Tooltip */}
                   {isButtonDisabled && showTooltip && (
-                    <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                    <span className="absolute top-[-35px] left-[45%] -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
                       Minimum 2 Datapoints Required
                     </span>
                   )}
@@ -411,9 +424,8 @@ export default function Graphs({
                   }}
                   onMouseEnter={() => isButtonDisabled && setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
-                  disabled={isButtonDisabled && !slideTitle}
                   className={`flex-1 py-2 px-5 rounded-md ${
-                    isButtonDisabled && !slideTitle
+                    isButtonDisabled
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-[#3667B2] text-white'
                   }`}

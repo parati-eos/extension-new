@@ -272,25 +272,25 @@ export default function People({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div>
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
-            />
-          </div>
+          <div className="w-full p-1 ">
+  <input
+    type="text"
+    value={slideTitle}
+    onChange={(e) => setSlideTitle(e.target.value)}
+    placeholder="Add Slide Title"
+    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
           <div
             ref={containerRef}
-            className={`flex-1 lg:px-2 overflow-y-auto scrollbar-none md:mt-1 ${
+            className={`flex-1  overflow-y-auto scrollbar-none md:mt-1 ${
               people.length > 3 ? 'max-h-[calc(100vh-200px)]' : ''
             }`}
           >
             {people.map((person, index) => (
               <div
                 key={index}
-                className={`flex flex-col gap-4 mb-2 p-1 ${
+                className={`flex flex-col gap-2 lg:gap-4 mb-2 p-1 ${
                   index === people.length - 1 ? 'lg:mb-4' : ''
                 }`}
               >

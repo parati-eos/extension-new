@@ -175,16 +175,16 @@ export default function Statistics({
             <h3 className="text-semibold">Statistics</h3>
             <BackButton onClick={onBack} />
           </div>
-          {/* Editable Slide Title */}
-          <div>
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
-            />
-          </div>
+         {/* Editable Slide Title */}
+         <div className="w-full p-1 ">
+  <input
+    type="text"
+    value={slideTitle}
+    onChange={(e) => setSlideTitle(e.target.value)}
+    placeholder="Add Slide Title"
+    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
 
           {/* Content container with flex-grow */}
           <div
@@ -194,8 +194,8 @@ export default function Statistics({
             {title.map((point, index) => (
               <div
                 key={index}
-                className={`flex gap-2 p-1 mb-2 lg:mb-0 ${
-                  index === 0 ? 'lg:mt-14' : 'lg:mt-2'
+                className={`flex gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 ${
+                  index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
                 <input
@@ -222,7 +222,7 @@ export default function Statistics({
                 onClick={addNewPoint}
                 type="button"
                 disabled={isAddDisabled}
-                className={`flex items-center justify-center py-2 px-3  mt-4 lg:ml-2 ml-1 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+                className={`flex items-center justify-center py-2 px-3  mt-4  ml-1 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
                   title.length >= 6 || isAddDisabled
                     ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed'
                     : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'

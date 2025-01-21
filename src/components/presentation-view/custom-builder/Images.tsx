@@ -188,19 +188,18 @@ export default function Images({
             <h3 className="text-semibold">Images</h3>
             <BackButton onClick={onBack} />
           </div>
-          {/* Editable Slide Title */}
-          <div>
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
-            />
-          </div>
+          <div className="w-full p-1 ">
+  <input
+    type="text"
+    value={slideTitle}
+    onChange={(e) => setSlideTitle(e.target.value)}
+    placeholder="Add Slide Title"
+    className="border  w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
 
           {/* Mobile Images Input and Display Section */}
-          <div className="flex flex-col lg:hidden w-full h-full md:mt-4">
+          <div className="flex flex-col lg:hidden w-full h-full md:mt-4 p-1">
             <div className="flex items-center border justify-between border-gray-300 rounded-lg mt-2 lg:mt-0 p-4">
               <div className="flex items-center gap-4">
                 <FaImage className="text-4xl text-gray-500" />
@@ -259,7 +258,7 @@ export default function Images({
           </div>
 
           {/* Large Screens Images Input and Display Section */}
-          <div className="hidden lg:flex justify-center w-full md:mt-4 lg:mt-12">
+          <div className="hidden ml-1 lg:flex justify-start w-full md:mt-4 lg:mt-4">
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
               {images.map((image, index) => (
                 <div key={index} className="w-full aspect-square relative">
