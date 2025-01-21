@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './presentationshare.css'
 import GoogleslidesShare from './googlepresentationShare-helper.jsx'
-import ParatiLogo from '../../assets/parati-logo.png'
+import ParatiLogo from '../../assets/zynth-text.png'
 
 const GooglePresentation = ({ url }) => {
   return (

@@ -5,7 +5,6 @@
   /* justify-content: center; */
   align-items: center;
   z-index: -2;
-  background-color: #001b28;
 }
 
 .pitch-PresentationContainer {
@@ -54,7 +53,6 @@
   justify-content: center;
   align-items: center;
   padding: 0 3vw;
-  background-color: #001b28;
 }
 .pitch-presentationshare-viewing-side {
   width: 100%;
@@ -64,7 +62,6 @@
   justify-content: start;
   align-items: center;
   gap: 0.5vw;
-  background-color: #001b28;
   flex-basis: 50%;
 }
 .pitch-presentationshare-viewing-center {
@@ -97,7 +94,7 @@
   border-radius: 4cqb; /* Adjust as needed */
 }
 .pitch-presentationshare-view-slides::-webkit-scrollbar-thumb {
-  background-color: #e6a500;
+  background-color: #3667b2;
   border-radius: 10px;
 }
 

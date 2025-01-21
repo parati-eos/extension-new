@@ -41,7 +41,7 @@ const GoogleslidesShare = () => {
           visible={true}
           height="120"
           width="120"
-          color="#E6A500"
+          color="#3667b2"
           ariaLabel="grid-loading"
           radius="12.5"
           wrapperStyle={{}}
