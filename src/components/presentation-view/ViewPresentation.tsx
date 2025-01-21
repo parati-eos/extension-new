@@ -312,6 +312,21 @@ export default function ViewPresentation() {
     const slideId = slidesArray[currentOutline]?.[currentSlideIndex]
     const isFinalized = finalizedSlides[currentOutline] === slideId
 
+    setFinalizedSlides((prevFinalizedSlides) => {
+      const updatedFinalizedSlides = { ...prevFinalizedSlides }
+
+      // Check if currentOutline is already present and its value is the same as slideId
+      if (updatedFinalizedSlides[currentOutline] === slideId) {
+        // Remove the value but keep the key
+        updatedFinalizedSlides[currentOutline] = ''
+      } else {
+        // Update the value of currentOutline to slideId
+        updatedFinalizedSlides[currentOutline] = slideId
+      }
+
+      return updatedFinalizedSlides
+    })
+
     const url = isFinalized
       ? `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/displayfalse/${slideId}`
       : `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/selected/${slideId}/${documentID}/${currentOutlineID}`
@@ -326,7 +341,9 @@ export default function ViewPresentation() {
         },
       }
     )
-      .then((response) => {
+      .then((response) => {})
+      .catch((error) => {
+        console.log('Error finalizing the slide')
         setFinalizedSlides((prevFinalizedSlides) => {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
@@ -334,16 +351,10 @@ export default function ViewPresentation() {
           if (updatedFinalizedSlides[currentOutline] === slideId) {
             // Remove the value but keep the key
             updatedFinalizedSlides[currentOutline] = ''
-          } else {
-            // Update the value of currentOutline to slideId
-            updatedFinalizedSlides[currentOutline] = slideId
           }
 
           return updatedFinalizedSlides
         })
-      })
-      .catch((error) => {
-        console.log('Error finalizing the slide')
       })
   }
 
