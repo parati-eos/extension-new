@@ -268,21 +268,21 @@ export default function Table({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div>
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
-            />
-          </div>
+          <div className="w-full p-1 ">
+  <input
+    type="text"
+    value={slideTitle}
+    onChange={(e) => setSlideTitle(e.target.value)}
+    placeholder="Add Slide Title"
+    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
           <div
             ref={containerRef}
-            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-4 py-2 "
+            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-1 p-1 "
           >
             <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
-              <table className="table-auto w-full ">
+              <table className="table-auto w-full  ">
                 <thead>
                   <tr>
                     <th className="bg-gray-100 p-2 lg:w-1/5 lg:min-w-0 min-w-[27vw]">
@@ -311,6 +311,7 @@ export default function Table({
                             handleHeaderChange(index, e.target.value, true)
                           }
                           className="w-full font-semibold text-center border-none bg-transparent focus:outline-none"
+                          readOnly
                         />
                       </th>
                     ))}

@@ -174,16 +174,16 @@ export default function Timeline({
             <h3 className="text-semibold">Timeline</h3>
             <BackButton onClick={onBack} />
           </div>
-          {/* Editable Slide Title */}
-          <div>
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="md:text-lg font-semibold text-[#091220] w-full bg-transparent focus:outline-none focus:ring-0 placeholder-gray-400"
-            />
-          </div>
+         {/* Editable Slide Title */}
+<div className="w-full p-1 ">
+  <input
+    type="text"
+    value={slideTitle}
+    onChange={(e) => setSlideTitle(e.target.value)}
+    placeholder="Add Slide Title"
+    className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
@@ -192,8 +192,8 @@ export default function Timeline({
             {timeline.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col lg:flex-row gap-2 lg:gap-4 lg:px-2 py-2 lg:py-0 p-1 mb-2 lg:mb-0 ${
-                  index === 0 ? 'lg:mt-14' : 'lg:mt-2'
+                className={`flex flex-col lg:flex-row gap-2 lg:gap-4 lg:px-0 py-2 lg:py-0 p-1 mb-2 lg:mb-0 ${
+                  index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
                 <input
@@ -201,7 +201,7 @@ export default function Timeline({
                   value={timeline[index]}
                   onChange={(e) => handleInputTitle(e.target.value, index)}
                   placeholder={`Enter Timeline ${index + 1}`}
-                  className="flex-1 lg:ml-2 w-full lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 lg:ml-1 w-full lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
                   type="text"
@@ -210,7 +210,7 @@ export default function Timeline({
                     handleInputDescription(e.target.value, index)
                   }
                   placeholder={`Enter Description ${index + 1}`}
-                  className="lg:ml-2 w-full lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="lg:ml-2 lg:mr-1 w-full lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             ))}
@@ -221,7 +221,7 @@ export default function Timeline({
                 onClick={addNewPoint}
                 type="button"
                 disabled={isAddDisabled}
-                className={`flex items-center p-2 gap-2 w-48 py-2 lg:rounded-md mt-4  ml-1 lg:ml-4 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+                className={`flex items-center p-2 gap-2 w-48 py-2 lg:rounded-md mt-4  ml-1  md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
                   timeline.length >= 6 || isAddDisabled
                     ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
                     : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
