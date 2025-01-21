@@ -60,7 +60,6 @@ const PitchDeckShare = () => {
               alt="Parati Logo"
               width={150}
               className="pitch-branding-logo"
-              onClick={handleLogoClicked}
             ></img>
           </div>
         </div>
