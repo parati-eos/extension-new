@@ -23,6 +23,7 @@ interface SlideNarrativeProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   setIsSlideLoading: () => void
   outlineID: string
+  setFailed: () => void
 }
 
 export default function SlideNarrative({
@@ -34,6 +35,7 @@ export default function SlideNarrative({
   setDisplayMode,
   setIsSlideLoading,
   outlineID,
+  setFailed,
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -74,7 +76,7 @@ export default function SlideNarrative({
 
   const options = [
     { value: 'Points', label: 'Points', icon: PointsIcon },
-    { value: 'Timeline', label: 'Timeline', icon: TimelineIcon },
+    { value: 'Phases', label: 'Timeline', icon: TimelineIcon },
     { value: 'Images', label: 'Images', icon: ImagesIcon },
     { value: 'Table', label: 'Table', icon: TableIcon },
     { value: 'People', label: 'People', icon: PeopleIcon },
@@ -155,12 +157,23 @@ export default function SlideNarrative({
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
       setDisplayMode('slides')
     } finally {
     }
   }
 
-  const isGenerateDisabled = narrative.trim() === ''
+  const isGenerateDisabled = !narrative.trim() || !selectedOption
+  const [showTooltip, setShowTooltip] = useState(false)
+  const handleMouseEnter = () => {
+    if (isGenerateDisabled) {
+      setShowTooltip(true)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    setShowTooltip(false)
+  }
 
   const onBack = () => {
     setDisplayMode('newContent')
@@ -190,30 +203,40 @@ export default function SlideNarrative({
           value={selectedOption}
           onChange={handleSelectChange}
           className="w-full lg:w-[25%] items-center"
+          isSearchable={false} // Disable search to prevent keypad
           styles={{
-            control: (provided) => ({
+            control: (provided, state) => ({
               ...provided,
               display: 'flex',
               alignItems: 'center',
-              cursor: 'pointer', // Make cursor a pointer
+              cursor: 'pointer', // Hand cursor for the dropdown area
+              backgroundColor: state.isFocused ? '#f9f9f9' : 'white', // Optional hover effect
             }),
-            option: (provided) => ({
+            option: (provided, state) => ({
               ...provided,
               display: 'flex',
               alignItems: 'center',
-              cursor: 'pointer', // Make options clickable
-              padding: '10px', // Increase padding
-              fontSize: '20px', // Increase text size
+              cursor: 'pointer', // Hand cursor for each dropdown option
+              padding: '10px',
+              fontSize: '20px',
+              backgroundColor: state.isFocused ? '#f0f0f0' : 'white', // Optional: highlight option on hover
             }),
-            singleValue: (provided) => ({
+            menu: (provided) => ({
               ...provided,
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '15px', // Match text size with options
+              cursor: 'pointer', // Ensure dropdown menu respects pointer style
+            }),
+            dropdownIndicator: (provided) => ({
+              ...provided,
+              cursor: 'pointer', // Hand cursor for dropdown indicator (arrow)
+            }),
+            placeholder: (provided) => ({
+              ...provided,
+              cursor: 'pointer', // Hand cursor for placeholder text
             }),
           }}
         />
       </div>
+
       {/* Input Section for Desktop */}
       <div className="hidden h-full w-full md:block flex-1 p-2 ">
         <div className="flex flex-col items-center justify-center h-full w-full ">
@@ -247,18 +270,30 @@ export default function SlideNarrative({
           fileName={fileName}
           uploadCompleted={uploadCompleted}
         />
-        {/* Generate Slide Button */}
-        <button
-          onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled || isLoading}
-          className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-            isGenerateDisabled || isLoading
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-              : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-          }`}
+        {/* Generate Slide Button with Tooltip */}
+        <div
+          className="relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          Generate Slide
-        </button>
+          {/* Tooltip */}
+          {showTooltip && !selectedOption && (
+            <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+              Select Slide Type
+            </span>
+          )}
+          <button
+            onClick={handleGenerateSlide}
+            disabled={isGenerateDisabled || isLoading}
+            className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
+              isGenerateDisabled || isLoading
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+            }`}
+          >
+            Generate Slide
+          </button>
+        </div>
       </div>
 
       {/* Attach Image and Generate Slide Buttons for Mobile */}
@@ -272,17 +307,30 @@ export default function SlideNarrative({
             uploadCompleted={uploadCompleted}
           />
         </div>
-        <button
-          onClick={handleGenerateSlide}
-          disabled={isGenerateDisabled || isLoading}
-          className={`flex-1 py-2 rounded-md   ${
-            isGenerateDisabled || isLoading
-              ? 'bg-gray-200 text-black cursor-not-allowed'
-              : 'bg-[#3667B2] text-white'
-          }`}
+        {/* Generate Slide Button with Tooltip */}
+        <div
+          className="relative flex-1"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          Generate Slide
-        </button>
+          {/* Tooltip */}
+          {showTooltip && !selectedOption && (
+            <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+              Select slide type
+            </div>
+          )}
+          <button
+            onClick={handleGenerateSlide}
+            disabled={isGenerateDisabled || isLoading}
+            className={`w-full py-2 rounded-md ${
+              isGenerateDisabled || isLoading
+                ? 'bg-gray-200 text-black cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+            }`}
+          >
+            Generate Slide
+          </button>
+        </div>
       </div>
     </div>
   )

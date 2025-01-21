@@ -354,9 +354,17 @@ export default function ViewPresentation() {
       isNoGeneratedSlide: false,
       lastUpdated: Date.now(),
     })
+
     setDisplayModes((prev) => ({
       ...prev,
-      [outlineTitle]: prev[outlineTitle] === 'slides' ? 'newContent' : 'slides',
+      [outlineTitle]:
+        outlineTitle === outlines[0].title // Check if it's the Cover outline
+          ? 'Cover'
+          : outlineTitle === outlines[outlines.length - 1].title // Check if it's the Contact outline
+          ? 'Contact'
+          : prev[outlineTitle] === 'slides'
+          ? 'newContent'
+          : 'slides',
     }))
   }
 
@@ -439,7 +447,9 @@ export default function ViewPresentation() {
       } else if (currentMode === 'customBuilder') {
         newMode = 'newContent'
       } else if (currentMode === 'Cover') {
-        newMode = 'newContent'
+        newMode = 'slides'
+      } else if (currentMode === 'Contact') {
+        newMode = 'slides'
       } else if (currentMode === 'newContent') {
         newMode = 'slides'
       } else {
@@ -753,23 +763,16 @@ export default function ViewPresentation() {
               await handleQuickGenerate()
             }}
             handleCustomBuilderClick={() => {
-              if (featureDisabled) {
-                toast.info('Upgrade to pro to access this feature', {
-                  position: 'top-right',
-                  autoClose: 3000,
-                })
-              } else {
-                const newMode =
-                  outlineTitle === outlines[0].title
-                    ? 'Cover'
-                    : outlineTitle === outlines[outlines.length - 1].title
-                    ? 'Contact'
-                    : 'customBuilder'
-                setDisplayModes((prev) => ({
-                  ...prev,
-                  [outlineTitle]: newMode,
-                }))
-              }
+              const newMode =
+                outlineTitle === outlines[0].title
+                  ? 'Cover'
+                  : outlineTitle === outlines[outlines.length - 1].title
+                  ? 'Contact'
+                  : 'customBuilder'
+              setDisplayModes((prev) => ({
+                ...prev,
+                [outlineTitle]: newMode,
+              }))
             }}
             handleSlideNarrative={() => {
               setDisplayModes((prev) => ({
@@ -838,6 +841,25 @@ export default function ViewPresentation() {
               }))
             }}
             outlineID={currentOutlineID}
+            setFailed={() => {
+              setIsNewSlideLoading((prev) => {
+                if (prev[currentOutline]) {
+                  setNewSlideGenerated((prev) => ({
+                    ...prev,
+                    [currentOutline]: 'No',
+                  }))
+                  toast.error(`New Slide Not Generated`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                  })
+                  return {
+                    ...prev,
+                    [currentOutline]: false,
+                  }
+                }
+                return prev
+              })
+            }}
             setIsSlideLoading={() => {
               setSlideStates((prev) => {
                 return {
@@ -1021,10 +1043,7 @@ export default function ViewPresentation() {
           },
         }))
 
-        setDisplayModes((prev) => ({
-          ...prev,
-          [currentOutline]: 'slides',
-        }))
+        console.log('Timeout Slides')
 
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
@@ -1057,6 +1076,33 @@ export default function ViewPresentation() {
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
+            if (
+              newSlideLoadingRef.current[currentOutline] &&
+              newSlides.length === 1 &&
+              !slidesArrayRef.current[currentOutline] &&
+              newSlides[0].display
+            ) {
+              setIsNewSlideLoading((prev) => ({
+                ...prev,
+                [currentOutline]: false,
+              }))
+              setNewSlideGenerated((prev) => ({
+                ...prev,
+                [currentOutline]: 'Yes',
+              }))
+              toast.success(`Slide Generated`, {
+                position: 'top-right',
+                autoClose: 3000,
+              })
+
+              console.log('Socket IF Slides')
+
+              setDisplayModes((prev) => ({
+                ...prev,
+                [currentOutline]: 'slides',
+              }))
+            }
+
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
@@ -1092,28 +1138,6 @@ export default function ViewPresentation() {
               setFinalizedSlides((prev) => ({
                 ...prev,
                 [currentOutline]: selectedSlide.GenSlideID,
-              }))
-            }
-
-            if (
-              newSlideLoadingRef.current[currentOutline] &&
-              newSlides.length === 1
-            ) {
-              setIsNewSlideLoading((prev) => ({
-                ...prev,
-                [currentOutline]: false,
-              }))
-              setNewSlideGenerated((prev) => ({
-                ...prev,
-                [currentOutline]: 'Yes',
-              }))
-              toast.success(`Slide Generated`, {
-                position: 'top-right',
-                autoClose: 3000,
-              })
-              setDisplayModes((prev) => ({
-                ...prev,
-                [currentOutline]: 'slides',
               }))
             }
 

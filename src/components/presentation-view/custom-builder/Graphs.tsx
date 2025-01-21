@@ -14,6 +14,7 @@ interface GraphProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Graphs({
@@ -25,6 +26,7 @@ export default function Graphs({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: GraphProps) {
   const [currentScreen, setCurrentScreen] = useState<
     'chartSelection' | 'inputScreen'
@@ -188,7 +190,11 @@ export default function Graphs({
           setDisplayMode('slides')
         })
     } catch (error) {
-      console.error('Submit failed:', error)
+      toast.error('Error submitting data!', {
+        position: 'top-right',
+        autoClose: 3000,
+      })
+      setFailed()
     }
   }
 
@@ -201,7 +207,7 @@ export default function Graphs({
   }
 
   const [showTooltip, setShowTooltip] = useState(false)
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
       {isLoading ? (
@@ -214,8 +220,8 @@ export default function Graphs({
             <h3>Graphs</h3>
             <BackButton onClick={onBack} />
           </div>
-             {/* Editable Slide Title */}
-             <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div>
             <input
               type="text"
               value={slideTitle}
@@ -372,8 +378,9 @@ export default function Graphs({
                   }}
                   onMouseEnter={() => isButtonDisabled && setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
+                  disabled={isButtonDisabled && !slideTitle}
                   className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform  ${
-                    isButtonDisabled
+                    isButtonDisabled && !slideTitle
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-[#3667B2] text-white'
                   }`}
@@ -404,8 +411,9 @@ export default function Graphs({
                   }}
                   onMouseEnter={() => isButtonDisabled && setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
+                  disabled={isButtonDisabled && !slideTitle}
                   className={`flex-1 py-2 px-5 rounded-md ${
-                    isButtonDisabled
+                    isButtonDisabled && !slideTitle
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-[#3667B2] text-white'
                   }`}

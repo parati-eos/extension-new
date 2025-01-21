@@ -41,18 +41,83 @@ export default function Contact({
     phone: '',
     linkedin: '',
   })
+  interface EmailChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
-  const validateWebsiteLink = () => {
-    const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
-    if (websiteLink && !regex.test(websiteLink)) {
-      setErrors((prev) => ({
-        ...prev,
-        websiteLink: 'Enter a valid website URL',
-      }))
-    } else {
-      setErrors((prev) => ({ ...prev, websiteLink: '' }))
+  const handleEmailChange = (e: EmailChangeEvent) => {
+    const value = e.target.value;
+    setEmail(value);
+    validateEmail(); // Validate on every change
+  };
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!websiteLink) {
+      setWebsiteLink('https://') // Pre-fill "https://" if empty
     }
   }
+  interface PhoneChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
+
+  const handlePhoneChange = (e: PhoneChangeEvent) => {
+    const value = e.target.value;
+  
+    // Allow only numeric input
+    if (/^[0-9]*$/.test(value)) {
+      setPhone(value);
+      validatePhone(value); // Validate the current input value
+    }
+  };
+  const validatePhone = (value: string) => {
+    const regex = /^[1-9]\d{9}$/;
+    if (value && !regex.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        phone: 'Enter a valid phone number (10 digits)',
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, phone: '' }));
+    }
+  };
+  const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!linkedin) {
+      setLinkedin('https://') // Pre-fill "https://" if empty
+    }
+  }
+  
+  const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updatedValue = e.target.value
+  
+    // Allow backspace to completely clear the input
+    if (updatedValue === '') {
+      setLinkedin('') // Allow clearing the field
+      validateLinkedin() // Validate empty value
+      return
+    }
+  
+    setLinkedin(updatedValue) // Update LinkedIn link state
+    validateLinkedin() // Call validation
+  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updatedValue = e.target.value
+  
+    // Allow backspace to completely clear the input
+    if (updatedValue === '') {
+      setWebsiteLink('') // Allow clearing the field
+      validateWebsiteLink('') // Validate empty value
+      return
+    }
+  
+    setWebsiteLink(updatedValue) // Update website link state
+    validateWebsiteLink(updatedValue) // Call validation
+  }
+  const validateWebsiteLink = (link: string) => {
+      const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+      if (link && !regex.test(link)) {
+        setErrors((prev) => ({
+          ...prev,
+          websiteLink: 'Enter a valid website URL',
+        }))
+      } else {
+        setErrors((prev) => ({ ...prev, websiteLink: '' }))
+      }
+    }
 
   const validateEmail = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -63,17 +128,7 @@ export default function Contact({
     }
   }
 
-  const validatePhone = () => {
-    const regex = /^[1-9]\d{9}$/
-    if (phone && !regex.test(phone)) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: 'Enter a valid phone number (10 digits)',
-      }))
-    } else {
-      setErrors((prev) => ({ ...prev, phone: '' }))
-    }
-  }
+ 
 
   const validateLinkedin = () => {
     const regex =
@@ -94,9 +149,9 @@ export default function Contact({
 
   const handleSubmit = async () => {
     setIsSlideLoading()
-    validateWebsiteLink()
+    validateWebsiteLink(websiteLink)
     validateEmail()
-    validatePhone()
+    validatePhone(phone)
     validateLinkedin()
 
     if (isButtonDisabled) {
@@ -169,7 +224,7 @@ export default function Contact({
   }
 
   const onBack = () => {
-    setDisplayMode('newContent')
+    setDisplayMode('slides')
   }
 
   return (
@@ -191,13 +246,14 @@ export default function Contact({
             <input
               type="text"
               value={websiteLink}
-              onChange={(e) => setWebsiteLink(e.target.value)}
-              onBlur={validateWebsiteLink}
+              onFocus={handleInputFocus}
+              onChange={handleInputChange}
+              onBlur={() => validateWebsiteLink(websiteLink)} // Call with current value
               placeholder="Enter Website Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.websiteLink && (
-              <p className="text-red-500 text-sm">{errors.websiteLink}</p>
+              <p className="text-red-500 text-sm mt-1 lg:mt-0">{errors.websiteLink}</p>
             )}
           </div>
 
@@ -206,8 +262,8 @@ export default function Contact({
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={validateEmail}
+              onChange={handleEmailChange}
+              onBlur={validateEmail} // Call with current value
               placeholder="Enter Email"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -221,8 +277,8 @@ export default function Contact({
             <input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              onBlur={validatePhone}
+              onChange={handlePhoneChange}
+              onBlur={(e) => validatePhone(e.target.value)}
               placeholder="Enter Phone"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -233,14 +289,15 @@ export default function Contact({
 
           {/* LinkedIn */}
           <div>
-            <input
-              type="url"
-              value={linkedin}
-              onChange={(e) => setLinkedin(e.target.value)}
-              onBlur={validateLinkedin}
-              placeholder="LinkedIn Profile Link"
-              className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <input
+        type="url"
+        value={linkedin}
+        onChange={handleLinkedinChange}
+        onFocus={handleLinkedinFocus}
+        onBlur={validateLinkedin}
+        placeholder="LinkedIn Profile Link"
+        className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
             {errors.linkedin && (
               <p className="text-red-500 text-sm">{errors.linkedin}</p>
             )}

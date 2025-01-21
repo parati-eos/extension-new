@@ -80,7 +80,6 @@ const SelectPresentationType: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
-  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showTooltip, setShowTooltip] = React.useState(false)
   const [refineLoading, setRefineLoading] = useState(false)
@@ -92,23 +91,19 @@ const SelectPresentationType: React.FC = () => {
   }
   const generatedDocumentID = generateDocumentID()
 
-  const handleMouseEnter = () => {
-    // Clear any existing timeout to avoid premature hiding
+
+
+
+
+
+
+  const handleGenerateMouseEnter = () => {
+    // Clear the timeout to keep the dialog visible while hovered
     if (dialogTimeoutRef.current) {
       clearTimeout(dialogTimeoutRef.current)
     }
-
-    // Show the dialog box
-    setIsDialogVisible(true)
   }
-
-  const handleMouseLeave = () => {
-    // Start a timer to hide the dialog box after 6 seconds
-    dialogTimeoutRef.current = setTimeout(() => {
-      setIsDialogVisible(false)
-    }, 1000)
-  }
-
+  
   const handleDialogMouseEnter = () => {
     // Clear the timeout to keep the dialog visible while hovered
     if (dialogTimeoutRef.current) {
@@ -116,32 +111,56 @@ const SelectPresentationType: React.FC = () => {
     }
   }
 
-  const handleDialogMouseLeave = () => {
-    // Restart the timer when the cursor leaves the dialog
-    dialogTimeoutRef.current = setTimeout(() => {
-      setIsDialogVisible(false)
-    }, 6000)
-  }
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setPDFUploading(true)
-    if (event.target.files && event.target.files[0]) {
-      const uploadedFile = event.target.files[0]
-      if (uploadedFile.type === 'application/pdf') {
-        setFile(uploadedFile)
-        const pdfLink = await uploadLogoToS3(uploadedFile)
-        setPdfLink(pdfLink)
-        setPDFUploading(false)
-      } else {
-        toast.info('Please upload a valid PDF', {
-          position: 'top-right',
-          autoClose: 3000,
-        })
-      }
+
+  const MAX_FILE_SIZE_MB = 20; // Limit file size to 20MB
+
+const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  setPDFUploading(true);
+
+  if (event.target.files && event.target.files[0]) {
+    const uploadedFile = event.target.files[0];
+
+    // Check file type
+    if (uploadedFile.type !== "application/pdf") {
+      toast.info("Please upload a valid PDF", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setPDFUploading(false);
+      return;
     }
+
+    // Check file size
+    const fileSizeMB = uploadedFile.size / (1024 * 1024);
+    if (fileSizeMB > MAX_FILE_SIZE_MB) {
+      toast.error(`File size exceeds ${MAX_FILE_SIZE_MB}MB. Please upload a smaller file.`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setPDFUploading(false);
+      return;
+    }
+
+    setFile(uploadedFile);
+
+    try {
+      // Handle upload
+      const pdfLink = await uploadLogoToS3(uploadedFile);
+      setPdfLink(pdfLink);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Failed to upload file. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setPDFUploading(false);
+    }
+  } else {
+    setPDFUploading(false);
   }
+};
 
   const handleGenerate = () => {
     navigate(
@@ -242,11 +261,7 @@ const SelectPresentationType: React.FC = () => {
     selectedType === 8 ? !customTypeInput.trim() : !selectedType
 
   const refineButtonDisabled =
-    userPlan === 'free'
-      ? true
-      : selectedType === 8
-      ? !customTypeInput.trim()
-      : !selectedType
+    selectedType === 8 ? !customTypeInput.trim() : !selectedType
 
   // API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
   useEffect(() => {
@@ -315,7 +330,25 @@ const SelectPresentationType: React.FC = () => {
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
-
+  const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null);
+  const handleMouseEnterGenerate = () => {
+    setVisibleTooltip('generate');
+  };
+  
+  const handleMouseLeaveGenerate = () => {
+    if (visibleTooltip === 'generate') setVisibleTooltip(null);
+  };
+  
+  const handleMouseEnter = () => {
+    setVisibleTooltip('refine');
+  };
+  
+  const handleMouseLeave = () => {
+    if (visibleTooltip === 'refine') setVisibleTooltip(null);
+  };
+  
+  const isGenerateVisible = visibleTooltip === 'generate';
+  const isDialogVisible = visibleTooltip === 'refine';
   return (
     <div className="p-6 bg-[#F5F7FA] min-h-screen">
       {/* Heading */}
@@ -384,60 +417,70 @@ const SelectPresentationType: React.FC = () => {
       </div>
 
       {/* Generate Buttons for medium and large screens */}
-      {selectedType && (
-        <div className="hidden lg:flex w-max justify-center mt-4 ml-16">
-          <button
-            id="generate-presentation" // Add this ID for targeting
-            onClick={handleGenerate}
-            disabled={isButtonDisabled}
-            className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
-              isButtonDisabled
-                ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-[#3667B2] hover:bg-[#0A8568]'
-            }`}
-          >
-            Generate Presentation
-          </button>
-          <div
-            className="relative group"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <button
-              id="refine-presentation" // Add this ID for targeting
-              disabled={refineButtonDisabled}
-              onClick={() => setIsRefineModalOpen(true)}
-              className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
-                refineButtonDisabled
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
-              }`}
-            >
-              Refine Presentation
-            </button>
+      <div className="hidden relative group lg:flex w-max justify-center mt-4 ml-16"
+       
+      >
+         <div
+      className="relative group"
+      onMouseEnter={handleMouseEnterGenerate}
+      onMouseLeave={handleMouseLeaveGenerate}
+    >
+    <button
+      id="generate-presentation"
+      onClick={handleGenerate}
+      disabled={!selectedType || isButtonDisabled}
+      className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
+        !selectedType || isButtonDisabled
+          ? 'bg-gray-300 cursor-not-allowed'
+          : 'bg-[#3667B2] hover:bg-[#0A8568]'
+      }`}
+    >
+      Generate Presentation
+    </button>
+    {isButtonDisabled && isGenerateVisible && (
+      <div
+        className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+        onMouseEnter={handleMouseEnterGenerate}
+        onMouseLeave={handleMouseLeaveGenerate}
+      >
+        <p className="text-sm text-center text-gray-800">
+          Please select a presentation type to generate
+        </p>
+      </div>
+    )}
+    </div>
+    <div
+      className="relative group"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button
+        id="refine-presentation"
+        disabled={!selectedType || refineButtonDisabled}
+        onClick={() => setIsRefineModalOpen(true)}
+        className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
+          !selectedType || refineButtonDisabled
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
+        }`}
+      >
+        Refine Presentation
+      </button>
 
-            {/* On Hover Dialog Box */}
-            {refineButtonDisabled && isDialogVisible && (
-              <div
-                className="absolute left-full top-[0.07rem] transform -translate-y-[60%] ml-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
-                onMouseEnter={handleDialogMouseEnter}
-                onMouseLeave={handleDialogMouseLeave}
-              >
-                <p className="text-sm text-center text-gray-800">
-                  Please{' '}
-                  <button
-                    className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                    onClick={() => setIsPricingModalOpen(true)}
-                  >
-                    upgrade to Pro
-                  </button>{' '}
-                  plan to access this feature.
-                </p>
-              </div>
-            )}
-          </div>
+      {refineButtonDisabled && isDialogVisible && (
+        <div
+          className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <p className="text-sm text-center text-gray-800">
+            Please select a presentation type to refine
+          </p>
         </div>
       )}
+    </div>
+  </div>
+
 
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (

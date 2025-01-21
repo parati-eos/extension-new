@@ -15,6 +15,7 @@ interface PeopleProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function People({
@@ -25,6 +26,7 @@ export default function People({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: PeopleProps) {
   const [people, setPeople] = useState([
     {
@@ -49,8 +51,7 @@ export default function People({
   const isFirstRender = useRef(true) // Tracks if it's the first render
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
   const [isImageUploading, setIsImageUploading] = useState(false) // Track image upload state
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
-
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -231,10 +232,11 @@ export default function People({
       setDisplayMode('slides')
       console.log('Server response:', response.data)
     } catch (error) {
-      toast.error('Error sending data', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
     }
   }
 
@@ -245,12 +247,13 @@ export default function People({
   }
 
   const [showTooltip, setShowTooltip] = useState(false)
-  const isGenerateDisabled = !(
-    people[0].name.trim() &&
-    people[0].description.trim() &&
-    people[1].name.trim() &&
-    people[1].description.trim()
-  )
+  const isGenerateDisabled =
+    !(
+      people[0].name.trim() &&
+      people[0].description.trim() &&
+      people[1].name.trim() &&
+      people[1].description.trim()
+    ) || !slideTitle.trim()
 
   const onBack = () => {
     setDisplayMode('customBuilder')
@@ -268,8 +271,8 @@ export default function People({
             <h3 className="text-semibold">People</h3>
             <BackButton onClick={onBack} />
           </div>
-           {/* Editable Slide Title */}
-           <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div>
             <input
               type="text"
               value={slideTitle}
@@ -402,10 +405,11 @@ export default function People({
                   e.preventDefault() // Prevent action when disabled
                 }
               }}
+              disabled={isGenerateDisabled && !slideTitle}
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`lg:w-[180px] py-2 px-5 justify-end  rounded-md active:scale-95 transition transform duration-300 ${
-                isGenerateDisabled || isImageUploading
+                isGenerateDisabled || isImageUploading || !slideTitle
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
               }`}

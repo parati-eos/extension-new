@@ -21,6 +21,7 @@ interface TableProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Table({
@@ -32,6 +33,7 @@ export default function Table({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
@@ -44,7 +46,7 @@ export default function Table({
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [isRowAdded, setIsRowAdded] = useState(false)
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   useEffect(() => {
     // Count fully completed rows
     const completedRows = tableData.rows.filter((row) =>
@@ -212,36 +214,40 @@ export default function Table({
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/tables`,
-        {
-          type: 'Tables',
-          documentID: documentID,
-          outlineID: outlineID,
-          data: {
-            slideName: heading,
-            title: slideTitle,
-            ...filteredTablePayload,
+      const response = await axios
+        .post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/tables`,
+          {
+            type: 'Tables',
+            documentID: documentID,
+            outlineID: outlineID,
+            data: {
+              slideName: heading,
+              title: slideTitle,
+              ...filteredTablePayload,
+            },
           },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          toast.info('Data submitted successfully!', {
+            position: 'top-right',
+            autoClose: 3000,
+          })
+          setIsLoading(false)
+          setDisplayMode('slides')
+        })
       console.log(response)
-      toast.info('Data submitted successfully!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setIsLoading(false)
-      setDisplayMode('slides')
     } catch (error) {
-      toast.error('Error sending data', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
+      setFailed()
     }
   }
 
@@ -261,8 +267,8 @@ export default function Table({
             <h3 className="text-semibold">Table</h3>
             <BackButton onClick={onBack} />
           </div>
-         {/* Editable Slide Title */}
-         <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div>
             <input
               type="text"
               value={slideTitle}
@@ -409,7 +415,7 @@ export default function Table({
               </table>
             </div>
           </div>
-          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto ">
+          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto">
             {/* Generate Slide Button */}
             <button
               onClick={(e) => {
@@ -419,10 +425,11 @@ export default function Table({
                   e.preventDefault() // Prevent action when disabled
                 }
               }}
+              disabled={!canGenerate && !slideTitle}
               onMouseEnter={() => !canGenerate && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
               className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-                canGenerate
+                canGenerate && slideTitle
                   ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
               }`}
@@ -439,7 +446,7 @@ export default function Table({
           </div>
           {/* Generate Slide Buttons for Mobile */}
 
-          <div className="flex lg:hidden  gap-2 justify-end  ">
+          <div className="flex lg:hidden  gap-2 justify-end">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
@@ -450,10 +457,11 @@ export default function Table({
                       e.preventDefault() // Block action when disabled
                     }
                   }}
+                  disabled={!canGenerate && !slideTitle}
                   onMouseEnter={() => !canGenerate && setShowTooltip(true)} // Show tooltip
                   onMouseLeave={() => setShowTooltip(false)} // Hide tooltip
                   className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
-                    canGenerate
+                    canGenerate && slideTitle
                       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
                       : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
                   }`}

@@ -16,6 +16,7 @@ interface PointsProps {
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   outlineID: string
   setIsSlideLoading: () => void
+  setFailed: () => void
 }
 
 export default function Points({
@@ -27,6 +28,7 @@ export default function Points({
   setDisplayMode,
   outlineID,
   setIsSlideLoading,
+  setFailed,
 }: PointsProps) {
   const [points, setPoints] = useState([''])
   const [isLoading, setIsLoading] = useState(false)
@@ -120,14 +122,11 @@ export default function Points({
       console.log('Server response:', response.data)
       setDisplayMode('slides')
     } catch (error) {
-      toast.error('Error sending data', {
+      toast.error('Error submitting data!', {
         position: 'top-right',
         autoClose: 3000,
       })
-      toast.error('Failed to send data.', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
+      setFailed()
     } finally {
       setIsLoading(false)
     }
@@ -137,9 +136,10 @@ export default function Points({
     setDisplayMode('customBuilder')
   }
 
-  const isGenerateDisabled = points.every((point) => point.trim() === '')
   const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
-  const [slideTitle, setSlideTitle] = useState(''); // Local state for slide title
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const isGenerateDisabled =
+    points.every((point) => point.trim() === '') || !slideTitle.trim()
 
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">
@@ -154,8 +154,8 @@ export default function Points({
             <h3 className="text-semibold">Points</h3>
             <BackButton onClick={onBack} />
           </div>
-            {/* Editable Slide Title */}
-            <div className="hidden lg:block">
+          {/* Editable Slide Title */}
+          <div>
             <input
               type="text"
               value={slideTitle}

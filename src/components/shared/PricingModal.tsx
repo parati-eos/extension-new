@@ -44,7 +44,7 @@ interface PricingModalProps {
 const categories = [
   {
     title: 'Access',
-    features: ['Generate Presentations', 'Presentation Uploads'],
+    features: ['Generate or Refine Presentations'],
   },
   {
     title: 'Features',
@@ -107,20 +107,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       price: null,
       features: [
         {
-          text: 'Unlimited',
+          text: '5 per month',
           bgColor: '#F5F7FA',
           icon: null,
           spacing: 'py-4 ',
           margin: '',
         },
 
-        {
-          text: '-',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-3 ',
-          margin: '',
-        },
+      
         {
           text: '',
           bgColor: 'white',
@@ -160,22 +154,22 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         {
           text: '-',
           bgColor: 'white',
-          icon: null,
+          icon: FaCheckCircle,
           spacing: 'py-4',
           margin: '',
         },
         {
           text: '-',
           bgColor: '#F5F7FA',
-          icon: null,
+          icon: FaCheckCircle,
           spacing: 'py-4',
           margin: '',
         },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-8', margin: '' },
         {
           text: '-',
           bgColor: '#F5F7FA',
-          icon: null,
+          icon: FaCheckCircle,
           spacing: 'py-4',
           margin: '',
         },
@@ -209,7 +203,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         userPlan === 'free' ? 'Upgrade to Pro' : 'Cancel Subscription',
 
       description: (
-        <div className="lg:mb-[2.4rem]">
+        <div className="lg:mb-[2.5rem]">
           <span style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>
             Ideal for professionals and businesses.
           </span>
@@ -235,19 +229,12 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           spacing: 'py-4 ',
           margin: '',
         },
-        {
-          text: 'Unlimited',
-          bgColor: 'white',
-          icon: null,
-          spacing: 'py-3 ',
-          margin: '',
-          textColor: 'text-black',
-        },
+      
         {
           text: '',
           bgColor: 'white',
           icon: null,
-          spacing: 'py-[1.9rem] ',
+          spacing: 'py-[1.8rem] ',
           margin: '',
         },
 
@@ -284,7 +271,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           text: '-',
           bgColor: 'white',
           icon: FaCheckCircle,
-          spacing: 'py-4',
+          spacing: 'py-3',
           margin: '',
         },
         {
@@ -298,14 +285,14 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           text: '-',
           bgColor: '#F5F7FA',
           icon: FaCheckCircle,
-          spacing: 'py-5',
+          spacing: 'py-4',
           margin: '',
         },
-        { text: '', bgColor: 'white', icon: null, spacing: 'py-5', margin: '' },
+        { text: '', bgColor: 'white', icon: null, spacing: 'py-8', margin: '' },
         {
           text: '-',
           bgColor: '#F5F7FA',
-          icon: null,
+          icon: FaCheckCircle,
           spacing: 'py-4',
           margin: '',
         },
@@ -668,11 +655,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             <ul className="text-gray-700 ">
               <li className="bg-[#F5F7FA] flex font-medium justify-between items-center px-2 py-6 w-full ">
                 General Presentations
-                <span className="font-medium">Unlimited</span>
+                <span className="font-medium">5 per month</span>
               </li>
               <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Presentation Uploads
-                <span className="font-medium mr-2 text-black">-</span>
+                <span className="font-medium ">  5 per month</span>
               </li>
             </ul>
           </div>
@@ -702,11 +689,17 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               </li>
               <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Add Custom Slides
-                <span className="font-medium mr-2 text-black">-</span>
+                <span className="font-medium  text-black">
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+
+                </span>
               </li>
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Custom Slide Builder
-                <span className="font-medium mr-2 text-black">-</span>
+                <span className="font-medium ">
+
+                <FaCheckCircle className="h-6 w-6 text-green-500" />
+                </span>
               </li>
             </ul>
           </div>
@@ -724,7 +717,10 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               </li>
               <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
                 PDF Exports
-                <span className="font-medium mr-2 text-black">-</span>
+                <span className="font-medium  text-black">
+
+                {currency === 'INR' ? '₹499' : '$9'} per Export
+                </span>
               </li>
             </ul>
           </div>
@@ -840,7 +836,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
                 <span className="font-medium  text-black">
-                  {currency === 'INR' ? '₹499' : '$9'} per Export
+                 Unlimited
                 </span>
               </li>
             </ul>

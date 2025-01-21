@@ -125,7 +125,7 @@ export default function Cover({
   }
 
   const onBack = () => {
-    setDisplayMode('newContent')
+    setDisplayMode('slides')
   }
 
   useEffect(() => {

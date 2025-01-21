@@ -207,11 +207,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <button
                     id={idx === 0 ? 'outline' : undefined} // Add id to the first button for tutorial targeting
-                    className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 ${
-                      isDisabled ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-300 border border-gray-400 `}
                     onClick={() => setInputIndex(idx)}
-                    disabled={isDisabled}
                   >
                     +
                   </button>
@@ -223,17 +220,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         Add new section.
                       </p>
 
-                      <br />
-                      <p className="text-sm text-center text-gray-800">
-                        Please{' '}
-                        <button
-                          className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                          onClick={() => setIsPricingModalOpen(true)}
-                        >
-                          upgrade to Pro
-                        </button>{' '}
-                        plan to access this feature.
-                      </p>
+                      
                     </div>
                   )}
                   {/* Tooltip */}

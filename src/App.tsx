@@ -11,7 +11,7 @@ import HistoryPage from './pages/HistoryPage.tsx'
 import PresentationTypePage from './pages/PresentationType.tsx'
 import LandingPage from './pages/LandingPage.tsx'
 import PresentationShare from './pages/PresentationShare.tsx'
-import PitchZynthShare from './components/pitchZynthShare/Share.jsx'
+import PitchDeckShare from './components/pitchZynthShare/Share.jsx'
 import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import Test from './test/test.tsx'
 import PricingPage from './pages/PricingPage.tsx'
@@ -23,17 +23,30 @@ const App: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   useEffect(() => {
     const currentUrl = window.location.href
+
+    // Normalize the URL
     const normalizedUrl = currentUrl.endsWith('/')
       ? currentUrl.slice(0, -1)
       : currentUrl
 
+    // Parse the URL for UTM parameters
+    const urlParams = new URLSearchParams(window.location.search)
+
+    // Construct the full URL including UTM parameters
+    const fullUrlWithUtm = urlParams.toString()
+      ? `${normalizedUrl}?${urlParams.toString()}`
+      : normalizedUrl
+
+    // Debug: Check if UTM parameters are present
+    console.log('URL Parameters:', urlParams.toString())
+
     // Check if 'sign_up_link' is already in localStorage
     const storedUrl = localStorage.getItem('sign_up_link')
 
-    // Store the full URL in localStorage if it's not already set
-    if (!storedUrl) {
-      localStorage.setItem('sign_up_link', normalizedUrl)
-      console.log('Initial URL stored:', normalizedUrl)
+    // Always update the stored URL if UTM parameters are present or if it's the first time
+    if (!storedUrl || (storedUrl && storedUrl !== fullUrlWithUtm)) {
+      localStorage.setItem('sign_up_link', fullUrlWithUtm)
+      console.log('URL with UTM parameters stored:', fullUrlWithUtm)
     } else {
       console.log('URL already stored:', storedUrl)
     }
@@ -151,7 +164,7 @@ const App: React.FC = () => {
               element={<RazorpayWebhooks orgId={orgId!} />}
             />
             <Route path="/presentation-share" element={<PresentationShare />} />
-            <Route path="/share" element={<PitchZynthShare />} />
+            <Route path="/share" element={<PitchDeckShare />} />
             <Route path="/test" element={<Test />} />
           </Routes>
         </Router>
