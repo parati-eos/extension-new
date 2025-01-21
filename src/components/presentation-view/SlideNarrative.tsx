@@ -78,7 +78,7 @@ export default function SlideNarrative({
     { value: 'Points', label: 'Points', icon: PointsIcon },
     { value: 'Phases', label: 'Timeline', icon: TimelineIcon },
     { value: 'Images', label: 'Images', icon: ImagesIcon },
-    { value: 'Table', label: 'Table', icon: TableIcon },
+    { value: 'Tables', label: 'Table', icon: TableIcon },
     { value: 'People', label: 'People', icon: PeopleIcon },
     { value: 'Statistics', label: 'Statistics', icon: StatisticsIcon },
     { value: 'Graphs', label: 'Graphs', icon: GraphIcon },

@@ -1489,6 +1489,10 @@ export default function ViewPresentation() {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
 
+  const deleteFinalizeDisabled =
+    isDocumentIDLoading || !slidesArrayRef.current[currentOutline]
+  const newVersionDisabled = isDocumentIDLoading
+
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Export Countdown */}
@@ -1611,6 +1615,8 @@ export default function ViewPresentation() {
                 slidesArray[currentOutline]?.[currentSlideIndex]
               }
               currentSlideId={slidesArray[currentOutline]?.[currentSlideIndex]}
+              deleteFinalizeDisabled={deleteFinalizeDisabled}
+              newVersionDisabled={newVersionDisabled}
             />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
@@ -1757,6 +1763,8 @@ export default function ViewPresentation() {
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
+              deleteFinalizeDisabled={deleteFinalizeDisabled}
+              newVersionDisabled={newVersionDisabled}
               finalized={
                 finalizedSlides[currentOutline] ===
                 slidesArray[currentOutline]?.[currentSlideIndex]
