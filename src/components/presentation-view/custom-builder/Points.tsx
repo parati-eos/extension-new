@@ -45,10 +45,13 @@ export default function Points({
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
   const handleInputChange = (value: string, index: number) => {
-    const updatedPoints = [...points]
-    updatedPoints[index] = value
-    setPoints(updatedPoints)
+    if (value.length <= 150) {
+      const updatedPoints = [...points]
+      updatedPoints[index] = value
+      setPoints(updatedPoints)
+    }
   }
+
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (containerRef.current) {
@@ -251,7 +254,7 @@ export default function Points({
             {points.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center gap-2 mb-2 lg:mb-0 p-1 ${
+                className={`flex flex-col items-start gap-2 mb-2 lg:mb-0 p-1 ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
@@ -277,6 +280,14 @@ export default function Points({
                     />
                   )}
                 </div>
+                {/* Character Counter (outside the input container) */}
+                <span
+                  className={`hidden lg:block text-xs ${
+                    point.length > 140 ? 'text-red-500' : 'text-gray-500'
+                  }`}
+                >
+                  {point.length}/150 characters
+                </span>
                 {/* Mobile View Input */}
                 <div className="relative lg:hidden w-full">
                   <input
@@ -300,6 +311,14 @@ export default function Points({
                     />
                   )}
                 </div>
+                {/* Character Counter (outside the input container) */}
+                <span
+                  className={`lg:hidden text-xs ${
+                    point.length > 140 ? 'text-red-500' : 'text-gray-500'
+                  }`}
+                >
+                  {point.length}/150 characters
+                </span>
                 {/* Add New Point Button */}
                 {index === points.length - 1 && points.length < 6 && (
                   <button

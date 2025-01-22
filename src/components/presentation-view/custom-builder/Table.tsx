@@ -141,9 +141,13 @@ export default function Table({
     colIndex: number,
     value: string
   ) => {
+    // Limit the character count to 25
+    const updatedValue = value.slice(0, 25)
+
+    // Update the table data
     const updatedRows = tableData.rows.map((row, i) =>
       i === rowIndex
-        ? row.map((cell, j) => (j === colIndex ? value : cell))
+        ? row.map((cell, j) => (j === colIndex ? updatedValue : cell))
         : row
     )
     setTableData((prev) => ({ ...prev, rows: updatedRows }))
@@ -154,6 +158,13 @@ export default function Table({
     value: string,
     isColumn: boolean
   ) => {
+    // Check if the value exceeds 25 characters
+    if (value.length > 25) {
+      // Optionally show a validation message or return early if the character count exceeds 25
+
+      return // Stop the update if character count is exceeded
+    }
+
     if (isColumn) {
       const updatedHeaders = [...tableData.columnHeaders]
       updatedHeaders[index] = value
@@ -371,7 +382,7 @@ export default function Table({
                       </th>
                     ))}
                     <th className="bg-gray-50 lg:p-2 p-1 lg:min-w-[0vw] min-w-[10vw]">
-                      <div className="flex justify-center gap-2">
+                      <div className="flex justify-center gap-2 ">
                         <button
                           onClick={handleAddColumn}
                           disabled={tableData.columnHeaders.length >= 5}
@@ -440,8 +451,19 @@ export default function Table({
                                 e.target.value
                               )
                             }
-                            className="w-full text-center border-none bg-transparent focus:outline-none"
+                            className="w-full text-start border-none bg-transparent focus:outline-none"
                           />
+                          {/* Display character count */}
+
+                          <span
+                            className={`text-xs mt-1 ${
+                              cell.length > 20
+                                ? 'text-red-500'
+                                : 'text-gray-500'
+                            }`}
+                          >
+                            {cell.length}/25
+                          </span>
                         </td>
                       ))}
                     </tr>
