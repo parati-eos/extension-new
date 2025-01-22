@@ -340,31 +340,37 @@ export default function People({
             <h3 className="text-semibold">People</h3>
             <BackButton onClick={onBack} />
           </div>
-          {/* Editable Slide Title */}
-          <div className="w-full p-1 ">
-            <div className="relative">
-              <input
-                type="text"
-                value={slideTitle}
-                onChange={(e) => setSlideTitle(e.target.value)}
-                placeholder="Add Slide Title"
-                className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {refineLoadingSlideTitle ? (
-                <>
-                  <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                    <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                  </div>
-                </>
-              ) : (
-                <FontAwesomeIcon
-                  icon={faWandMagicSparkles}
-                  onClick={() => refineText('slideTitle')}
-                  className="absolute top-[55%] hover:scale-105 hover:cursor-pointer active:scale-95 right-2 transform -translate-y-1/2 text-[#3667B2]"
-                />
-              )}
-            </div>
-          </div>
+         <div className="w-full p-1">
+           <div className="relative">
+             <input
+               type="text"
+               value={slideTitle}
+               onChange={(e) => setSlideTitle(e.target.value)}
+               placeholder="Add Slide Title"
+               className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+             />
+             {refineLoadingSlideTitle ? (
+               <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                 <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+               </div>
+             ) : (
+               <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                 <div className="relative group">
+                   <FontAwesomeIcon
+                     icon={faWandMagicSparkles}
+                     onClick={() => refineText('slideTitle')}
+                     className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                   />
+                   {/* Tooltip */}
+                   <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                     Click to refine text.
+                   </span>
+                 </div>
+               </div>
+             )}
+           </div>
+         </div>
+         
           <div
             ref={containerRef}
             className={`flex-1  overflow-y-auto scrollbar-none md:mt-1 ${
@@ -439,40 +445,45 @@ export default function People({
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <div className="relative w-full">
-                    <input
-                      type="text"
-                      value={person.description}
-                      onChange={(e) =>
-                        handleInputChange(e.target.value, index, 'description')
-                      }
-                      placeholder={`Enter Description ${index + 1}`}
-                      className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {refineLoadingStates[index] ? (
-                      <>
-                        <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                          <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                        </div>
-                      </>
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faWandMagicSparkles}
-                        onClick={() => refineText('people', index)}
-                        className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
-                      />
-                    )}
-                  </div>
-                  <span
-                    className={`text-xs ${
-                      person.description.length > 140
-                        ? 'text-red-500'
-                        : 'text-gray-500'
-                    }`}
-                  >
-                    {person.description.length}/150 characters
-                  </span>
-                </div>
+  <div className="relative w-full">
+    <input
+      type="text"
+      value={person.description}
+      onChange={(e) =>
+        handleInputChange(e.target.value, index, 'description')
+      }
+      placeholder={`Enter Description ${index + 1}`}
+      className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    {refineLoadingStates[index] ? (
+      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+      </div>
+    ) : (
+      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
+        <div className="relative group">
+          <FontAwesomeIcon
+            icon={faWandMagicSparkles}
+            onClick={() => refineText('people', index)}
+            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+          />
+          {/* Tooltip */}
+          <span className="absolute top-[-35px] w-max right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+            Click to refine text
+          </span>
+        </div>
+      </div>
+    )}
+  </div>
+  <span
+    className={`text-xs ${
+      person.description.length > 140 ? 'text-red-500' : 'text-gray-500'
+    }`}
+  >
+    {person.description.length}/150 characters
+  </span>
+</div>
+
                 <div className="flex items-center gap-2">
                   {person.image && (
                     <div className="flex items-center gap-2">
