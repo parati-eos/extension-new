@@ -274,35 +274,57 @@ export default function Timeline({
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <input
-                  type="text"
-                  value={timeline[index]}
-                  onChange={(e) => handleInputTitle(e.target.value, index)}
-                  placeholder={`Enter Timeline ${index + 1}`}
-                  className="flex-1 lg:ml-1 w-full lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                {/* Description Input with Icons */}
-                <div className="relative lg:ml-2 lg:mr-1 w-full lg:w-[75%]">
+                <div className="flex flex-col lg:w-[25%]">
                   <input
                     type="text"
-                    value={description[index]}
-                    onChange={(e) =>
-                      handleInputDescription(e.target.value, index)
-                    }
-                    placeholder={`Enter Description ${index + 1}`}
-                    className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={timeline[index]}
+                    onChange={(e) => handleInputTitle(e.target.value, index)}
+                    placeholder={`Enter Timeline ${index + 1}`}
+                    className="flex-1 lg:ml-1 w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  {refineLoadingStates[index] ? (
-                    <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
-                      <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                    </div>
-                  ) : (
-                    <FontAwesomeIcon
-                      icon={faWandMagicSparkles}
-                      onClick={() => refineText('timeLineDescription', index)}
-                      className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                  <span
+                    className={`text-xs mt-1 ${
+                      timeline[index].length > 20
+                        ? 'text-red-500'
+                        : 'text-gray-500'
+                    }`}
+                  >
+                    {timeline[index].length}/25 characters
+                  </span>
+                </div>
+                {/* Description Input with Icons */}
+                <div className="relative lg:ml-2 lg:mr-1 w-full flex flex-col lg:w-[75%]">
+                  <>
+                    <input
+                      type="text"
+                      value={description[index]}
+                      onChange={(e) =>
+                        handleInputDescription(e.target.value, index)
+                      }
+                      placeholder={`Enter Description ${index + 1}`}
+                      className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  )}
+                    {refineLoadingStates[index] ? (
+                      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                      </div>
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faWandMagicSparkles}
+                        onClick={() => refineText('timeLineDescription', index)}
+                        className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                      />
+                    )}
+                  </>
+                  <span
+                    className={`text-xs mt-1 ${
+                      description[index].length > 140
+                        ? 'text-red-500'
+                        : 'text-gray-500'
+                    }`}
+                  >
+                    {description[index].length}/150 characters
+                  </span>
                 </div>
               </div>
             ))}
