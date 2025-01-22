@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import {
   FaFilter,
   FaSort,
@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux'
 import PaymentGateway from '../payment/PaymentGateway'
 import { useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice'
+import HistoryThumbnail from './HistoryThumbnail'
 
 function getSheetIdFromUrl(url: string) {
   const match = url.match(/\/d\/(.+?)\/|\/open\?id=(.+?)(?:&|$)/)
@@ -54,9 +55,31 @@ const HistoryContainer: React.FC = () => {
   const [paid, setIsPaid] = useState(false)
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
+  const [exportStatus, setExportStatus] = useState(false)
+  const [visibleSlides, setVisibleSlides] = useState<Set<number>>(new Set())
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // Handle Download Button Click
   const handleDownload = async () => {
+    // Set exportStatus to true if false
+    if (!exportStatus) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {
+            exportstatus: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+      } catch (error: any) {
+        console.error('Failed to update profile', error)
+      }
+    }
+
     try {
       const formId = documentID
       if (!formId) {
@@ -171,6 +194,25 @@ const HistoryContainer: React.FC = () => {
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
     const paymentButton = document.getElementById('payment-button')
+    // Set exportStatus to true if false
+    if (!exportStatus) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {
+            exportstatus: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+      } catch (error: any) {
+        console.error('Failed to update profile', error)
+      }
+    }
+
     if (paymentButton) {
       paymentButton.click()
     } else {
@@ -308,6 +350,12 @@ const HistoryContainer: React.FC = () => {
         )
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
+        const exportStatus = response.data.exportstatus
+        if (exportStatus) {
+          setExportStatus(false)
+        } else {
+          setExportStatus(true)
+        }
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {
@@ -353,6 +401,45 @@ const HistoryContainer: React.FC = () => {
   useEffect(() => {
     setIsDialogVisible(false)
   }, [activeDropdown])
+
+  const checkVisibility = useCallback(() => {
+    if (!containerRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = parseInt(entry.target.getAttribute('data-index') || '')
+          if (!isNaN(index)) {
+            setVisibleSlides((prev) => {
+              const newSet = new Set(prev)
+              if (entry.isIntersecting) {
+                newSet.add(index)
+              } else {
+                newSet.delete(index)
+              }
+              return newSet
+            })
+          }
+        })
+      },
+      {
+        root: null,
+        rootMargin: '50px',
+        threshold: 0.1,
+      }
+    )
+
+    const slides =
+      containerRef.current.getElementsByClassName('slide-container')
+    Array.from(slides).forEach((slide) => observer.observe(slide))
+
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const observer = checkVisibility()
+    return () => observer?.()
+  }, [checkVisibility])
 
   return (
     <>
@@ -622,10 +709,11 @@ const HistoryContainer: React.FC = () => {
                     {/* Thumbnail Container */}
                     <div className="relative w-[12rem] h-[7rem] overflow-hidden">
                       {/* Invisible clickable overlay */}
-                      <div
-                        onClick={() => handleEdit(item.FormID, item.pptName)}
-                        className="absolute top-0 left-0 w-full h-full z-10 cursor-pointer"
-                      ></div>
+                      <HistoryThumbnail
+                        item={item}
+                        onEdit={handleEdit}
+                        isVisible={visibleSlides.has(index)}
+                      />
 
                       {/* Embedded Google Slides iframe */}
                       <iframe
@@ -770,6 +858,7 @@ const HistoryContainer: React.FC = () => {
               }}
               heading={pricingModalHeading}
               subscriptionId={subId}
+              exportStatus={exportStatus}
               monthlyPlanAmount={monthlyPlanAmount}
               yearlyPlanAmount={yearlyPlanAmount}
               currency={currency}

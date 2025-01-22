@@ -13,25 +13,7 @@ const GooglePresentation: React.FC<GooglePresentationProps> = ({ formId }) => {
 }
 
 const SharedPresentation = ({ formId }: SharedPresentationProps) => {
-  return (
-    <div className="w-full h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
-      <div className="flex flex-col items-center justify-center py-2 bg-gray-50">
-        <a
-          href="/"
-          target="_blank"
-          className="transition-all duration-300 transform hover:scale-110 active:scale-95 active:opacity-80"
-        >
-          <img
-            src={ZynthLogo}
-            alt="Parati Logo"
-            width={150}
-            className="text-center"
-          />
-        </a>
-      </div>
-      <GooglePresentation formId={formId} />
-    </div>
-  )
+  return <GooglePresentation formId={formId} />
 }
 
 export default SharedPresentation

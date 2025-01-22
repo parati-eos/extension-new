@@ -6,6 +6,8 @@ import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
 interface StatisticProps {
   heading: string
@@ -40,19 +42,23 @@ export default function Statistics({
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
   const handleInputTitle = (value: string, index: number) => {
-    const updatedPoints = [...title]
-    updatedPoints[index] = value
-    setTitle(updatedPoints)
-  }
-
+    if (value.length <= 25) {
+      const updatedPoints = [...title];
+      updatedPoints[index] = value;
+      setTitle(updatedPoints);
+    }
+  };
+  
   const handleInputDescription = (value: string, index: number) => {
-    const updatedPoints = [...description]
-    updatedPoints[index] = value
-    setDescription(updatedPoints)
-  }
-
+    if (value.length <= 25) {
+      const updatedPoints = [...description];
+      updatedPoints[index] = value;
+      setDescription(updatedPoints);
+    }
+  };
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -139,6 +145,37 @@ export default function Statistics({
     }
   }
 
+  const refineText = async (type: string, text: string) => {
+    setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
+        {
+          type: type,
+          textToRefine: text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        const refinedText = response.data.refinedText
+
+        setSlideTitle(refinedText)
+      }
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    } catch (error) {
+      toast.error('Error refining text!', {
+        position: 'top-right',
+        autoClose: 3000,
+      })
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    }
+  }
+
   const handleFileSelect = async (file: File | null) => {
     setIsImageLoading(true)
     if (file) {
@@ -177,44 +214,83 @@ export default function Statistics({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="w-full p-1 ">
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+       <div className="w-full p-1">
+         <div className="relative">
+           <input
+             type="text"
+             value={slideTitle}
+             onChange={(e) => setSlideTitle(e.target.value)}
+             placeholder="Add Slide Title"
+             className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+           />
+           {refineLoadingSlideTitle ? (
+             <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+               <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+             </div>
+           ) : (
+             <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+               <div className="relative group">
+                 <FontAwesomeIcon
+                   icon={faWandMagicSparkles}
+                   onClick={() => refineText('slideTitle', slideTitle)}
+                   className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                 />
+                 {/* Tooltip */}
+                 <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                   Click to refine text.
+                 </span>
+               </div>
+             </div>
+           )}
+         </div>
+       </div>
 
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto scrollbar-none lg:w-[65%]"
+            className="flex-1 overflow-y-auto scrollbar-none lg:w-[80%] w-full lg:p-4"
           >
             {title.map((point, index) => (
               <div
                 key={index}
-                className={`flex gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 ${
+                className={`flex  gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <input
-                  type="text"
-                  value={title[index]}
-                  onChange={(e) => handleInputTitle(e.target.value, index)}
-                  placeholder={`Enter Data Label ${index + 1}`}
-                  className="lg:ml-1 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="text"
-                  value={description[index]}
-                  onChange={(e) =>
-                    handleInputDescription(e.target.value, index)
-                  }
-                  placeholder={`Enter Value ${index + 1}`}
-                  className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              <div className="flex flex-col ">
+  <input
+    type="text"
+    value={title[index]}
+    onChange={(e) => handleInputTitle(e.target.value, index)}
+    placeholder={`Enter Data Label ${index + 1}`}
+    className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    maxLength={25}
+  />
+  <span
+    className={`text-xs mt-1 ${
+      title[index].length > 20 ? 'text-red-500' : 'text-gray-500'
+    }`}
+  >
+    {title[index].length}/25 characters
+  </span>
+</div>
+<div className="flex flex-col">
+  <input
+    type="text"
+    value={description[index]}
+    onChange={(e) => handleInputDescription(e.target.value, index)}
+    placeholder={`Enter Value ${index + 1}`}
+    className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    maxLength={25}
+  />
+  <span
+    className={`text-xs mt-1 ${
+      description[index].length > 20 ? 'text-red-500' : 'text-gray-500'
+    }`}
+  >
+    {description[index].length}/25 characters
+  </span>
+</div>
               </div>
             ))}
 
@@ -267,10 +343,20 @@ export default function Statistics({
 
                 {/* Tooltip */}
                 {isGenerateDisabled && showTooltip && (
-                  <span className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-                    Minimum 3 data points required.<br></br> Please fill all
-                    cells.
-                  </span>
+                  <span
+                    className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        title.length < 3 ||
+                        title.some(
+                          (point, index) =>
+                            point.trim() === '' ||
+                            description[index].trim() === ''
+                        )
+                          ? 'Minimum 3 data points required.<br>Please fill all cells.'
+                          : 'Slide title is required.',
+                    }}
+                  />
                 )}
               </div>
             </div>
@@ -309,10 +395,20 @@ export default function Statistics({
 
               {/* Tooltip */}
               {isGenerateDisabled && showTooltip && (
-                <span className="absolute top-[-45px] left-1/2 -translate-x-[55%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20">
-                  Minimum 3 data points required.<br></br> Please fill all
-                  cells.
-                </span>
+                <span
+                  className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      title.length < 3 ||
+                      title.some(
+                        (point, index) =>
+                          point.trim() === '' ||
+                          description[index].trim() === ''
+                      )
+                        ? 'Minimum 3 data points required.<br>Please fill all cells.'
+                        : 'Slide title is required.',
+                  }}
+                />
               )}
             </div>
           </div>

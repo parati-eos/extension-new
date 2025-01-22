@@ -11,10 +11,6 @@ import {
   disconnectWebSocket,
 } from './webSocketService'
 
-interface RazorpayWebhooksProps {
-  orgId: string
-}
-
 interface PaymentData {
   // Define the shape of the payment data based on your backend response
   [key: string]: any
@@ -39,6 +35,7 @@ interface PricingModalProps {
   exportHandler?: () => void
   isButtonDisabled?: boolean
   subscriptionId: string
+  exportStatus: boolean
 }
 
 const categories = [
@@ -79,6 +76,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   exportHandler,
   isButtonDisabled,
   subscriptionId,
+  exportStatus,
 }) => {
   const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -86,9 +84,9 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   )
   const userPlan = useSelector((state: any) => state.user.userPlan)
   const userEmail = sessionStorage.getItem('userEmail')
-  const navigate = useNavigate()
   const [subscriptionData, setSubscriptionData] =
     useState<SubscriptionData | null>(null)
+
   const plans = [
     {
       name: 'FREE',
@@ -114,7 +112,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           margin: '',
         },
 
-      
         {
           text: '',
           bgColor: 'white',
@@ -229,7 +226,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           spacing: 'py-4 ',
           margin: '',
         },
-      
+
         {
           text: '',
           bgColor: 'white',
@@ -328,6 +325,25 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     const currentTime = Date.now()
     const startAtTime = currentTime + 10 * 60 * 1000 // 10 minutes in milliseconds
     const startAtUnix = Math.floor(startAtTime / 1000) // Convert to Unix timestamp in seconds
+
+    // Set exportStatus to true if false
+    if (!exportStatus) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {
+            exportstatus: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+      } catch (error: any) {
+        console.error('Failed to update profile', error)
+      }
+    }
 
     if (userPlan === 'free') {
       try {
@@ -659,7 +675,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               </li>
               <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Presentation Uploads
-                <span className="font-medium ">  5 per month</span>
+                <span className="font-medium "> 5 per month</span>
               </li>
             </ul>
           </div>
@@ -690,15 +706,13 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-white flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Add Custom Slides
                 <span className="font-medium  text-black">
-                <FaCheckCircle className="h-6 w-6 text-green-500" />
-
+                  <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full ">
                 Custom Slide Builder
                 <span className="font-medium ">
-
-                <FaCheckCircle className="h-6 w-6 text-green-500" />
+                  <FaCheckCircle className="h-6 w-6 text-green-500" />
                 </span>
               </li>
             </ul>
@@ -718,8 +732,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               <li className="bg-white flex font-medium justify-between items-center px-2 py-6 w-full">
                 PDF Exports
                 <span className="font-medium  text-black">
-
-                {currency === 'INR' ? '₹499' : '$9'} per Export
+                  {currency === 'INR' ? '₹499' : '$9'} per Export
                 </span>
               </li>
             </ul>
@@ -835,9 +848,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
               </li>
               <li className="bg-[#F5F7FA] flex justify-between font-medium items-center px-2 py-6 w-full">
                 Google Slides Exports
-                <span className="font-medium  text-black">
-                 Unlimited
-                </span>
+                <span className="font-medium  text-black">Unlimited</span>
               </li>
             </ul>
             <div className="px-4 py-2 mb-14">
