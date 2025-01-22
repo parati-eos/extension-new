@@ -20,7 +20,6 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
 
   const mobileSlideRefs = useRef<HTMLDivElement[]>([])
   const mobileScrollContainerRef = useRef<HTMLDivElement>(null)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const authToken = sessionStorage.getItem('authToken')
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
