@@ -43,10 +43,13 @@ export default function Timeline({
 
 
   const handleInputTitle = (value: string, index: number) => {
-    const updatedPoints = [...timeline]
-    updatedPoints[index] = value
-    setTimeline(updatedPoints)
-  }
+    if (value.length <= 25) {
+      const updatedPoints = [...timeline];
+      updatedPoints[index] = value;
+      setTimeline(updatedPoints);
+    }
+  };
+  
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -56,10 +59,12 @@ export default function Timeline({
   }, [timeline])
 
   const handleInputDescription = (value: string, index: number) => {
-    const updatedPoints = [...description]
-    updatedPoints[index] = value
-    setDescription(updatedPoints)
-  }
+    if (value.length <= 150) {
+      const updatedPoints = [...description];
+      updatedPoints[index] = value;
+      setDescription(updatedPoints);
+    }
+  };
 
   const addNewPoint = () => {
     if (timeline.length < 6) {
@@ -198,23 +203,40 @@ export default function Timeline({
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <input
-                  type="text"
-                  value={timeline[index]}
-                  onChange={(e) => handleInputTitle(e.target.value, index)}
-                  placeholder={`Enter Timeline ${index + 1}`}
-                  className="flex-1 lg:ml-1 w-full lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              <div className="flex flex-col lg:w-[25%]">
+    <input
+      type="text"
+      value={timeline[index]}
+      onChange={(e) => handleInputTitle(e.target.value, index)}
+      placeholder={`Enter Timeline ${index + 1}`}
+      className="flex-1 lg:ml-1 w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <span
+      className={`text-xs mt-1 ${
+        timeline[index].length > 20 ? 'text-red-500' : 'text-gray-500'
+      }`}
+    >
+      {timeline[index].length}/25 characters
+    </span>
+  </div>
+                <div className="flex flex-col lg:w-[75%]">
                 <input
                   type="text"
                   value={description[index]}
-                  onChange={(e) =>
-                    handleInputDescription(e.target.value, index)
-                  }
+                  onChange={(e) => handleInputDescription(e.target.value, index)}
                   placeholder={`Enter Description ${index + 1}`}
-                  className="lg:ml-2 lg:mr-1 w-full lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <span
+                  className={`text-xs mt-1 ${
+                    description[index].length > 140 ? 'text-red-500' : 'text-gray-500'
+                  }`}
+                >
+                  {description[index].length}/150 characters
+                </span>
               </div>
+            </div>
+            
             ))}
 
             {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
@@ -267,13 +289,15 @@ export default function Timeline({
   {loading ? 'Generating...' : 'Generate Slide'}
 
   {/* Tooltip */}
-  {isGenerateDisabled && showTooltip && (
+  {showTooltip && (
   <span className="absolute top-[-40px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-    {timeline.length < 3
+    {timeline.filter(
+      (point, index) => point.trim() !== '' && description[index].trim() !== ''
+    ).length < 3 
       ? 'Minimum 3 timelines are required.'
-      : slideTitle.trim() === ''
-      ? 'Slide title is required.'
-      : ''}
+   
+      : 'Slide title is required.'
+     }
   </span>
 )}
 
@@ -313,11 +337,12 @@ export default function Timeline({
               {/* Tooltip */}
               {isGenerateDisabled && showTooltip && (
                 <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  {timeline.length < 3
+                  {timeline.filter(
+      (point, index) => point.trim() !== '' && description[index].trim() !== ''
+    ).length < 3 
       ? 'Minimum 3 timelines are required.'
-      : slideTitle.trim() === ''
-      ? 'Slide title is required.'
-      : ''}
+      : 'Slide title is required.'
+      }
                 </span>
               )}
             </button>

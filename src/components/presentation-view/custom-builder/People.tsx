@@ -94,10 +94,15 @@ export default function People({
   }, [people, isUserInteracting])
 
   const handleInputChange = (value: string, index: number, field: string) => {
-    const updatedPeople = [...people]
-    updatedPeople[index] = { ...updatedPeople[index], [field]: value }
-    setPeople(updatedPeople)
-  }
+    const charLimit = field === 'description' ? 150 : 25;
+
+    if (value.length <= charLimit) {
+      const updatedPeople = [...people];
+      updatedPeople[index] = { ...updatedPeople[index], [field]: value };
+      setPeople(updatedPeople);
+    }
+  };
+
 
   const handleImageUpload = async (file: File | null, index: number) => {
     if (!file) {
@@ -303,33 +308,58 @@ export default function People({
                 }`}
               >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mt-2 ">
-                  <input
-                    type="text"
-                    value={person.name}
-                    onChange={(e) => handleNameChange(e.target.value, index)}
-                    placeholder={`Enter Name ${index + 1}`}
-                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={person.designation}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, index, 'designation')
-                    }
-                    placeholder={`Enter Designation ${index + 1}`}
-                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={person.company}
-                    onChange={(e) =>
-                      handleInputChange(e.target.value, index, 'company')
-                    }
-                    placeholder={`Enter Company ${index + 1}`}
-                    className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className='flex flex-col'>
+                <input
+            type="text"
+            value={person.name}
+            onChange={(e) => handleNameChange(e.target.value, index)}
+            placeholder={`Enter Name ${index + 1}`}
+            className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span
+            className={`text-xs mt-1 ${
+              person.name.length > 20 ? 'text-red-500' : 'text-gray-500'
+            }`}
+          >
+            {person.name.length}/25 characters
+          </span>
+          </div>
+          <div className='flex flex-col'>
+                <input
+            type="text"
+            value={person.designation}
+            onChange={(e) =>  handleInputChange(e.target.value, index, 'designation')}
+            placeholder={`Enter Designation ${index + 1}`}
+            className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span
+            className={`text-xs mt-1 ${
+              person.designation.length > 20 ? 'text-red-500' : 'text-gray-500'
+            }`}
+          >
+            {person.designation.length}/25 characters
+          </span>
+          </div>
+          <div className='flex flex-col'>
+                <input
+            type="text"
+            value={person.company}
+            onChange={(e) =>
+              handleInputChange(e.target.value, index, 'company')
+            }
+            placeholder={`Enter Company ${index + 1}`}
+            className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <span
+            className={`text-xs mt-1 ${
+              person.company.length > 20 ? 'text-red-500' : 'text-gray-500'
+            }`}
+          >
+            {person.company.length}/25 characters
+          </span>
+          </div>
                 </div>
-
+                <div className='flex flex-col'>
                 <input
                   type="text"
                   value={person.description}
@@ -339,7 +369,14 @@ export default function People({
                   placeholder={`Enter Description ${index + 1}`}
                   className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-
+                <span
+            className={`text-xs ${
+              person.description.length > 140 ? 'text-red-500' : 'text-gray-500'
+            }`}
+          >
+            {person.description.length}/150 characters
+          </span>
+          </div>
                 <div className="flex items-center gap-2">
                   {person.image && (
                     <div className="flex items-center gap-2">

@@ -100,6 +100,8 @@ export default function Graphs({
     column: string,
     value: string
   ) => {
+    if (value.length > 25) return // Enforce max length of 25 characters
+  
     if (column !== 'label' && !/^\d*\.?\d*$/.test(value)) {
       return // Validate numerical input for series fields
     }
@@ -108,8 +110,11 @@ export default function Graphs({
     )
     setRows(updatedRows)
   }
+  
 
   const handleHeaderChange = (index: number, value: string) => {
+    if (value.length > 25) return // Enforce max length of 25 characters
+  
     const updatedHeaders = headers.map((header, i) =>
       i === index ? value : header
     )

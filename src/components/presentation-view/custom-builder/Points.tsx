@@ -39,10 +39,13 @@ export default function Points({
   const [showTooltip, setShowTooltip] = useState(false) // Tooltip visibility state
 
   const handleInputChange = (value: string, index: number) => {
-    const updatedPoints = [...points]
-    updatedPoints[index] = value
-    setPoints(updatedPoints)
-  }
+    if (value.length <= 150) {
+      const updatedPoints = [...points];
+      updatedPoints[index] = value;
+      setPoints(updatedPoints);
+    }
+  };
+  
   const containerRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (containerRef.current) {
@@ -178,7 +181,7 @@ export default function Points({
             {points.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center gap-2 mb-2 lg:mb-0 p-1 ${
+                className={`flex flex-col items-start gap-2 mb-2 lg:mb-0 p-1 ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
@@ -189,6 +192,14 @@ export default function Points({
                   placeholder={`Enter Point ${index + 1}`}
                   className="hidden lg:block flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                 {/* Character Counter (outside the input container) */}
+    <span
+      className={`hidden lg:block text-xs ${
+        point.length > 140 ? 'text-red-500' : 'text-gray-500'
+      }`}
+    >
+      {point.length}/150 characters
+    </span>
                 {/* Mobile View Input */}
                 <input
                   type="text"
@@ -197,6 +208,14 @@ export default function Points({
                   placeholder={`Enter Point ${index + 1}`}
                   className="lg:hidden mb-2 w-full text-[#5D5F61] p-3 mt-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                  {/* Character Counter (outside the input container) */}
+    <span
+      className={`lg:hidden text-xs ${
+        point.length > 140 ? 'text-red-500' : 'text-gray-500'
+      }`}
+    >
+      {point.length}/150 characters
+    </span>
                 {/* Add New Point Button */}
                 {index === points.length - 1 && points.length < 6 && (
                   <button

@@ -42,17 +42,20 @@ export default function Statistics({
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
 
   const handleInputTitle = (value: string, index: number) => {
-    const updatedPoints = [...title]
-    updatedPoints[index] = value
-    setTitle(updatedPoints)
-  }
-
+    if (value.length <= 25) {
+      const updatedPoints = [...title];
+      updatedPoints[index] = value;
+      setTitle(updatedPoints);
+    }
+  };
+  
   const handleInputDescription = (value: string, index: number) => {
-    const updatedPoints = [...description]
-    updatedPoints[index] = value
-    setDescription(updatedPoints)
-  }
-
+    if (value.length <= 25) {
+      const updatedPoints = [...description];
+      updatedPoints[index] = value;
+      setDescription(updatedPoints);
+    }
+  };
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -190,31 +193,49 @@ export default function Statistics({
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto scrollbar-none lg:w-[65%]"
+            className="flex-1 overflow-y-auto scrollbar-none lg:w-[80%] w-full lg:p-4"
           >
             {title.map((point, index) => (
               <div
                 key={index}
-                className={`flex gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 ${
+                className={`flex  gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <input
-                  type="text"
-                  value={title[index]}
-                  onChange={(e) => handleInputTitle(e.target.value, index)}
-                  placeholder={`Enter Data Label ${index + 1}`}
-                  className="lg:ml-1 flex-1 lg:w-[65%] w-1/2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="text"
-                  value={description[index]}
-                  onChange={(e) =>
-                    handleInputDescription(e.target.value, index)
-                  }
-                  placeholder={`Enter Value ${index + 1}`}
-                  className="lg:ml-2 flex-1 lg:w-[65%] w-1/2 lg:mr-2 lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              <div className="flex flex-col ">
+  <input
+    type="text"
+    value={title[index]}
+    onChange={(e) => handleInputTitle(e.target.value, index)}
+    placeholder={`Enter Data Label ${index + 1}`}
+    className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    maxLength={25}
+  />
+  <span
+    className={`text-xs mt-1 ${
+      title[index].length > 20 ? 'text-red-500' : 'text-gray-500'
+    }`}
+  >
+    {title[index].length}/25 characters
+  </span>
+</div>
+<div className="flex flex-col">
+  <input
+    type="text"
+    value={description[index]}
+    onChange={(e) => handleInputDescription(e.target.value, index)}
+    placeholder={`Enter Value ${index + 1}`}
+    className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    maxLength={25}
+  />
+  <span
+    className={`text-xs mt-1 ${
+      description[index].length > 20 ? 'text-red-500' : 'text-gray-500'
+    }`}
+  >
+    {description[index].length}/25 characters
+  </span>
+</div>
               </div>
             ))}
 
