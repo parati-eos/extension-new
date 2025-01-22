@@ -6,6 +6,8 @@ import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
 interface PointsProps {
   heading: string
@@ -37,6 +39,10 @@ export default function Points({
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [showTooltip, setShowTooltip] = useState(false) // Tooltip visibility state
+  const [refineLoadingStates, setRefineLoadingStates] = useState<boolean[]>(
+    new Array(points.length).fill(false)
+  )
+  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
   const handleInputChange = (value: string, index: number) => {
     const updatedPoints = [...points]
@@ -133,6 +139,58 @@ export default function Points({
     }
   }
 
+  const refineText = async (type: string, index?: number) => {
+    const newRefineLoadingStates = [...refineLoadingStates]
+    newRefineLoadingStates[index!] = true // Set loading for this specific index
+    setRefineLoadingStates(newRefineLoadingStates)
+
+    let textToRefine = ''
+
+    if (type === 'slideTitle') {
+      textToRefine = slideTitle
+      setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+    } else if (type === 'points' && index !== undefined) {
+      textToRefine = points[index]
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
+        {
+          type: type,
+          textToRefine: textToRefine,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        const refinedText = response.data.refinedText
+
+        if (type === 'slideTitle') {
+          setSlideTitle(refinedText)
+        } else if (type === 'points' && index !== undefined) {
+          const updatedPoints = [...points]
+          updatedPoints[index] = refinedText
+          setPoints(updatedPoints)
+        }
+      }
+      newRefineLoadingStates[index!] = false // Stop loading for this specific index
+      setRefineLoadingStates(newRefineLoadingStates)
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    } catch (error) {
+      toast.error('Error refining text!', {
+        position: 'top-right',
+        autoClose: 3000,
+      })
+      newRefineLoadingStates[index!] = false // Stop loading for this specific index
+      setRefineLoadingStates(newRefineLoadingStates)
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    }
+  }
+
   const onBack = () => {
     setDisplayMode('customBuilder')
   }
@@ -157,13 +215,28 @@ export default function Points({
           </div>
           {/* Editable Slide Title */}
           <div className="w-full p-1 ">
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {refineLoadingSlideTitle ? (
+                <>
+                  <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                    <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                </>
+              ) : (
+                <FontAwesomeIcon
+                  icon={faWandMagicSparkles}
+                  onClick={() => refineText('slideTitle')}
+                  className="absolute top-[55%] hover:scale-105 hover:cursor-pointer active:scale-95 right-2 transform -translate-y-1/2 text-[#3667B2]"
+                />
+              )}
+            </div>
           </div>
           {/* Input Section with Scrolling */}
           <div
@@ -182,21 +255,51 @@ export default function Points({
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <input
-                  type="text"
-                  value={point}
-                  onChange={(e) => handleInputChange(e.target.value, index)}
-                  placeholder={`Enter Point ${index + 1}`}
-                  className="hidden lg:block flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="relative hidden lg:block w-full">
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) => handleInputChange(e.target.value, index)}
+                    placeholder={`Enter Point ${index + 1}`}
+                    className="flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {refineLoadingStates[index] ? (
+                    <>
+                      <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                      </div>
+                    </>
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('points', index)}
+                      className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                    />
+                  )}
+                </div>
                 {/* Mobile View Input */}
-                <input
-                  type="text"
-                  value={point}
-                  onChange={(e) => handleInputChange(e.target.value, index)}
-                  placeholder={`Enter Point ${index + 1}`}
-                  className="lg:hidden mb-2 w-full text-[#5D5F61] p-3 mt-2 border  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="relative lg:hidden w-full">
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) => handleInputChange(e.target.value, index)}
+                    placeholder={`Enter Point ${index + 1}`}
+                    className="mb-2 w-full text-[#5D5F61] p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {refineLoadingStates[index] ? (
+                    <>
+                      <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                      </div>
+                    </>
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('points', index)}
+                      className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                    />
+                  )}
+                </div>
                 {/* Add New Point Button */}
                 {index === points.length - 1 && points.length < 6 && (
                   <button
@@ -228,41 +331,40 @@ export default function Points({
 
             {/* Generate Slide Button */}
             <div
-  className="relative"
-  onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
-  onMouseLeave={() => setShowTooltip(false)}
->
-  <button
-    onClick={handleGenerateSlide}
-    disabled={isGenerateDisabled || isLoading || isImageLoading}
-    className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-      isGenerateDisabled || isLoading || isImageLoading
-        ? 'bg-gray-200 text-gray-500'
-        : 'bg-[#3667B2] text-white'
-    }`}
-  >
-    {isLoading ? 'Loading...' : 'Generate Slide'}
-  </button>
+              className="relative"
+              onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
+              <button
+                onClick={handleGenerateSlide}
+                disabled={isGenerateDisabled || isLoading || isImageLoading}
+                className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+                  isGenerateDisabled || isLoading || isImageLoading
+                    ? 'bg-gray-200 text-gray-500'
+                    : 'bg-[#3667B2] text-white'
+                }`}
+              >
+                {isLoading ? 'Loading...' : 'Generate Slide'}
+              </button>
 
-  {/* Tooltip */}
-  {showTooltip && (
-    <span
-      className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 mt-2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md z-50"
-      style={{ whiteSpace: 'nowrap' }} // Prevent text wrapping
-    >
-      {points.every((point) => point.trim() === '')
-        ? 'Minimum 1 point required.'
-        : 'Slide title is required.'}
-    </span>
-  )}
-</div>
-
+              {/* Tooltip */}
+              {showTooltip && (
+                <span
+                  className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 mt-2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md z-50"
+                  style={{ whiteSpace: 'nowrap' }} // Prevent text wrapping
+                >
+                  {points.every((point) => point.trim() === '')
+                    ? 'Minimum 1 point required.'
+                    : 'Slide title is required.'}
+                </span>
+              )}
+            </div>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-2 gap-2  w-full relative "
-          
-          onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
-  onMouseLeave={() => setShowTooltip(false)}
+          <div
+            className="flex lg:hidden mt-2 gap-2  w-full relative "
+            onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
+            onMouseLeave={() => setShowTooltip(false)}
           >
             <div className="flex-1  items-center justify-center gap-2">
               <AttachImage
@@ -279,23 +381,21 @@ export default function Points({
               className={`flex-1 py-2 rounded-md ${
                 isGenerateDisabled || isLoading || isImageLoading
                   ? 'bg-gray-200 text-gray-500'
-        : 'bg-[#3667B2] text-white'
+                  : 'bg-[#3667B2] text-white'
               }`}
             >
               Generate Slide
             </button>
 
             {/* Tooltip for Slide Type */}
-            {showTooltip &&  (
+            {showTooltip && (
               <div className="absolute -top-12 left-[75%] w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md">
-                  {points.every((point) => point.trim() === '')
-        ? 'Minimum 1 point required.'
-        : 'Slide title is required.'}
+                {points.every((point) => point.trim() === '')
+                  ? 'Minimum 1 point required.'
+                  : 'Slide title is required.'}
               </div>
             )}
-
           </div>
-          
         </>
       )}
     </div>

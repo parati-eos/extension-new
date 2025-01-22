@@ -4,6 +4,8 @@ import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
 interface GraphProps {
   heading: string
@@ -39,6 +41,7 @@ export default function Graphs({
   const [isLoading, setIsLoading] = useState(false)
   const tableRef = useRef<HTMLDivElement | null>(null)
   const [headers, setHeaders] = useState<string[]>(['', ''])
+  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
@@ -187,6 +190,37 @@ export default function Graphs({
     }
   }
 
+  const refineText = async (type: string, text: string) => {
+    setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
+        {
+          type: type,
+          textToRefine: text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        const refinedText = response.data.refinedText
+
+        setSlideTitle(refinedText)
+      }
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    } catch (error) {
+      toast.error('Error refining text!', {
+        position: 'top-right',
+        autoClose: 3000,
+      })
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    }
+  }
+
   const onBack = () => {
     if (currentScreen === 'chartSelection') {
       setDisplayMode('customBuilder')
@@ -268,19 +302,33 @@ export default function Graphs({
           </div>
           {/* Editable Slide Title */}
           {currentScreen === 'inputScreen' && (
-  <div className="w-full lg:p-1">
-    <input
-      type="text"
-      value={slideTitle}
-      onChange={(e) => setSlideTitle(e.target.value)}
-      placeholder="Add Slide Title"
-      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
-)}
+            <div className="w-full lg:p-1">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={slideTitle}
+                  onChange={(e) => setSlideTitle(e.target.value)}
+                  placeholder="Add Slide Title"
+                  className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {refineLoadingSlideTitle ? (
+                  <>
+                    <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                      <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  </>
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faWandMagicSparkles}
+                    onClick={() => refineText('slideTitle', slideTitle)}
+                    className="absolute top-[55%] hover:scale-105 hover:cursor-pointer active:scale-95 right-2 transform -translate-y-1/2 text-[#3667B2]"
+                  />
+                )}
+              </div>
+            </div>
+          )}
           {currentScreen === 'chartSelection' ? (
             <div className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
-          
               <div className="grid  grid-cols-3 lg:grid-cols-4 gap-4 mt-4 mr-5 h-28 ">
                 {['Line', 'Bar', 'Pie'].map((chart) => (
                   <div

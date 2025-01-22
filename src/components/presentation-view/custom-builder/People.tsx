@@ -5,6 +5,8 @@ import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
 interface PeopleProps {
   heading: string
@@ -52,6 +54,10 @@ export default function People({
   const [isUserInteracting, setIsUserInteracting] = useState(false) // Tracks user interaction
   const [isImageUploading, setIsImageUploading] = useState(false) // Track image upload state
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const [refineLoadingStates, setRefineLoadingStates] = useState<boolean[]>(
+    new Array(people.length).fill(false)
+  )
+  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -240,6 +246,58 @@ export default function People({
     }
   }
 
+  const refineText = async (type: string, index?: number) => {
+    const newRefineLoadingStates = [...refineLoadingStates]
+    newRefineLoadingStates[index!] = true // Set loading for this specific index
+    setRefineLoadingStates(newRefineLoadingStates)
+
+    let textToRefine = ''
+
+    if (type === 'slideTitle') {
+      textToRefine = slideTitle
+      setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+    } else if (type === 'people' && index !== undefined) {
+      textToRefine = people[index].description
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
+        {
+          type: type,
+          textToRefine: textToRefine,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        const refinedText = response.data.refinedText
+
+        if (type === 'slideTitle') {
+          setSlideTitle(refinedText)
+        } else if (type === 'people' && index !== undefined) {
+          const updatedPeopleDescriptions = [...people]
+          updatedPeopleDescriptions[index].description = refinedText
+          setPeople(updatedPeopleDescriptions)
+        }
+      }
+      newRefineLoadingStates[index!] = false // Stop loading for this specific index
+      setRefineLoadingStates(newRefineLoadingStates)
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    } catch (error) {
+      toast.error('Error refining text!', {
+        position: 'top-right',
+        autoClose: 3000,
+      })
+      newRefineLoadingStates[index!] = false // Stop loading for this specific index
+      setRefineLoadingStates(newRefineLoadingStates)
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    }
+  }
+
   const handleNameChange = (value: string, index: number) => {
     // Ensure that only alphabetic characters and spaces are allowed in the name input
     const sanitizedValue = value.replace(/[^a-zA-Z\s]/g, '')
@@ -255,13 +313,12 @@ export default function People({
       people[1].description.trim()
     ) || !slideTitle.trim()
 
-    const isTooltipSwitch =
-    !(
-      people[0].name.trim() &&
-      people[0].description.trim() &&
-      people[1].name.trim() &&
-      people[1].description.trim()
-    ) 
+  const isTooltipSwitch = !(
+    people[0].name.trim() &&
+    people[0].description.trim() &&
+    people[1].name.trim() &&
+    people[1].description.trim()
+  )
 
   const onBack = () => {
     setDisplayMode('customBuilder')
@@ -281,13 +338,28 @@ export default function People({
           </div>
           {/* Editable Slide Title */}
           <div className="w-full p-1 ">
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {refineLoadingSlideTitle ? (
+                <>
+                  <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                    <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                </>
+              ) : (
+                <FontAwesomeIcon
+                  icon={faWandMagicSparkles}
+                  onClick={() => refineText('slideTitle')}
+                  className="absolute top-[55%] hover:scale-105 hover:cursor-pointer active:scale-95 right-2 transform -translate-y-1/2 text-[#3667B2]"
+                />
+              )}
+            </div>
           </div>
           <div
             ref={containerRef}
@@ -330,15 +402,30 @@ export default function People({
                   />
                 </div>
 
-                <input
-                  type="text"
-                  value={person.description}
-                  onChange={(e) =>
-                    handleInputChange(e.target.value, index, 'description')
-                  }
-                  placeholder={`Enter Description ${index + 1}`}
-                  className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    value={person.description}
+                    onChange={(e) =>
+                      handleInputChange(e.target.value, index, 'description')
+                    }
+                    placeholder={`Enter Description ${index + 1}`}
+                    className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {refineLoadingStates[index] ? (
+                    <>
+                      <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                      </div>
+                    </>
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('people', index)}
+                      className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                    />
+                  )}
+                </div>
 
                 <div className="flex items-center gap-2">
                   {person.image && (
@@ -405,36 +492,36 @@ export default function People({
           </div>
 
           <div className="flex w-full justify-end relative">
-  <button
-    onClick={(e) => {
-      if (!isGenerateDisabled && !isImageUploading) {
-        handleGenerateSlide();
-      } else {
-        e.preventDefault(); // Prevent action when disabled
-      }
-    }}
-    onMouseEnter={() => {
-      if (isGenerateDisabled || isAddMoreDisabled) setShowTooltip(true); // Show tooltip for relevant condition
-    }}
-    onMouseLeave={() => setShowTooltip(false)} // Hide tooltip on mouse leave
-    className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-      isGenerateDisabled || isImageUploading || !slideTitle
-        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-        : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-    }`}
-  >
-    Generate Slide
-
-    {/* Tooltip */}
-    {showTooltip && (
-      <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-        {isTooltipSwitch
-          ? 'Minimum 2 people required.'
-          : 'Slide title is required.'}
-      </span>
-    )}
-  </button>
-</div>
+            <button
+              onClick={(e) => {
+                if (!isGenerateDisabled && !isImageUploading) {
+                  handleGenerateSlide()
+                } else {
+                  e.preventDefault() // Prevent action when disabled
+                }
+              }}
+              onMouseEnter={() => {
+                if (isGenerateDisabled || isAddMoreDisabled)
+                  setShowTooltip(true) // Show tooltip for relevant condition
+              }}
+              onMouseLeave={() => setShowTooltip(false)} // Hide tooltip on mouse leave
+              className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
+                isGenerateDisabled || isImageUploading || !slideTitle
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+              }`}
+            >
+              Generate Slide
+              {/* Tooltip */}
+              {showTooltip && (
+                <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  {isTooltipSwitch
+                    ? 'Minimum 2 people required.'
+                    : 'Slide title is required.'}
+                </span>
+              )}
+            </button>
+          </div>
         </>
       )}
     </div>

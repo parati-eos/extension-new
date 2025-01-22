@@ -6,6 +6,8 @@ import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
 import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
 interface TimelineProps {
   heading: string
@@ -39,8 +41,10 @@ export default function Timeline({
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
-  const [showTitleTooltip, setShowTitleTooltip] = useState(false) // Tooltip for slide title
-
+  const [refineLoadingStates, setRefineLoadingStates] = useState<boolean[]>(
+    new Array(description.length).fill(false)
+  )
+  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
   const handleInputTitle = (value: string, index: number) => {
     const updatedPoints = [...timeline]
@@ -139,6 +143,58 @@ export default function Timeline({
     }
   }
 
+  const refineText = async (type: string, index?: number) => {
+    const newRefineLoadingStates = [...refineLoadingStates]
+    newRefineLoadingStates[index!] = true // Set loading for this specific index
+    setRefineLoadingStates(newRefineLoadingStates)
+
+    let textToRefine = ''
+
+    if (type === 'slideTitle') {
+      textToRefine = slideTitle
+      setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+    } else if (type === 'timeLineDescription' && index !== undefined) {
+      textToRefine = description[index]
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
+        {
+          type: type,
+          textToRefine: textToRefine,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+      if (response.status === 200) {
+        const refinedText = response.data.refinedText
+
+        if (type === 'slideTitle') {
+          setSlideTitle(refinedText)
+        } else if (type === 'timeLineDescription' && index !== undefined) {
+          const updatedDescriptions = [...description]
+          updatedDescriptions[index] = refinedText
+          setDescription(updatedDescriptions)
+        }
+      }
+      newRefineLoadingStates[index!] = false // Stop loading for this specific index
+      setRefineLoadingStates(newRefineLoadingStates)
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    } catch (error) {
+      toast.error('Error refining text!', {
+        position: 'top-right',
+        autoClose: 3000,
+      })
+      newRefineLoadingStates[index!] = false // Stop loading for this specific index
+      setRefineLoadingStates(newRefineLoadingStates)
+      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+    }
+  }
+
   const handleFileSelect = async (file: File | null) => {
     setIsLoading(true)
     if (file) {
@@ -178,13 +234,28 @@ export default function Timeline({
           </div>
           {/* Editable Slide Title */}
           <div className="w-full p-1 ">
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg  rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {refineLoadingSlideTitle ? (
+                <>
+                  <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                    <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  </div>
+                </>
+              ) : (
+                <FontAwesomeIcon
+                  icon={faWandMagicSparkles}
+                  onClick={() => refineText('slideTitle')}
+                  className="absolute top-[55%] hover:scale-105 hover:cursor-pointer active:scale-95 right-2 transform -translate-y-1/2 text-[#3667B2]"
+                />
+              )}
+            </div>
           </div>
           {/* Content container with flex-grow */}
           <div
@@ -205,15 +276,29 @@ export default function Timeline({
                   placeholder={`Enter Timeline ${index + 1}`}
                   className="flex-1 lg:ml-1 w-full lg:w-[25%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <input
-                  type="text"
-                  value={description[index]}
-                  onChange={(e) =>
-                    handleInputDescription(e.target.value, index)
-                  }
-                  placeholder={`Enter Description ${index + 1}`}
-                  className="lg:ml-2 lg:mr-1 w-full lg:w-[75%] lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                {/* Description Input with Icons */}
+                <div className="relative lg:ml-2 lg:mr-1 w-full lg:w-[75%]">
+                  <input
+                    type="text"
+                    value={description[index]}
+                    onChange={(e) =>
+                      handleInputDescription(e.target.value, index)
+                    }
+                    placeholder={`Enter Description ${index + 1}`}
+                    className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {refineLoadingStates[index] ? (
+                    <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                      <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                    </div>
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('timeLineDescription', index)}
+                      className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                    />
+                  )}
+                </div>
               </div>
             ))}
 
@@ -244,41 +329,40 @@ export default function Timeline({
               fileName={fileName}
               uploadCompleted={uploadCompleted}
             />
-          <button
-  onClick={(e) => {
-    if (!isGenerateDisabled && !isLoading) {
-      handleGenerateSlide();
-    } else {
-      e.preventDefault(); // Prevent action when disabled
-    }
-  }}
-  onMouseEnter={() => {
-    if (isGenerateDisabled) {
-      setShowTooltip(true);
-    }
-  }}
-  onMouseLeave={() => setShowTooltip(false)}
-  className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 ${
-    isGenerateDisabled || loading || isLoading
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
-      : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
-  }`}
->
-  {loading ? 'Generating...' : 'Generate Slide'}
+            <button
+              onClick={(e) => {
+                if (!isGenerateDisabled && !isLoading) {
+                  handleGenerateSlide()
+                } else {
+                  e.preventDefault() // Prevent action when disabled
+                }
+              }}
+              onMouseEnter={() => {
+                if (isGenerateDisabled) {
+                  setShowTooltip(true)
+                }
+              }}
+              onMouseLeave={() => setShowTooltip(false)}
+              className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 ${
+                isGenerateDisabled || loading || isLoading
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
+                  : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles
+              }`}
+            >
+              {loading ? 'Generating...' : 'Generate Slide'}
 
-  {/* Tooltip */}
-  {isGenerateDisabled && showTooltip && (
-  <span className="absolute top-[-40px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-    {timeline.length < 3
-      ? 'Minimum 3 timelines are required.'
-      : slideTitle.trim() === ''
-      ? 'Slide title is required.'
-      : ''}
-  </span>
-)}
-
-</button>
-
+              {/* Tooltip */}
+              {showTooltip && (
+                <span className="absolute top-[-40px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+                  {timeline.filter(
+                    (point, index) =>
+                      point.trim() !== '' && description[index].trim() !== ''
+                  ).length < 3
+                    ? 'Minimum 3 timelines are required.'
+                    : 'Slide title is required.'}
+                </span>
+              )}
+            </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden mt-2 gap-2  w-full">
@@ -313,11 +397,12 @@ export default function Timeline({
               {/* Tooltip */}
               {isGenerateDisabled && showTooltip && (
                 <span className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  {timeline.length < 3
-      ? 'Minimum 3 timelines are required.'
-      : slideTitle.trim() === ''
-      ? 'Slide title is required.'
-      : ''}
+                  {timeline.filter(
+                    (point, index) =>
+                      point.trim() !== '' && description[index].trim() !== ''
+                  ).length < 3
+                    ? 'Minimum 3 timelines are required.'
+                    : 'Slide title is required.'}
                 </span>
               )}
             </button>

@@ -116,6 +116,7 @@ export default function ViewPresentation() {
   const slidesArrayRef = useRef(slidesArray)
   const newSlideLoadingRef = useRef(isNewSlideLoading)
   const slideStatesRef = useRef(slideStates)
+  const [exportStatus, setExportStatus] = useState(false)
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -127,6 +128,25 @@ export default function ViewPresentation() {
   const handleDownload = async () => {
     setShowCountdown(true)
     setCountdown(8)
+    // Set exportStatus to true if false
+    if (!exportStatus) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {
+            exportstatus: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+      } catch (error: any) {
+        console.error('Failed to update profile', error)
+      }
+    }
+
     try {
       const formId = documentID
       if (!formId) {
@@ -234,6 +254,25 @@ export default function ViewPresentation() {
 
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
+    // Set exportStatus to true if false
+    if (!exportStatus) {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {
+            exportstatus: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+      } catch (error: any) {
+        console.error('Failed to update profile', error)
+      }
+    }
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
@@ -1403,6 +1442,12 @@ export default function ViewPresentation() {
         )
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
+        const exportStatus = response.data.exportstatus
+        if (exportStatus) {
+          setExportStatus(true)
+        } else {
+          setExportStatus(false)
+        }
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {
@@ -1527,6 +1572,7 @@ export default function ViewPresentation() {
           }}
           heading={pricingModalHeading}
           subscriptionId={subId}
+          exportStatus={exportStatus}
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
           currency={currency}
