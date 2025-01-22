@@ -48,12 +48,12 @@ export default function Timeline({
 
   const handleInputTitle = (value: string, index: number) => {
     if (value.length <= 25) {
-      const updatedPoints = [...timeline];
-      updatedPoints[index] = value;
-      setTimeline(updatedPoints);
+      const updatedPoints = [...timeline]
+      updatedPoints[index] = value
+      setTimeline(updatedPoints)
     }
-  };
-  
+  }
+
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -64,11 +64,11 @@ export default function Timeline({
 
   const handleInputDescription = (value: string, index: number) => {
     if (value.length <= 150) {
-      const updatedPoints = [...description];
-      updatedPoints[index] = value;
-      setDescription(updatedPoints);
+      const updatedPoints = [...description]
+      updatedPoints[index] = value
+      setDescription(updatedPoints)
     }
-  };
+  }
 
   const addNewPoint = () => {
     if (timeline.length < 6) {
@@ -305,8 +305,6 @@ export default function Timeline({
                   )}
                 </div>
               </div>
-            </div>
-            
             ))}
 
             {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
