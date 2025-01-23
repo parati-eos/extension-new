@@ -249,6 +249,7 @@ export default function Images({
                   whiteSpace: 'nowrap', // Prevent text wrapping
                   overflow: 'hidden', // Hide overflowing text
                 }}
+                maxLength={25}
                 placeholder="Add Slide Title"
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />

@@ -64,7 +64,7 @@ export default function Points({
       setPoints([...points, ''])
     }
   }
-
+  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
   const handleFileSelect = async (file: File | null) => {
     setIsImageLoading(true)
     if (file) {
@@ -224,6 +224,7 @@ export default function Points({
                 value={slideTitle}
                 onChange={(e) => setSlideTitle(e.target.value)}
                 placeholder="Add Slide Title"
+                maxLength={25}
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {refineLoadingSlideTitle ? (
@@ -268,6 +269,8 @@ export default function Points({
                   <input
                     type="text"
                     value={point}
+                    onFocus={() => setFocusedInput(index)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputChange(e.target.value, index)}
                     onFocus={(e) => {
                       const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
@@ -305,8 +308,12 @@ export default function Points({
 
                 {/* Character Counter (outside the input container) */}
                 <span
-                  className={`hidden lg:block text-xs ${
-                    point.length > 140 ? 'text-red-500' : 'text-gray-500'
+                  className={`hidden lg:block text-xs mt-1 ml-1 ${
+                    focusedInput === index
+                      ? points[index].length > 140
+                        ? 'text-red-500'
+                        : 'text-gray-500'
+                      : 'invisible' // Hide text but reserve space
                   }`}
                 >
                   {point.length}/150 characters
@@ -316,6 +323,8 @@ export default function Points({
                   <input
                     type="text"
                     value={point}
+                    onFocus={() => setFocusedInput(index)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputChange(e.target.value, index)}
                     placeholder={`Enter Point ${index + 1}`}
                     className="mb-2 w-full text-[#5D5F61] p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -336,8 +345,12 @@ export default function Points({
                 </div>
                 {/* Character Counter (outside the input container) */}
                 <span
-                  className={`lg:hidden text-xs ${
-                    point.length > 140 ? 'text-red-500' : 'text-gray-500'
+                  className={`lg:hidden block text-xs ml-1  ${
+                    focusedInput === index
+                      ? points[index].length > 140
+                        ? 'text-red-500'
+                        : 'text-gray-500'
+                      : 'invisible' // Hide text but reserve space
                   }`}
                 >
                   {point.length}/150 characters

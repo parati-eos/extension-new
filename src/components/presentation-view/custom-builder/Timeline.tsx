@@ -46,6 +46,8 @@ export default function Timeline({
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
 
+  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
+
   const handleInputTitle = (value: string, index: number) => {
     if (value.length <= 25) {
       const updatedPoints = [...timeline]
@@ -253,6 +255,7 @@ export default function Timeline({
                   whiteSpace: 'nowrap', // Prevent text wrapping
                   overflow: 'hidden', // Hide overflowing text
                 }}
+                maxLength={25}
                 placeholder="Add Slide Title"
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
@@ -294,14 +297,18 @@ export default function Timeline({
                     type="text"
                     value={timeline[index]}
                     onChange={(e) => handleInputTitle(e.target.value, index)}
+                    onFocus={() => setFocusedInput(index)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
                     placeholder={`Enter Timeline ${index + 1}`}
-                    className="flex-1 lg:ml-1 w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1  lg:ml-1 w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <span
-                    className={`text-xs mt-1 ${
-                      timeline[index].length > 20
-                        ? 'text-red-500'
-                        : 'text-gray-500'
+                    className={`block text-xs mt-1 ml-1 ${
+                      focusedInput === index
+                        ? timeline[index].length > 20
+                          ? 'text-red-500'
+                          : 'text-gray-500'
+                        : 'invisible' // Hide text but reserve space
                     }`}
                   >
                     {timeline[index].length}/25 characters
@@ -313,6 +320,8 @@ export default function Timeline({
                     <input
                       type="text"
                       value={description[index]}
+                      onFocus={() => setFocusedInput(index + 100)}
+                      onBlur={() => setFocusedInput(null)}
                       onChange={(e) =>
                         handleInputDescription(e.target.value, index)
                       }
@@ -351,10 +360,12 @@ export default function Timeline({
                     )}
                   </>
                   <span
-                    className={`text-xs mt-1 ${
-                      description[index].length > 140
-                        ? 'text-red-500'
-                        : 'text-gray-500'
+                    className={`block text-xs mt-1 ml-1 ${
+                      focusedInput === index + 100
+                        ? description[index].length > 140
+                          ? 'text-red-500'
+                          : 'text-gray-500'
+                        : 'invisible' // Hide text but reserve space
                     }`}
                   >
                     {description[index].length}/150 characters
