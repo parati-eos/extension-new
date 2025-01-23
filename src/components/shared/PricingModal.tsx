@@ -35,7 +35,6 @@ interface PricingModalProps {
   exportHandler?: () => void
   isButtonDisabled?: boolean
   subscriptionId: string
-  exportStatus: boolean
 }
 
 const categories = [
@@ -76,7 +75,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   exportHandler,
   isButtonDisabled,
   subscriptionId,
-  exportStatus,
 }) => {
   const [isloading, setIsLoading] = useState(false)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(
@@ -325,25 +323,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     const currentTime = Date.now()
     const startAtTime = currentTime + 10 * 60 * 1000 // 10 minutes in milliseconds
     const startAtUnix = Math.floor(startAtTime / 1000) // Convert to Unix timestamp in seconds
-
-    // Set exportStatus to true if false
-    if (!exportStatus) {
-      try {
-        await axios.patch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-          {
-            exportstatus: true,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-      } catch (error: any) {
-        console.error('Failed to update profile', error)
-      }
-    }
 
     if (userPlan === 'free') {
       try {

@@ -13,7 +13,7 @@ interface TableData {
   columnHeaders: string[]
   rowHeaders: string[]
 }
-
+type focusedIndex = { rowIndex: number; colIndex: number } | null
 interface TableProps {
   heading: string
   slideType: string
@@ -50,6 +50,7 @@ export default function Table({
   const [isRowAdded, setIsRowAdded] = useState(false)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const [refineLoadingTable, setRefineLoadingTable] = useState(false)
 
   useEffect(() => {
     // Count fully completed rows
@@ -136,6 +137,8 @@ export default function Table({
     }
   }
 
+  const [focusedIndex, setFocusedIndex] = useState<focusedIndex>(null)
+
   const handleCellChange = (
     rowIndex: number,
     colIndex: number,
@@ -144,12 +147,14 @@ export default function Table({
     // Limit the character count to 25
     const updatedValue = value.slice(0, 25)
 
-    // Update the table data
+    // Update the table data with the new value
     const updatedRows = tableData.rows.map((row, i) =>
       i === rowIndex
         ? row.map((cell, j) => (j === colIndex ? updatedValue : cell))
         : row
     )
+
+    // Update the state with the modified rows
     setTableData((prev) => ({ ...prev, rows: updatedRows }))
   }
 
@@ -209,22 +214,32 @@ export default function Table({
         acc[`columnHeader${index + 1}`] = header
         return acc
       }, {}),
-      rows: tableData.rows.map((row, index) => ({
-        attribute1: row[0] || '',
-        attribute2: row[1] || '',
-        attribute3: row[2] || '',
-        attribute4: row[3] || '',
-        attribute5: row[4] || '',
-      })),
+      ...tableData.rows.reduce<Record<string, Record<string, string>>>(
+        (acc, row, index) => {
+          acc[`rows${index + 1}`] = {
+            attribute1: row[0] || '',
+            attribute2: row[1] || '',
+            attribute3: row[2] || '',
+            attribute4: row[3] || '',
+            attribute5: row[4] || '',
+          }
+          return acc
+        },
+        {}
+      ),
     }
 
     // Filter out empty rows
-    const filteredTablePayload = {
-      ...tablePayload,
-      rows: tablePayload.rows.filter((row) =>
-        Object.values(row).some((attr) => attr !== '')
-      ),
-    }
+    const filteredTablePayload = Object.fromEntries(
+      Object.entries(tablePayload).filter(([key, value]) => {
+        if (key.startsWith('rows')) {
+          return Object.values(value as Record<string, string>).some(
+            (attr) => attr !== ''
+          )
+        }
+        return true
+      })
+    )
 
     try {
       const response = await axios
@@ -264,15 +279,58 @@ export default function Table({
     }
   }
 
-  const refineText = async (type: string, text: string) => {
-    setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+  const refineText = async (type: string, text?: string) => {
+    let payload
+
+    if (type === 'slideTitle') {
+      setRefineLoadingSlideTitle(true)
+      payload = text
+    } else if (type === 'tables') {
+      setRefineLoadingTable(true)
+      // Prepare table data, filtering out empty row and column headers
+      const rowHeaders = tableData.rowHeaders.filter((header) => header !== '')
+      const columnHeaders = tableData.columnHeaders.filter(
+        (header) => header !== ''
+      )
+
+      const tablePayload = {
+        ...rowHeaders.reduce<Record<string, string>>((acc, header, index) => {
+          acc[`rowHeader${index + 1}`] = header
+          return acc
+        }, {}),
+        ...columnHeaders.reduce<Record<string, string>>(
+          (acc, header, index) => {
+            acc[`columnHeader${index + 1}`] = header
+            return acc
+          },
+          {}
+        ),
+        rows: tableData.rows.map((row, index) => ({
+          attribute1: row[0] || '',
+          attribute2: row[1] || '',
+          attribute3: row[2] || '',
+          attribute4: row[3] || '',
+          attribute5: row[4] || '',
+        })),
+      }
+
+      // Filter out empty rows
+      const filteredTablePayload = {
+        ...tablePayload,
+        rows: tablePayload.rows.filter((row) =>
+          Object.values(row).some((attr) => attr !== '')
+        ),
+      }
+
+      payload = filteredTablePayload
+    }
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
         {
           type: type,
-          textToRefine: text,
+          textToRefine: payload,
         },
         {
           headers: {
@@ -280,12 +338,64 @@ export default function Table({
           },
         }
       )
-      if (response.status === 200) {
+      if (response.status === 200 && type === 'slideTitle') {
         const refinedText = response.data.refinedText
-
         setSlideTitle(refinedText)
+        setRefineLoadingSlideTitle(false)
+      } else if (response.status === 200 && type === 'tables') {
+        setRefineLoadingTable(false)
+        const refinedTableData = response.data.refinedtext
+
+        // Dynamically extract all row headers
+        const refinedRowHeaders = Object.keys(refinedTableData)
+          .filter((key) => key.startsWith('rowHeader'))
+          .sort(
+            (a, b) =>
+              parseInt(a.replace('rowHeader', ''), 10) -
+              parseInt(b.replace('rowHeader', ''), 10)
+          ) // Ensure correct order
+          .map((key) => refinedTableData[key])
+          .filter((header) => header) // Filter out undefined or empty headers
+
+        // Dynamically extract all column headers
+        const refinedColumnHeaders = Object.keys(refinedTableData)
+          .filter((key) => key.startsWith('columnHeader'))
+          .sort(
+            (a, b) =>
+              parseInt(a.replace('columnHeader', ''), 10) -
+              parseInt(b.replace('columnHeader', ''), 10)
+          ) // Ensure correct order
+          .map((key) => refinedTableData[key])
+          .filter((header) => header) // Filter out undefined or empty headers
+
+        // Map rows to a 2D array of strings (string[][])
+        const refinedRows = Object.keys(refinedTableData)
+          .filter((key) => key.startsWith('rows'))
+          .sort(
+            (a, b) =>
+              parseInt(a.replace('rows', ''), 10) -
+              parseInt(b.replace('rows', ''), 10)
+          ) // Ensure correct order
+          .map((key) => {
+            const row = refinedTableData[key]
+            return Object.keys(row)
+              .filter((attrKey) => attrKey.startsWith('attribute'))
+              .sort(
+                (a, b) =>
+                  parseInt(a.replace('attribute', ''), 10) -
+                  parseInt(b.replace('attribute', ''), 10)
+              ) // Ensure correct order
+              .map((attrKey) => row[attrKey] || '') // Map to string, ensuring empty values are handled
+          })
+
+        // Update table data state
+        setTableData((prevData) => ({
+          ...prevData,
+          rowHeaders: refinedRowHeaders,
+          columnHeaders: refinedColumnHeaders,
+          rows: refinedRows,
+        }))
       }
-      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
     } catch (error) {
       toast.error('Error refining text!', {
         position: 'top-right',
@@ -311,37 +421,47 @@ export default function Table({
             <h3 className="text-semibold">Table</h3>
             <BackButton onClick={onBack} />
           </div>
-        <div className="w-full p-1">
-          <div className="relative">
-            <input
-              type="text"
-              value={slideTitle}
-              onChange={(e) => setSlideTitle(e.target.value)}
-              placeholder="Add Slide Title"
-              className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {refineLoadingSlideTitle ? (
-              <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-              </div>
-            ) : (
-              <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
-                <div className="relative group">
-                  <FontAwesomeIcon
-                    icon={faWandMagicSparkles}
-                    onClick={() => refineText('slideTitle', slideTitle)}
-                    className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                  />
-                  {/* Tooltip */}
-                  <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-                    Click to refine text.
-                  </span>
+          <div className="w-full p-1">
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                onFocus={(e) => {
+                  const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                  input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                }}
+                style={{
+                  textOverflow: 'ellipsis', // Truncate text with dots
+                  whiteSpace: 'nowrap', // Prevent text wrapping
+                  overflow: 'hidden', // Hide overflowing text
+                }}
+                maxLength={25}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+              />
+              {refineLoadingSlideTitle ? (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                  <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                  <div className="relative group">
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('slideTitle', slideTitle)}
+                      className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                    />
+                    {/* Tooltip */}
+                    <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                      Click to refine text.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        
+
           <div
             ref={containerRef}
             className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-1 p-1 "
@@ -411,6 +531,23 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
+                        {/* {refineLoadingTable ? ( */}
+                        {/* <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                            <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                          </div> */}
+                        {/* ) : ( */}
+                        {/* <div className="relative group ml-1">
+                            <FontAwesomeIcon
+                              icon={faWandMagicSparkles}
+                              onClick={() => refineText('tables')}
+                              className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                            /> */}
+                        {/* Tooltip */}
+                        {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                              Click to refine table.
+                            </span>
+                          </div> */}
+                        {/* )} */}
                       </div>
                     </th>
                   </tr>
@@ -447,29 +584,32 @@ export default function Table({
                               : 'lg:min-w-[0vw] '
                           }`}
                         >
-                          <input
-                            type="text"
-                            value={cell}
-                            onChange={(e) =>
-                              handleCellChange(
-                                rowIndex,
-                                colIndex,
-                                e.target.value
-                              )
-                            }
-                            className="w-full text-start border-none bg-transparent focus:outline-none"
-                          />
-                          {/* Display character count */}
-
-                          <span
-                            className={`text-xs mt-1 ${
-                              cell.length > 20
-                                ? 'text-red-500'
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {cell.length}/25
-                          </span>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={cell}
+                              onFocus={() =>
+                                setFocusedIndex({ rowIndex, colIndex })
+                              }
+                              onBlur={() => setFocusedIndex(null)}
+                              onChange={(e) =>
+                                handleCellChange(
+                                  rowIndex,
+                                  colIndex,
+                                  e.target.value
+                                )
+                              }
+                              className="w-full text-start border-none bg-transparent focus:outline-none"
+                            />
+                            {/* Display character count */}
+                            {focusedIndex &&
+                              focusedIndex.rowIndex === rowIndex &&
+                              focusedIndex.colIndex === colIndex && (
+                                <span className="absolute bottom-[-10px] right-0 text-xs text-gray-600">
+                                  {cell.length}/25
+                                </span>
+                              )}
+                          </div>
                         </td>
                       ))}
                     </tr>

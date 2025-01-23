@@ -147,12 +147,12 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             id="phone"
             placeholder="Enter phone number"
             className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
-              !isPhoneValid ? 'border-red-500' : ''
+              !isPhoneValid && contactPhone.length !== 0  ? 'border-red-500' : ''
             }`}
             value={contactPhone}
             onChange={handlePhoneChange}
           />
-          {!isPhoneValid && (
+          {!isPhoneValid && contactPhone.length !== 0 &&(
             <p className="text-red-500 text-sm">
               Please enter a valid phone number. Remove 0 from the start if
               present.
@@ -171,13 +171,13 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             id="linkedin"
             placeholder="Link of your LinkedIn profile"
             className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
-              !isLinkedinValid ? 'border-red-500' : ''
+              !isLinkedinValid && linkedinLink.length !== 0 ? 'border-red-500' : ''
             }`}
             value={linkedinLink}
             onFocus={handleLinkedinFocus} // Add "https://" on focus
   onChange={handleLinkedinChange}
           />
-          {!isLinkedinValid && (
+          {!isLinkedinValid && linkedinLink.length !== 0 && (
             <p className="text-[#FF0000] text-sm text-left">
               Please enter a valid LinkedIn URL
             </p>

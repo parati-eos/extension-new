@@ -110,7 +110,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
 
   return (
     <div className="w-full h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
-      <div className="flex flex-col items-center justify-center py-2 bg-gray-50">
+      <div className="flex flex-col items-center lg:items-start lg:px-6 justify-center  bg-gray-50">
         <a
           href={companyLink}
           target="_blank"
@@ -120,7 +120,7 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
             src={companyLogo}
             alt="Parati Logo"
             width={150}
-            className="text-center"
+            className="h-16 w-20 h object-contain aspect-auto "
           />
         </a>
       </div>

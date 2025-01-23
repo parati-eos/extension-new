@@ -170,7 +170,7 @@ export default function Contact({
         contactEmail: email,
         contactPhone: phone,
         linkedinLink: linkedin,
-        ...(selectedImage && { image: selectedImage }),
+        image: selectedImage ? [selectedImage] : [],
       },
       outlineID: outlineID,
     }
@@ -263,7 +263,7 @@ export default function Contact({
               placeholder="Enter Website Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.websiteLink && (
+            {errors.websiteLink && websiteLink.length!==0 && (
               <p className="text-red-500 text-sm mt-1 lg:mt-0">
                 {errors.websiteLink}
               </p>
@@ -280,7 +280,7 @@ export default function Contact({
               placeholder="Enter Email"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && (
+            {errors.email && email.length!==0 && (
               <p className="text-red-500 text-sm">{errors.email}</p>
             )}
           </div>
@@ -295,7 +295,7 @@ export default function Contact({
               placeholder="Enter Phone"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.phone && (
+            {errors.phone && phone.length!==0 &&(
               <p className="text-red-500 text-sm">{errors.phone}</p>
             )}
           </div>
@@ -311,7 +311,7 @@ export default function Contact({
               placeholder="LinkedIn Profile Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.linkedin && (
+            {errors.linkedin && linkedin.length!==0 && (
               <p className="text-red-500 text-sm">{errors.linkedin}</p>
             )}
           </div>
@@ -336,16 +336,16 @@ export default function Contact({
         >
           {/* Generate Slide Button */}
           <button
-  onClick={handleSubmit}
-  disabled={isButtonDisabled || isImageLoading}
-  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform flex items-center justify-center ${
-    isButtonDisabled || isImageLoading
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : 'bg-[#3667B2] text-white'
-  }`}
->
-{isLoading ? 'Loading...' : 'Generate Slide'}
-</button>
+            onClick={handleSubmit}
+            disabled={isButtonDisabled || isImageLoading}
+            className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform flex items-center justify-center ${
+              isButtonDisabled || isImageLoading
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2] text-white'
+            }`}
+          >
+            {isLoading ? 'Loading...' : 'Generate Slide'}
+          </button>
           {/* Tooltip for Desktop */}
           {showTooltip && !email && (
             <div className="absolute top-[-35px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">

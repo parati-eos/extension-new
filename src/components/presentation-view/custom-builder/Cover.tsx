@@ -111,7 +111,7 @@ export default function Cover({
             logo,
             tagline: tagline,
             companyName: companyName,
-            ...(selectedImage && { image: selectedImage }),
+            image: selectedImage ? [selectedImage] : [],
           },
           outlineID,
         },
@@ -229,79 +229,72 @@ export default function Cover({
 
         {/* Generate Slide Button */}
         <div className="relative">
-      <button
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleGenerateSlide}
- 
-        className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
-          !logo || !tagline.trim() ||isUploading
-            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-            : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
-        }`}
-      >
-        {isLoading ? 'Loading...' : 'Generate Slide'}
-      </button>
+          <button
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={handleGenerateSlide}
+            className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
+              !logo || !tagline.trim() || isUploading
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+            }`}
+          >
+            {isLoading ? 'Loading...' : 'Generate Slide'}
+          </button>
 
-      {/* Tooltip */}
-      {isTooltipVisible && (!logo || !tagline.trim()) && (
-        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
-          {!logo
-            ? 'Please upload a logo.'
-            : !tagline.trim()
-            ? 'Please enter a tagline.'
-            : ''}
+          {/* Tooltip */}
+          {isTooltipVisible && (!logo || !tagline.trim()) && (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
+              {!logo
+                ? 'Please upload a logo.'
+                : !tagline.trim()
+                ? 'Please enter a tagline.'
+                : ''}
+            </div>
+          )}
         </div>
-      )}
-
-</div>
-
-
       </div>
 
-    {/* Attach Image and Generate Slide Buttons for Mobile */}
-<div className="flex lg:hidden mt-2 gap-2 w-full relative">
-  <div className="flex-1 items-center justify-center gap-2">
-    <AttachImage
-      onFileSelected={handleFileSelect}
-      isLoading={isUploading}
-      fileName={fileName}
-      uploadCompleted={uploadCompleted}
-    />
-  </div>
+      {/* Attach Image and Generate Slide Buttons for Mobile */}
+      <div className="flex lg:hidden mt-2 gap-2 w-full relative">
+        <div className="flex-1 items-center justify-center gap-2">
+          <AttachImage
+            onFileSelected={handleFileSelect}
+            isLoading={isUploading}
+            fileName={fileName}
+            uploadCompleted={uploadCompleted}
+          />
+        </div>
 
-  <div className="relative flex-1">
-  <button
-  onMouseEnter={handleMouseEnter}
-  onMouseLeave={handleMouseLeave}
-  onTouchStart={handleTouchStart}
-  onTouchEnd={handleTouchEnd}
-  onClick={handleGenerateSlide}
-  disabled={!logo || !tagline.trim() || isLoading || isUploading}
-  className={`w-full py-2 rounded-md ${
-    !logo || !tagline.trim() || isLoading || isUploading
-      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-      : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
-  }`}
->
-  {isLoading ? 'Loading...' : 'Generate Slide'}
-</button>
+        <div className="relative flex-1">
+          <button
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onClick={handleGenerateSlide}
+            disabled={!logo || !tagline.trim() || isLoading || isUploading}
+            className={`w-full py-2 rounded-md ${
+              !logo || !tagline.trim() || isLoading || isUploading
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
+            }`}
+          >
+            {isLoading ? 'Loading...' : 'Generate Slide'}
+          </button>
 
-    {/* Tooltip */}
-    {isTooltipVisible && (!logo || !tagline.trim()) && (
-      <div
-        className="absolute -top-12 left-1/2 w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md"
-      >
-        {!logo
-          ? 'Please upload a logo.'
-          : !tagline.trim()
-          ? 'Please enter a tagline.'
-          : ''}
+          {/* Tooltip */}
+          {isTooltipVisible && (!logo || !tagline.trim()) && (
+            <div className="absolute -top-12 left-1/2 w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md">
+              {!logo
+                ? 'Please upload a logo.'
+                : !tagline.trim()
+                ? 'Please enter a tagline.'
+                : ''}
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div>
-
     </div>
   )
 }

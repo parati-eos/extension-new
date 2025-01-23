@@ -29,9 +29,7 @@ function getSheetIdFromUrl(url: string) {
 
 const HistoryContainer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
-  const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isSortModalOpen, setIsSortModalOpen] = useState(false) // State for sort modal
-  const [isTooltipVisible, setIsTooltipVisible] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
@@ -55,31 +53,42 @@ const HistoryContainer: React.FC = () => {
   const [paid, setIsPaid] = useState(false)
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
-  const [exportStatus, setExportStatus] = useState(false)
   const [visibleSlides, setVisibleSlides] = useState<Set<number>>(new Set())
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Handle Download Button Click
-  const handleDownload = async () => {
-    // Set exportStatus to true if false
-    if (!exportStatus) {
-      try {
-        await axios.patch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+  const openPricingModal = async () => {
+    setIsPricingModalOpen(true)
+    try {
+      // Update the export status
+      const updatePaymentStatus = async () => {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
           {
-            exportstatus: true,
-          },
-          {
+            method: 'PATCH',
             headers: {
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${authToken}`,
             },
+            body: JSON.stringify({ exportstatus: true }),
           }
         )
-      } catch (error: any) {
-        console.error('Failed to update profile', error)
-      }
-    }
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const result = await response.json()
+        console.log('Payment status updated:', result)
+      }
+
+      // Call payment status update
+      await updatePaymentStatus()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // Handle Download Button Click
+  const handleDownload = async () => {
     try {
       const formId = documentID
       if (!formId) {
@@ -97,7 +106,7 @@ const HistoryContainer: React.FC = () => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${authToken}`,
               },
-              body: JSON.stringify({ paymentStatus: 1 }),
+              body: JSON.stringify({ paymentStatus: 1, exportstatus: true }),
             }
           )
 
@@ -194,24 +203,6 @@ const HistoryContainer: React.FC = () => {
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
     const paymentButton = document.getElementById('payment-button')
-    // Set exportStatus to true if false
-    if (!exportStatus) {
-      try {
-        await axios.patch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-          {
-            exportstatus: true,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-      } catch (error: any) {
-        console.error('Failed to update profile', error)
-      }
-    }
 
     if (paymentButton) {
       paymentButton.click()
@@ -247,12 +238,10 @@ const HistoryContainer: React.FC = () => {
         !dropdownRef.current.contains(e.target as Node)
       ) {
         setActiveDropdown(null) // Close dropdown if click is outside both
-        setIsTooltipVisible(false) // Hide tooltip when dropdown closes
       }
     }
 
     const handleScroll = () => setActiveDropdown(null)
-    setIsTooltipVisible(false) // Hide tooltip on scroll
 
     document.addEventListener('click', handleOutsideClick)
     window.addEventListener('scroll', handleScroll)
@@ -350,12 +339,6 @@ const HistoryContainer: React.FC = () => {
         )
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
-        const exportStatus = response.data.exportstatus
-        if (exportStatus) {
-          setExportStatus(false)
-        } else {
-          setExportStatus(true)
-        }
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {
@@ -396,11 +379,6 @@ const HistoryContainer: React.FC = () => {
   const monthlyPlanId = monthlyPlan?.id
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
-
-  // Reset the tooltip when a different dropdown is opened
-  useEffect(() => {
-    setIsDialogVisible(false)
-  }, [activeDropdown])
 
   const checkVisibility = useCallback(() => {
     if (!containerRef.current) return
@@ -662,36 +640,25 @@ const HistoryContainer: React.FC = () => {
                                 : ''
                             }`}
                             onClick={() => {
-                              // Only show the tooltip if the button is disabled
                               if (
                                 userPlan === 'free' &&
                                 item.paymentStatus === 0
                               ) {
-                                setIsTooltipVisible(true)
+                                openPricingModal()
+                                setPricingModalHeading('Google Slides')
+                              } else if (
+                                userPlan === 'free' &&
+                                item.paymentStatus === 1
+                              ) {
+                                handleDownload()
                               } else {
-                                handleDownload() // Your regular function for non-free users
+                                handleDownload()
                               }
                             }}
                           >
                             <FaGoogleDrive className="text-[#5D5F61]" />
                             <span>Google Slides</span>
                           </button>
-
-                          {/* Tooltip */}
-                          {isTooltipVisible && (
-                            <div className="absolute bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center ">
-                              <p className="text-sm text-gray-800 text-center ">
-                                Please{' '}
-                                <button
-                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                                  onClick={() => setIsPricingModalOpen(true)}
-                                >
-                                  upgrade to Pro
-                                </button>{' '}
-                                to access this feature.
-                              </p>
-                            </div>
-                          )}
                         </div>
                       </div>
                     )}
@@ -792,22 +759,14 @@ const HistoryContainer: React.FC = () => {
                           <FaShareAlt className="text-[#5D5F61]" />
                           <span>Share</span>
                         </button>
-                        <div
-                          className="relative"
-                          onMouseEnter={() =>
-                            userPlan === 'free' &&
-                            item.paymentStatus === 0 &&
-                            setIsDialogVisible(true)
-                          }
-                          onMouseLeave={() => setIsDialogVisible(false)}
-                        >
+                        <div className="relative">
                           <button
                             onClick={() => {
                               if (
                                 userPlan === 'free' &&
                                 item.paymentStatus === 0
                               ) {
-                                setIsPricingModalOpen(true)
+                                openPricingModal()
                                 setPricingModalHeading('Google Slides')
                               } else if (
                                 userPlan === 'free' &&
@@ -818,29 +777,11 @@ const HistoryContainer: React.FC = () => {
                                 handleDownload()
                               }
                             }}
-                            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer ${
-                              userPlan === 'free' && item.paymentStatus === 0
-                                ? 'cursor-not-allowed opacity-50'
-                                : ''
-                            }`}
+                            className={`flex items-center gap-3 text-base text-[#5D5F61] mb-2 cursor-pointer`}
                           >
                             <FaGoogleDrive className="text-[#5D5F61]" />
                             <span>Google Slides</span>
                           </button>
-                          {isDialogVisible && userPlan === 'free' && (
-                            <div className="absolute bottom-full left-[45%] transform -translate-x-1/2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg z-50">
-                              <p className="text-sm text-center text-gray-800">
-                                Please{' '}
-                                <button
-                                  className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                                  onClick={() => setIsPricingModalOpen(true)}
-                                >
-                                  upgrade to Pro
-                                </button>{' '}
-                                plan to access this feature.
-                              </p>
-                            </div>
-                          )}
                         </div>
                       </div>
                     )}
@@ -858,7 +799,6 @@ const HistoryContainer: React.FC = () => {
               }}
               heading={pricingModalHeading}
               subscriptionId={subId}
-              exportStatus={exportStatus}
               monthlyPlanAmount={monthlyPlanAmount}
               yearlyPlanAmount={yearlyPlanAmount}
               currency={currency}
