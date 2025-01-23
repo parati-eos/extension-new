@@ -263,7 +263,7 @@ export default function Contact({
               placeholder="Enter Website Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.websiteLink && (
+            {errors.websiteLink && websiteLink.length!==0 && (
               <p className="text-red-500 text-sm mt-1 lg:mt-0">
                 {errors.websiteLink}
               </p>
@@ -280,7 +280,7 @@ export default function Contact({
               placeholder="Enter Email"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && (
+            {errors.email && email.length!==0 && (
               <p className="text-red-500 text-sm">{errors.email}</p>
             )}
           </div>
@@ -295,7 +295,7 @@ export default function Contact({
               placeholder="Enter Phone"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.phone && (
+            {errors.phone && phone.length!==0 &&(
               <p className="text-red-500 text-sm">{errors.phone}</p>
             )}
           </div>
@@ -311,7 +311,7 @@ export default function Contact({
               placeholder="LinkedIn Profile Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.linkedin && (
+            {errors.linkedin && linkedin.length!==0 && (
               <p className="text-red-500 text-sm">{errors.linkedin}</p>
             )}
           </div>
