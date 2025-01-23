@@ -1130,6 +1130,7 @@ export default function ViewPresentation() {
                 ...prev,
                 [currentOutline]: false,
               }))
+              console.log('Socket Effect')
               setNewSlideGenerated((prev) => ({
                 ...prev,
                 [currentOutline]: 'Yes',
@@ -1138,8 +1139,6 @@ export default function ViewPresentation() {
                 position: 'top-right',
                 autoClose: 3000,
               })
-
-              console.log('Socket IF Slides')
 
               setDisplayModes((prev) => ({
                 ...prev,
@@ -1344,6 +1343,8 @@ export default function ViewPresentation() {
       if (totalSlides !== 0) {
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutline]) {
+            console.log('Pagination Effect')
+
             setNewSlideGenerated((prev) => ({
               ...prev,
               [currentOutline]: 'Yes',

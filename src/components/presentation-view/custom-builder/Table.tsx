@@ -50,6 +50,7 @@ export default function Table({
   const [isRowAdded, setIsRowAdded] = useState(false)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const [refineLoadingTable, setRefineLoadingTable] = useState(false)
 
   useEffect(() => {
     // Count fully completed rows
@@ -135,8 +136,9 @@ export default function Table({
       }))
     }
   }
-  const [cellValues, setCellValues] = useState(Array(4).fill('')) // Adjust cell count as needed
+
   const [focusedIndex, setFocusedIndex] = useState<focusedIndex>(null)
+
   const handleCellChange = (
     rowIndex: number,
     colIndex: number,
@@ -154,16 +156,6 @@ export default function Table({
 
     // Update the state with the modified rows
     setTableData((prev) => ({ ...prev, rows: updatedRows }))
-
-    // If you have a setCellValues function to update the individual cell values:
-    const updatedCellValues = tableData.rows.map((row, i) =>
-      i === rowIndex
-        ? row.map((cell, j) => (j === colIndex ? updatedValue : cell))
-        : row
-    )
-
-    // This ensures the state reflects the cell-level changes
-    setCellValues(updatedCellValues)
   }
 
   const handleHeaderChange = (
@@ -277,15 +269,58 @@ export default function Table({
     }
   }
 
-  const refineText = async (type: string, text: string) => {
-    setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+  const refineText = async (type: string, text?: string) => {
+    let payload
+
+    if (type === 'slideTitle') {
+      setRefineLoadingSlideTitle(true)
+      payload = text
+    } else if (type === 'tables') {
+      setRefineLoadingTable(true)
+      // Prepare table data, filtering out empty row and column headers
+      const rowHeaders = tableData.rowHeaders.filter((header) => header !== '')
+      const columnHeaders = tableData.columnHeaders.filter(
+        (header) => header !== ''
+      )
+
+      const tablePayload = {
+        ...rowHeaders.reduce<Record<string, string>>((acc, header, index) => {
+          acc[`rowHeader${index + 1}`] = header
+          return acc
+        }, {}),
+        ...columnHeaders.reduce<Record<string, string>>(
+          (acc, header, index) => {
+            acc[`columnHeader${index + 1}`] = header
+            return acc
+          },
+          {}
+        ),
+        rows: tableData.rows.map((row, index) => ({
+          attribute1: row[0] || '',
+          attribute2: row[1] || '',
+          attribute3: row[2] || '',
+          attribute4: row[3] || '',
+          attribute5: row[4] || '',
+        })),
+      }
+
+      // Filter out empty rows
+      const filteredTablePayload = {
+        ...tablePayload,
+        rows: tablePayload.rows.filter((row) =>
+          Object.values(row).some((attr) => attr !== '')
+        ),
+      }
+
+      payload = filteredTablePayload
+    }
 
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
         {
           type: type,
-          textToRefine: text,
+          textToRefine: payload,
         },
         {
           headers: {
@@ -293,12 +328,13 @@ export default function Table({
           },
         }
       )
-      if (response.status === 200) {
+      if (response.status === 200 && type === 'slideTitle') {
         const refinedText = response.data.refinedText
-
         setSlideTitle(refinedText)
+        setRefineLoadingSlideTitle(false)
+      } else if (response.status === 200 && type === 'tables') {
+        setRefineLoadingTable(false)
       }
-      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
     } catch (error) {
       toast.error('Error refining text!', {
         position: 'top-right',
@@ -434,6 +470,23 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
+                        {/* {refineLoadingTable ? ( */}
+                        {/* <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end"> */}
+                        {/* <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> */}
+                        {/* </div> */}
+                        {/* ) : ( */}
+                        {/* <div className="relative group ml-1">
+                            <FontAwesomeIcon
+                              icon={faWandMagicSparkles}
+                              onClick={() => refineText('tables')}
+                              className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                            /> */}
+                        {/* Tooltip */}
+                        {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                              Click to refine table.
+                            </span>
+                          </div> */}
+                        {/* )} */}
                       </div>
                     </th>
                   </tr>
