@@ -334,6 +334,15 @@ export default function Table({
         setRefineLoadingSlideTitle(false)
       } else if (response.status === 200 && type === 'tables') {
         setRefineLoadingTable(false)
+        const refinedTableData = response.data.refinedText
+
+        // Update the tableData with refined values
+        setTableData((prevData) => ({
+          ...prevData,
+          rowHeaders: refinedTableData.rowHeaders || [],
+          columnHeaders: refinedTableData.columnHeaders || [],
+          rows: refinedTableData.rows || [],
+        }))
       }
     } catch (error) {
       toast.error('Error refining text!', {
