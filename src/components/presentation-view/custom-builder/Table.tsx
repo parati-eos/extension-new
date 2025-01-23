@@ -214,22 +214,32 @@ export default function Table({
         acc[`columnHeader${index + 1}`] = header
         return acc
       }, {}),
-      rows: tableData.rows.map((row, index) => ({
-        attribute1: row[0] || '',
-        attribute2: row[1] || '',
-        attribute3: row[2] || '',
-        attribute4: row[3] || '',
-        attribute5: row[4] || '',
-      })),
+      ...tableData.rows.reduce<Record<string, Record<string, string>>>(
+        (acc, row, index) => {
+          acc[`rows${index + 1}`] = {
+            attribute1: row[0] || '',
+            attribute2: row[1] || '',
+            attribute3: row[2] || '',
+            attribute4: row[3] || '',
+            attribute5: row[4] || '',
+          }
+          return acc
+        },
+        {}
+      ),
     }
 
     // Filter out empty rows
-    const filteredTablePayload = {
-      ...tablePayload,
-      rows: tablePayload.rows.filter((row) =>
-        Object.values(row).some((attr) => attr !== '')
-      ),
-    }
+    const filteredTablePayload = Object.fromEntries(
+      Object.entries(tablePayload).filter(([key, value]) => {
+        if (key.startsWith('rows')) {
+          return Object.values(value as Record<string, string>).some(
+            (attr) => attr !== ''
+          )
+        }
+        return true
+      })
+    )
 
     try {
       const response = await axios
@@ -334,14 +344,56 @@ export default function Table({
         setRefineLoadingSlideTitle(false)
       } else if (response.status === 200 && type === 'tables') {
         setRefineLoadingTable(false)
-        const refinedTableData = response.data.refinedText
+        const refinedTableData = response.data.refinedtext
 
-        // Update the tableData with refined values
+        // Dynamically extract all row headers
+        const refinedRowHeaders = Object.keys(refinedTableData)
+          .filter((key) => key.startsWith('rowHeader'))
+          .sort(
+            (a, b) =>
+              parseInt(a.replace('rowHeader', ''), 10) -
+              parseInt(b.replace('rowHeader', ''), 10)
+          ) // Ensure correct order
+          .map((key) => refinedTableData[key])
+          .filter((header) => header) // Filter out undefined or empty headers
+
+        // Dynamically extract all column headers
+        const refinedColumnHeaders = Object.keys(refinedTableData)
+          .filter((key) => key.startsWith('columnHeader'))
+          .sort(
+            (a, b) =>
+              parseInt(a.replace('columnHeader', ''), 10) -
+              parseInt(b.replace('columnHeader', ''), 10)
+          ) // Ensure correct order
+          .map((key) => refinedTableData[key])
+          .filter((header) => header) // Filter out undefined or empty headers
+
+        // Map rows to a 2D array of strings (string[][])
+        const refinedRows = Object.keys(refinedTableData)
+          .filter((key) => key.startsWith('rows'))
+          .sort(
+            (a, b) =>
+              parseInt(a.replace('rows', ''), 10) -
+              parseInt(b.replace('rows', ''), 10)
+          ) // Ensure correct order
+          .map((key) => {
+            const row = refinedTableData[key]
+            return Object.keys(row)
+              .filter((attrKey) => attrKey.startsWith('attribute'))
+              .sort(
+                (a, b) =>
+                  parseInt(a.replace('attribute', ''), 10) -
+                  parseInt(b.replace('attribute', ''), 10)
+              ) // Ensure correct order
+              .map((attrKey) => row[attrKey] || '') // Map to string, ensuring empty values are handled
+          })
+
+        // Update table data state
         setTableData((prevData) => ({
           ...prevData,
-          rowHeaders: refinedTableData.rowHeaders || [],
-          columnHeaders: refinedTableData.columnHeaders || [],
-          rows: refinedTableData.rows || [],
+          rowHeaders: refinedRowHeaders,
+          columnHeaders: refinedColumnHeaders,
+          rows: refinedRows,
         }))
       }
     } catch (error) {
@@ -479,23 +531,23 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
-                        {/* {refineLoadingTable ? ( */}
-                        {/* <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end"> */}
-                        {/* <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div> */}
-                        {/* </div> */}
-                        {/* ) : ( */}
-                        {/* <div className="relative group ml-1">
+                        {refineLoadingTable ? (
+                          <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                            <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                          </div>
+                        ) : (
+                          <div className="relative group ml-1">
                             <FontAwesomeIcon
                               icon={faWandMagicSparkles}
                               onClick={() => refineText('tables')}
                               className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                            /> */}
-                        {/* Tooltip */}
-                        {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            />
+                            {/* Tooltip */}
+                            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
                               Click to refine table.
                             </span>
-                          </div> */}
-                        {/* )} */}
+                          </div>
+                        )}
                       </div>
                     </th>
                   </tr>
