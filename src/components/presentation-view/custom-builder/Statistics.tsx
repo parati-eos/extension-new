@@ -43,6 +43,7 @@ export default function Statistics({
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const [focusedInput, setFocusedInput] = useState<number | null>(null); // Define focusedInput
 
   const handleInputTitle = (value: string, index: number) => {
     if (value.length <= 25) {
@@ -219,6 +220,7 @@ export default function Statistics({
            <input
              type="text"
              value={slideTitle}
+             maxLength={25}
              onChange={(e) => setSlideTitle(e.target.value)}
              placeholder="Add Slide Title"
              className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -261,16 +263,22 @@ export default function Statistics({
   <input
     type="text"
     value={title[index]}
+    onFocus={() => setFocusedInput(index)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
     onChange={(e) => handleInputTitle(e.target.value, index)}
     placeholder={`Enter Data Label ${index + 1}`}
     className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
     maxLength={25}
   />
-  <span
-    className={`text-xs mt-1 ${
-      title[index].length > 20 ? 'text-red-500' : 'text-gray-500'
-    }`}
-  >
+     <span
+            className={`text-xs mt-1 ml-1 ${
+              focusedInput === index
+                ? title[index].length > 20
+                  ? "text-red-500"
+                  : "text-gray-500"
+                : "invisible" // Hide text but reserve space
+            }`}
+          >
     {title[index].length}/25 characters
   </span>
 </div>
@@ -278,16 +286,22 @@ export default function Statistics({
   <input
     type="text"
     value={description[index]}
+    onFocus={() => setFocusedInput(index + 100)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
     onChange={(e) => handleInputDescription(e.target.value, index)}
     placeholder={`Enter Value ${index + 1}`}
     className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
     maxLength={25}
   />
-  <span
-    className={`text-xs mt-1 ${
-      description[index].length > 20 ? 'text-red-500' : 'text-gray-500'
-    }`}
-  >
+      <span
+            className={`text-xs mt-1 ml-1 ${
+              focusedInput === index+100
+                ? description[index].length > 20
+                  ? "text-red-500"
+                  : "text-gray-500"
+                : "invisible" // Hide text but reserve space
+            }`}
+          >
     {description[index].length}/25 characters
   </span>
 </div>

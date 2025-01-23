@@ -13,7 +13,7 @@ interface TableData {
   columnHeaders: string[]
   rowHeaders: string[]
 }
-
+type focusedIndex = { rowIndex: number; colIndex: number } | null;
 interface TableProps {
   heading: string
   slideType: string
@@ -135,23 +135,37 @@ export default function Table({
       }))
     }
   }
-
+  const [cellValues, setCellValues] = useState(Array(4).fill("")); // Adjust cell count as needed
+  const [focusedIndex, setFocusedIndex] = useState<focusedIndex>(null);
   const handleCellChange = (
     rowIndex: number,
     colIndex: number,
     value: string
   ) => {
     // Limit the character count to 25
-    const updatedValue = value.slice(0, 25)
-
-    // Update the table data
+    const updatedValue = value.slice(0, 25);
+  
+    // Update the table data with the new value
     const updatedRows = tableData.rows.map((row, i) =>
       i === rowIndex
         ? row.map((cell, j) => (j === colIndex ? updatedValue : cell))
         : row
-    )
-    setTableData((prev) => ({ ...prev, rows: updatedRows }))
-  }
+    );
+  
+    // Update the state with the modified rows
+    setTableData((prev) => ({ ...prev, rows: updatedRows }));
+  
+    // If you have a setCellValues function to update the individual cell values:
+    const updatedCellValues = tableData.rows.map((row, i) =>
+      i === rowIndex
+        ? row.map((cell, j) => (j === colIndex ? updatedValue : cell))
+        : row
+    );
+  
+    // This ensures the state reflects the cell-level changes
+    setCellValues(updatedCellValues);
+  };
+  
 
   const handleHeaderChange = (
     index: number,
@@ -317,6 +331,7 @@ export default function Table({
               type="text"
               value={slideTitle}
               onChange={(e) => setSlideTitle(e.target.value)}
+              maxLength={25}
               placeholder="Add Slide Title"
               className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -447,29 +462,27 @@ export default function Table({
                               : 'lg:min-w-[0vw] '
                           }`}
                         >
-                          <input
-                            type="text"
-                            value={cell}
-                            onChange={(e) =>
-                              handleCellChange(
-                                rowIndex,
-                                colIndex,
-                                e.target.value
-                              )
-                            }
-                            className="w-full text-start border-none bg-transparent focus:outline-none"
-                          />
-                          {/* Display character count */}
+                         <div className="relative">
+  <input
+    type="text"
+    value={cell}
+    onFocus={() => setFocusedIndex({ rowIndex, colIndex })}
+    onBlur={() => setFocusedIndex(null)}
+    onChange={(e) =>
+      handleCellChange(rowIndex, colIndex, e.target.value)
+    }
+    className="w-full text-start border-none bg-transparent focus:outline-none"
+  />
+  {/* Display character count */}
+  {focusedIndex &&
+                focusedIndex.rowIndex === rowIndex &&
+                focusedIndex.colIndex === colIndex && (
+    <span className="absolute bottom-[-10px] right-0 text-xs text-gray-600">
+      {cell.length}/25
+    </span>
+  )}
+</div>
 
-                          <span
-                            className={`text-xs mt-1 ${
-                              cell.length > 20
-                                ? 'text-red-500'
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {cell.length}/25
-                          </span>
                         </td>
                       ))}
                     </tr>

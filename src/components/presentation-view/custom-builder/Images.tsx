@@ -240,6 +240,7 @@ export default function Images({
       type="text"
       value={slideTitle}
       onChange={(e) => setSlideTitle(e.target.value)}
+      maxLength={25}
       placeholder="Add Slide Title"
       className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />

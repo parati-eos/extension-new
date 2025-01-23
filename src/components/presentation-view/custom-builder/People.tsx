@@ -58,6 +58,7 @@ export default function People({
     new Array(people.length).fill(false)
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const [focusedInput, setFocusedInput] = useState<number | null>(null); // Define focusedInput
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -345,6 +346,7 @@ export default function People({
              <input
                type="text"
                value={slideTitle}
+               maxLength={25}
                onChange={(e) => setSlideTitle(e.target.value)}
                placeholder="Add Slide Title"
                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -389,17 +391,21 @@ export default function People({
                     <input
                       type="text"
                       value={person.name}
+                      onFocus={() => setFocusedInput(index)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) => handleNameChange(e.target.value, index)}
                       placeholder={`Enter Name ${index + 1}`}
                       className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <span
-                      className={`text-xs mt-1 ${
-                        person.name.length > 20
-                          ? 'text-red-500'
-                          : 'text-gray-500'
-                      }`}
-                    >
+                       <span
+            className={`text-xs mt-1 ml-1 ${
+              focusedInput === index
+                ? person.name.length > 20
+                  ? "text-red-500"
+                  : "text-gray-500"
+                : "invisible" // Hide text but reserve space
+            }`}
+          >
                       {person.name.length}/25 characters
                     </span>
                   </div>
@@ -407,19 +413,23 @@ export default function People({
                     <input
                       type="text"
                       value={person.designation}
+                      onFocus={() => setFocusedInput(index + 200)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) =>
                         handleInputChange(e.target.value, index, 'designation')
                       }
                       placeholder={`Enter Designation ${index + 1}`}
                       className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <span
-                      className={`text-xs mt-1 ${
-                        person.designation.length > 20
-                          ? 'text-red-500'
-                          : 'text-gray-500'
-                      }`}
-                    >
+                  <span
+            className={`text-xs mt-1 ml-1 ${
+              focusedInput === index+200
+                ? person.designation.length > 20
+                  ? "text-red-500"
+                  : "text-gray-500"
+                : "invisible" // Hide text but reserve space
+            }`}
+          >
                       {person.designation.length}/25 characters
                     </span>
                   </div>
@@ -427,19 +437,23 @@ export default function People({
                     <input
                       type="text"
                       value={person.company}
+                      onFocus={() => setFocusedInput(index + 100)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) =>
                         handleInputChange(e.target.value, index, 'company')
                       }
                       placeholder={`Enter Company ${index + 1}`}
                       className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <span
-                      className={`text-xs mt-1 ${
-                        person.company.length > 20
-                          ? 'text-red-500'
-                          : 'text-gray-500'
-                      }`}
-                    >
+                     <span
+            className={`text-xs mt-1 ml-1 ${
+              focusedInput === index+100
+                ? person.company.length > 20
+                  ? "text-red-500"
+                  : "text-gray-500"
+                : "invisible" // Hide text but reserve space
+            }`}
+          >
                       {person.company.length}/25 characters
                     </span>
                   </div>
@@ -448,6 +462,8 @@ export default function People({
   <div className="relative w-full">
     <input
       type="text"
+      onFocus={() => setFocusedInput(index + 300)} // Set focus
+                    onBlur={() => setFocusedInput(null)} // Remove focus
       value={person.description}
       onChange={(e) =>
         handleInputChange(e.target.value, index, 'description')
@@ -476,10 +492,14 @@ export default function People({
     )}
   </div>
   <span
-    className={`text-xs ${
-      person.description.length > 140 ? 'text-red-500' : 'text-gray-500'
-    }`}
-  >
+            className={`text-xs mt-1 ml-1 ${
+              focusedInput === index+300
+                ? person.description.length > 140
+                  ? "text-red-500"
+                  : "text-gray-500"
+                : "invisible" // Hide text but reserve space
+            }`}
+          >
     {person.description.length}/150 characters
   </span>
 </div>

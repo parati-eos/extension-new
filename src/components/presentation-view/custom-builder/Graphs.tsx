@@ -312,6 +312,7 @@ export default function Graphs({
                <input
                  type="text"
                  value={slideTitle}
+                 maxLength={25}
                  onChange={(e) => setSlideTitle(e.target.value)}
                  placeholder="Add Slide Title"
                  className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
