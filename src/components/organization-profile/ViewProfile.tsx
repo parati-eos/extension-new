@@ -77,7 +77,7 @@ const ViewProfile: React.FC = () => {
                 <img
                   src={organizationData?.logo}
                   alt="Organization Logo"
-                  className="w-24 h-24 rounded-full shadow-md"
+                  className="w-24 h-24 rounded-full shadow-md object-cover aspect-auto"
                 />
 
                 {/* Organization Info */}
@@ -169,7 +169,7 @@ const ViewProfile: React.FC = () => {
                 <img
                   src={organizationData?.logo}
                   alt="Organization Logo"
-                  className="w-20 h-20 rounded-full shadow-md"
+                  className="w-20 h-20 rounded-full shadow-md object-cover aspect-auto"
                 />
 
                 {/* Organization Info */}

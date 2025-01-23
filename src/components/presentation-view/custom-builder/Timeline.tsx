@@ -279,7 +279,7 @@ export default function Timeline({
             {timeline.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col lg:flex-row gap-2 lg:gap-4 lg:px-0 py-2 lg:py-0 p-1 mb-2 lg:mb-0 ${
+                className={`flex flex-col lg:flex-row  lg:gap-4 lg:px-0 py-2 lg:py-0 p-1  lg:mb-0 ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
