@@ -471,7 +471,6 @@ export default function People({
                   <div className="relative w-full">
                     <input
                       type="text"
-                      onFocus={() => setFocusedInput(index + 300)} // Set focus
                       onBlur={() => setFocusedInput(null)} // Remove focus
                       value={person.description}
                       onChange={(e) =>
@@ -479,6 +478,7 @@ export default function People({
                       }
                       placeholder={`Enter Description ${index + 1}`}
                       onFocus={(e) => {
+                        setFocusedInput(index + 300)
                         const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
                         input.scrollLeft = input.scrollWidth // Scroll to the end on focus
                       }}

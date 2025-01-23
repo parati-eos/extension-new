@@ -320,12 +320,12 @@ export default function Timeline({
                     <input
                       type="text"
                       value={description[index]}
-                      onFocus={() => setFocusedInput(index + 100)}
                       onBlur={() => setFocusedInput(null)}
                       onChange={(e) =>
                         handleInputDescription(e.target.value, index)
                       }
                       onFocus={(e) => {
+                        setFocusedInput(index + 100)
                         const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
                         input.scrollLeft = input.scrollWidth // Scroll to the end on focus
                       }}

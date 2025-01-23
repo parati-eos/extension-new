@@ -269,10 +269,10 @@ export default function Points({
                   <input
                     type="text"
                     value={point}
-                    onFocus={() => setFocusedInput(index)} // Set focus
                     onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputChange(e.target.value, index)}
                     onFocus={(e) => {
+                      setFocusedInput(index)
                       const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
                       input.scrollLeft = input.scrollWidth // Scroll to the end on focus
                     }}
