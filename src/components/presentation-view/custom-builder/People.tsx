@@ -58,7 +58,7 @@ export default function People({
     new Array(people.length).fill(false)
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
-  const [focusedInput, setFocusedInput] = useState<number | null>(null); // Define focusedInput
+  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -341,38 +341,47 @@ export default function People({
             <h3 className="text-semibold">People</h3>
             <BackButton onClick={onBack} />
           </div>
-         <div className="w-full p-1">
-           <div className="relative">
-             <input
-               type="text"
-               value={slideTitle}
-               maxLength={25}
-               onChange={(e) => setSlideTitle(e.target.value)}
-               placeholder="Add Slide Title"
-               className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-             />
-             {refineLoadingSlideTitle ? (
-               <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                 <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-               </div>
-             ) : (
-               <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
-                 <div className="relative group">
-                   <FontAwesomeIcon
-                     icon={faWandMagicSparkles}
-                     onClick={() => refineText('slideTitle')}
-                     className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                   />
-                   {/* Tooltip */}
-                   <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-                     Click to refine text.
-                   </span>
-                 </div>
-               </div>
-             )}
-           </div>
-         </div>
-         
+          <div className="w-full p-1">
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                maxLength={25}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                onFocus={(e) => {
+                  const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                  input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                }}
+                style={{
+                  textOverflow: 'ellipsis', // Truncate text with dots
+                  whiteSpace: 'nowrap', // Prevent text wrapping
+                  overflow: 'hidden', // Hide overflowing text
+                }}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+              />
+              {refineLoadingSlideTitle ? (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                  <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                  <div className="relative group">
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('slideTitle')}
+                      className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                    />
+                    {/* Tooltip */}
+                    <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                      Click to refine text.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div
             ref={containerRef}
             className={`flex-1  overflow-y-auto scrollbar-none md:mt-1 ${
@@ -392,20 +401,20 @@ export default function People({
                       type="text"
                       value={person.name}
                       onFocus={() => setFocusedInput(index)} // Set focus
-                    onBlur={() => setFocusedInput(null)} // Remove focus
+                      onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) => handleNameChange(e.target.value, index)}
                       placeholder={`Enter Name ${index + 1}`}
                       className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                       <span
-            className={`text-xs mt-1 ml-1 ${
-              focusedInput === index
-                ? person.name.length > 20
-                  ? "text-red-500"
-                  : "text-gray-500"
-                : "invisible" // Hide text but reserve space
-            }`}
-          >
+                    <span
+                      className={`text-xs mt-1 ml-1 ${
+                        focusedInput === index
+                          ? person.name.length > 20
+                            ? 'text-red-500'
+                            : 'text-gray-500'
+                          : 'invisible' // Hide text but reserve space
+                      }`}
+                    >
                       {person.name.length}/25 characters
                     </span>
                   </div>
@@ -414,22 +423,22 @@ export default function People({
                       type="text"
                       value={person.designation}
                       onFocus={() => setFocusedInput(index + 200)} // Set focus
-                    onBlur={() => setFocusedInput(null)} // Remove focus
+                      onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) =>
                         handleInputChange(e.target.value, index, 'designation')
                       }
                       placeholder={`Enter Designation ${index + 1}`}
                       className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  <span
-            className={`text-xs mt-1 ml-1 ${
-              focusedInput === index+200
-                ? person.designation.length > 20
-                  ? "text-red-500"
-                  : "text-gray-500"
-                : "invisible" // Hide text but reserve space
-            }`}
-          >
+                    <span
+                      className={`text-xs mt-1 ml-1 ${
+                        focusedInput === index + 200
+                          ? person.designation.length > 20
+                            ? 'text-red-500'
+                            : 'text-gray-500'
+                          : 'invisible' // Hide text but reserve space
+                      }`}
+                    >
                       {person.designation.length}/25 characters
                     </span>
                   </div>
@@ -438,71 +447,80 @@ export default function People({
                       type="text"
                       value={person.company}
                       onFocus={() => setFocusedInput(index + 100)} // Set focus
-                    onBlur={() => setFocusedInput(null)} // Remove focus
+                      onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) =>
                         handleInputChange(e.target.value, index, 'company')
                       }
                       placeholder={`Enter Company ${index + 1}`}
                       className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                     <span
-            className={`text-xs mt-1 ml-1 ${
-              focusedInput === index+100
-                ? person.company.length > 20
-                  ? "text-red-500"
-                  : "text-gray-500"
-                : "invisible" // Hide text but reserve space
-            }`}
-          >
+                    <span
+                      className={`text-xs mt-1 ml-1 ${
+                        focusedInput === index + 100
+                          ? person.company.length > 20
+                            ? 'text-red-500'
+                            : 'text-gray-500'
+                          : 'invisible' // Hide text but reserve space
+                      }`}
+                    >
                       {person.company.length}/25 characters
                     </span>
                   </div>
                 </div>
                 <div className="flex flex-col">
-  <div className="relative w-full">
-    <input
-      type="text"
-      onFocus={() => setFocusedInput(index + 300)} // Set focus
-                    onBlur={() => setFocusedInput(null)} // Remove focus
-      value={person.description}
-      onChange={(e) =>
-        handleInputChange(e.target.value, index, 'description')
-      }
-      placeholder={`Enter Description ${index + 1}`}
-      className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    {refineLoadingStates[index] ? (
-      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
-        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    ) : (
-      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
-        <div className="relative group">
-          <FontAwesomeIcon
-            icon={faWandMagicSparkles}
-            onClick={() => refineText('people', index)}
-            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-          />
-          {/* Tooltip */}
-          <span className="absolute top-[-35px] w-max right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-            Click to refine text
-          </span>
-        </div>
-      </div>
-    )}
-  </div>
-  <span
-            className={`text-xs mt-1 ml-1 ${
-              focusedInput === index+300
-                ? person.description.length > 140
-                  ? "text-red-500"
-                  : "text-gray-500"
-                : "invisible" // Hide text but reserve space
-            }`}
-          >
-    {person.description.length}/150 characters
-  </span>
-</div>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      onBlur={() => setFocusedInput(null)} // Remove focus
+                      value={person.description}
+                      onChange={(e) =>
+                        handleInputChange(e.target.value, index, 'description')
+                      }
+                      placeholder={`Enter Description ${index + 1}`}
+                      onFocus={(e) => {
+                        setFocusedInput(index + 300)
+                        const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                        input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                      }}
+                      style={{
+                        textOverflow: 'ellipsis', // Truncate text with dots
+                        whiteSpace: 'nowrap', // Prevent text wrapping
+                        overflow: 'hidden', // Hide overflowing text
+                      }}
+                      className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                    />
+                    {refineLoadingStates[index] ? (
+                      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                      </div>
+                    ) : (
+                      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
+                        <div className="relative group">
+                          <FontAwesomeIcon
+                            icon={faWandMagicSparkles}
+                            onClick={() => refineText('people', index)}
+                            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                          />
+                          {/* Tooltip */}
+                          <span className="absolute top-[-35px] w-max right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            Click to refine text
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs mt-1 ml-1 ${
+                      focusedInput === index + 300
+                        ? person.description.length > 140
+                          ? 'text-red-500'
+                          : 'text-gray-500'
+                        : 'invisible' // Hide text but reserve space
+                    }`}
+                  >
+                    {person.description.length}/150 characters
+                  </span>
+                </div>
 
                 <div className="flex items-center gap-2">
                   {person.image && (

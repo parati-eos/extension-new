@@ -233,38 +233,47 @@ export default function Images({
             <h3 className="text-semibold">Images</h3>
             <BackButton onClick={onBack} />
           </div>
-            {/* Editable Slide Title */}
-<div className="w-full p-1">
-  <div className="relative">
-    <input
-      type="text"
-      value={slideTitle}
-      onChange={(e) => setSlideTitle(e.target.value)}
-      maxLength={25}
-      placeholder="Add Slide Title"
-      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    {refineLoadingSlideTitle ? (
-      <div className="absolute top-[55%] right-2 transform -translate-y-1/2  w-full h-full flex items-center justify-end">
-        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    ) : (
-      <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
-        <div className="relative group">
-          <FontAwesomeIcon
-            icon={faWandMagicSparkles}
-            onClick={() => refineText('slideTitle', slideTitle)}
-            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-          />
-          {/* Tooltip */}
-          <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-            Click to refine text.
-          </span>
-        </div>
-      </div>
-    )}
-  </div>
-</div>
+          {/* Editable Slide Title */}
+          <div className="w-full p-1">
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                onFocus={(e) => {
+                  const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                  input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                }}
+                style={{
+                  textOverflow: 'ellipsis', // Truncate text with dots
+                  whiteSpace: 'nowrap', // Prevent text wrapping
+                  overflow: 'hidden', // Hide overflowing text
+                }}
+                maxLength={25}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+              />
+              {refineLoadingSlideTitle ? (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2  w-full h-full flex items-center justify-end">
+                  <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                  <div className="relative group">
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('slideTitle', slideTitle)}
+                      className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                    />
+                    {/* Tooltip */}
+                    <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                      Click to refine text.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Mobile Images Input and Display Section */}
           <div className="flex flex-col lg:hidden w-full h-full md:mt-4 p-1">

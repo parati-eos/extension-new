@@ -45,8 +45,8 @@ export default function Timeline({
     new Array(description.length).fill(false)
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
-  
-  const [focusedInput, setFocusedInput] = useState<number | null>(null); // Define focusedInput
+
+  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
 
   const handleInputTitle = (value: string, index: number) => {
     if (value.length <= 25) {
@@ -239,38 +239,47 @@ export default function Timeline({
             <h3 className="text-semibold">Timeline</h3>
             <BackButton onClick={onBack} />
           </div>
-      {/* Editable Slide Title */}
-<div className="w-full p-1">
-  <div className="relative">
-    <input
-      type="text"
-      value={slideTitle}
-      onChange={(e) => setSlideTitle(e.target.value)}
-      maxLength={25}
-      placeholder="Add Slide Title"
-      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    {refineLoadingSlideTitle ? (
-      <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    ) : (
-      <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
-        <div className="relative group">
-          <FontAwesomeIcon
-            icon={faWandMagicSparkles}
-            onClick={() => refineText('slideTitle')}
-            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-          />
-          {/* Tooltip */}
-          <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-            Click to refine text.
-          </span>
-        </div>
-      </div>
-    )}
-  </div>
-</div>
+          {/* Editable Slide Title */}
+          <div className="w-full p-1">
+            <div className="relative">
+              <input
+                type="text"
+                value={slideTitle}
+                onChange={(e) => setSlideTitle(e.target.value)}
+                onFocus={(e) => {
+                  const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                  input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                }}
+                style={{
+                  textOverflow: 'ellipsis', // Truncate text with dots
+                  whiteSpace: 'nowrap', // Prevent text wrapping
+                  overflow: 'hidden', // Hide overflowing text
+                }}
+                maxLength={25}
+                placeholder="Add Slide Title"
+                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+              />
+              {refineLoadingSlideTitle ? (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                  <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                  <div className="relative group">
+                    <FontAwesomeIcon
+                      icon={faWandMagicSparkles}
+                      onClick={() => refineText('slideTitle')}
+                      className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                    />
+                    {/* Tooltip */}
+                    <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                      Click to refine text.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
@@ -293,64 +302,75 @@ export default function Timeline({
                     placeholder={`Enter Timeline ${index + 1}`}
                     className="flex-1  lg:ml-1 w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                    <span
-            className={`block text-xs mt-1 ml-1 ${
-              focusedInput === index
-                ? timeline[index].length > 20
-                  ? "text-red-500"
-                  : "text-gray-500"
-                : "invisible" // Hide text but reserve space
-            }`}
-          >
-            {timeline[index].length}/25 characters
-          </span>
+                  <span
+                    className={`block text-xs mt-1 ml-1 ${
+                      focusedInput === index
+                        ? timeline[index].length > 20
+                          ? 'text-red-500'
+                          : 'text-gray-500'
+                        : 'invisible' // Hide text but reserve space
+                    }`}
+                  >
+                    {timeline[index].length}/25 characters
+                  </span>
                 </div>
-               {/* Description Input with Icons */}
-<div className="relative lg:ml-2 lg:mr-1 w-full flex flex-col lg:w-[75%]">
-  <>
-    <input
-      type="text"
-      value={description[index]}
-      onFocus={() => setFocusedInput(index + 100)}
-      onBlur={() => setFocusedInput(null)}
-      onChange={(e) => handleInputDescription(e.target.value, index)}
-      placeholder={`Enter Description ${index + 1}`}
-      className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    {refineLoadingStates[index] ? (
-      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
-        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    ) : (
-      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
-        <div className="relative group">
-          <FontAwesomeIcon
-            icon={faWandMagicSparkles}
-            onClick={() => refineText('timeLineDescription', index)}
-            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-          />
-          {/* Tooltip */}
-          <span className="absolute w-max top-[-35px] right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-            Click to refine text.
-          </span>
-        </div>
-      </div>
-    )}
-  </>
-  <span
-            className={`block text-xs mt-1 ml-1 ${
-              focusedInput === index+100
-                ? description[index].length > 140
-                  ? "text-red-500"
-                  : "text-gray-500"
-                : "invisible" // Hide text but reserve space
-            }`}
-          >
-        
-    {description[index].length}/150 characters
-  </span>
-</div>
-
+                {/* Description Input with Icons */}
+                <div className="relative lg:ml-2 lg:mr-1 w-full flex flex-col lg:w-[75%]">
+                  <>
+                    <input
+                      type="text"
+                      value={description[index]}
+                      onBlur={() => setFocusedInput(null)}
+                      onChange={(e) =>
+                        handleInputDescription(e.target.value, index)
+                      }
+                      onFocus={(e) => {
+                        setFocusedInput(index + 100)
+                        const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                        input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                      }}
+                      style={{
+                        textOverflow: 'ellipsis', // Truncate text with dots
+                        whiteSpace: 'nowrap', // Prevent text wrapping
+                        overflow: 'hidden', // Hide overflowing text
+                      }}
+                      placeholder={`Enter Description ${index + 1}`}
+                      className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                    />
+                    {refineLoadingStates[index] ? (
+                      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                      </div>
+                    ) : (
+                      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
+                        <div className="relative group">
+                          <FontAwesomeIcon
+                            icon={faWandMagicSparkles}
+                            onClick={() =>
+                              refineText('timeLineDescription', index)
+                            }
+                            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                          />
+                          {/* Tooltip */}
+                          <span className="absolute w-max top-[-35px] right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            Click to refine text.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                  <span
+                    className={`block text-xs mt-1 ml-1 ${
+                      focusedInput === index + 100
+                        ? description[index].length > 140
+                          ? 'text-red-500'
+                          : 'text-gray-500'
+                        : 'invisible' // Hide text but reserve space
+                    }`}
+                  >
+                    {description[index].length}/150 characters
+                  </span>
+                </div>
               </div>
             ))}
 

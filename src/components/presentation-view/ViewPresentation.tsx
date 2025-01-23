@@ -116,7 +116,37 @@ export default function ViewPresentation() {
   const slidesArrayRef = useRef(slidesArray)
   const newSlideLoadingRef = useRef(isNewSlideLoading)
   const slideStatesRef = useRef(slideStates)
-  const [exportStatus, setExportStatus] = useState(false)
+
+  const openPricingModal = async () => {
+    setIsPricingModalOpen(true)
+    try {
+      // Update the export status
+      const updatePaymentStatus = async () => {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/finalsheet/${documentID}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ exportstatus: true }),
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const result = await response.json()
+        console.log('Payment status updated:', result)
+      }
+
+      // Call payment status update
+      await updatePaymentStatus()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // Handle Share Button Click
   const handleShare = async () => {
@@ -128,24 +158,6 @@ export default function ViewPresentation() {
   const handleDownload = async () => {
     setShowCountdown(true)
     setCountdown(8)
-    // Set exportStatus to true if false
-    if (!exportStatus) {
-      try {
-        await axios.patch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-          {
-            exportstatus: true,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-      } catch (error: any) {
-        console.error('Failed to update profile', error)
-      }
-    }
 
     try {
       const formId = documentID
@@ -163,7 +175,7 @@ export default function ViewPresentation() {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${authToken}`,
             },
-            body: JSON.stringify({ paymentStatus: 1 }),
+            body: JSON.stringify({ paymentStatus: 1, exportstatus: true }),
           }
         )
 
@@ -254,25 +266,6 @@ export default function ViewPresentation() {
 
   // Function to check payment status and proceed
   const checkPaymentStatusAndProceed = async () => {
-    // Set exportStatus to true if false
-    if (!exportStatus) {
-      try {
-        await axios.patch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-          {
-            exportstatus: true,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-      } catch (error: any) {
-        console.error('Failed to update profile', error)
-      }
-    }
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${documentID}`,
@@ -1442,12 +1435,6 @@ export default function ViewPresentation() {
         )
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
-        const exportStatus = response.data.exportstatus
-        if (exportStatus) {
-          setExportStatus(true)
-        } else {
-          setExportStatus(false)
-        }
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {
@@ -1572,7 +1559,6 @@ export default function ViewPresentation() {
           }}
           heading={pricingModalHeading}
           subscriptionId={subId}
-          exportStatus={exportStatus}
           monthlyPlanAmount={monthlyPlanAmount}
           yearlyPlanAmount={yearlyPlanAmount}
           currency={currency}
@@ -1602,7 +1588,7 @@ export default function ViewPresentation() {
         pptName={pptName!}
         isLoading={isPptNameLoading}
         userPlan={userPlan!}
-        openPricingModal={() => setIsPricingModalOpen(true)}
+        openPricingModal={openPricingModal}
         exportPaid={isExportPaid}
         buttonsDisabled={buttonsDisabled}
       />
@@ -1728,7 +1714,7 @@ export default function ViewPresentation() {
           pptName={pptName!}
           isLoading={isPptNameLoading}
           userPlan={userPlan!}
-          openPricingModal={() => setIsPricingModalOpen(true)}
+          openPricingModal={openPricingModal}
           exportPaid={isExportPaid}
           buttonsDisabled={buttonsDisabled}
         />
