@@ -531,23 +531,23 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
-                        {refineLoadingTable ? (
-                          <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                        {/* {refineLoadingTable ? ( */}
+                        {/* <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
                             <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                          </div>
-                        ) : (
-                          <div className="relative group ml-1">
+                          </div> */}
+                        {/* ) : ( */}
+                        {/* <div className="relative group ml-1">
                             <FontAwesomeIcon
                               icon={faWandMagicSparkles}
                               onClick={() => refineText('tables')}
                               className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                            />
-                            {/* Tooltip */}
-                            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            /> */}
+                        {/* Tooltip */}
+                        {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
                               Click to refine table.
                             </span>
-                          </div>
-                        )}
+                          </div> */}
+                        {/* )} */}
                       </div>
                     </th>
                   </tr>
