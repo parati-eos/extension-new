@@ -75,18 +75,21 @@ const OnboardingContainer: React.FC = () => {
             setIsNextLoading(false)
           })
       } else {
-        await axios.patch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-          data,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
+        await axios
+          .patch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+            data,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            setIsNextLoading(false)
+            setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
+          })
       }
-      setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
-      setIsNextLoading(false)
     } catch (error) {
       toast.error('Error submitting form data', {
         position: 'top-right',

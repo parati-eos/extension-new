@@ -91,20 +91,6 @@ const SelectPresentationType: React.FC = () => {
   }
   const generatedDocumentID = generateDocumentID()
 
-  const handleGenerateMouseEnter = () => {
-    // Clear the timeout to keep the dialog visible while hovered
-    if (dialogTimeoutRef.current) {
-      clearTimeout(dialogTimeoutRef.current)
-    }
-  }
-
-  const handleDialogMouseEnter = () => {
-    // Clear the timeout to keep the dialog visible while hovered
-    if (dialogTimeoutRef.current) {
-      clearTimeout(dialogTimeoutRef.current)
-    }
-  }
-
   const MAX_FILE_SIZE_MB = 20 // Limit file size to 20MB
 
   const handleFileChange = async (

@@ -10,7 +10,7 @@ const s3 = new AWS.S3({
 // Define the interface for the file parameter
 interface UploadFile {
   name: string
-  // Add other properties if the file object has more attributes (like size, type, etc.)
+  type: string // Added file type property
 }
 
 // Function to upload a file to S3 bucket
@@ -22,7 +22,8 @@ const uploadLogoToS3 = async (file: UploadFile): Promise<string> => {
   const params: AWS.S3.PutObjectRequest = {
     Bucket: 'zynthimage',
     Key: key,
-    Body: file as any, // Cast to any if the file type is not compatible with Body's expected type
+    Body: file, // No cast needed with proper type definition
+    ContentType: file.type, // Set ContentType header based on file type
   }
 
   try {
