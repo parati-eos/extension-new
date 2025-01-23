@@ -360,7 +360,7 @@ const EditProfile: React.FC = () => {
                   <img
                     src={logo && !isUploading ? logo : formData.logo}
                     alt="Organization Logo"
-                    className="w-20 h-20 rounded-full"
+                    className="w-24 h-24 rounded-full  shadow-md object-cover aspect-auto"
                   />
                   <button
                     className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
@@ -525,7 +525,7 @@ const EditProfile: React.FC = () => {
                   <img
                     src={logo && !isUploading ? logo : formData.logo}
                     alt="Organization Logo"
-                    className="w-28 h-28 rounded-full"
+                    className="w-28 h-28 rounded-full shadow-md object-cover aspect-auto"
                   />
 
                   <button
