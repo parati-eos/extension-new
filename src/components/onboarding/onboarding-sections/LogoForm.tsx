@@ -52,7 +52,12 @@ const LogoForm: React.FC<LogoFormProps> = ({
         // Upload file to S3 and get the URL
         console.log('File selected:', file)
         const processedFile = await removeBackground(file)
-        const url = await uploadFileToS3(processedFile)
+        const processedLogo = {
+          name: processedFile.name,
+          type: processedFile.type,
+          body: processedFile,
+        }
+        const url = await uploadFileToS3(processedLogo)
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {

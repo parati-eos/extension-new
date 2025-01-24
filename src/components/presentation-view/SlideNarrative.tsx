@@ -5,7 +5,7 @@ import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage'
 import { toast } from 'react-toastify'
 import uploadFileToS3 from '../../utils/uploadFileToS3'
-import Select, { components } from 'react-select'
+import Select from 'react-select'
 import PointsIcon from '../../assets/points.svg'
 import TimelineIcon from '../../assets/Presentation.svg'
 import ImagesIcon from '../../assets/images.svg'
@@ -88,7 +88,13 @@ export default function SlideNarrative({
     setIsLoading(true)
     if (file) {
       try {
-        const url = await uploadFileToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+
+        const url = await uploadFileToS3(uploadedFile)
         setSelectedImage(url)
         setUploadCompleted(true) // Mark upload as complete
         setFileName(file.name) // Set file name only after upload is completed

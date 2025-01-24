@@ -92,7 +92,15 @@ export default function Images({
 
     try {
       const uploadedImages = await Promise.all(
-        files.map((file) => uploadFileToS3(file))
+        files.map((file) => {
+          const uploadedFile = {
+            name: file.name,
+            type: file.type,
+            body: file,
+          }
+
+          return uploadFileToS3(uploadedFile)
+        })
       )
 
       if (replaceIndex !== undefined) {

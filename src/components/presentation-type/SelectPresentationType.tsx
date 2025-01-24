@@ -128,8 +128,13 @@ const SelectPresentationType: React.FC = () => {
       setFile(uploadedFile)
 
       try {
+        const pdfUploaded = {
+          name: uploadedFile.name,
+          type: uploadedFile.type,
+          body: uploadedFile, // Pass the File object directly
+        }
         // Handle upload
-        const pdfLink = await uploadFileToS3(uploadedFile)
+        const pdfLink = await uploadFileToS3(pdfUploaded)
         setPdfLink(pdfLink)
       } catch (error) {
         console.error('Error uploading file:', error)

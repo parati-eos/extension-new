@@ -131,7 +131,13 @@ export default function People({
     })
 
     try {
-      const url = await uploadFileToS3(file)
+      const uploadedFile = {
+        name: file.name,
+        type: file.type,
+        body: file,
+      }
+
+      const url = await uploadFileToS3(uploadedFile)
       setPeople((prevPeople) => {
         const updatedPeople = [...prevPeople]
         updatedPeople[index].image = url

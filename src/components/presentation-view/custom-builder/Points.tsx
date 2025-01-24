@@ -69,7 +69,12 @@ export default function Points({
     setIsImageLoading(true)
     if (file) {
       try {
-        const url = await uploadFileToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+        const url = await uploadFileToS3(uploadedFile)
         setSelectedImage(url)
         setUploadCompleted(true) // Mark upload as complete
         setFileName(file.name) // Set file name only after upload is completed

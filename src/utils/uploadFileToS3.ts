@@ -10,24 +10,36 @@ const s3 = new AWS.S3({
 // Define the interface for the file parameter
 interface UploadFile {
   name: string
-  type: string // Added file type property
+  type: string
+  body: Blob | File // Define file body type
 }
 
 // Function to upload a file to S3 bucket
 const uploadFileToS3 = async (file: UploadFile): Promise<string> => {
-  const fileName = file.name // Get the original file name
-  const uniqueId = Math.floor(Math.random() * 1000) // Generate a unique ID
+  const fileName = file.name // Original file name
+  const uniqueId = Date.now() // Generate a unique ID (timestamp is better)
   const key = `uploads/${uniqueId}_${fileName}` // Set the key with a prefix 'uploads/'
 
   const params: AWS.S3.PutObjectRequest = {
     Bucket: 'zynthimage',
     Key: key,
-    Body: file, // No cast needed with proper type definition
-    ContentType: file.type, // Set ContentType header based on file type
+    Body: file.body, // File content
+    ContentType: file.type, // File type
   }
 
   try {
-    const data = await s3.upload(params).promise()
+    // Use AWS SDK's managed upload with concurrency options
+    const upload = s3.upload(params, {
+      partSize: 5 * 1024 * 1024, // 5MB part size
+      queueSize: 5, // Concurrency level
+    })
+
+    // Progress monitoring (optional)
+    upload.on('httpUploadProgress', (progress) => {
+      console.log(`Uploaded: ${(progress.loaded / progress.total) * 100}%`)
+    })
+
+    const data = await upload.promise()
     return data.Location // Return the public URL of the uploaded file
   } catch (error) {
     console.error('Error uploading file:', error)

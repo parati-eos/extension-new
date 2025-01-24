@@ -58,7 +58,12 @@ export default function Cover({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       try {
-        const url = await uploadFileToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+        const url = await uploadFileToS3(uploadedFile)
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {
@@ -75,7 +80,12 @@ export default function Cover({
     setIsUploading(true)
     if (file) {
       try {
-        const url = await uploadFileToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+        const url = await uploadFileToS3(uploadedFile)
         setSelectedImage(url)
         setUploadCompleted(true)
         setFileName(file.name)

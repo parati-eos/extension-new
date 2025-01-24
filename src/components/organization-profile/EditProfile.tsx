@@ -67,8 +67,14 @@ const EditProfile: React.FC = () => {
       setIsUploading(true) // Indicate uploading
 
       try {
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+
         // Upload file to S3 and get the URL
-        const url = await uploadFileToS3(file)
+        const url = await uploadFileToS3(uploadedFile)
         setLogo(url)
       } catch (error) {
         console.error('Error uploading logo:', error)
