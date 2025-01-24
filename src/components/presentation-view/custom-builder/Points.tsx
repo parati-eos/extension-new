@@ -266,7 +266,7 @@ export default function Points({
             {points.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-start gap-2 mb-2 lg:mb-0 p-1 ${
+                className={`flex flex-col items-start px-1  lg:mb-0  ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
@@ -332,7 +332,7 @@ export default function Points({
                     onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputChange(e.target.value, index)}
                     placeholder={`Enter Point ${index + 1}`}
-                    className="mb-2 w-full text-[#5D5F61] p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full text-[#5D5F61] p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   {refineLoadingStates[index] ? (
                     <>
