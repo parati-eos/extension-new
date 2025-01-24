@@ -103,6 +103,9 @@ export default function ViewPresentation() {
   const [isNewSlideLoading, setIsNewSlideLoading] = useState<{
     [key: string]: boolean
   }>({})
+  const [initialSlides, setInitialSlides] = useState<{
+    [key: string]: number
+  }>({})
   const [slideStates, setSlideStates] = useState<SlideStates>({})
   const [finalizedSlides, setFinalizedSlides] = useState<{
     [key: string]: string
@@ -504,6 +507,10 @@ export default function ViewPresentation() {
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
+    setInitialSlides((prev) => ({
+      ...prev,
+      [currentOutline]: slidesArrayRef.current[currentOutline].length,
+    }))
     if (storedOutlineIDs) {
       const outlineIDs = JSON.parse(storedOutlineIDs)
 
@@ -905,6 +912,10 @@ export default function ViewPresentation() {
               })
             }}
             setIsSlideLoading={() => {
+              setInitialSlides((prev) => ({
+                ...prev,
+                [currentOutline]: slidesArrayRef.current[currentOutline].length,
+              }))
               setSlideStates((prev) => {
                 return {
                   ...prev,
@@ -1111,7 +1122,10 @@ export default function ViewPresentation() {
       const processSlides = (newSlides: any[]) => {
         newSlidesRef.current = newSlides
 
-        if (newSlides.length > 0) {
+        if (
+          newSlides.length > 0 &&
+          currentOutlineID === newSlides[0].outline_id
+        ) {
           const firstSlide = newSlides[0]
 
           if (
@@ -1340,36 +1354,69 @@ export default function ViewPresentation() {
         }))
       }
 
-      if (totalSlides !== 0) {
-        setIsNewSlideLoading((prev) => {
-          if (prev[currentOutline]) {
-            console.log('Pagination Effect')
+      // if (totalSlides !== 0) {
+      //   setIsNewSlideLoading((prev) => {
+      //     if (prev[currentOutline]) {
+      //       console.log('Pagination Effect')
 
-            setNewSlideGenerated((prev) => ({
-              ...prev,
-              [currentOutline]: 'Yes',
-            }))
-            toast.success(`Slide Generated`, {
-              position: 'top-right',
-              autoClose: 3000,
-            })
-            setDisplayModes((prev) => ({
-              ...prev,
-              [currentOutline]: 'slides', // Preserve the previous state
-            }))
-            return {
-              ...prev,
-              [currentOutline]: false,
-            }
-          }
-          return prev
-        })
-      }
+      //       setNewSlideGenerated((prev) => ({
+      //         ...prev,
+      //         [currentOutline]: 'Yes',
+      //       }))
+      //       toast.success(`Slide Generated`, {
+      //         position: 'top-right',
+      //         autoClose: 3000,
+      //       })
+      //       setDisplayModes((prev) => ({
+      //         ...prev,
+      //         [currentOutline]: 'slides', // Preserve the previous state
+      //       }))
+      //       return {
+      //         ...prev,
+      //         [currentOutline]: false,
+      //       }
+      //     }
+      //     return prev
+      //   })
+      // }
     }
 
     if (totalSlides !== 0) {
       setNewVersionBackDisabled(false)
     }
+
+    console.log('Initial Slides State: ', initialSlides[currentOutline])
+
+    if (
+      initialSlides[currentOutline] &&
+      initialSlides[currentOutline] !== totalSlides
+    ) {
+      setIsNewSlideLoading((prev) => {
+        if (prev[currentOutline]) {
+          console.log('Pagination Effect')
+
+          setNewSlideGenerated((prev) => ({
+            ...prev,
+            [currentOutline]: 'Yes',
+          }))
+          toast.success(`Slide Generated`, {
+            position: 'top-right',
+            autoClose: 3000,
+          })
+          setDisplayModes((prev) => ({
+            ...prev,
+            [currentOutline]: 'slides', // Preserve the previous state
+          }))
+          return {
+            ...prev,
+            [currentOutline]: false,
+          }
+        }
+        return prev
+      })
+    }
+    console.log('Initial Slides', initialSlides[currentOutline])
+    console.log('Current Slides', totalSlides)
 
     setPrevTotalSlides(totalSlides)
   }, [totalSlides, prevTotalSlides])

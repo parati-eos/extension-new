@@ -5,7 +5,7 @@ import AttachImage from '../../presentation-view/custom-builder/shared/attachima
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
@@ -69,7 +69,12 @@ export default function Points({
     setIsImageLoading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+        const url = await uploadFileToS3(uploadedFile)
         setSelectedImage(url)
         setUploadCompleted(true) // Mark upload as complete
         setFileName(file.name) // Set file name only after upload is completed
@@ -261,7 +266,7 @@ export default function Points({
             {points.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-start gap-2 mb-2 lg:mb-0 p-1 ${
+                className={`flex flex-col items-start px-1  lg:mb-0  ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
@@ -286,7 +291,7 @@ export default function Points({
                 text-ellipsis overflow-hidden whitespace-nowrap pr-10" // Ensure padding for the icon
                   />
                   {refineLoadingStates[index] ? (
-                    <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                    <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
                       <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                     </div>
                   ) : (
@@ -327,7 +332,7 @@ export default function Points({
                     onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputChange(e.target.value, index)}
                     placeholder={`Enter Point ${index + 1}`}
-                    className="mb-2 w-full text-[#5D5F61] p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className=" w-full text-[#5D5F61] p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   {refineLoadingStates[index] ? (
                     <>

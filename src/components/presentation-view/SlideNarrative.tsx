@@ -4,8 +4,8 @@ import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
 import AttachImage from '../presentation-view/custom-builder/shared/attachimage'
 import { toast } from 'react-toastify'
-import uploadLogoToS3 from '../../utils/uploadLogoToS3'
-import Select, { components } from 'react-select'
+import uploadFileToS3 from '../../utils/uploadFileToS3'
+import Select from 'react-select'
 import PointsIcon from '../../assets/points.svg'
 import TimelineIcon from '../../assets/Presentation.svg'
 import ImagesIcon from '../../assets/images.svg'
@@ -88,7 +88,13 @@ export default function SlideNarrative({
     setIsLoading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+
+        const url = await uploadFileToS3(uploadedFile)
         setSelectedImage(url)
         setUploadCompleted(true) // Mark upload as complete
         setFileName(file.name) // Set file name only after upload is completed
@@ -316,7 +322,7 @@ export default function SlideNarrative({
           {/* Tooltip */}
           {showTooltip && !selectedOption && (
             <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Select Slide Type.
+              Select Slide Type.
             </div>
           )}
           <button

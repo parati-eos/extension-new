@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { FaImage, FaPlus } from 'react-icons/fa'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
@@ -131,7 +131,13 @@ export default function People({
     })
 
     try {
-      const url = await uploadLogoToS3(file)
+      const uploadedFile = {
+        name: file.name,
+        type: file.type,
+        body: file,
+      }
+
+      const url = await uploadFileToS3(uploadedFile)
       setPeople((prevPeople) => {
         const updatedPeople = [...prevPeople]
         updatedPeople[index].image = url
@@ -490,7 +496,7 @@ export default function People({
                       className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
                     />
                     {refineLoadingStates[index] ? (
-                      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
                         <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                       </div>
                     ) : (

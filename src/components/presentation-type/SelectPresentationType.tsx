@@ -21,7 +21,7 @@ import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice'
-import uploadLogoToS3 from '../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../utils/uploadFileToS3'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 const SelectPresentationType: React.FC = () => {
@@ -128,8 +128,13 @@ const SelectPresentationType: React.FC = () => {
       setFile(uploadedFile)
 
       try {
+        const pdfUploaded = {
+          name: uploadedFile.name,
+          type: uploadedFile.type,
+          body: uploadedFile, // Pass the File object directly
+        }
         // Handle upload
-        const pdfLink = await uploadLogoToS3(uploadedFile)
+        const pdfLink = await uploadFileToS3(pdfUploaded)
         setPdfLink(pdfLink)
       } catch (error) {
         console.error('Error uploading file:', error)

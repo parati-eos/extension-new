@@ -3,7 +3,7 @@ import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
 import AttachImage from './shared/attachimage'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 
 interface ContactProps {
   heading: string
@@ -211,7 +211,13 @@ export default function Contact({
     setIsImageLoading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
+        const uploadedFile = {
+          name: file.name,
+          type: file.type,
+          body: file,
+        }
+
+        const url = await uploadFileToS3(uploadedFile)
         setSelectedImage(url)
         setFileName(file.name)
         setUploadCompleted(true)
@@ -263,7 +269,7 @@ export default function Contact({
               placeholder="Enter Website Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.websiteLink && websiteLink.length!==0 && (
+            {errors.websiteLink && websiteLink.length !== 0 && (
               <p className="text-red-500 text-sm mt-1 lg:mt-0">
                 {errors.websiteLink}
               </p>
@@ -280,7 +286,7 @@ export default function Contact({
               placeholder="Enter Email"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && email.length!==0 && (
+            {errors.email && email.length !== 0 && (
               <p className="text-red-500 text-sm">{errors.email}</p>
             )}
           </div>
@@ -295,7 +301,7 @@ export default function Contact({
               placeholder="Enter Phone"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.phone && phone.length!==0 &&(
+            {errors.phone && phone.length !== 0 && (
               <p className="text-red-500 text-sm">{errors.phone}</p>
             )}
           </div>
@@ -311,7 +317,7 @@ export default function Contact({
               placeholder="LinkedIn Profile Link"
               className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.linkedin && linkedin.length!==0 && (
+            {errors.linkedin && linkedin.length !== 0 && (
               <p className="text-red-500 text-sm">{errors.linkedin}</p>
             )}
           </div>

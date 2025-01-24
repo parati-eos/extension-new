@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 import { FaImage } from 'react-icons/fa'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
@@ -92,7 +92,15 @@ export default function Images({
 
     try {
       const uploadedImages = await Promise.all(
-        files.map((file) => uploadLogoToS3(file))
+        files.map((file) => {
+          const uploadedFile = {
+            name: file.name,
+            type: file.type,
+            body: file,
+          }
+
+          return uploadFileToS3(uploadedFile)
+        })
       )
 
       if (replaceIndex !== undefined) {
