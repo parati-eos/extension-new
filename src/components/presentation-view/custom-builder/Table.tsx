@@ -357,9 +357,11 @@ export default function Table({
           .map((key) => refinedTableData[key])
           .filter((header) => header) // Filter out undefined or empty headers
 
-        // Dynamically extract all column headers
+        // Dynamically extract all column headers, ignoring columnHeader0
         const refinedColumnHeaders = Object.keys(refinedTableData)
-          .filter((key) => key.startsWith('columnHeader'))
+          .filter(
+            (key) => key.startsWith('columnHeader') && key !== 'columnHeader0'
+          ) // Ignore columnHeader0
           .sort(
             (a, b) =>
               parseInt(a.replace('columnHeader', ''), 10) -
@@ -368,7 +370,7 @@ export default function Table({
           .map((key) => refinedTableData[key])
           .filter((header) => header) // Filter out undefined or empty headers
 
-        // Map rows to a 2D array of strings (string[][])
+        // Map rows to a 2D array of strings (string[][]), ignoring attribute0 and filtering out empty values
         const refinedRows = Object.keys(refinedTableData)
           .filter((key) => key.startsWith('rows'))
           .sort(
@@ -379,13 +381,17 @@ export default function Table({
           .map((key) => {
             const row = refinedTableData[key]
             return Object.keys(row)
-              .filter((attrKey) => attrKey.startsWith('attribute'))
+              .filter(
+                (attrKey) =>
+                  attrKey.startsWith('attribute') && attrKey !== 'attribute0'
+              ) // Ignore attribute0
               .sort(
                 (a, b) =>
                   parseInt(a.replace('attribute', ''), 10) -
                   parseInt(b.replace('attribute', ''), 10)
               ) // Ensure correct order
-              .map((attrKey) => row[attrKey] || '') // Map to string, ensuring empty values are handled
+              .map((attrKey) => row[attrKey]) // Map attribute values
+              .filter((value) => value) // Filter out empty values
           })
 
         // Update table data state
@@ -440,12 +446,10 @@ export default function Table({
                 placeholder="Add Slide Title"
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
-              {refineLoadingSlideTitle ? (
-                <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+              <div className="absolute top-[55%] right-2 transform -translate-y-1/2 flex items-center justify-end">
+                {refineLoadingSlideTitle ? (
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                </div>
-              ) : (
-                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                ) : (
                   <div className="relative group">
                     <FontAwesomeIcon
                       icon={faWandMagicSparkles}
@@ -457,8 +461,8 @@ export default function Table({
                       Click to refine text.
                     </span>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
@@ -531,23 +535,23 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
-                        {/* {refineLoadingTable ? ( */}
-                        {/* <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                            <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                          </div> */}
-                        {/* ) : ( */}
-                        {/* <div className="relative group ml-1">
+                        {refineLoadingTable ? (
+                          <div className="relative group ml-1 flex items-center justify-center">
+                            <div className="absolute w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                          </div>
+                        ) : (
+                          <div className="relative group ml-1">
                             <FontAwesomeIcon
                               icon={faWandMagicSparkles}
                               onClick={() => refineText('tables')}
                               className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                            /> */}
-                        {/* Tooltip */}
-                        {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            />
+                            {/* Tooltip */}
+                            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
                               Click to refine table.
                             </span>
-                          </div> */}
-                        {/* )} */}
+                          </div>
+                        )}
                       </div>
                     </th>
                   </tr>
