@@ -1,4 +1,4 @@
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import React, { useEffect, useState } from 'react'
 import { FaImage, FaBullseye } from 'react-icons/fa'
 import { LogoFormProps } from '../../../types/onboardingTypes'
@@ -52,7 +52,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
         // Upload file to S3 and get the URL
         console.log('File selected:', file)
         const processedFile = await removeBackground(file)
-        const url = await uploadLogoToS3(processedFile)
+        const url = await uploadFileToS3(processedFile)
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {

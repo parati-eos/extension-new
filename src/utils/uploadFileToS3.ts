@@ -14,7 +14,7 @@ interface UploadFile {
 }
 
 // Function to upload a file to S3 bucket
-const uploadLogoToS3 = async (file: UploadFile): Promise<string> => {
+const uploadFileToS3 = async (file: UploadFile): Promise<string> => {
   const fileName = file.name // Get the original file name
   const uniqueId = Math.floor(Math.random() * 1000) // Generate a unique ID
   const key = `uploads/${uniqueId}_${fileName}` // Set the key with a prefix 'uploads/'
@@ -35,4 +35,4 @@ const uploadLogoToS3 = async (file: UploadFile): Promise<string> => {
   }
 }
 
-export default uploadLogoToS3
+export default uploadFileToS3

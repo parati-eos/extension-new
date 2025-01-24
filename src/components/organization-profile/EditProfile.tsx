@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import uploadLogoToS3 from '../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../utils/uploadFileToS3'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationData } from '../../types/types'
 import { industrySectorMap } from '../../utils/industrySector'
@@ -68,7 +68,7 @@ const EditProfile: React.FC = () => {
 
       try {
         // Upload file to S3 and get the URL
-        const url = await uploadLogoToS3(file)
+        const url = await uploadFileToS3(file)
         setLogo(url)
       } catch (error) {
         console.error('Error uploading logo:', error)

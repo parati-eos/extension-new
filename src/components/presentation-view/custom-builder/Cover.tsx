@@ -1,6 +1,6 @@
 import { FaImage } from 'react-icons/fa'
 import React, { useState, useRef, useEffect } from 'react'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import axios from 'axios'
 import { DisplayMode } from '../../../types/presentationView'
 import { BackButton } from './shared/BackButton'
@@ -58,7 +58,7 @@ export default function Cover({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       try {
-        const url = await uploadLogoToS3(file)
+        const url = await uploadFileToS3(file)
         setLogo(url)
       } catch (error) {
         toast.error('Error uploading logo', {
@@ -75,7 +75,7 @@ export default function Cover({
     setIsUploading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
+        const url = await uploadFileToS3(file)
         setSelectedImage(url)
         setUploadCompleted(true)
         setFileName(file.name)

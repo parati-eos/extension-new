@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { FaImage, FaPlus } from 'react-icons/fa'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
@@ -131,7 +131,7 @@ export default function People({
     })
 
     try {
-      const url = await uploadLogoToS3(file)
+      const url = await uploadFileToS3(file)
       setPeople((prevPeople) => {
         const updatedPeople = [...prevPeople]
         updatedPeople[index].image = url

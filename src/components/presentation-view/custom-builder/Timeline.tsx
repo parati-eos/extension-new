@@ -5,7 +5,7 @@ import AttachImage from '../../presentation-view/custom-builder/shared/attachima
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
-import uploadLogoToS3 from '../../../utils/uploadLogoToS3'
+import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 
@@ -206,7 +206,7 @@ export default function Timeline({
     setIsLoading(true)
     if (file) {
       try {
-        const url = await uploadLogoToS3(file)
+        const url = await uploadFileToS3(file)
         setSelectedImage(url)
         setUploadCompleted(true) // Mark upload as complete
         setFileName(file.name) // Set file name only after upload is completed
