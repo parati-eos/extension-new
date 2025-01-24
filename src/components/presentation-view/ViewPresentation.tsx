@@ -396,16 +396,25 @@ export default function ViewPresentation() {
       lastUpdated: Date.now(),
     })
 
+    const isCoverOutline = outlines.some(
+      (outline) => outline.type === 'Cover' && outline.title === outlineTitle
+    )
+    const isContactOutline = outlines.some(
+      (outline) => outline.type === 'Contact' && outline.title === outlineTitle
+    )
+
+    console.log('Is Cover: ', isCoverOutline)
+    console.log('Is Contact: ', isContactOutline)
+
     setDisplayModes((prev) => ({
       ...prev,
-      [outlineTitle]:
-        outlineTitle === outlines[0].title // Check if it's the Cover outline
-          ? 'Cover'
-          : outlineTitle === outlines[outlines.length - 1].title // Check if it's the Contact outline
-          ? 'Contact'
-          : prev[outlineTitle] === 'slides'
-          ? 'newContent'
-          : 'slides',
+      [outlineTitle]: isCoverOutline
+        ? 'Cover'
+        : isContactOutline
+        ? 'Contact'
+        : prev[outlineTitle] === 'slides'
+        ? 'newContent'
+        : 'slides',
     }))
   }
 
