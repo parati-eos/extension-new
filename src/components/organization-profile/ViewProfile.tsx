@@ -77,7 +77,7 @@ const ViewProfile: React.FC = () => {
                 <img
                   src={organizationData?.logo}
                   alt="Organization Logo"
-                  className="w-24 h-24 rounded-full shadow-md object-cover aspect-auto"
+                  className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
                 />
 
                 {/* Organization Info */}
