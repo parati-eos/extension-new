@@ -509,7 +509,7 @@ export default function ViewPresentation() {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     setInitialSlides((prev) => ({
       ...prev,
-      [currentOutline]: slidesArrayRef.current[currentOutline].length,
+      [currentOutline]: slidesArrayRef.current[currentOutline]?.length ?? 0,
     }))
     if (storedOutlineIDs) {
       const outlineIDs = JSON.parse(storedOutlineIDs)
@@ -914,7 +914,8 @@ export default function ViewPresentation() {
             setIsSlideLoading={() => {
               setInitialSlides((prev) => ({
                 ...prev,
-                [currentOutline]: slidesArrayRef.current[currentOutline].length,
+                [currentOutline]:
+                  slidesArrayRef.current[currentOutline]?.length ?? 0,
               }))
               setSlideStates((prev) => {
                 return {
