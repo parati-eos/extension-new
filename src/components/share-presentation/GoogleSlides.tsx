@@ -65,6 +65,14 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
     }
   }
 
+  const transformS3ToCloudfrontUrl = (
+    s3Url: string,
+    cloudfrontDomain: string
+  ): string => {
+    const s3DomainRegex = /https:\/\/[a-zA-Z0-9.-]+\.s3\.amazonaws\.com/
+    return s3Url.replace(s3DomainRegex, cloudfrontDomain)
+  }
+
   useEffect(() => {
     const fetchSlidesData = async () => {
       try {
@@ -82,7 +90,14 @@ const GoogleSlides = ({ formId }: GoogleSlidesProps) => {
         const data = await response.json()
         setPresentationID(data.presentationID)
         setCompanyLink(data.websiteLink)
-        setCompanyLogo(data.companyLogo)
+        const cloudfrontDomain = 'https://d2zu6flr7wd65l.cloudfront.net'
+
+        const cloudfrontUrl = transformS3ToCloudfrontUrl(
+          data.companyLogo,
+          cloudfrontDomain
+        )
+
+        setCompanyLogo(cloudfrontUrl)
         setSlidesData(data.outlineData)
         setCurrentOutline(data.outlineData[0]?.title || '')
         setLoading(false)
