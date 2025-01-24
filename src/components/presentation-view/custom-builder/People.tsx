@@ -490,7 +490,7 @@ export default function People({
                       className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
                     />
                     {refineLoadingStates[index] ? (
-                      <div className="absolute top-1/2 right-10 transform -translate-y-1/2">
+                      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
                         <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                       </div>
                     ) : (
