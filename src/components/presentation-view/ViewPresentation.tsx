@@ -1111,8 +1111,12 @@ export default function ViewPresentation() {
       const processSlides = (newSlides: any[]) => {
         newSlidesRef.current = newSlides
 
-        if (newSlides.length > 0) {
+        if (
+          newSlides.length > 0 &&
+          currentOutlineID === newSlides[0].outline_id
+        ) {
           const firstSlide = newSlides[0]
+          console.log('Socket Data', newSlides)
 
           if (
             firstSlide.outline_id === currentOutlineID &&
