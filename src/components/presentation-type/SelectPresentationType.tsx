@@ -100,16 +100,6 @@ const SelectPresentationType: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       const uploadedFile = event.target.files[0]
 
-      // Check file type
-      if (uploadedFile.type !== 'application/pdf') {
-        toast.info('Please upload a valid PDF', {
-          position: 'top-right',
-          autoClose: 3000,
-        })
-        setPDFUploading(false)
-        return
-      }
-
       // Check file size
       const fileSizeMB = uploadedFile.size / (1024 * 1024)
       if (fileSizeMB > MAX_FILE_SIZE_MB) {
@@ -589,7 +579,7 @@ const SelectPresentationType: React.FC = () => {
                   <span>Upload Presentation</span>
                   <input
                     type="file"
-                    accept=".pdf, .doc, .docx, .ppt, .pptx, application/pdf"
+                    accept=".pdf, .doc, .docx, .ppt, .pptx"
                     className="hidden"
                     onChange={handleFileChange}
                   />
