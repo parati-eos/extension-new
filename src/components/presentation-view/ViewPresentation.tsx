@@ -802,8 +802,8 @@ export default function ViewPresentation() {
           <>
             {slideState.isLoading ? (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
-                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                <p className="text-gray-600 text-sm mt-4">
+                <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                <p className="text-gray-600 text-sm mt-3">
                   {slideLoaderMessages[currentMessageIndex]}
                 </p>
               </div>
@@ -1716,8 +1716,8 @@ export default function ViewPresentation() {
           >
             {displayBoxLoading && (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
-                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                <p className="text-gray-600 text-sm mt-4">
+                <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                <p className="text-gray-600 text-sm mt-3">
                   {initialLoaderMessages[currentMessageIndex]}
                 </p>
               </div>
@@ -1880,8 +1880,8 @@ export default function ViewPresentation() {
         >
           {displayBoxLoading && (
             <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-              <p className="text-gray-600 text-sm mt-4">
+              <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              <p className="text-gray-600 text-sm mt-3">
                 {initialLoaderMessages[currentMessageIndex]}
               </p>
             </div>
