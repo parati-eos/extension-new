@@ -398,9 +398,11 @@ const SelectPresentationType: React.FC = () => {
           <button
             id="generate-presentation"
             onClick={handleGenerate}
-            disabled={!selectedType || isButtonDisabled}
+            disabled={
+              !selectedType || isButtonDisabled || !eligibleForGeneration
+            }
             className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
-              !selectedType || isButtonDisabled
+              !selectedType || isButtonDisabled || !eligibleForGeneration
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-[#3667B2] hover:bg-[#0A8568]'
             }`}
@@ -426,10 +428,12 @@ const SelectPresentationType: React.FC = () => {
         >
           <button
             id="refine-presentation"
-            disabled={!selectedType || refineButtonDisabled}
+            disabled={
+              !selectedType || refineButtonDisabled || !eligibleForGeneration
+            }
             onClick={() => setIsRefineModalOpen(true)}
             className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
-              !selectedType || refineButtonDisabled
+              !selectedType || refineButtonDisabled || !eligibleForGeneration
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
             }`}
@@ -471,7 +475,7 @@ const SelectPresentationType: React.FC = () => {
         <></>
       )}
 
-      {/* Generate Modal*/}
+      {/* Mobile Generate Modal On Bottom Of The Screen*/}
       {isModalOpen && (
         <div className="fixed inset-0  flex justify-center items-end lg:hidden">
           {/* Dimmed Background */}
@@ -499,6 +503,9 @@ const SelectPresentationType: React.FC = () => {
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleGenerate}
+                disabled={
+                  !selectedType || isButtonDisabled || !eligibleForGeneration
+                }
                 className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
               >
                 Generate Presentation
@@ -507,30 +514,14 @@ const SelectPresentationType: React.FC = () => {
               <button
                 onClick={() => {
                   if (userPlan !== 'free') {
-                    setIsRefineModalOpen(true) // Open refine modal
+                    setIsRefineModalOpen(true)
                   } else if (userPlan === 'free') {
-                    setShowTooltip(true) // Show tooltip
+                    setIsPricingModalOpen(true)
                   }
                 }}
                 className="relative bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
-                onMouseLeave={() => setShowTooltip(false)} // Hide tooltip when mouse leaves
               >
                 Refine Presentation
-                {/* Tooltip */}
-                {showTooltip && refineButtonDisabled && userPlan === 'free' && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center z-50">
-                    <p className="text-sm text-gray-800 text-center">
-                      Please{' '}
-                      <button
-                        className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                        onClick={() => setIsPricingModalOpen(true)}
-                      >
-                        upgrade to Pro
-                      </button>{' '}
-                      to access this feature.
-                    </p>
-                  </div>
-                )}
               </button>
 
               <button
@@ -620,7 +611,9 @@ const SelectPresentationType: React.FC = () => {
                       ? 'text-white'
                       : 'cursor-not-allowed'
                   }`}
-                  disabled={refineLoading && !pdfLink}
+                  disabled={
+                    (refineLoading && !pdfLink) || !eligibleForGeneration
+                  }
                 >
                   <span>Refine Presentation</span>
                 </button>
