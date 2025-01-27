@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FaBox,
   FaDesktop,
@@ -80,11 +80,10 @@ const SelectPresentationType: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
-  const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [showTooltip, setShowTooltip] = React.useState(false)
   const [refineLoading, setRefineLoading] = useState(false)
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
+  const [eligibleForGeneration, setEligibleForGeneration] = useState(false)
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -100,16 +99,6 @@ const SelectPresentationType: React.FC = () => {
 
     if (event.target.files && event.target.files[0]) {
       const uploadedFile = event.target.files[0]
-
-      // Check file type
-      if (uploadedFile.type !== 'application/pdf') {
-        toast.info('Please upload a valid PDF', {
-          position: 'top-right',
-          autoClose: 3000,
-        })
-        setPDFUploading(false)
-        return
-      }
 
       // Check file size
       const fileSizeMB = uploadedFile.size / (1024 * 1024)
@@ -159,8 +148,9 @@ const SelectPresentationType: React.FC = () => {
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}/${generatedDocumentID}`,
-
-          {},
+          {
+            pptInput: '',
+          },
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -284,7 +274,11 @@ const SelectPresentationType: React.FC = () => {
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
         console.log('Subscription ID: ', response.data.plan.subscriptionId)
-
+        if (response.data.is_eligible === true) {
+          setEligibleForGeneration(true)
+        } else {
+          setEligibleForGeneration(false)
+        }
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {
@@ -395,9 +389,11 @@ const SelectPresentationType: React.FC = () => {
           <button
             id="generate-presentation"
             onClick={handleGenerate}
-            disabled={!selectedType || isButtonDisabled}
+            disabled={
+              !selectedType || isButtonDisabled || !eligibleForGeneration
+            }
             className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
-              !selectedType || isButtonDisabled
+              !selectedType || isButtonDisabled || !eligibleForGeneration
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-[#3667B2] hover:bg-[#0A8568]'
             }`}
@@ -423,10 +419,12 @@ const SelectPresentationType: React.FC = () => {
         >
           <button
             id="refine-presentation"
-            disabled={!selectedType || refineButtonDisabled}
+            disabled={
+              !selectedType || refineButtonDisabled || !eligibleForGeneration
+            }
             onClick={() => setIsRefineModalOpen(true)}
             className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
-              !selectedType || refineButtonDisabled
+              !selectedType || refineButtonDisabled || !eligibleForGeneration
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
             }`}
@@ -468,7 +466,7 @@ const SelectPresentationType: React.FC = () => {
         <></>
       )}
 
-      {/* Generate Modal*/}
+      {/* Mobile Generate Modal On Bottom Of The Screen*/}
       {isModalOpen && (
         <div className="fixed inset-0  flex justify-center items-end lg:hidden">
           {/* Dimmed Background */}
@@ -476,7 +474,6 @@ const SelectPresentationType: React.FC = () => {
             className="absolute inset-0 bg-gray-900 bg-opacity-50"
             onClick={() => {
               setIsModalOpen(false) // Close the modal
-              setShowTooltip(false) // Hide the tooltip
             }}
           ></div>
 
@@ -487,7 +484,6 @@ const SelectPresentationType: React.FC = () => {
               className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
               onClick={() => {
                 setIsModalOpen(false) // Close the modal
-                setShowTooltip(false) // Hide the tooltip
               }}
             >
               <FaTimes className="text-[#888a8f] text-lg" />
@@ -496,6 +492,9 @@ const SelectPresentationType: React.FC = () => {
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleGenerate}
+                disabled={
+                  !selectedType || isButtonDisabled || !eligibleForGeneration
+                }
                 className="bg-[#3667B2] h-[3.1rem] text-white py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
               >
                 Generate Presentation
@@ -504,37 +503,20 @@ const SelectPresentationType: React.FC = () => {
               <button
                 onClick={() => {
                   if (userPlan !== 'free') {
-                    setIsRefineModalOpen(true) // Open refine modal
+                    setIsRefineModalOpen(true)
                   } else if (userPlan === 'free') {
-                    setShowTooltip(true) // Show tooltip
+                    setIsPricingModalOpen(true)
                   }
                 }}
                 className="relative bg-white text-[#5D5F61] h-[3.1rem] border border-[#5D5F61] py-2 px-4 rounded-lg active:scale-95 transition transform duration-300"
-                onMouseLeave={() => setShowTooltip(false)} // Hide tooltip when mouse leaves
               >
                 Refine Presentation
-                {/* Tooltip */}
-                {showTooltip && refineButtonDisabled && userPlan === 'free' && (
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center z-50">
-                    <p className="text-sm text-gray-800 text-center">
-                      Please{' '}
-                      <button
-                        className="text-purple-600 font-medium hover:text-purple-800 hover:scale-105 active:scale-95 transition transform"
-                        onClick={() => setIsPricingModalOpen(true)}
-                      >
-                        upgrade to Pro
-                      </button>{' '}
-                      to access this feature.
-                    </p>
-                  </div>
-                )}
               </button>
 
               <button
                 className="text-[#5D5F61] py-2 px-4 rounded-lg"
                 onClick={() => {
                   setIsModalOpen(false) // Close the modal
-                  setShowTooltip(false) // Hide the tooltip
                 }}
               >
                 Cancel
@@ -597,7 +579,7 @@ const SelectPresentationType: React.FC = () => {
                   <span>Upload Presentation</span>
                   <input
                     type="file"
-                    accept="application/pdf"
+                    accept=".pdf, .doc, .docx, .ppt, .pptx"
                     className="hidden"
                     onChange={handleFileChange}
                   />
@@ -617,7 +599,9 @@ const SelectPresentationType: React.FC = () => {
                       ? 'text-white'
                       : 'cursor-not-allowed'
                   }`}
-                  disabled={refineLoading && !pdfLink}
+                  disabled={
+                    (refineLoading && !pdfLink) || !eligibleForGeneration
+                  }
                 >
                   <span>Refine Presentation</span>
                 </button>

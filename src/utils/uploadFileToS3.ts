@@ -40,6 +40,7 @@ const uploadFileToS3 = async (file: UploadFile): Promise<string> => {
     })
 
     const data = await upload.promise()
+    console.log('PDF Link: ', data.Location)
     return data.Location // Return the public URL of the uploaded file
   } catch (error) {
     console.error('Error uploading file:', error)

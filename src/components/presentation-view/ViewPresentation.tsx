@@ -10,7 +10,7 @@ import React, {
 import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { io } from 'socket.io-client'
-import { Outline } from '../../types/types'
+import { Outline } from '../../types/presentationView'
 import { DesktopHeading, MobileHeading } from './Heading'
 import PaymentGateway from '../payment/PaymentGateway'
 import {
@@ -40,6 +40,7 @@ import Cover from './custom-builder/Cover'
 import { useDispatch, useSelector } from 'react-redux'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
+import { slideLoaderMessages, initialLoaderMessages } from '../../utils/data'
 
 interface SlideState {
   isLoading: boolean
@@ -119,6 +120,39 @@ export default function ViewPresentation() {
   const slidesArrayRef = useRef(slidesArray)
   const newSlideLoadingRef = useRef(isNewSlideLoading)
   const slideStatesRef = useRef(slideStates)
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
+  const [currentSlideLoaderMessageIndex, setCurrentSlideLoaderMessageIndex] =
+    useState(0)
+
+  // Initial Loader Messages
+  useEffect(() => {
+    if (!displayBoxLoading) return
+
+    const interval = setInterval(() => {
+      setCurrentMessageIndex((prevIndex) =>
+        prevIndex < initialLoaderMessages.length - 1 ? prevIndex + 1 : 0
+      )
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [displayBoxLoading])
+
+  // Slide Loader Messages
+  useEffect(() => {
+    if (!slideStates[currentOutline]?.isLoading) return
+
+    const interval = setInterval(() => {
+      setCurrentSlideLoaderMessageIndex((prevIndex) =>
+        prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : 0
+      )
+      // setCurrentSlideLoaderMessageIndex(
+      //   (prevIndex) =>
+      //     prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : prevIndex // Stop incrementing at the last message
+      // )
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [slideStates[currentOutline]?.isLoading])
 
   const openPricingModal = async () => {
     setIsPricingModalOpen(true)
@@ -773,9 +807,11 @@ export default function ViewPresentation() {
         return (
           <>
             {slideState.isLoading ? (
-              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
-                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                <h1>Generating Slide Please Wait...</h1>
+              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
+                <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                <p className="text-gray-600 text-sm mt-3">
+                  {slideLoaderMessages[currentSlideLoaderMessageIndex]}
+                </p>
               </div>
             ) : slideState.isNoGeneratedSlide ? (
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
@@ -1685,8 +1721,11 @@ export default function ViewPresentation() {
             ref={scrollContainerRef}
           >
             {displayBoxLoading && (
-              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
-                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
+                <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                <p className="text-gray-600 text-sm mt-3">
+                  {initialLoaderMessages[currentMessageIndex]}
+                </p>
               </div>
             )}
             {outlines.map((outline, index) => (
@@ -1846,8 +1885,11 @@ export default function ViewPresentation() {
           } w-full border border-gray-200 mb-2`}
         >
           {displayBoxLoading && (
-            <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+            <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
+              <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              <p className="text-gray-600 text-sm mt-3">
+                {initialLoaderMessages[currentMessageIndex]}
+              </p>
             </div>
           )}
           {renderContent({
