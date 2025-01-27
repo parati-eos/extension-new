@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   FaBox,
   FaDesktop,
@@ -80,7 +80,6 @@ const SelectPresentationType: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
-  const [showTooltip, setShowTooltip] = React.useState(false)
   const [refineLoading, setRefineLoading] = useState(false)
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
@@ -483,7 +482,6 @@ const SelectPresentationType: React.FC = () => {
             className="absolute inset-0 bg-gray-900 bg-opacity-50"
             onClick={() => {
               setIsModalOpen(false) // Close the modal
-              setShowTooltip(false) // Hide the tooltip
             }}
           ></div>
 
@@ -494,7 +492,6 @@ const SelectPresentationType: React.FC = () => {
               className="absolute top-5 right-4 bg-gray-200 rounded-full p-2 cursor-pointer"
               onClick={() => {
                 setIsModalOpen(false) // Close the modal
-                setShowTooltip(false) // Hide the tooltip
               }}
             >
               <FaTimes className="text-[#888a8f] text-lg" />
@@ -528,7 +525,6 @@ const SelectPresentationType: React.FC = () => {
                 className="text-[#5D5F61] py-2 px-4 rounded-lg"
                 onClick={() => {
                   setIsModalOpen(false) // Close the modal
-                  setShowTooltip(false) // Hide the tooltip
                 }}
               >
                 Cancel

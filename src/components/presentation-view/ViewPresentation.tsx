@@ -121,6 +121,8 @@ export default function ViewPresentation() {
   const newSlideLoadingRef = useRef(isNewSlideLoading)
   const slideStatesRef = useRef(slideStates)
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
+  const [currentSlideLoaderMessageIndex, setCurrentSlideLoaderMessageIndex] =
+    useState(0)
 
   // Initial Loader Messages
   useEffect(() => {
@@ -130,7 +132,7 @@ export default function ViewPresentation() {
       setCurrentMessageIndex((prevIndex) =>
         prevIndex < initialLoaderMessages.length - 1 ? prevIndex + 1 : 0
       )
-    }, 7000)
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [displayBoxLoading])
@@ -140,7 +142,7 @@ export default function ViewPresentation() {
     if (!slideStates[currentOutline]?.isLoading) return
 
     const interval = setInterval(() => {
-      setCurrentMessageIndex((prevIndex) =>
+      setCurrentSlideLoaderMessageIndex((prevIndex) =>
         prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : 0
       )
     }, 10000)
@@ -804,7 +806,7 @@ export default function ViewPresentation() {
               <div className="w-full h-full flex flex-col gap-y-3 items-center justify-center text-center">
                 <div className="w-8 h-8 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 <p className="text-gray-600 text-sm mt-3">
-                  {slideLoaderMessages[currentMessageIndex]}
+                  {slideLoaderMessages[currentSlideLoaderMessageIndex]}
                 </p>
               </div>
             ) : slideState.isNoGeneratedSlide ? (
