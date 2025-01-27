@@ -13,7 +13,6 @@ import LandingPage from './pages/LandingPage.tsx'
 import PresentationShare from './pages/PresentationShare.tsx'
 import PitchDeckShare from './components/pitchZynthShare/Share.jsx'
 import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
-import Test from './test/test.tsx'
 import PricingPage from './pages/PricingPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
 import { SocketProvider } from './components/shared/SubscriptionSocket.tsx'
@@ -165,7 +164,6 @@ const App: React.FC = () => {
             />
             <Route path="/presentation-share" element={<PresentationShare />} />
             <Route path="/share" element={<PitchDeckShare />} />
-            <Route path="/test" element={<Test />} />
           </Routes>
         </Router>
         <ToastContainer />

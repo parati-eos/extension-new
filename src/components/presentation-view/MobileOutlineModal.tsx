@@ -6,7 +6,7 @@ import {
   FaCheck,
   FaExclamation,
 } from 'react-icons/fa'
-import { Outlines } from '../../types/types'
+import { Outlines } from '../../types/presentationView'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { PricingModal } from '../shared/PricingModal'

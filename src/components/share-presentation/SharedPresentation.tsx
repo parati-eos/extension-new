@@ -1,10 +1,11 @@
 import React from 'react'
 import Googleslides from './GoogleSlides.tsx'
-import ZynthLogo from '../../assets/zynth-text.png'
-import { GooglePresentationProps } from '../../types/types.ts'
-import '../presentation-view/viewpresentation.css'
 
 interface SharedPresentationProps {
+  formId: string
+}
+
+interface GooglePresentationProps {
   formId: string
 }
 

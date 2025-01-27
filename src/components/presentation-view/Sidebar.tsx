@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
-import { Outlines, SidebarProps } from '../../types/types'
+import { Outlines, SidebarProps } from '../../types/presentationView'
 import { toast } from 'react-toastify'
 import { FaCheck, FaExclamation, FaTimes } from 'react-icons/fa'
 import './viewpresentation.css'
@@ -219,8 +219,6 @@ const Sidebar: React.FC<SidebarProps> = ({
                       <p className="text-sm text-center text-gray-800">
                         Add new section.
                       </p>
-
-                      
                     </div>
                   )}
                   {/* Tooltip */}

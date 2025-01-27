@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import uploadFileToS3 from '../../utils/uploadFileToS3'
 import { useNavigate } from 'react-router-dom'
-import { OrganizationData } from '../../types/types'
+import { OrganizationData } from '../../types/orgProfileTypes'
 import { industrySectorMap } from '../../utils/industrySector'
 import { toast } from 'react-toastify'
 

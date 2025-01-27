@@ -1,5 +1,5 @@
 import { FaDownload, FaShare } from 'react-icons/fa'
-import { HeadingProps } from '../../types/types'
+import { HeadingProps } from '../../types/presentationView'
 
 import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'

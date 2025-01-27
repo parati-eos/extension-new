@@ -80,11 +80,11 @@ const SelectPresentationType: React.FC = () => {
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
-  const dialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showTooltip, setShowTooltip] = React.useState(false)
   const [refineLoading, setRefineLoading] = useState(false)
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
+  const [eligibleForGeneration, setEligibleForGeneration] = useState(false)
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -284,7 +284,11 @@ const SelectPresentationType: React.FC = () => {
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
         console.log('Subscription ID: ', response.data.plan.subscriptionId)
-
+        if (response.data.is_eligible === true) {
+          setEligibleForGeneration(true)
+        } else {
+          setEligibleForGeneration(false)
+        }
         dispatch(setUserPlan(planName))
         setSubId(subscriptionId)
       } catch (error) {
@@ -597,7 +601,7 @@ const SelectPresentationType: React.FC = () => {
                   <span>Upload Presentation</span>
                   <input
                     type="file"
-                    accept="application/pdf"
+                    accept=".pdf, .doc, .docx, .ppt, .pptx, application/pdf"
                     className="hidden"
                     onChange={handleFileChange}
                   />

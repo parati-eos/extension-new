@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FaEdit, FaLink, FaEnvelope, FaPhone, FaLinkedin } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { OrganizationData } from '../../types/types'
+import { OrganizationData } from '../../types/orgProfileTypes'
 import { toast } from 'react-toastify'
 
 const ViewProfile: React.FC = () => {
