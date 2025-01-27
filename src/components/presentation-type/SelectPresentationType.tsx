@@ -158,7 +158,9 @@ const SelectPresentationType: React.FC = () => {
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${selectedTypeName}/${generatedDocumentID}`,
-          {},
+          {
+            pptInput: '',
+          },
           {
             headers: {
               Authorization: `Bearer ${authToken}`,

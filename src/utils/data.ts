@@ -1,7 +1,4 @@
 export const slideLoaderMessages = [
-  'Gathering insights and visualizing your data for the perfect slides.',
-  "Did you know? Zynth's AI uses tried-and-tested frameworks to create impactful presentations!",
-  'By just waiting for a minute or two, you will be saving hours of content and design work.',
   "While this slide is generating, you can go through the outline to see what's coming up and if any slide is ready.",
   'You can also create new versions of each slide or add new sections in the outline to further improve your generated presentation.',
   'Do you know that knowledge workers spend almost 50% of their time in creating business documents?',
@@ -15,12 +12,7 @@ export const slideLoaderMessages = [
 ]
 
 export const initialLoaderMessages = [
-  'Fetching and analyzing the data that powers your story.',
-  'Scraping relevant information to create a solid foundation for your presentation.',
-  'Creating a comprehensive outline to craft a compelling narrative.',
-  'Setting up the structure for your slides—almost ready to start generating!',
-  "Zynth's AI is using tried-and-tested frameworks to create impactful presentations.",
-  'Saving you hours of work—just a little longer while we craft your slides.',
-  'Get control over your slides with custom versions or new sections in the outline.',
-  'Great presentations take time—Zynth is crafting each slide with precision.',
+  'Gathering insights and visualizing your data for the perfect slides.',
+  "Did you know? Zynth's AI uses tried-and-tested frameworks to create impactful presentations!",
+  'By just waiting for a minute or two, you will be saving hours of content and design work.',
 ]

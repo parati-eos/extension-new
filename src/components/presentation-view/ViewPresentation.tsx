@@ -132,7 +132,7 @@ export default function ViewPresentation() {
       setCurrentMessageIndex((prevIndex) =>
         prevIndex < initialLoaderMessages.length - 1 ? prevIndex + 1 : 0
       )
-    }, 5000)
+    }, 10000)
 
     return () => clearInterval(interval)
   }, [displayBoxLoading])
@@ -145,6 +145,10 @@ export default function ViewPresentation() {
       setCurrentSlideLoaderMessageIndex((prevIndex) =>
         prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : 0
       )
+      // setCurrentSlideLoaderMessageIndex(
+      //   (prevIndex) =>
+      //     prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : prevIndex // Stop incrementing at the last message
+      // )
     }, 10000)
 
     return () => clearInterval(interval)
