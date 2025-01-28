@@ -89,7 +89,7 @@ export default function Statistics({
     !slideTitle.trim()
 
   const handleGenerateSlide = async () => {
-    toast.info(`Request sent for generating new slide for ${heading}`, {
+    toast.info(`Request sent to a generate new version for ${heading}`, {
       position: 'top-right',
       autoClose: 3000,
     })

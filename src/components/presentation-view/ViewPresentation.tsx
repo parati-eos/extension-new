@@ -550,7 +550,7 @@ export default function ViewPresentation() {
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
     toast.info(
-      `Request sent for generating new slide for ${currentOutline.replace(
+      `Request sent to a generate new version for ${currentOutline.replace(
         /^\d+\.\s*/,
         ''
       )}`,

@@ -127,7 +127,7 @@ export default function Images({
   }
 
   const handleSubmit = async () => {
-    toast.info(`Request sent for generating new slide for ${heading}`, {
+    toast.info(`Request sent to a generate new version for ${heading}`, {
       position: 'top-right',
       autoClose: 3000,
     })
