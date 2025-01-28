@@ -11,6 +11,7 @@ interface ButtonProps {
   handleQuickGenerate: () => void
   handleCustomBuilderClick: () => void
   handleSlideNarrative: () => void
+  handleBack?: () => void
   userPlan: string
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
   isLoading: boolean
@@ -30,7 +31,6 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
   handleQuickGenerate,
   handleCustomBuilderClick,
   handleSlideNarrative,
-  backDisabled,
   userPlan,
   isLoading,
   monthlyPlanAmount,
@@ -243,6 +243,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   authToken,
   orgId,
   subscriptionId,
+  handleBack,
 }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isDialogVisibleQuick, setIsDialogVisibleQuick] = useState(false)
@@ -262,9 +263,6 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
   const handleMouseLeaveNarrative = () => {
     setIsDialogVisibleNarrative(false)
   }
-  const onBack = () => {
-    setDisplayMode('slides')
-  }
 
   return (
     <div className="relative flex flex-col h-full w-full items-center justify-center p-4">
@@ -277,7 +275,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
         <>
           {/* Back Button */}
           <div className="hidden lg:block absolute top-4 right-4 ">
-            <BackButton onClick={onBack} disabled={backDisabled} />
+            <BackButton onClick={handleBack!} disabled={backDisabled} />
           </div>
           <div className="text-center">
             <h2 className="text-xl text-[#091220] font-semibold mb-3">

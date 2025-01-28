@@ -89,6 +89,10 @@ export default function Statistics({
     !slideTitle.trim()
 
   const handleGenerateSlide = async () => {
+    toast.info(`Request sent to a generate new version for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    })
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     if (storedOutlineIDs) {
       const outlineIDs = JSON.parse(storedOutlineIDs)
