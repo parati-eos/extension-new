@@ -11,92 +11,80 @@ import PresentationGrid from './PresentationGrid'
 // HeroParallax Component
 const products = [
   {
-    title: 'Facebook',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713502679562',
+    title: 'Ola Electric',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736753397973',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Facebook+Team+5.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738073641839_ola.png',
   },
   {
-    title: 'Delhivery',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713430410967',
+    title: 'Whatfix',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736757094125',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Delhivery+Product+5.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738073837415_whatfix.png',
   },
   {
-    title: 'Tesla',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713506221153',
-    thumbnail: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/Tesla+GTM+3.png',
+    title: 'Zomato',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736761113709',
+    thumbnail: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738073881562_zomato.png',
   },
   {
-    title: 'Apple',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713424380332',
+    title: 'Razorpay',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736763499534',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Apple+Product+6.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738073931871_razorpay.png',
   },
   {
-    title: 'Nykaa',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713426656376',
+    title: 'Cult.fit',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736831397485',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Nykaa+business+model+4.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738073971986_cult.fit.png',
   },
   {
-    title: 'Duolingo',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713521432288',
+    title: 'GoMechanic',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736851283267',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Duolingo+Financials+Use+of+Funds.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074058408_gomechanic.png',
   },
   {
-    title: 'Blinkit',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713510136883',
+    title: 'Licious',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1736919070264',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Blinkit+Track+Record.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074097043_licious.png',
   },
   {
-    title: 'Open AI',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713450564562',
+    title: 'Digit Insurance ',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1737625933129',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Open+AI+Problem+5.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074136376_digit.png',
+  },
+  {
+    title: 'MyGlamm ',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1737696537896',
+    thumbnail:
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074167423_MyGlamm.png',
+  },
+  {
+    title: 'Urban Company ',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1737706157139',
+    thumbnail:
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074497622_image.png',
+  },
+  {
+    title: 'EcoKadai',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1737710890505',
+    thumbnail:
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074267645_Ecokadai.png',
   },
   {
     title: 'Paytm',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713877444343',
-    thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Paytm+Mobile+App+screenshots+3.png',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1737958705672',
+    thumbnail: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074303714_paytm.png',
   },
   {
-    title: 'NVIDIA',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713523086905',
+    title: 'Namo ewaste',
+    link: 'https://zynth.ai/presentation-share?formId=Document-1737722102025',
     thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/NVIDIA+Product+RoadMap.png',
-  },
-  {
-    title: 'DailyHunt',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713511811562',
-    thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/DailyHunt+Solutions+4.png',
-  },
-  {
-    title: 'Cred',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713509226838',
-    thumbnail: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/Cred+About+5.png',
-  },
-  {
-    title: 'Zerodha',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713873123080',
-    thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Zerodha+GTM+5.png',
-  },
-  {
-    title: 'Paytm',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713877444343',
-    thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Paytm+Product+Architecture.png',
-  },
-  {
-    title: 'Duolingo',
-    link: 'https://zynth.ai/share?submissionId=Parati-1713521432288',
-    thumbnail:
-      'https://d2zu6flr7wd65l.cloudfront.net/uploads/Duolingo+Case+Study.png',
+      'https://d2zu6flr7wd65l.cloudfront.net/uploads/1738074320178_e-namo.png',
   },
 ]
 export const Hero = () => {

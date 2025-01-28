@@ -541,7 +541,7 @@ const SelectPresentationType: React.FC = () => {
               <div className="mt-4">
                 <textarea
                   className="w-full h-[7rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl scrollbar-none"
-                  placeholder="Please provide any context around the presentation you want to create or drop content in the text box below which may be relevant to the required presentation"
+                  placeholder="Add text or drop content here—more details mean a more tailored presentation!"
                   value={generateinput || ''}
                   onChange={(e) => setGenerateInput(e.target.value)}
                   maxLength={10000}
