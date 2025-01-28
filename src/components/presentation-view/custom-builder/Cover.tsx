@@ -107,6 +107,10 @@ export default function Cover({
   }
 
   const handleGenerateSlide = async () => {
+    toast.info(`Request sent for generating new slide for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    })
     setIsSlideLoading()
     setIsLoading(true)
     try {

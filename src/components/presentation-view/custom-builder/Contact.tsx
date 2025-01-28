@@ -150,6 +150,11 @@ export default function Contact({
     Object.values(errors).some((error) => error !== '') // Check for validation errors
 
   const handleSubmit = async () => {
+    toast.info(`Request sent for generating new slide for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    })
+
     setIsSlideLoading()
     validateWebsiteLink(websiteLink)
     validateEmail()

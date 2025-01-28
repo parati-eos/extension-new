@@ -549,6 +549,16 @@ export default function ViewPresentation() {
 
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
+    toast.info(
+      `Request sent for generating new slide for ${currentOutline.replace(
+        /^\d+\.\s*/,
+        ''
+      )}`,
+      {
+        position: 'top-right',
+        autoClose: 3000,
+      }
+    )
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     setInitialSlides((prev) => ({
       ...prev,

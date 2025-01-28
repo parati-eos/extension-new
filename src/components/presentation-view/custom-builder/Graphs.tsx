@@ -124,6 +124,10 @@ export default function Graphs({
   }
 
   const handleSubmit = async () => {
+    toast.info(`Request sent for generating new slide for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    })
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     if (storedOutlineIDs) {
       const outlineIDs = JSON.parse(storedOutlineIDs)
