@@ -15,7 +15,12 @@ interface ContactProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  handleBack: () => void
 }
+
+interface PhoneChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
+
+interface EmailChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
 export default function Contact({
   heading,
@@ -27,6 +32,7 @@ export default function Contact({
   outlineID,
   setIsSlideLoading,
   setFailed,
+  handleBack,
 }: ContactProps) {
   const [websiteLink, setWebsiteLink] = useState('')
   const [email, setEmail] = useState('')
@@ -45,19 +51,18 @@ export default function Contact({
     phone: '',
     linkedin: '',
   })
-  interface EmailChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
   const handleEmailChange = (e: EmailChangeEvent) => {
     const value = e.target.value
     setEmail(value)
     validateEmail() // Validate on every change
   }
+
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!websiteLink) {
       setWebsiteLink('https://') // Pre-fill "https://" if empty
     }
   }
-  interface PhoneChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
   const handlePhoneChange = (e: PhoneChangeEvent) => {
     const value = e.target.value
@@ -68,6 +73,7 @@ export default function Contact({
       validatePhone(value) // Validate the current input value
     }
   }
+
   const validatePhone = (value: string) => {
     const regex = /^[1-9]\d{9}$/
     if (value && !regex.test(value)) {
@@ -79,6 +85,7 @@ export default function Contact({
       setErrors((prev) => ({ ...prev, phone: '' }))
     }
   }
+
   const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!linkedin) {
       setLinkedin('https://') // Pre-fill "https://" if empty
@@ -98,6 +105,7 @@ export default function Contact({
     setLinkedin(updatedValue) // Update LinkedIn link state
     validateLinkedin() // Call validation
   }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedValue = e.target.value
 
@@ -111,6 +119,7 @@ export default function Contact({
     setWebsiteLink(updatedValue) // Update website link state
     validateWebsiteLink(updatedValue) // Call validation
   }
+
   const validateWebsiteLink = (link: string) => {
     const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
     if (link && !regex.test(link)) {
@@ -237,9 +246,6 @@ export default function Contact({
     }
   }
 
-  const onBack = () => {
-    setDisplayMode('slides')
-  }
   const handleMouseEnter = () => {
     if (isButtonDisabled) {
       setShowTooltip(true)
@@ -254,7 +260,7 @@ export default function Contact({
       {/* Heading */}
       <div className="flex items-center justify-between w-full">
         <h3 className="text-semibold">Contact</h3>
-        <BackButton onClick={onBack} />
+        <BackButton onClick={handleBack} />
       </div>
       <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">
         {heading}

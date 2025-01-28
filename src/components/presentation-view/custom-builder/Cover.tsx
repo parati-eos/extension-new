@@ -17,11 +17,13 @@ interface CoverProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  handleBack: () => void
 }
 
 export default function Cover({
   heading,
   slideType,
+  handleBack,
   documentID,
   orgId,
   authToken,
@@ -151,10 +153,6 @@ export default function Cover({
     }
   }
 
-  const onBack = () => {
-    setDisplayMode('slides')
-  }
-
   useEffect(() => {
     axios
       .get(
@@ -176,7 +174,7 @@ export default function Cover({
       {/* Header Section */}
       <div className="flex items-center justify-between w-full">
         <h3 className="text-semibold">Cover</h3>
-        <BackButton onClick={onBack} />
+        <BackButton onClick={handleBack} />
       </div>
       <div className="flex items-center "></div>
       <div className="py-2 lg:mt-8">

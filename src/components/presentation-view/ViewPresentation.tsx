@@ -849,6 +849,28 @@ export default function ViewPresentation() {
           <NewSlideVersion
             isLoading={slideState.isLoading}
             subscriptionId={subId}
+            handleBack={() => {
+              if (!slidesArray[currentOutline]) {
+                console.log('Reached Here')
+
+                setSlideStates((prev) => ({
+                  ...prev,
+                  [currentOutline]: {
+                    ...prev[currentOutline],
+                    isLoading: true,
+                  },
+                }))
+                setDisplayModes((prev) => ({
+                  ...prev,
+                  [currentOutline]: 'slides',
+                }))
+              } else {
+                setDisplayModes((prev) => ({
+                  ...prev,
+                  [outlineTitle]: 'slides',
+                }))
+              }
+            }}
             setDisplayMode={(value: SetStateAction<DisplayMode>) => {
               const newMode =
                 typeof value === 'function'
@@ -940,6 +962,28 @@ export default function ViewPresentation() {
             documentID={documentID!}
             orgId={orgId!}
             authToken={authToken!}
+            handleBack={() => {
+              if (!slidesArray[currentOutline]) {
+                console.log('Reached Here')
+
+                setSlideStates((prev) => ({
+                  ...prev,
+                  [currentOutline]: {
+                    ...prev[currentOutline],
+                    isLoading: true,
+                  },
+                }))
+                setDisplayModes((prev) => ({
+                  ...prev,
+                  [currentOutline]: 'slides',
+                }))
+              } else {
+                setDisplayModes((prev) => ({
+                  ...prev,
+                  [outlineTitle]: 'slides',
+                }))
+              }
+            }}
             setDisplayMode={(mode: DisplayMode) => {
               setDisplayModes((prev) => ({
                 ...prev,
@@ -1409,32 +1453,6 @@ export default function ViewPresentation() {
           [currentOutline]: prev[currentOutline], // Preserve the previous state
         }))
       }
-
-      // if (totalSlides !== 0) {
-      //   setIsNewSlideLoading((prev) => {
-      //     if (prev[currentOutline]) {
-      //       console.log('Pagination Effect')
-
-      //       setNewSlideGenerated((prev) => ({
-      //         ...prev,
-      //         [currentOutline]: 'Yes',
-      //       }))
-      //       toast.success(`Slide Generated`, {
-      //         position: 'top-right',
-      //         autoClose: 3000,
-      //       })
-      //       setDisplayModes((prev) => ({
-      //         ...prev,
-      //         [currentOutline]: 'slides', // Preserve the previous state
-      //       }))
-      //       return {
-      //         ...prev,
-      //         [currentOutline]: false,
-      //       }
-      //     }
-      //     return prev
-      //   })
-      // }
     }
 
     if (totalSlides !== 0) {
