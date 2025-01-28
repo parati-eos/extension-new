@@ -83,6 +83,8 @@ const SelectPresentationType: React.FC = () => {
   const dispatch = useDispatch()
   const [eligibleForGeneration, setEligibleForGeneration] = useState(false)
   const [generateinput, setGenerateInput] = useState('')
+  const [pptCount, setPptCount] = useState(0)
+  const [pptCountMonthly, setPptCountMonthly] = useState(0)
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -168,7 +170,23 @@ const SelectPresentationType: React.FC = () => {
       }
     }
 
+    const updatePptCount = async () => {
+      await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+        {
+          pptcount: pptCount + 1,
+          pptcount_monthly: pptCountMonthly + 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+    }
+
     quickGenerate()
+    updatePptCount()
   }
 
   const handleRefinePPT = () => {
@@ -209,7 +227,22 @@ const SelectPresentationType: React.FC = () => {
       }
     }
 
+    const updatePptCount = async () => {
+      await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+        {
+          pptcount: pptCount + 1,
+          pptcount_monthly: pptCountMonthly + 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      )
+    }
     refinePPT()
+    updatePptCount()
   }
 
   const isButtonDisabled =
@@ -266,7 +299,8 @@ const SelectPresentationType: React.FC = () => {
         )
         const planName = response.data.plan.plan_name
         const subscriptionId = response.data.plan.subscriptionId
-        console.log('Subscription ID: ', response.data.plan.subscriptionId)
+        setPptCount(response.data.pptcount)
+        setPptCountMonthly(response.data.pptcount_monthly)
         if (response.data.is_eligible === true) {
           setEligibleForGeneration(true)
         } else {
