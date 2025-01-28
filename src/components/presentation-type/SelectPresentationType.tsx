@@ -84,6 +84,8 @@ const SelectPresentationType: React.FC = () => {
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
   const [eligibleForGeneration, setEligibleForGeneration] = useState(false)
+  const [generateinput, setGenerateInput] = useState('');
+
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -324,7 +326,8 @@ const SelectPresentationType: React.FC = () => {
       </p>
 
       {/* Grid of Presentation Types */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4 sm:gap-6 lg:ml-16 mt-10">
+      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4 sm:gap-6 lg:ml-16 mt-10">
+
         {presentationTypes.map((type) => (
           <div
             key={type.id}
@@ -335,6 +338,63 @@ const SelectPresentationType: React.FC = () => {
               setSelectedTypeName(type.label)
             }}
           >
+            
+            {/* Check Icon for Medium and Large Screens */}
+            {selectedType === type.id && (
+              <div className="hidden lg:block absolute top-2 right-2 bg-[#3667B2] text-white rounded-full p-1">
+                <FaCheck />
+              </div>
+            )}
+            {/* Icon */}
+            <div className="text-3xl mb-4">{type.icon}</div>
+            {/* Label */}
+            <p className="text-gray-800 text-center font-medium">
+              {type.label}
+            </p>
+            {type.id === 8 && selectedType === 8 && (
+              <div>
+                <input
+                  type="text"
+                  value={customTypeInput}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    // Allow only alphabets and spaces
+                    const textOnly = value.replace(/[^a-zA-Z\s]/g, '')
+                    setCustomTypeInput(textOnly)
+                    setSelectedTypeName(textOnly)
+                  }}
+                  placeholder="Enter Custom type"
+                  className="mt-2 p-2 border rounded w-full"
+                />
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={!customTypeInput.trim()}
+                  className={`absolute bottom-9 right-1 text-[#091220] md:hidden ${
+                    customTypeInput.trim()
+                      ? 'cursor-pointer'
+                      : 'text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <FaCheck />
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      {/* Grid of Presentation Types Mobile */}
+      <div className="lg:hidden grid grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 gap-4 sm:gap-6 lg:ml-16 mt-10">
+        {presentationTypes.map((type) => (
+          <div
+            key={type.id}
+            className=" relative flex flex-col items-center justify-center p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg cursor-pointer lg:h-40 lg:w-52"
+            onClick={() => {
+              setSelectedType(type.id)
+              if (type.id !== 8) setIsRefineModalOpen(true)
+              setSelectedTypeName(type.label)
+            }}
+          >
+            
             {/* Check Icon for Medium and Large Screens */}
             {selectedType === type.id && (
               <div className="hidden lg:block absolute top-2 right-2 bg-[#3667B2] text-white rounded-full p-1">
@@ -388,7 +448,7 @@ const SelectPresentationType: React.FC = () => {
         >
           <button
             id="generate-presentation"
-            onClick={handleGenerate}
+            onClick={() => setIsRefineModalOpen(true)}
             disabled={
               !selectedType || isButtonDisabled || !eligibleForGeneration
             }
@@ -417,20 +477,7 @@ const SelectPresentationType: React.FC = () => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <button
-            id="refine-presentation"
-            disabled={
-              !selectedType || refineButtonDisabled || !eligibleForGeneration
-            }
-            onClick={() => setIsRefineModalOpen(true)}
-            className={`h-[3.1rem] border px-4 font-semibold rounded-lg active:scale-95 transition transform duration-300 ${
-              !selectedType || refineButtonDisabled || !eligibleForGeneration
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-white text-[#091220] border-[#bcbdbe] hover:bg-[#3667B2] hover:text-white hover:border-none'
-            }`}
-          >
-            Refine Presentation
-          </button>
+         
 
           {refineButtonDisabled && isDialogVisible && (
             <div
@@ -536,7 +583,7 @@ const SelectPresentationType: React.FC = () => {
           ></div>
 
           {/* Modal Content */}
-          <div className="relative bg-white w-11/12 md:w-1/2 lg:w-1/3 rounded-lg md:rounded-3xl shadow-lg p-6">
+          <div className="relative bg-white  w-11/12 md:w-1/2 lg:w-[40] rounded-lg md:rounded-3xl shadow-lg p-6">
             {/* Close Icon */}
             <div
               className="absolute top-4 right-4 md:top-5 bg-gray-200 rounded-full p-2 cursor-pointer"
@@ -546,64 +593,77 @@ const SelectPresentationType: React.FC = () => {
             </div>
             {/* Heading */}
             <h2 className="text-xl text-center font-semibold text-[#091220]">
-              Refine Presentation
+              Generate Presentation
             </h2>
             {/* Subheading */}
             <p className="text-[#4A4B4D] text-center text-600 mt-2">
               Upload your presentation to refine it
             </p>
-            {/* Upload Button */}
-            <div className="mt-4 md:mt-8">
-              {pdfUploading && (
-                <div className="flex items-center justify-center h-[3.1rem] mt-2 bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
-                  <span>Uploading...</span>
-                </div>
-              )}
-              {file && !pdfUploading && (
-                <div className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
-                  <span className="text-[#5D5F61] truncate">{file.name}</span>
-                  <button
-                    className="text-[#8A8B8C] ml-2"
-                    onClick={() => {
-                      setFile(null)
-                      setPdfLink('')
-                    }}
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-              )}{' '}
-              {!file && (
-                <label className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl cursor-pointer">
-                  <FaUpload className="mr-2 text-[#5D5F61]" />
-                  <span>Upload Presentation</span>
-                  <input
-                    type="file"
-                    accept=".pdf, .doc, .docx, .ppt, .pptx"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
-              )}
-            </div>
+           {/* Upload Button */}
+<div className="mt-4 md:mt-8">
+  {pdfUploading && (
+    <div className="flex items-center justify-center h-[3.1rem] mt-2 bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
+      <span>Uploading...</span>
+    </div>
+  )}
+  {file && !pdfUploading && (
+    <div className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl">
+      <span className="text-[#5D5F61] truncate">{file.name}</span>
+      <button
+        className="text-[#8A8B8C] ml-2"
+        onClick={() => {
+          setFile(null);
+          setPdfLink('');
+        }}
+      >
+        <FaTimes />
+      </button>
+    </div>
+  )}
+  {!file && (
+    <label className="flex items-center justify-center h-[3.1rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl cursor-pointer">
+      <FaUpload className="mr-2 text-[#5D5F61]" />
+      <span>Upload a Document</span>
+      <input
+        type="file"
+        accept=".pdf, .doc, .docx, .ppt, .pptx"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+    </label>
+  )}
+    {/* Add "or" */}
+    <div className="flex justify-center items-center mt-2 text-[#091220]  text-sm font-medium">
+    <span>or</span>
+  </div>
+
+  {/* Input for Context */}
+  <div className="mt-4">
+    <textarea
+
+      className="w-full h-[7rem] bg-white border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl scrollbar-none"
+      placeholder="Please provide any context around the presentation you want to create or drop content in the text box below which may be relevant to the required presentation"
+      value={generateinput || ""}
+      onChange={(e) => setGenerateInput(e.target.value)}
+      maxLength={10000}
+    ></textarea>
+  </div>
+</div>
+
             {/* Refine Button */}
             {!refineLoading && (
               <div className="items-center justify-center">
                 <button
-                  onClick={handleRefinePPT}
+                  onClick={handleGenerate}
                   style={{
-                    backgroundColor: pdfLink ? '#3667B2' : 'white',
+                    backgroundColor: pdfLink ? '#3667B2' : '#3667B2',
                   }}
-                  className={`flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-[#091220] py-2 px-4 rounded-xl ${
-                    !refineLoading && pdfLink
-                      ? 'text-white'
-                      : 'cursor-not-allowed'
-                  }`}
+                  className='flex items-center justify-center w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-white py-2 px-4 rounded-xl '
                   disabled={
-                    (refineLoading && !pdfLink) || !eligibleForGeneration
+                    (refineLoading ) || !eligibleForGeneration
                   }
                 >
-                  <span>Refine Presentation</span>
+                  <span>Generate Presentation</span>
                 </button>
               </div>
             )}
@@ -614,13 +674,6 @@ const SelectPresentationType: React.FC = () => {
               </div>
             )}
 
-            {/* Cancel Button */}
-            <button
-              className="mt-4 w-full py-2 px-4 rounded-lg text-[#5D5F61]"
-              onClick={() => setIsRefineModalOpen(false)}
-            >
-              Cancel
-            </button>
           </div>
         </div>
       )}
