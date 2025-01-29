@@ -14,7 +14,7 @@ import GuidedTourOutlineMobile from '../onboarding/shared/GuidedTourOutlineMobil
 
 interface MobileOutlineDropdownProps {
   outlines: Outlines[]
-  onSelectOutline: (outline: string) => void
+  onSelectOutline: (outlineid: string) => void
   selectedOutline: string
   documentID: string
   selectedOutlineID: string

@@ -1850,40 +1850,7 @@ export default function ViewPresentation() {
                 newSlideGenerated={newSlideGenerated}
                 documentID={documentID!}
                 outlines={outlines}
-                onSelectOutline={(outline) => {
-                  setCurrentOutline(outline)
-                  setCurrentOutlineID(
-                    outlines.find((o) => o.title === outline)?.outlineID!
-                  )
-                  const slideIndex = outlines.findIndex(
-                    (o) => o.title === outline
-                  )
-                  setCurrentSlide(slideIndex)
-                  setCurrentSlideIndex(0)
-                  // Only execute setDisplayModes if isNewSlideLoading[title] is false or undefined
-                  if (
-                    isNewSlideLoading[outline] === false ||
-                    isNewSlideLoading[outline] === undefined
-                  ) {
-                    setDisplayModes((prev) => ({
-                      ...prev,
-                      [currentOutlineID]:
-                        slidesArray[outline]?.length === 0
-                          ? 'newContent'
-                          : prev[currentOutlineID],
-                    }))
-                  }
-
-                  setIsNewSlideLoading((prev) => ({
-                    ...prev,
-                    [currentOutlineID]: prev[currentOutlineID],
-                  }))
-
-                  setNewSlideGenerated((prev) => ({
-                    ...prev,
-                    [outline]: prev[outline] && '',
-                  }))
-                }}
+                onSelectOutline={handleOutlineSelect}
                 selectedOutline={currentOutline}
                 fetchOutlines={fetchOutlines}
                 isLoading={isDocumentIDLoading}
@@ -1923,7 +1890,7 @@ export default function ViewPresentation() {
               : '',
             displayMode: displayModes[currentOutlineID],
             isMobile: true,
-            outlineid: currentOutline,
+            outlineid: currentOutlineID,
           })}
         </div>
 
