@@ -149,7 +149,60 @@ export default function Statistics({
       setLoading(false)
     }
   }
-
+  const fetchSlideData = async () => {
+    const payload = {
+      type: 'Statistics',
+      title: heading,
+      documentID,
+      outlineID,
+    };
+  
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/statistics`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        const slideData = response.data;
+  
+        if (slideData.slideName) setSlideTitle(slideData.slideName);
+  
+        if (slideData.stats && Array.isArray(slideData.stats)) {
+          const extractedTitles = slideData.stats.map((stat: { label?: string }) =>
+            stat.label?.trim() || ''
+          );
+          const extractedValues = slideData.stats.map((stat: { value?: string }) =>
+            stat.value?.trim() || ''
+          );
+  
+          setTitle(extractedTitles.length > 0 ? extractedTitles : ['', '', '']);
+          setDescription(extractedValues.length > 0 ? extractedValues : ['', '', '']);
+        } else {
+          setTitle(['', '', '']);
+          setDescription(['', '', '']);
+        }
+  
+        if (slideData.image) {
+          setSelectedImage(slideData.image);
+          setUploadCompleted(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching slide data:', error);
+    }
+  };
+  
+  // Run fetchSlideData when dependencies change
+  useEffect(() => {
+    fetchSlideData();
+  }, [documentID, outlineID, orgId]);
+  
   const refineText = async (type: string, text: string) => {
     setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
 

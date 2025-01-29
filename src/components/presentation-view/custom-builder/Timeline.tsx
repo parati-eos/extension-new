@@ -234,7 +234,47 @@ export default function Timeline({
   const onBack = () => {
     setDisplayMode('customBuilder')
   }
+  useEffect(() => {
+    const fetchSlideData = async () => {
 
+  
+      const payload = {
+        type: "Phases",
+        title: slideTitle,
+        documentID,
+        outlineID,
+      };
+  
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/phases`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          const slideData = response.data;
+  
+          if (slideData.slideName) setSlideTitle(slideData.slideName);
+          if (slideData.phases) {
+            setTimeline(slideData.phases.map((phase: any) => phase.timeline));
+            setDescription(slideData.phases.map((phase: any) => phase.description));
+          }
+          if (slideData.image) setSelectedImage(slideData.image);
+        }
+      } catch (error) {
+       
+      
+      } 
+    };
+  
+    fetchSlideData(); // Fetch data on mount
+  }, [documentID, outlineID, orgId]); // Run when dependencies change
+  
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">
       {loading ? (
