@@ -28,6 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   orgId,
   isNewSlideLoading,
   subscriptionId,
+  selectedOutlineID,
 }) => {
   const [outlines, setOutlines] = useState<Outlines[]>([])
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
@@ -55,9 +56,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   // Scroll to the selected outline and ensure it is visible in the sidebar
   useEffect(() => {
-    if (selectedOutline) {
+    if (selectedOutlineID) {
       const selectedIndex = outlines.findIndex(
-        (outline) => outline.title === selectedOutline
+        (outline) => outline.outlineID === selectedOutlineID
       )
       const selectedRef = outlineRefs.current[selectedIndex]
 
@@ -145,29 +146,29 @@ const Sidebar: React.FC<SidebarProps> = ({
             >
               {/* Outline Title */}
               <button
-                onClick={() => onOutlineSelect(outline.title)}
+                onClick={() => onOutlineSelect(outline.outlineID)}
                 className={`w-full max-w-xs font-normal text-left p-2 rounded-lg flex justify-between ${
-                  selectedOutline === outline.title
+                  selectedOutlineID === outline.outlineID
                     ? 'bg-blue-50 text-[#3667B2]'
                     : 'hover:bg-gray-200 text-gray-600'
                 }`}
               >
                 <span>{`${idx + 1}. ${outline.title}`}</span>
-                {isNewSlideLoading[outline.title] && (
+                {isNewSlideLoading[outline.outlineID] && (
                   <div className="flex items-center justify-center ml-2 mt-1">
                     <div className="w-5 h-5 border-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
                   </div>
                 )}
-                {newSlideGenerated[outline.title] === 'Yes' &&
-                  !isNewSlideLoading[outline.title] && (
+                {newSlideGenerated[outline.outlineID] === 'Yes' &&
+                  !isNewSlideLoading[outline.outlineID] && (
                     <div className="flex items-center justify-center ml-2 mt-1">
                       <div className="w-5 h-5">
                         <FaCheck className="text-green-600" />
                       </div>
                     </div>
                   )}
-                {newSlideGenerated[outline.title] === 'No' &&
-                  !isNewSlideLoading[outline.title] && (
+                {newSlideGenerated[outline.outlineID] === 'No' &&
+                  !isNewSlideLoading[outline.outlineID] && (
                     <div className="flex items-center justify-center ml-2 mt-1">
                       <div className="w-5 h-5">
                         <FaExclamation className="text-red-700" />
