@@ -418,7 +418,75 @@ export default function Table({
   const onBack = () => {
     setDisplayMode('customBuilder')
   }
-
+  const fetchSlideData = async () => {
+    const payload = {
+      type: "Tables",
+      title: slideTitle,
+      documentID,
+      outlineID,
+    };
+  
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/tables`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        const slideData = response.data;
+  
+        if (slideData.slideName) setSlideTitle(slideData.slideName);
+  
+        // Extract row headers dynamically
+        const rowHeaders = Object.keys(slideData)
+          .filter((key) => key.startsWith("rowHeader"))
+          .map((key) => slideData[key]?.trim())
+          .filter((header) => header && header !== "");
+  
+        // Extract column headers dynamically
+        const columnHeaders = Object.keys(slideData)
+          .filter((key) => key.startsWith("columnHeader"))
+          .map((key) => slideData[key]?.trim())
+          .filter((header) => header && header !== "");
+  
+        // Extract rows dynamically
+        const rowsData = Object.keys(slideData)
+          .filter((key) => key.startsWith("rows"))
+          .map((key) => slideData[key]);
+  
+        const rows = rowsData
+          .map((row) =>
+            row
+              ? Object.values(row).map((cell) =>
+                  typeof cell === "string" && cell.trim() !== "" ? cell : null
+                )
+              : []
+          )
+          .filter((row) => row.some((cell) => cell !== null));
+  
+        // Set table data
+        setTableData({
+          rowHeaders,
+          columnHeaders,
+          rows: rows.map((row) => row.filter((cell) => cell !== null) as string[]),
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching slide data:", error);
+    }
+  };
+  
+  // Fetch data on mount
+  useEffect(() => {
+    fetchSlideData();
+  }, [documentID, outlineID, orgId]);
+  
+  
   return (
     <div className="flex flex-col w-full h-full lg:p-4 p-2">
       {isLoading ? (
@@ -478,7 +546,7 @@ export default function Table({
               <table className="table-auto w-full  ">
                 <thead>
                   <tr>
-                    <th className="bg-gray-100 p-2 lg:w-1/5 lg:min-w-0 ">
+                    <th className="bg-gray-100 p-2 lg:w-max overflow-x-auto ">
                       {' '}
                       {/* First Column */}
                       <input
@@ -539,7 +607,7 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
-                        {refineLoadingTable ? (
+                        {/* {refineLoadingTable ? (
                           <div className="relative group ml-1 flex items-center justify-center">
                             <div className="absolute w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                           </div>
@@ -551,11 +619,11 @@ export default function Table({
                               className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
                             />
                             {/* Tooltip */}
-                            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
                               Click to refine table.
                             </span>
                           </div>
-                        )}
+                        )} */} 
                       </div>
                     </th>
                   </tr>

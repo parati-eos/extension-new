@@ -17,6 +17,7 @@ interface MobileOutlineDropdownProps {
   onSelectOutline: (outline: string) => void
   selectedOutline: string
   documentID: string
+  selectedOutlineID: string
   fetchOutlines: () => Promise<void>
   isLoading: boolean
   subscriptionId: string
@@ -40,6 +41,7 @@ export default function MobileOutlineModal({
   selectedOutline,
   documentID,
   fetchOutlines,
+  selectedOutlineID,
   isLoading,
   userPlan,
   monthlyPlanAmount,
@@ -133,21 +135,21 @@ export default function MobileOutlineModal({
             <span className="text-[#091220] flex items-center">
               <span> {selectedOutline || 'Select Outline'}</span>
               <span>
-                {isNewSlideLoading[selectedOutline] && (
+                {isNewSlideLoading[selectedOutlineID] && (
                   <div className="flex items-center justify-center ml-4 mt-1">
                     <div className="w-4 h-4 border-4 border-t-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
                   </div>
                 )}
-                {newSlideGenerated[selectedOutline] === 'Yes' &&
-                  !isNewSlideLoading[selectedOutline] && (
+                {newSlideGenerated[selectedOutlineID] === 'Yes' &&
+                  !isNewSlideLoading[selectedOutlineID] && (
                     <div className="flex items-center justify-center ml-4 mb-1">
                       <div className="w-3 h-3">
                         <FaCheck className="text-green-600" />
                       </div>
                     </div>
                   )}
-                {newSlideGenerated[selectedOutline] === 'No' &&
-                  !isNewSlideLoading[selectedOutline] && (
+                {newSlideGenerated[selectedOutlineID] === 'No' &&
+                  !isNewSlideLoading[selectedOutlineID] && (
                     <div className="flex items-center justify-center ml-4 mb-1">
                       <div className="w-3 h-3">
                         <FaExclamation className="text-red-700" />
@@ -200,7 +202,7 @@ export default function MobileOutlineModal({
                   key={index}
                   className="py-2 font-medium text-[#091220] flex items-center justify-between"
                   onClick={() => {
-                    onSelectOutline(outline.title)
+                    onSelectOutline(outline.outlineID)
                     setIsOutlinesOpen(false)
                   }}
                 >
@@ -208,19 +210,19 @@ export default function MobileOutlineModal({
                     {index + 1}. {outline.title}
                   </span>
                   <span>
-                    {isNewSlideLoading[outline.title] && (
+                    {isNewSlideLoading[outline.outlineID] && (
                       <div className="flex items-center justify-center ml-2 mt-1">
                         <div className="w-6 h-6 border-4 border-t-4 border-t-[#4b83d6] border-gray-300 rounded-full animate-spin"></div>
                       </div>
                     )}
-                    {newSlideGenerated[outline.title] === 'Yes' &&
-                      !isNewSlideLoading[outline.title] && (
+                    {newSlideGenerated[outline.outlineID] === 'Yes' &&
+                      !isNewSlideLoading[outline.outlineID] && (
                         <div className="w-5 h-5">
                           <FaCheck className="text-green-600" />
                         </div>
                       )}
-                    {newSlideGenerated[outline.title] === 'No' &&
-                      !isNewSlideLoading[outline.title] && (
+                    {newSlideGenerated[outline.outlineID] === 'No' &&
+                      !isNewSlideLoading[outline.outlineID] && (
                         <div className="w-5 h-5">
                           <FaExclamation className="text-red-700" />
                         </div>

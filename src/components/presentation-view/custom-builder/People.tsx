@@ -260,7 +260,88 @@ export default function People({
       setFailed()
     }
   }
+  const fetchSlideData = async () => {
+    const payload = {
+      type: "People",
+      title: heading,
+      documentID,
+      outlineID,
+    };
+  
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/people`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        const slideData = response.data;
+  
+        if (slideData.slideName) setSlideTitle(slideData.slideName);
+  
+        if (slideData.people && Array.isArray(slideData.people)) {
+            interface Person {
+              name: string;
+              designation: string;
+              company: string;
+              description: string;
+              image: string;
+              loading: boolean;
+            }
 
+            interface SlideData {
+              slideName: string;
+              people: Person[];
+            }
+
+            const filteredPeople: Person[] = (slideData as SlideData).people
+              .map((person: Person) => ({
+                name: person.name?.trim() || "",
+                designation: person.designation?.trim() || "",
+                company: person.company?.trim() || "",
+                description: person.description?.trim() || "",
+                image: person.image?.trim() || "",
+                loading: false, // Ensure loading state is initialized
+              }))
+              .filter(
+                (person: { name: string; description: string }) =>
+                  person.name !== "" && person.description !== "" // Ensure essential fields are present
+              );
+  
+          setPeople(filteredPeople.length > 0 ? filteredPeople : [
+            {
+              name: "",
+              designation: "",
+              company: "",
+              description: "",
+              image: "",
+              loading: false,
+            },
+            {
+              name: "",
+              designation: "",
+              company: "",
+              description: "",
+              image: "",
+              loading: false,
+            },
+          ]);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching slide data:", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchSlideData(); // Fetch data on mount
+  }, [documentID, outlineID, orgId]); // Run when dependencies change
+  
   const refineText = async (type: string, index?: number) => {
     const newRefineLoadingStates = [...refineLoadingStates]
     newRefineLoadingStates[index!] = true // Set loading for this specific index

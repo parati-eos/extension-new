@@ -139,7 +139,7 @@ export default function ViewPresentation() {
 
   // Slide Loader Messages
   useEffect(() => {
-    if (!slideStates[currentOutline]?.isLoading) return
+    if (!slideStates[currentOutlineID]?.isLoading) return
 
     const interval = setInterval(() => {
       setCurrentSlideLoaderMessageIndex((prevIndex) =>
@@ -152,7 +152,7 @@ export default function ViewPresentation() {
     }, 10000)
 
     return () => clearInterval(interval)
-  }, [slideStates[currentOutline]?.isLoading])
+  }, [slideStates[currentOutlineID]?.isLoading])
 
   const openPricingModal = async () => {
     setIsPricingModalOpen(true)
@@ -338,7 +338,7 @@ export default function ViewPresentation() {
   const handleDelete = () => {
     axios
       .patch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/display/${slidesArray[currentOutline]?.[currentSlideIndex]}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/slidedisplay/display/${slidesArray[currentOutlineID]?.[currentSlideIndex]}`,
         {},
         {
           headers: {
@@ -349,15 +349,15 @@ export default function ViewPresentation() {
       .then((response) => {
         setSlidesArray((prevSlidesArray) => {
           const updatedSlidesArray = { ...prevSlidesArray }
-          const updatedSlides = updatedSlidesArray[currentOutline].filter(
+          const updatedSlides = updatedSlidesArray[currentOutlineID].filter(
             (_, index) => index !== currentSlideIndex
           )
-          updatedSlidesArray[currentOutline] = updatedSlides
+          updatedSlidesArray[currentOutlineID] = updatedSlides
           // Check if the updatedSlides array is empty
           if (updatedSlides.length === 0) {
             setDisplayModes((prev) => ({
               ...prev,
-              [currentOutline]: 'newContent',
+              [currentOutlineID]: 'newContent',
             }))
             setNewVersionBackDisabled(true)
           }
@@ -373,19 +373,19 @@ export default function ViewPresentation() {
 
   // Handle Finalize Button Click
   const handleFinalize = () => {
-    const slideId = slidesArray[currentOutline]?.[currentSlideIndex]
-    const isFinalized = finalizedSlides[currentOutline] === slideId
+    const slideId = slidesArray[currentOutlineID]?.[currentSlideIndex]
+    const isFinalized = finalizedSlides[currentOutlineID] === slideId
 
     setFinalizedSlides((prevFinalizedSlides) => {
       const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
       // Check if currentOutline is already present and its value is the same as slideId
-      if (updatedFinalizedSlides[currentOutline] === slideId) {
+      if (updatedFinalizedSlides[currentOutlineID] === slideId) {
         // Remove the value but keep the key
-        updatedFinalizedSlides[currentOutline] = ''
+        updatedFinalizedSlides[currentOutlineID] = ''
       } else {
         // Update the value of currentOutline to slideId
-        updatedFinalizedSlides[currentOutline] = slideId
+        updatedFinalizedSlides[currentOutlineID] = slideId
       }
 
       return updatedFinalizedSlides
@@ -412,9 +412,9 @@ export default function ViewPresentation() {
           const updatedFinalizedSlides = { ...prevFinalizedSlides }
 
           // Check if currentOutline is already present and its value is the same as slideId
-          if (updatedFinalizedSlides[currentOutline] === slideId) {
+          if (updatedFinalizedSlides[currentOutlineID] === slideId) {
             // Remove the value but keep the key
-            updatedFinalizedSlides[currentOutline] = ''
+            updatedFinalizedSlides[currentOutlineID] = ''
           }
 
           return updatedFinalizedSlides
@@ -423,18 +423,18 @@ export default function ViewPresentation() {
   }
 
   // Handle Add New Slide Version Button
-  const handlePlusClick = (outlineTitle: string) => {
-    updateSlideState(outlineTitle, {
+  const handlePlusClick = (outlineid: string) => {
+    updateSlideState(outlineid, {
       isLoading: false,
       isNoGeneratedSlide: false,
       lastUpdated: Date.now(),
     })
 
     const isCoverOutline = outlines.some(
-      (outline) => outline.type === 'Cover' && outline.title === outlineTitle
+      (outline) => outline.type === 'Cover' && outline.outlineID === outlineid
     )
     const isContactOutline = outlines.some(
-      (outline) => outline.type === 'Contact' && outline.title === outlineTitle
+      (outline) => outline.type === 'Contact' && outline.outlineID === outlineid
     )
 
     console.log('Is Cover: ', isCoverOutline)
@@ -442,11 +442,11 @@ export default function ViewPresentation() {
 
     setDisplayModes((prev) => ({
       ...prev,
-      [outlineTitle]: isCoverOutline
+      [outlineid]: isCoverOutline
         ? 'Cover'
         : isContactOutline
         ? 'Contact'
-        : prev[outlineTitle] === 'slides'
+        : prev[outlineid] === 'slides'
         ? 'newContent'
         : 'slides',
     }))
@@ -458,8 +458,8 @@ export default function ViewPresentation() {
       setCurrentSlideIndex((prev) => prev - 1)
       setSlideStates((prev) => ({
         ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
+        [currentOutlineID]: {
+          ...prev[currentOutlineID],
           isLoading: true,
         },
       }))
@@ -467,8 +467,8 @@ export default function ViewPresentation() {
       setTimeout(() => {
         setSlideStates((prev) => ({
           ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
+          [currentOutlineID]: {
+            ...prev[currentOutlineID],
             isLoading: false,
           },
         }))
@@ -478,13 +478,13 @@ export default function ViewPresentation() {
 
   // Paginate Next
   const handlePaginateNext = () => {
-    const currentSlides = slidesArray[currentOutline]
+    const currentSlides = slidesArray[currentOutlineID]
     if (currentSlides && currentSlideIndex < currentSlides.length - 1) {
       setCurrentSlideIndex((prev) => prev + 1)
       setSlideStates((prev) => ({
         ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
+        [currentOutlineID]: {
+          ...prev[currentOutlineID],
           isLoading: true,
         },
       }))
@@ -492,8 +492,8 @@ export default function ViewPresentation() {
       setTimeout(() => {
         setSlideStates((prev) => ({
           ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
+          [currentOutlineID]: {
+            ...prev[currentOutlineID],
             isLoading: false,
           },
         }))
@@ -502,25 +502,22 @@ export default function ViewPresentation() {
   }
 
   // Custom Builder Slide Type Select Handler
-  const handleCustomTypeClick = (
-    typeName: DisplayMode,
-    outlineTitle: string
-  ) => {
+  const handleCustomTypeClick = (typeName: DisplayMode, outlineid: string) => {
     setDisplayModes((prev) => ({
       ...prev,
-      [outlineTitle]: typeName,
+      [outlineid]: typeName,
     }))
   }
 
   // Mobile Back Button
-  const onBack = (outlineTitle: string) => {
+  const onBack = (outlineid: string) => {
     setDisplayModes((prev) => {
-      const currentMode = prev[outlineTitle]
+      const currentMode = prev[outlineid]
       let newMode: DisplayMode = 'slides'
 
       if (
-        (outlineTitle === outlines[0].title ||
-          outlineTitle === outlines[outlines.length - 1].title) &&
+        (outlineid === outlines[0].title ||
+          outlineid === outlines[outlines.length - 1].title) &&
         currentMode === 'customBuilder'
       ) {
         newMode = 'newContent'
@@ -542,7 +539,7 @@ export default function ViewPresentation() {
 
       return {
         ...prev,
-        [outlineTitle]: newMode,
+        [outlineid]: newMode,
       }
     })
   }
@@ -562,7 +559,7 @@ export default function ViewPresentation() {
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
     setInitialSlides((prev) => ({
       ...prev,
-      [currentOutline]: slidesArrayRef.current[currentOutline]?.length ?? 0,
+      [currentOutlineID]: slidesArrayRef.current[currentOutlineID]?.length ?? 0,
     }))
     if (storedOutlineIDs) {
       const outlineIDs = JSON.parse(storedOutlineIDs)
@@ -582,11 +579,11 @@ export default function ViewPresentation() {
     setSlideStates((prev) => {
       return {
         ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
+        [currentOutlineID]: {
+          ...prev[currentOutlineID],
           isLoading:
-            slidesArray[currentOutline]?.length === 0 ||
-            !slidesArray[currentOutline],
+            slidesArray[currentOutlineID]?.length === 0 ||
+            !slidesArray[currentOutlineID],
           isNoGeneratedSlide: false,
           lastUpdated: Date.now(),
         },
@@ -595,18 +592,18 @@ export default function ViewPresentation() {
 
     setIsNewSlideLoading((prev) => ({
       ...prev,
-      [currentOutline]: true,
+      [currentOutlineID]: true,
     }))
 
     setDisplayModes((prev) => {
       if (
-        !slideStates[currentOutline]?.isLoading &&
-        slidesArray[currentOutline] &&
-        slidesArray[currentOutline].length > 0
+        !slideStates[currentOutlineID]?.isLoading &&
+        slidesArray[currentOutlineID] &&
+        slidesArray[currentOutlineID].length > 0
       ) {
         return {
           ...prev,
-          [currentOutline]: 'slides',
+          [currentOutlineID]: 'slides',
         }
       }
       return prev
@@ -648,21 +645,21 @@ export default function ViewPresentation() {
             autoClose: 3000,
           })
           setSlideStates((prev) => {
-            const genSlideID = prev[currentOutline]?.genSlideID
+            const genSlideID = prev[currentOutlineID]?.genSlideID
             return {
               ...prev,
-              [currentOutline]: {
-                ...prev[currentOutline],
+              [currentOutlineID]: {
+                ...prev[currentOutlineID],
                 isLoading: false,
                 isNoGeneratedSlide: !genSlideID || genSlideID === '',
                 lastUpdated: Date.now(),
               },
             }
           })
-          setDisplayModes((prev) => ({ ...prev, [currentOutline]: 'slides' }))
+          setDisplayModes((prev) => ({ ...prev, [currentOutlineID]: 'slides' }))
           setIsNewSlideLoading((prev) => ({
             ...prev,
-            [currentOutline]: false,
+            [currentOutlineID]: false,
           }))
         })
     } catch (error) {
@@ -675,24 +672,24 @@ export default function ViewPresentation() {
       // Reset loading state on error
       setSlideStates((prev) => ({
         ...prev,
-        [currentOutline]: {
-          ...prev[currentOutline],
+        [currentOutlineID]: {
+          ...prev[currentOutlineID],
           isLoading: false,
           lastUpdated: Date.now(),
         },
       }))
       setIsNewSlideLoading((prev) => ({
         ...prev,
-        [currentOutline]: false,
+        [currentOutlineID]: false,
       }))
     }
   }
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
-  const handleOutlineSelect = (title: string) => {
-    setCurrentOutline(title)
-    setCurrentOutlineID(outlines.find((o) => o.title === title)?.outlineID!)
-    const slideIndex = outlines.findIndex((o) => o.title === title)
+  const handleOutlineSelect = (outlineid: string) => {
+    setCurrentOutline(outlines.find((o) => o.outlineID === outlineid)?.title!)
+    setCurrentOutlineID(outlineid)
+    const slideIndex = outlines.findIndex((o) => o.outlineID === outlineid)
     setCurrentSlide(slideIndex)
     slideRefs.current[slideIndex]?.scrollIntoView({
       behavior: 'smooth',
@@ -702,21 +699,19 @@ export default function ViewPresentation() {
 
     // Only execute setDisplayModes if isNewSlideLoading[title] is false or undefined
     if (
-      isNewSlideLoading[title] === false ||
-      isNewSlideLoading[title] === undefined
+      isNewSlideLoading[outlineid] === false ||
+      isNewSlideLoading[outlineid] === undefined
     ) {
       setDisplayModes((prev) => ({
         ...prev,
-        [currentOutline]:
-          slidesArray[currentOutline]?.length === 0
-            ? 'newContent'
-            : prev[currentOutline],
+        [outlineid]:
+          slidesArray[outlineid]?.length === 0 ? 'newContent' : prev[outlineid],
       }))
     } else {
       setDisplayModes((prev) => ({
         ...prev,
-        [currentOutline]:
-          slidesArray[currentOutline]?.length === 0 && totalSlides === 0
+        [outlineid]:
+          slidesArray[outlineid]?.length === 0 && totalSlides === 0
             ? 'newContent'
             : 'slides',
       }))
@@ -724,12 +719,12 @@ export default function ViewPresentation() {
 
     setIsNewSlideLoading((prev) => ({
       ...prev,
-      [currentOutline]: prev[currentOutline],
+      [outlineid]: prev[outlineid],
     }))
 
     setNewSlideGenerated((prev) => ({
       ...prev,
-      [title]: prev[title] && '',
+      [outlineid]: prev[outlineid] && '',
     }))
   }
 
@@ -759,21 +754,21 @@ export default function ViewPresentation() {
       setCurrentOutline(outlines[closestIndex]?.title)
       setCurrentOutlineID(outlines[closestIndex]?.outlineID!)
       if (
-        isNewSlideLoading[currentOutline] === false ||
-        isNewSlideLoading[currentOutline] === undefined
+        isNewSlideLoading[currentOutlineID] === false ||
+        isNewSlideLoading[currentOutlineID] === undefined
       ) {
         setDisplayModes((prev) => ({
           ...prev,
-          [currentOutline]:
-            slidesArray[currentOutline]?.length === 0
+          [currentOutlineID]:
+            slidesArray[currentOutlineID]?.length === 0
               ? 'newContent'
-              : prev[currentOutline],
+              : prev[currentOutlineID],
         }))
       } else {
         setDisplayModes((prev) => ({
           ...prev,
-          [currentOutline]:
-            slidesArray[currentOutline]?.length === 0 && totalSlides === 0
+          [currentOutlineID]:
+            slidesArray[currentOutlineID]?.length === 0 && totalSlides === 0
               ? 'newContent'
               : 'slides',
         }))
@@ -781,36 +776,36 @@ export default function ViewPresentation() {
 
       setIsNewSlideLoading((prev) => ({
         ...prev,
-        [currentOutline]: prev[currentOutline],
+        [currentOutlineID]: prev[currentOutlineID],
       }))
 
       setNewSlideGenerated((prev) => ({
         ...prev,
-        [currentOutline]: prev[currentOutline] && '',
+        [currentOutlineID]: prev[currentOutlineID] && '',
       }))
     }
   }, 100)
 
   // Function to check if slides exist for an outline
-  const hasSlidesForOutline = (outlineTitle: string) => {
-    return slidesArray[outlineTitle]?.length > 0
+  const hasSlidesForOutline = (outlineid: string) => {
+    return slidesArray[outlineid]?.length > 0
   }
 
   // Render Slide Content
   const renderContent = ({
     isMobile,
     index,
-    outlineTitle,
+    outlineid,
   }: {
     displayMode: string
     isMobile: boolean
     index?: number
     GenSlideID: string
-    outlineTitle: string
+    outlineid: string
   }) => {
-    const currentDisplayMode = displayModes[outlineTitle]
-    const slideState = slideStates[outlineTitle] || createInitialSlideState()
-    const currentSlideId = slidesArray[outlineTitle]?.[currentSlideIndex]
+    const currentDisplayMode = displayModes[outlineid]
+    const slideState = slideStates[outlineid] || createInitialSlideState()
+    const currentSlideId = slidesArray[outlineid]?.[currentSlideIndex]
 
     switch (currentDisplayMode) {
       case 'slides':
@@ -850,39 +845,39 @@ export default function ViewPresentation() {
             isLoading={slideState.isLoading}
             subscriptionId={subId}
             handleBack={() => {
-              if (!slidesArray[currentOutline]) {
+              if (!slidesArray[currentOutlineID]) {
                 console.log('Reached Here')
 
                 setSlideStates((prev) => ({
                   ...prev,
-                  [currentOutline]: {
-                    ...prev[currentOutline],
+                  [currentOutlineID]: {
+                    ...prev[currentOutlineID],
                     isLoading: true,
                   },
                 }))
                 setDisplayModes((prev) => ({
                   ...prev,
-                  [currentOutline]: 'slides',
+                  [currentOutlineID]: 'slides',
                 }))
               } else {
                 setDisplayModes((prev) => ({
                   ...prev,
-                  [outlineTitle]: 'slides',
+                  [outlineid]: 'slides',
                 }))
               }
             }}
             setDisplayMode={(value: SetStateAction<DisplayMode>) => {
               const newMode =
                 typeof value === 'function'
-                  ? value(displayModes[outlineTitle] || 'slides')
+                  ? value(displayModes[outlineid] || 'slides')
                   : value
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]: newMode,
+                [outlineid]: newMode,
               }))
             }}
             handleQuickGenerate={async () => {
-              updateSlideState(outlineTitle, {
+              updateSlideState(outlineid, {
                 isLoading: true,
                 isNoGeneratedSlide: false,
                 retryCount: 0,
@@ -892,20 +887,20 @@ export default function ViewPresentation() {
             }}
             handleCustomBuilderClick={() => {
               const newMode =
-                outlineTitle === outlines[0].title
+                outlineid === outlines[0].title
                   ? 'Cover'
-                  : outlineTitle === outlines[outlines.length - 1].title
+                  : outlineid === outlines[outlines.length - 1].title
                   ? 'Contact'
                   : 'customBuilder'
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]: newMode,
+                [outlineid]: newMode,
               }))
             }}
             handleSlideNarrative={() => {
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]: 'SlideNarrative',
+                [outlineid]: 'SlideNarrative',
               }))
             }}
             userPlan={userPlan!}
@@ -925,13 +920,13 @@ export default function ViewPresentation() {
       case 'customBuilder':
         return (
           <CustomBuilderMenu
-            onTypeClick={(type) => handleCustomTypeClick(type, outlineTitle)}
+            onTypeClick={(type) => handleCustomTypeClick(type, outlineid)}
             setDisplayMode={(value: React.SetStateAction<DisplayMode>) => {
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]:
+                [outlineid]:
                   typeof value === 'function'
-                    ? value(prev[outlineTitle] || 'slides')
+                    ? value(prev[outlineid] || 'slides')
                     : value,
               }))
             }}
@@ -963,40 +958,40 @@ export default function ViewPresentation() {
             orgId={orgId!}
             authToken={authToken!}
             handleBack={() => {
-              if (!slidesArray[currentOutline]) {
+              if (!slidesArray[currentOutlineID]) {
                 console.log('Reached Here')
 
                 setSlideStates((prev) => ({
                   ...prev,
-                  [currentOutline]: {
-                    ...prev[currentOutline],
+                  [currentOutlineID]: {
+                    ...prev[currentOutlineID],
                     isLoading: true,
                   },
                 }))
                 setDisplayModes((prev) => ({
                   ...prev,
-                  [currentOutline]: 'slides',
+                  [currentOutlineID]: 'slides',
                 }))
               } else {
                 setDisplayModes((prev) => ({
                   ...prev,
-                  [outlineTitle]: 'slides',
+                  [outlineid]: 'slides',
                 }))
               }
             }}
             setDisplayMode={(mode: DisplayMode) => {
               setDisplayModes((prev) => ({
                 ...prev,
-                [outlineTitle]: mode,
+                [outlineid]: mode,
               }))
             }}
             outlineID={currentOutlineID}
             setFailed={() => {
               setIsNewSlideLoading((prev) => {
-                if (prev[currentOutline]) {
+                if (prev[currentOutlineID]) {
                   setNewSlideGenerated((prev) => ({
                     ...prev,
-                    [currentOutline]: 'No',
+                    [currentOutlineID]: 'No',
                   }))
                   toast.error(`New Slide Not Generated`, {
                     position: 'top-right',
@@ -1004,7 +999,7 @@ export default function ViewPresentation() {
                   })
                   return {
                     ...prev,
-                    [currentOutline]: false,
+                    [currentOutlineID]: false,
                   }
                 }
                 return prev
@@ -1013,17 +1008,17 @@ export default function ViewPresentation() {
             setIsSlideLoading={() => {
               setInitialSlides((prev) => ({
                 ...prev,
-                [currentOutline]:
-                  slidesArrayRef.current[currentOutline]?.length ?? 0,
+                [currentOutlineID]:
+                  slidesArrayRef.current[currentOutlineID]?.length ?? 0,
               }))
               setSlideStates((prev) => {
                 return {
                   ...prev,
-                  [currentOutline]: {
-                    ...prev[currentOutline],
+                  [currentOutlineID]: {
+                    ...prev[currentOutlineID],
                     isLoading:
-                      !slidesArray[currentOutline] ||
-                      slidesArray[currentOutline].length === 0,
+                      !slidesArray[currentOutlineID] ||
+                      slidesArray[currentOutlineID].length === 0,
                     isNoGeneratedSlide: false,
                     lastUpdated: Date.now(),
                   },
@@ -1032,12 +1027,12 @@ export default function ViewPresentation() {
 
               setIsNewSlideLoading((prev) => ({
                 ...prev,
-                [currentOutline]: true,
+                [currentOutlineID]: true,
               }))
-              if (slidesArray[currentOutline]?.length !== 0) {
+              if (slidesArray[currentOutlineID]?.length !== 0) {
                 setDisplayModes((prev) => ({
                   ...prev,
-                  [outlineTitle]: 'slides',
+                  [outlineid]: 'slides',
                 }))
               }
             }}
@@ -1054,16 +1049,16 @@ export default function ViewPresentation() {
     setSlideStates((prev) => {
       const updatedStates = { ...prev }
       for (const outline of outlines) {
-        if (!updatedStates[outline.title]) {
+        if (!updatedStates[outline.outlineID]) {
           // Initialize slide state if it doesn't exist
-          updatedStates[outline.title] = createInitialSlideState()
+          updatedStates[outline.outlineID] = createInitialSlideState()
         } else if (
-          outline.title === currentOutline &&
+          outline.outlineID === currentOutlineID &&
           outlineIDs.includes(currentOutlineID) && // Only modify if currentOutlineID is in sessionStorage
-          updatedStates[outline.title].isLoading
+          updatedStates[outline.outlineID].isLoading
         ) {
-          updatedStates[outline.title] = {
-            ...updatedStates[outline.title],
+          updatedStates[outline.outlineID] = {
+            ...updatedStates[outline.outlineID],
             isLoading: false, // Set loading to false only for the matching outline
           }
         }
@@ -1074,14 +1069,14 @@ export default function ViewPresentation() {
     setDisplayModes((prev) => {
       const updatedModes = { ...prev }
       for (const outline of outlines) {
-        if (!updatedModes[outline.title]) {
-          updatedModes[outline.title] = 'slides'
+        if (!updatedModes[outline.outlineID]) {
+          updatedModes[outline.outlineID] = 'slides'
         } else if (
-          outline.title === currentOutline &&
+          outline.outlineID === currentOutlineID &&
           outlineIDs.includes(currentOutlineID) && // Ensure we only update displayMode for valid outlines
-          updatedModes[outline.title] === 'slides'
+          updatedModes[outline.outlineID] === 'slides'
         ) {
-          updatedModes[outline.title] = 'newContent'
+          updatedModes[outline.outlineID] = 'newContent'
         }
       }
       return updatedModes
@@ -1090,11 +1085,11 @@ export default function ViewPresentation() {
 
   // Slide State Update Function
   const updateSlideState = useCallback(
-    (outlineTitle: string, updates: Partial<SlideState>) => {
+    (outlineid: string, updates: Partial<SlideState>) => {
       setSlideStates((prev) => ({
         ...prev,
-        [outlineTitle]: {
-          ...prev[outlineTitle],
+        [outlineid]: {
+          ...prev[outlineid],
           ...updates,
         },
       }))
@@ -1129,16 +1124,16 @@ export default function ViewPresentation() {
       // Set initial loading state
       if (!isOutlineIDInSessionStorage(currentOutlineID)) {
         setSlideStates((prev) => {
-          const currentState = prev[currentOutline]
+          const currentState = prev[currentOutlineID]
           const hasExistingSlides = hasSlidesForOutline(currentOutline)
 
           // Don't set loading if we already have slides
           if (hasExistingSlides) {
             return {
               ...prev,
-              [currentOutline]: {
+              [currentOutlineID]: {
                 ...currentState,
-                genSlideID: slidesArray[currentOutline][0],
+                genSlideID: slidesArray[currentOutlineID][0],
                 isLoading: false,
                 isNoGeneratedSlide: false,
                 lastUpdated: Date.now(),
@@ -1148,12 +1143,12 @@ export default function ViewPresentation() {
 
           // Only set loading if we need new slides
           const shouldBeLoading =
-            isNewSlideLoading[currentOutline] ||
+            isNewSlideLoading[currentOutlineID] ||
             (!currentState?.genSlideID && !hasExistingSlides)
 
           return {
             ...prev,
-            [currentOutline]: {
+            [currentOutlineID]: {
               ...currentState,
               isLoading: shouldBeLoading,
               isNoGeneratedSlide: false,
@@ -1167,7 +1162,7 @@ export default function ViewPresentation() {
         setSlideStates((prev) => {
           return {
             ...prev,
-            [currentOutline]: {
+            [currentOutlineID]: {
               isLoading: false,
               isNoGeneratedSlide: false,
               genSlideID: null,
@@ -1179,7 +1174,7 @@ export default function ViewPresentation() {
 
         setDisplayModes((prev) => ({
           ...prev,
-          [currentOutline]: 'newContent',
+          [currentOutlineID]: 'newContent',
         }))
 
         setNewVersionBackDisabled(true)
@@ -1189,22 +1184,22 @@ export default function ViewPresentation() {
       const timeoutId = setTimeout(() => {
         setSlideStates((prev) => ({
           ...prev,
-          [currentOutline]: {
-            ...prev[currentOutline],
+          [currentOutlineID]: {
+            ...prev[currentOutlineID],
             isLoading: false,
             isNoGeneratedSlide:
-              slidesArrayRef.current[currentOutline]?.length === 0 ||
-              !slidesArrayRef.current[currentOutline],
+              slidesArrayRef.current[currentOutlineID]?.length === 0 ||
+              !slidesArrayRef.current[currentOutlineID],
           },
         }))
 
         console.log('Timeout Slides')
 
         setIsNewSlideLoading((prev) => {
-          if (prev[currentOutline]) {
+          if (prev[currentOutlineID]) {
             setNewSlideGenerated((prev) => ({
               ...prev,
-              [currentOutline]: 'No',
+              [currentOutlineID]: 'No',
             }))
             toast.error(`New Slide Not Generated`, {
               position: 'top-right',
@@ -1212,7 +1207,7 @@ export default function ViewPresentation() {
             })
             return {
               ...prev,
-              [currentOutline]: false,
+              [currentOutlineID]: false,
             }
           }
           return prev
@@ -1230,24 +1225,24 @@ export default function ViewPresentation() {
 
           if (
             firstSlide.outline_id === currentOutlineID &&
-            slidesArray[currentOutline]?.length !== newSlides.length &&
+            slidesArray[currentOutlineID]?.length !== newSlides.length &&
             firstSlide.PresentationID &&
             (firstSlide.GenSlideID !== null || '')
           ) {
             if (
-              newSlideLoadingRef.current[currentOutline] &&
+              newSlideLoadingRef.current[currentOutlineID] &&
               newSlides.length === 1 &&
-              !slidesArrayRef.current[currentOutline] &&
+              !slidesArrayRef.current[currentOutlineID] &&
               newSlides[0].display
             ) {
               setIsNewSlideLoading((prev) => ({
                 ...prev,
-                [currentOutline]: false,
+                [currentOutlineID]: false,
               }))
               console.log('Socket Effect')
               setNewSlideGenerated((prev) => ({
                 ...prev,
-                [currentOutline]: 'Yes',
+                [currentOutlineID]: 'Yes',
               }))
               toast.success(`Slide Generated`, {
                 position: 'top-right',
@@ -1256,15 +1251,15 @@ export default function ViewPresentation() {
 
               setDisplayModes((prev) => ({
                 ...prev,
-                [currentOutline]: 'slides',
+                [currentOutlineID]: 'slides',
               }))
             }
 
             // Update state with successful response
             setSlideStates((prev) => ({
               ...prev,
-              [currentOutline]: {
-                ...prev[currentOutline],
+              [currentOutlineID]: {
+                ...prev[currentOutlineID],
                 isLoading: false,
                 isNoGeneratedSlide: false,
                 genSlideID: firstSlide.GenSlideID,
@@ -1284,7 +1279,7 @@ export default function ViewPresentation() {
             setSlidesArray((prev) => {
               return {
                 ...prev,
-                [currentOutline]: ids,
+                [currentOutlineID]: ids,
               }
             })
 
@@ -1294,7 +1289,7 @@ export default function ViewPresentation() {
             if (selectedSlide) {
               setFinalizedSlides((prev) => ({
                 ...prev,
-                [currentOutline]: selectedSlide.GenSlideID,
+                [currentOutlineID]: selectedSlide.GenSlideID,
               }))
             }
 
@@ -1307,7 +1302,7 @@ export default function ViewPresentation() {
             ) {
               setDisplayModes((prev) => ({
                 ...prev,
-                [currentOutline]: 'newContent',
+                [currentOutlineID]: 'newContent',
               }))
               setNewVersionBackDisabled(true)
             }
@@ -1369,8 +1364,8 @@ export default function ViewPresentation() {
         const newOutline = fetchedOutlines[newOutlineIndex]
         setSlideStates((prev) => ({
           ...prev,
-          [newOutline.title]: {
-            ...prev[newOutline.title],
+          [newOutline.outlineID]: {
+            ...prev[newOutline.outlineID],
             isLoading: false,
             isNoGeneratedSlide: false,
             genSlideID: null,
@@ -1380,7 +1375,7 @@ export default function ViewPresentation() {
         }))
         setDisplayModes((prev) => ({
           ...prev,
-          [newOutline.title]: 'newContent',
+          [newOutline.outlineID]: 'newContent',
         }))
       } else {
         setCurrentOutline(fetchedOutlines[0].title)
@@ -1411,7 +1406,7 @@ export default function ViewPresentation() {
   useEffect(() => {
     setCurrentSlideIndex(0)
     setPrevSlideIndex(0)
-  }, [currentOutline])
+  }, [currentOutlineID])
 
   // Effect to set loader for pagination changes
   useEffect(() => {
@@ -1445,12 +1440,12 @@ export default function ViewPresentation() {
       })
 
       if (
-        slidesArray[currentOutline] &&
-        slidesArray[currentOutline].length >= 1
+        slidesArray[currentOutlineID] &&
+        slidesArray[currentOutlineID].length >= 1
       ) {
         setDisplayModes((prev) => ({
           ...prev,
-          [currentOutline]: prev[currentOutline], // Preserve the previous state
+          [currentOutlineID]: prev[currentOutlineID], // Preserve the previous state
         }))
       }
     }
@@ -1459,19 +1454,19 @@ export default function ViewPresentation() {
       setNewVersionBackDisabled(false)
     }
 
-    console.log('Initial Slides State: ', initialSlides[currentOutline])
+    console.log('Initial Slides State: ', initialSlides[currentOutlineID])
 
     if (
-      initialSlides[currentOutline] &&
-      initialSlides[currentOutline] !== totalSlides
+      initialSlides[currentOutlineID] &&
+      initialSlides[currentOutlineID] !== totalSlides
     ) {
       setIsNewSlideLoading((prev) => {
-        if (prev[currentOutline]) {
+        if (prev[currentOutlineID]) {
           console.log('Pagination Effect')
 
           setNewSlideGenerated((prev) => ({
             ...prev,
-            [currentOutline]: 'Yes',
+            [currentOutlineID]: 'Yes',
           }))
           toast.success(`Slide Generated`, {
             position: 'top-right',
@@ -1479,17 +1474,17 @@ export default function ViewPresentation() {
           })
           setDisplayModes((prev) => ({
             ...prev,
-            [currentOutline]: 'slides', // Preserve the previous state
+            [currentOutlineID]: 'slides', // Preserve the previous state
           }))
           return {
             ...prev,
-            [currentOutline]: false,
+            [currentOutlineID]: false,
           }
         }
         return prev
       })
     }
-    console.log('Initial Slides', initialSlides[currentOutline])
+    console.log('Initial Slides', initialSlides[currentOutlineID])
     console.log('Current Slides', totalSlides)
 
     setPrevTotalSlides(totalSlides)
@@ -1498,11 +1493,11 @@ export default function ViewPresentation() {
   // Effect to Set Slide Type For Quick Generate
   useEffect(() => {
     const matchingOutline = outlines.find(
-      (outline) => outline.title === currentOutline
+      (outline) => outline.outlineID === currentOutlineID
     )
     // Update the outlineType state with the type of the matched object
     setOutlineType(matchingOutline?.type || '')
-  }, [outlines, currentOutline])
+  }, [outlines, currentOutlineID])
 
   // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
@@ -1656,7 +1651,7 @@ export default function ViewPresentation() {
   const yearlyPlanId = yearlyPlan?.id
 
   const deleteFinalizeDisabled =
-    isDocumentIDLoading || !slidesArray[currentOutline]
+    isDocumentIDLoading || !slidesArray[currentOutlineID]
   const buttonsDisabled = isDocumentIDLoading
 
   return (
@@ -1723,6 +1718,7 @@ export default function ViewPresentation() {
           newSlideGenerated={newSlideGenerated}
           onOutlineSelect={handleOutlineSelect}
           selectedOutline={currentOutline!}
+          selectedOutlineID={currentOutlineID!}
           fetchedOutlines={outlines!}
           documentID={documentID!}
           authToken={authToken!}
@@ -1758,16 +1754,17 @@ export default function ViewPresentation() {
             )}
             {outlines.map((outline, index) => (
               <div
-                key={outline.title}
+                key={outline.outlineID}
                 ref={(el) => (slideRefs.current[index] = el!)}
                 className="snap-center scroll-smooth w-full h-full mb-4"
               >
                 {renderContent({
-                  GenSlideID: slidesArray[outline.title]?.[currentSlideIndex],
-                  displayMode: displayModes[outline.title],
+                  GenSlideID:
+                    slidesArray[outline.outlineID]?.[currentSlideIndex],
+                  displayMode: displayModes[outline.outlineID],
                   isMobile: false,
                   index,
-                  outlineTitle: outline.title,
+                  outlineid: outline.outlineID,
                 })}
               </div>
             ))}
@@ -1781,10 +1778,12 @@ export default function ViewPresentation() {
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutline)}
               finalized={
-                finalizedSlides[currentOutline] ===
-                slidesArray[currentOutline]?.[currentSlideIndex]
+                finalizedSlides[currentOutlineID] ===
+                slidesArray[currentOutlineID]?.[currentSlideIndex]
               }
-              currentSlideId={slidesArray[currentOutline]?.[currentSlideIndex]}
+              currentSlideId={
+                slidesArray[currentOutlineID]?.[currentSlideIndex]
+              }
               deleteFinalizeDisabled={deleteFinalizeDisabled}
               newVersionDisabled={buttonsDisabled}
             />
@@ -1805,20 +1804,20 @@ export default function ViewPresentation() {
               </button>
               <span className="text-sm">
                 Slide{' '}
-                {slidesArray[currentOutline]?.length > 0
+                {slidesArray[currentOutlineID]?.length > 0
                   ? currentSlideIndex + 1
                   : '0'}{' '}
-                of {slidesArray[currentOutline]?.length || 0}
+                of {slidesArray[currentOutlineID]?.length || 0}
               </span>
               <button
                 onClick={handlePaginateNext}
                 disabled={
                   currentSlideIndex ===
-                  (slidesArray[currentOutline]?.length ?? 0) - 1
+                  (slidesArray[currentOutlineID]?.length ?? 0) - 1
                 }
                 className={`flex items-center border hover:cursor-pointer border-[#E1E3E5] bg-white p-2 rounded-md active:scale-95 transition transform duration-300 ${
                   currentSlideIndex ===
-                  (slidesArray[currentOutline]?.length ?? 0) - 1
+                  (slidesArray[currentOutlineID]?.length ?? 0) - 1
                     ? 'text-gray-400'
                     : 'hover:text-blue-600'
                 }`}
@@ -1850,6 +1849,7 @@ export default function ViewPresentation() {
             {outlines && outlines.length > 0 && (
               <MobileOutlineModal
                 isNewSlideLoading={isNewSlideLoading}
+                selectedOutlineID={currentOutlineID!}
                 newSlideGenerated={newSlideGenerated}
                 documentID={documentID!}
                 outlines={outlines}
@@ -1870,16 +1870,16 @@ export default function ViewPresentation() {
                   ) {
                     setDisplayModes((prev) => ({
                       ...prev,
-                      [currentOutline]:
+                      [currentOutlineID]:
                         slidesArray[outline]?.length === 0
                           ? 'newContent'
-                          : prev[currentOutline],
+                          : prev[currentOutlineID],
                     }))
                   }
 
                   setIsNewSlideLoading((prev) => ({
                     ...prev,
-                    [currentOutline]: prev[currentOutline],
+                    [currentOutlineID]: prev[currentOutlineID],
                   }))
 
                   setNewSlideGenerated((prev) => ({
@@ -1907,7 +1907,7 @@ export default function ViewPresentation() {
         {/* MOBILE: SLIDE DISPLAY BOX */}
         <div
           className={`relative bg-white ${
-            displayModes[currentOutline] !== 'slides'
+            displayModes[currentOutlineID] !== 'slides'
               ? 'h-[50vh] md:h-[50vh]'
               : 'h-[50.5vh]' // keep the height the same when 'slides' mode
           } w-full border border-gray-200 mb-2`}
@@ -1921,18 +1921,18 @@ export default function ViewPresentation() {
             </div>
           )}
           {renderContent({
-            GenSlideID: slidesArray[currentOutline]
-              ? slidesArray[currentOutline][currentSlideIndex]
+            GenSlideID: slidesArray[currentOutlineID]
+              ? slidesArray[currentOutlineID][currentSlideIndex]
               : '',
-            displayMode: displayModes[currentOutline],
+            displayMode: displayModes[currentOutlineID],
             isMobile: true,
-            outlineTitle: currentOutline,
+            outlineid: currentOutline,
           })}
         </div>
 
         {/* MOBILE: ACTION BUTTONS */}
         <div className={`relative flex items-center justify-between w-full`}>
-          {displayModes[currentOutline] === 'slides' ? (
+          {displayModes[currentOutlineID] === 'slides' ? (
             <MobileButtonSection
               onDelete={handleDelete}
               onFinalize={handleFinalize}
@@ -1940,11 +1940,11 @@ export default function ViewPresentation() {
               deleteFinalizeDisabled={deleteFinalizeDisabled}
               newVersionDisabled={buttonsDisabled}
               finalized={
-                finalizedSlides[currentOutline] ===
-                slidesArray[currentOutline]?.[currentSlideIndex]
+                finalizedSlides[currentOutlineID] ===
+                slidesArray[currentOutlineID]?.[currentSlideIndex]
               }
               currentSlideId={slidesId[currentSlideIndex]}
-              displayMode={displayModes[currentOutline]}
+              displayMode={displayModes[currentOutlineID]}
             />
           ) : (
             <button
@@ -1972,15 +1972,15 @@ export default function ViewPresentation() {
             </button>
             <span className="text-sm text-[#5D5F61]">
               Slide{' '}
-              {slidesArray[currentOutline]?.length > 0
+              {slidesArray[currentOutlineID]?.length > 0
                 ? currentSlideIndex + 1
                 : '0'}{' '}
-              of {slidesArray[currentOutline]?.length || 0}
+              of {slidesArray[currentOutlineID]?.length || 0}
             </span>
             <button
               onClick={handlePaginateNext}
               disabled={
-                currentSlideIndex === slidesArray[currentOutline]?.length - 1
+                currentSlideIndex === slidesArray[currentOutlineID]?.length - 1
               }
               className={`flex items-center border border-gray-300 bg-white p-2 rounded-md ${
                 currentSlide === totalSlides
