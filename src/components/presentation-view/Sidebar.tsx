@@ -70,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         })
       }
     }
-  }, [selectedOutline, outlines])
+  }, [selectedOutlineID, outlines])
 
   const handleAddOutline = async (index: number) => {
     const newOutlineID = generateOutlineID()
