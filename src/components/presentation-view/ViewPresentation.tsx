@@ -437,9 +437,6 @@ export default function ViewPresentation() {
       (outline) => outline.type === 'Contact' && outline.outlineID === outlineid
     )
 
-    console.log('Is Cover: ', isCoverOutline)
-    console.log('Is Contact: ', isContactOutline)
-
     setDisplayModes((prev) => ({
       ...prev,
       [outlineid]: isCoverOutline
@@ -1776,7 +1773,7 @@ export default function ViewPresentation() {
               userPlan={userPlan}
               onDelete={handleDelete}
               onFinalize={handleFinalize}
-              onNewVersion={() => handlePlusClick(currentOutline)}
+              onNewVersion={() => handlePlusClick(currentOutlineID)}
               finalized={
                 finalizedSlides[currentOutlineID] ===
                 slidesArray[currentOutlineID]?.[currentSlideIndex]
@@ -1936,7 +1933,7 @@ export default function ViewPresentation() {
             <MobileButtonSection
               onDelete={handleDelete}
               onFinalize={handleFinalize}
-              onNewVersion={() => handlePlusClick(currentOutline)}
+              onNewVersion={() => handlePlusClick(currentOutlineID)}
               deleteFinalizeDisabled={deleteFinalizeDisabled}
               newVersionDisabled={buttonsDisabled}
               finalized={
