@@ -513,8 +513,8 @@ export default function ViewPresentation() {
       let newMode: DisplayMode = 'slides'
 
       if (
-        (outlineid === outlines[0].title ||
-          outlineid === outlines[outlines.length - 1].title) &&
+        (outlineid === outlines[0].outlineID ||
+          outlineid === outlines[outlines.length - 1].outlineID) &&
         currentMode === 'customBuilder'
       ) {
         newMode = 'newContent'
@@ -1912,7 +1912,7 @@ export default function ViewPresentation() {
             />
           ) : (
             <button
-              onClick={() => onBack(currentOutline)}
+              onClick={() => onBack(currentOutlineID)}
               disabled={newVersionBackDisabled}
               className="border border-gray-300 p-2 rounded-md flex items-center"
             >
