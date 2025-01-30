@@ -60,14 +60,12 @@ function Login() {
     }
   }
 
-  // const serverurl = process.env.REACT_APP_BACKEND_URL || ''
-
   const saveUserData = async (userData: Record<string, any>) => {
     setIsLoading(true)
     const signupLink = localStorage.getItem('sign_up_link') || ''
     try {
       const ipInfoResponse = await fetch(
-        'https://ipinfo.io/json?token=f0e9cf876d422e'
+        'https://cors-anywhere.herokuapp.com/https://ipinfo.io/json?token=f0e9cf876d422e'
       )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 

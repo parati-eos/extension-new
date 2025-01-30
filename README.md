@@ -53,13 +53,13 @@ The following states are managed using React hooks:
 - `currentSlide`: Stores the currently active slide number.
 - `currentOutline`: Stores the outline text of the current slide.
 - `currentOutlineID`: Stores the ID of the current outline.
-- `outlineType`: Stores the type of outline.
+- `outlineType`: Stores the type of slide/outline.
 - `outlines`: Stores an array of all outlines.
 - `displayModes`: Stores the display modes for different slides.
 - `slideRefs`: A reference array to store DOM elements of slides.
-- `totalSlides`: Stores the total number of slides of an individual outline.
+- `totalSlides`: Stores the total number of slides versions of an individual outline.
 - `slidesId`: Stores an array of slide IDs.
-- `currentSlideIndex`: Stores the index of the currently active slide.
+- `currentSlideIndex`: Stores the index of the currently active slide version of an outline.
 
 ### Subscription & Pricing
 
@@ -84,7 +84,7 @@ The following states are managed using React hooks:
 
 - `slidesArray`: Stores `outlineID`s as keys and an array of `slideID`s as values.
 - `isNewSlideLoading`: Tracks the loading state of new slide versions.
-- `initialSlides`: Stores the initial number of slide versions for outlines.
+- `initialSlides`: Stores the initial number of slide versions for outlines before generating new version.
 - `slideStates`: Stores the state of all slides.
 - `finalizedSlides`: Stores finalized slides.
 - `newSlideGenerated`: Stores details of newly generated slides.
@@ -96,7 +96,7 @@ The following states are managed using React hooks:
 
 ### Loading & Refs
 
-- `displayBoxLoading`: Controls whether the display box is loading.
+- `displayBoxLoading`: Controls whether the whole display box is loading.
 - `slidesArrayRef`: A reference to `slidesArray` for maintaining consistency across re-renders.
 - `newSlideLoadingRef`: A reference to `isNewSlideLoading` for keeping track of slide load status.
 - `slideStatesRef`: A reference to `slideStates` for managing slide-related updates.
