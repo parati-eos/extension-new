@@ -1429,7 +1429,7 @@ export default function ViewPresentation() {
   // Effect to monitor changes
   useEffect(() => {
     if (totalSlides !== prevTotalSlides) {
-      updateSlideState(currentOutline, {
+      updateSlideState(currentOutlineID, {
         isLoading: false,
         isNoGeneratedSlide: false,
         retryCount: 0,

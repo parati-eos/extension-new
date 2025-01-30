@@ -587,8 +587,13 @@ const SelectPresentationType: React.FC = () => {
             <div className="items-center justify-center">
               <button
                 onClick={pdfLink ? handleRefinePPT : handleGenerate}
-                className="flex items-center justify-center bg-[#3667B2] w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-white py-2 px-4 rounded-xl disabled:cursor-not-allowed active:scale-95 transition transform duration-300"
-                disabled={pdfUploading || !eligibleForGeneration}
+                className="flex items-center justify-center bg-[#3667B2] w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-white py-2 px-4 rounded-xl disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-95 transition transform duration-300"
+                disabled={
+                  pdfUploading ||
+                  !selectedType ||
+                  isButtonDisabled ||
+                  !eligibleForGeneration
+                }
               >
                 <span>Generate Presentation</span>
               </button>
