@@ -348,14 +348,13 @@ export default function Table({
   
         // Extract and filter column headers
         const refinedColumnHeaders = Object.keys(refinedTableData)
-        .filter((key) => key.startsWith("columnHeader")) // Allow columnHeader0
-        .sort(
-          (a, b) =>
-            parseInt(a.replace("columnHeader", ""), 10) -
-            parseInt(b.replace("columnHeader", ""), 10)
-        )
-        .map((key) => refinedTableData[key] || "");
-      
+          .filter((key) => key.startsWith("columnHeader") && key !== "columnHeader0")
+          .sort(
+            (a, b) =>
+              parseInt(a.replace("columnHeader", ""), 10) -
+              parseInt(b.replace("columnHeader", ""), 10)
+          )
+          .map((key) => refinedTableData[key] || "");
   
         // Determine maxAttributes dynamically based on non-empty column headers
         let maxAttributes = refinedColumnHeaders.filter((header) => header !== "").length;
@@ -374,7 +373,6 @@ export default function Table({
           .map((key) => {
             const row = refinedTableData[key] || {};
             return [
-              row["attribute0"] || "", // Include attribute0
               row["attribute1"] || "",
               row["attribute2"] || "",
               row["attribute3"] || "",
