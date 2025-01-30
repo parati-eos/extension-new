@@ -19,6 +19,12 @@ interface GraphProps {
   setFailed: () => void
 }
 
+interface Row {
+  label: string
+  services: string
+  series3: string
+}
+
 export default function Graphs({
   heading,
   slideType,
@@ -231,13 +237,14 @@ export default function Graphs({
 
   const onBack = () => {
     if (currentScreen === 'chartSelection') {
-      setDisplayMode('customBuilder')
+      setDisplayMode('customBuilder');
     } else if (currentScreen === 'inputScreen') {
-      setCurrentScreen('chartSelection')
-      setSeries(1) // Reset series to default
-      setHeaders(['', '']) // Reset headers
+      setCurrentScreen('chartSelection');
+      setSelectedChart(''); // Reset selectedChart to trigger useEffect on back
+      setSeries(1); // Reset series to default
+      setHeaders(['', '']); // Reset headers
     }
-  }
+  };
 
   const [showTooltip, setShowTooltip] = useState(false)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
@@ -295,6 +302,104 @@ export default function Graphs({
   useEffect(() => {
     validateData()
   }, [slideTitle, slideType, rows, series, headers])
+  const fetchSlideData = async () => {
+    const payload = {
+        type: "Graphs",
+        title: slideTitle,
+        documentID,
+        outlineID,
+    };
+
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/graphs`,
+            payload,
+            {
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            const { chartType, chart, slideName } = response.data;
+
+            // Ensure that chart type is compared correctly (case-insensitive comparison)
+            if (selectedChart && selectedChart.toLowerCase() !== chartType.toLowerCase()) {
+                console.log(`Chart type mismatch: selected(${selectedChart}) vs response(${chartType})`);
+                return; // Exit if the chart types don't match
+            }
+
+            // If the chart types match, update the slide title and other states
+            if (slideName && slideName !== slideTitle) {
+                setSlideTitle(slideName);
+            }
+
+            // Update the selected chart if it's different from the response
+            if (selectedChart !== chartType.charAt(0).toUpperCase() + chartType.slice(1)) {
+                setSelectedChart(chartType.charAt(0).toUpperCase() + chartType.slice(1));
+            }
+
+            // Extract headers and set them
+            const headers: string[] = chart.series.map((s: { key: string }) => s.key);
+            setHeaders(headers);
+
+            // Get the max number of rows from the longest series
+            const maxRows: number = Math.max(...chart.series.map((s: { key: string; value: string[] }) => s.value.length));
+
+            // Dynamically create rows based on max rows
+            const rowsData: Row[] = Array.from({ length: maxRows }, (_, rowIndex) => {
+                const row: Row = {
+                    label: "",
+                    services: "",
+                    series3: "",
+                };
+
+                interface Series {
+                  key: string;
+                  value: string[];
+                }
+
+                interface Chart {
+                  series: Series[];
+                }
+
+                interface SlideData {
+                  chartType: string;
+                  chart: Chart;
+                  slideName: string;
+                }
+
+                chart.series.forEach((series: Series, index: number) => {
+                  if (index === 0) row.label = series.value[rowIndex] || "";
+                  else if (index === 1) row.services = series.value[rowIndex] || "";
+                  else if (index === 2) row.series3 = series.value[rowIndex] || "";
+                });
+
+                return row;
+            });
+
+            // Update rows and series count without affecting other states
+            setRows(rowsData.map((row) => ({ ...row, series3: row.series3 || "" })));
+            setSeries(chart.series.length - 1); // Subtract 1 from the number of series
+        }
+    } catch (error) {
+        console.error("Error fetching slide data:", error);
+    }
+};
+
+  
+  
+
+
+
+
+useEffect(() => {
+  if (selectedChart) {
+      fetchSlideData();
+  }
+}, [documentID, outlineID, orgId, selectedChart
+]);
 
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">

@@ -282,53 +282,39 @@ export default function Table({
       setFailed()
     }
   }
-
   const refineText = async (type: string, text?: string) => {
-    let payload
-
-    if (type === 'slideTitle') {
-      setRefineLoadingSlideTitle(true)
-      payload = text
-    } else if (type === 'tables') {
-      setRefineLoadingTable(true)
-      // Prepare table data, filtering out empty row and column headers
-      const rowHeaders = tableData.rowHeaders.filter((header) => header !== '')
-      const columnHeaders = tableData.columnHeaders.filter(
-        (header) => header !== ''
-      )
-
+    let payload;
+  
+    if (type === "slideTitle") {
+      setRefineLoadingSlideTitle(true);
+      payload = text;
+    } else if (type === "tables") {
+      setRefineLoadingTable(true);
+  
+      const rowHeaders = tableData.rowHeaders.map((header) => header || "");
+      const columnHeaders = tableData.columnHeaders.map((header) => header || "");
+  
       const tablePayload = {
         ...rowHeaders.reduce<Record<string, string>>((acc, header, index) => {
-          acc[`rowHeader${index + 1}`] = header
-          return acc
+          acc[`rowHeader${index + 1}`] = header;
+          return acc;
         }, {}),
-        ...columnHeaders.reduce<Record<string, string>>(
-          (acc, header, index) => {
-            acc[`columnHeader${index + 1}`] = header
-            return acc
-          },
-          {}
-        ),
-        rows: tableData.rows.map((row, index) => ({
-          attribute1: row[0] || '',
-          attribute2: row[1] || '',
-          attribute3: row[2] || '',
-          attribute4: row[3] || '',
-          attribute5: row[4] || '',
+        ...columnHeaders.reduce<Record<string, string>>((acc, header, index) => {
+          acc[`columnHeader${index + 1}`] = header;
+          return acc;
+        }, {}),
+        rows: tableData.rows.map((row) => ({
+          attribute1: row[0] || "",
+          attribute2: row[1] || "",
+          attribute3: row[2] || "",
+          attribute4: row[3] || "",
+          attribute5: row[4] || "",
         })),
-      }
-
-      // Filter out empty rows
-      const filteredTablePayload = {
-        ...tablePayload,
-        rows: tablePayload.rows.filter((row) =>
-          Object.values(row).some((attr) => attr !== '')
-        ),
-      }
-
-      payload = filteredTablePayload
+      };
+  
+      payload = tablePayload;
     }
-
+  
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
@@ -341,79 +327,93 @@ export default function Table({
             Authorization: `Bearer ${authToken}`,
           },
         }
-      )
-      if (response.status === 200 && type === 'slideTitle') {
-        const refinedText = response.data.refinedText
-        setSlideTitle(refinedText)
-        setRefineLoadingSlideTitle(false)
-      } else if (response.status === 200 && type === 'tables') {
-        setRefineLoadingTable(false)
-        const refinedTableData = response.data.refinedtext
-
-        // Dynamically extract all row headers
+      );
+  
+      if (response.status === 200 && type === "slideTitle") {
+        setSlideTitle(response.data.refinedText);
+        setRefineLoadingSlideTitle(false);
+      } else if (response.status === 200 && type === "tables") {
+        setRefineLoadingTable(false);
+        const refinedTableData = response.data.refinedtext;
+  
+        // Extract row headers
         const refinedRowHeaders = Object.keys(refinedTableData)
-          .filter((key) => key.startsWith('rowHeader'))
+          .filter((key) => key.startsWith("rowHeader"))
           .sort(
             (a, b) =>
-              parseInt(a.replace('rowHeader', ''), 10) -
-              parseInt(b.replace('rowHeader', ''), 10)
-          ) // Ensure correct order
-          .map((key) => refinedTableData[key])
-          .filter((header) => header) // Filter out undefined or empty headers
-
-        // Dynamically extract all column headers, ignoring columnHeader0
+              parseInt(a.replace("rowHeader", ""), 10) -
+              parseInt(b.replace("rowHeader", ""), 10)
+          )
+          .map((key) => refinedTableData[key] || "");
+  
+        // Extract and filter column headers
         const refinedColumnHeaders = Object.keys(refinedTableData)
-          .filter(
-            (key) => key.startsWith('columnHeader') && key !== 'columnHeader0'
-          ) // Ignore columnHeader0
-          .sort(
-            (a, b) =>
-              parseInt(a.replace('columnHeader', ''), 10) -
-              parseInt(b.replace('columnHeader', ''), 10)
-          ) // Ensure correct order
-          .map((key) => refinedTableData[key])
-          .filter((header) => header) // Filter out undefined or empty headers
-
-        // Map rows to a 2D array of strings (string[][]), ignoring attribute0 and filtering out empty values
+        .filter((key) => key.startsWith("columnHeader")) // Allow columnHeader0
+        .sort(
+          (a, b) =>
+            parseInt(a.replace("columnHeader", ""), 10) -
+            parseInt(b.replace("columnHeader", ""), 10)
+        )
+        .map((key) => refinedTableData[key] || "");
+      
+  
+        // Determine maxAttributes dynamically based on non-empty column headers
+        let maxAttributes = refinedColumnHeaders.filter((header) => header !== "").length;
+  
+        // Ensure at least 2 columns are always shown
+        maxAttributes = Math.max(maxAttributes, 2);
+  
+        // Extract rows dynamically
         const refinedRows = Object.keys(refinedTableData)
-          .filter((key) => key.startsWith('rows'))
+          .filter((key) => key.startsWith("rows"))
           .sort(
             (a, b) =>
-              parseInt(a.replace('rows', ''), 10) -
-              parseInt(b.replace('rows', ''), 10)
-          ) // Ensure correct order
+              parseInt(a.replace("rows", ""), 10) -
+              parseInt(b.replace("rows", ""), 10)
+          )
           .map((key) => {
-            const row = refinedTableData[key]
-            return Object.keys(row)
-              .filter(
-                (attrKey) =>
-                  attrKey.startsWith('attribute') && attrKey !== 'attribute0'
-              ) // Ignore attribute0
-              .sort(
-                (a, b) =>
-                  parseInt(a.replace('attribute', ''), 10) -
-                  parseInt(b.replace('attribute', ''), 10)
-              ) // Ensure correct order
-              .map((attrKey) => row[attrKey]) // Map attribute values
-              .filter((value) => value) // Filter out empty values
-          })
-
-        // Update table data state
+            const row = refinedTableData[key] || {};
+            return [
+              row["attribute0"] || "", // Include attribute0
+              row["attribute1"] || "",
+              row["attribute2"] || "",
+              row["attribute3"] || "",
+              row["attribute4"] || "",
+              row["attribute5"] || "",
+            ];
+          });
+  
+        // Trim rows based on maxAttributes
+        const trimmedRows = refinedRows.map((row) => row.slice(0, maxAttributes));
+  
+        // Ensure at least 2 rows with at least 2 attributes (even if empty)
+        while (trimmedRows.length < 2) {
+          trimmedRows.push(Array(maxAttributes).fill(""));
+        }
+  
+        // Ensure at least 2 column headers exist
+        while (refinedColumnHeaders.length < 2) {
+          refinedColumnHeaders.push("");
+        }
+  
+        // Update state
         setTableData((prevData) => ({
           ...prevData,
-          rowHeaders: refinedRowHeaders,
-          columnHeaders: refinedColumnHeaders,
-          rows: refinedRows,
-        }))
+          rowHeaders: refinedRowHeaders.length > 0 ? refinedRowHeaders : ["", ""],
+          columnHeaders: refinedColumnHeaders.slice(0, maxAttributes),
+          rows: trimmedRows,
+        }));
       }
     } catch (error) {
-      toast.error('Error refining text!', {
-        position: 'top-right',
+      toast.error("Error refining text!", {
+        position: "top-right",
         autoClose: 3000,
-      })
-      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+      });
+      setRefineLoadingSlideTitle(false);
+      setRefineLoadingTable(false);
     }
-  }
+  };
+  
 
   const onBack = () => {
     setDisplayMode('customBuilder')
@@ -607,7 +607,7 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
-                        {/* {refineLoadingTable ? (
+                      {refineLoadingTable ? (
                           <div className="relative group ml-1 flex items-center justify-center">
                             <div className="absolute w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                           </div>
@@ -619,11 +619,11 @@ export default function Table({
                               className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
                             />
                             {/* Tooltip */}
-                            {/* <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
                               Click to refine table.
                             </span>
                           </div>
-                        )} */} 
+                        )} 
                       </div>
                     </th>
                   </tr>
@@ -631,7 +631,7 @@ export default function Table({
                 <tbody>
                   {tableData.rows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="bg-gray-100 lg:min-w-[0vw] ">
+                      <td className="bg-gray-100 lg:min-w-[0vw] overflow-x-auto ">
                         <input
                           type="text"
                           value={tableData.rowHeaders[rowIndex]}

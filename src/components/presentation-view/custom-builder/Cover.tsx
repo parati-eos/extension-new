@@ -168,7 +168,59 @@ export default function Cover({
         setIsLoading(false)
       })
   }, [])
+  const fetchSlideData = async () => {
+    const payload = {
+      type: "Cover",
+      title: heading,
+      documentID,
+      outlineID,
+    };
+  
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/cover`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        const slideData = response.data;
+  
+        // Update states based on response data
+      
+        if (slideData.tagline) {
+          // If tagline is "Default Tagline", pass an empty string
+          const taglineToSet = slideData.tagline === "Default Tagline" ? "" : slideData.tagline;
+          setTagline(taglineToSet); // Set tagline with empty string if it's "Default Tagline"
+        }
+        if (slideData.companyName) {
+          setCompanyName(slideData.companyName); // Set company name
+        }
+        if (slideData.logo && (slideData.logo.startsWith('https://') || slideData.logo.startsWith('http://'))) {
+          setLogo(slideData.logo); // Set logo URL if it starts with "http://" or "https://"
+        } else {
+          setLogo(''); // Set logo to empty string or null if the URL is invalid
+        }
+  
+        // Set other properties as needed
+        // Example: if there's an image, you can set it similarly
+        if (slideData.image && slideData.image.length > 0) {
+          setSelectedImage(slideData.image[0]); // Assume the first image
+        }
+      }
+    } catch (error) {
+      
+    }
+  };
 
+  // Call fetchSlideType on component mount
+  useEffect(() => {
+    fetchSlideData()
+  }, [documentID, outlineID, orgId, heading, authToken]); // Dependency array ensures re-fetch when dependencies change
   return (
     <div className="flex flex-col h-full w-full p-2 lg:p-4">
       {/* Header Section */}
@@ -183,6 +235,7 @@ export default function Cover({
           placeholder="Enter your tagline"
           onChange={(e) => setTagline(e.target.value)}
           className=" py-1 px-2 lg:w-[50%] w-full border border-gray-300 rounded-lg "
+          value={tagline}
         />
       </div>
       {/* Main Content */}
