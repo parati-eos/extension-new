@@ -631,7 +631,7 @@ export default function Table({
                 <tbody>
                   {tableData.rows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      <td className="bg-gray-100 lg:min-w-[0vw] ">
+                      <td className="bg-gray-100 lg:min-w-[0vw] overflow-x-auto ">
                         <input
                           type="text"
                           value={tableData.rowHeaders[rowIndex]}
