@@ -1,15 +1,13 @@
 import React from 'react'
-import { io, Socket } from 'socket.io-client'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { FaCheckCircle } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import {
   connectWebSocket,
   listenToEvent,
   disconnectWebSocket,
-} from './webSocketService'
+} from '../payment/webSocketService'
 
 interface PaymentData {
   // Define the shape of the payment data based on your backend response
@@ -82,8 +80,6 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   )
   const userPlan = useSelector((state: any) => state.user.userPlan)
   const userEmail = sessionStorage.getItem('userEmail')
-  const [subscriptionData, setSubscriptionData] =
-    useState<SubscriptionData | null>(null)
 
   const plans = [
     {
@@ -410,7 +406,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     // Listen to subscription events
     listenToEvent('subscription.authenticated', (data: SubscriptionData) => {
       console.log('Subscription authenticated:', data)
-      setSubscriptionData(data)
+
       window.location.reload()
     })
 

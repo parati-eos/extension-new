@@ -285,6 +285,7 @@ export default function ViewPresentation() {
     }
   }
 
+  // Handles the countdown timer which is shown on clicking export
   useEffect(() => {
     if (countdown === null || countdown === 0) {
       if (countdown === 0) {
@@ -1038,6 +1039,7 @@ export default function ViewPresentation() {
     }
   }
 
+  // Handles slide states when outline list changes
   useEffect(() => {
     // Get stored outline IDs from sessionStorage
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
