@@ -571,6 +571,8 @@ export default function ViewPresentation() {
     }
     // Set loading state at the start
     setSlideStates((prev) => {
+      console.log('Quick Generate Slide State')
+
       return {
         ...prev,
         [currentOutlineID]: {
@@ -840,8 +842,6 @@ export default function ViewPresentation() {
             subscriptionId={subId}
             handleBack={() => {
               if (!slidesArray[currentOutlineID]) {
-                console.log('Reached Here')
-
                 setSlideStates((prev) => ({
                   ...prev,
                   [currentOutlineID]: {
@@ -871,12 +871,14 @@ export default function ViewPresentation() {
               }))
             }}
             handleQuickGenerate={async () => {
-              updateSlideState(outlineid, {
-                isLoading: true,
-                isNoGeneratedSlide: false,
-                retryCount: 0,
-                lastUpdated: Date.now(),
-              })
+              if (slidesArrayRef.current[currentOutlineID]?.length === 0) {
+                updateSlideState(outlineid, {
+                  isLoading: true,
+                  isNoGeneratedSlide: false,
+                  retryCount: 0,
+                  lastUpdated: Date.now(),
+                })
+              }
               await handleQuickGenerate()
             }}
             handleCustomBuilderClick={() => {
@@ -953,8 +955,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             handleBack={() => {
               if (!slidesArray[currentOutlineID]) {
-                console.log('Reached Here')
-
                 setSlideStates((prev) => ({
                   ...prev,
                   [currentOutlineID]: {
@@ -1006,6 +1006,7 @@ export default function ViewPresentation() {
                   slidesArrayRef.current[currentOutlineID]?.length ?? 0,
               }))
               setSlideStates((prev) => {
+                console.log('Render Content Slide State')
                 return {
                   ...prev,
                   [currentOutlineID]: {
@@ -1046,6 +1047,8 @@ export default function ViewPresentation() {
       for (const outline of outlines) {
         if (!updatedStates[outline.outlineID]) {
           // Initialize slide state if it doesn't exist
+          console.log('Outline Effect Slide State')
+
           updatedStates[outline.outlineID] = createInitialSlideState()
         } else if (
           outline.outlineID === currentOutlineID &&
@@ -1120,7 +1123,7 @@ export default function ViewPresentation() {
       if (!isOutlineIDInSessionStorage(currentOutlineID)) {
         setSlideStates((prev) => {
           const currentState = prev[currentOutlineID]
-          const hasExistingSlides = hasSlidesForOutline(currentOutline)
+          const hasExistingSlides = hasSlidesForOutline(currentOutlineID)
 
           // Don't set loading if we already have slides
           if (hasExistingSlides) {
@@ -1139,7 +1142,9 @@ export default function ViewPresentation() {
           // Only set loading if we need new slides
           const shouldBeLoading =
             isNewSlideLoading[currentOutlineID] ||
-            (!currentState?.genSlideID && !hasExistingSlides)
+            (!currentState?.genSlideID &&
+              !hasExistingSlides &&
+              !slidesArrayRef.current[currentOutlineID])
 
           return {
             ...prev,
@@ -1188,8 +1193,6 @@ export default function ViewPresentation() {
           },
         }))
 
-        console.log('Timeout Slides')
-
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutlineID]) {
             setNewSlideGenerated((prev) => ({
@@ -1234,7 +1237,7 @@ export default function ViewPresentation() {
                 ...prev,
                 [currentOutlineID]: false,
               }))
-              console.log('Socket Effect')
+
               setNewSlideGenerated((prev) => ({
                 ...prev,
                 [currentOutlineID]: 'Yes',
@@ -1449,16 +1452,12 @@ export default function ViewPresentation() {
       setNewVersionBackDisabled(false)
     }
 
-    console.log('Initial Slides State: ', initialSlides[currentOutlineID])
-
     if (
       initialSlides[currentOutlineID] &&
       initialSlides[currentOutlineID] !== totalSlides
     ) {
       setIsNewSlideLoading((prev) => {
         if (prev[currentOutlineID]) {
-          console.log('Pagination Effect')
-
           setNewSlideGenerated((prev) => ({
             ...prev,
             [currentOutlineID]: 'Yes',
@@ -1479,8 +1478,6 @@ export default function ViewPresentation() {
         return prev
       })
     }
-    console.log('Initial Slides', initialSlides[currentOutlineID])
-    console.log('Current Slides', totalSlides)
 
     setPrevTotalSlides(totalSlides)
   }, [totalSlides, prevTotalSlides])
