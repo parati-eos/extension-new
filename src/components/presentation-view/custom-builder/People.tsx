@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { FaImage, FaPlus } from 'react-icons/fa'
+import { FaImage, FaMinus, FaPlus } from 'react-icons/fa'
 import uploadFileToS3 from '../../../utils/uploadFileToS3'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
@@ -277,6 +277,13 @@ export default function People({
       }
     }
   }, [people, isInitialDataLoad])
+  const removePerson = (index: number) => {
+    if (people.length > 2) {
+      setIsInitialDataLoad(false) 
+      setPeople(people.filter((_, i) => i !== index));
+    }
+  };
+  
   const fetchSlideData = async () => {
     const payload = {
       type: "People",
@@ -503,10 +510,11 @@ export default function People({
             }`}
           >
             {people.map((person, index) => (
+              <div className='flex flex-row w-full items-center gap-2'>
               <div
                 key={index}
-                className={`flex flex-col gap-2 lg:gap-4 mb-2 p-1 ${
-                  index === people.length - 1 ? 'lg:mb-4' : ''
+                className={`flex flex-col gap-2 lg:gap-4 mb-2 p-1 w-full${
+                  index === people.length - 1 ? 'lg:mb-4 w-full' : ''
                 }`}
               >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mt-2 ">
@@ -697,7 +705,22 @@ export default function People({
                   </button>
                 )}
               </div>
+                   <button
+                   onClick={() => removePerson(index)}
+                   disabled={people.length <= 2} // Prevents removing if only 1 person remains
+                   className={`${
+                     people.length <= 2
+                       ? 'text-gray-400 cursor-not-allowed' // Disabled state
+                       : 'text-[#3667B2] hover:bg-red-100' // Active state
+                   } bg-white  flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
+                 >
+                   <FaMinus />
+                 </button>
+                 </div>
+              
             ))}
+     
+
           </div>
 
           <div className="flex w-full justify-end relative">
