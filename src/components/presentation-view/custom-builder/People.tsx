@@ -59,6 +59,7 @@ export default function People({
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
   const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -161,10 +162,12 @@ export default function People({
   }
 
   const addNewPerson = () => {
+    setIsInitialDataLoad(false)
     const currentPerson = people[people.length - 1]
 
     // Ensure the mandatory fields are filled before adding a new person
     if (!currentPerson.name.trim() || !currentPerson.description.trim()) {
+     
       alert(
         'Please fill in the required fields (Name and Description) before adding a new person.'
       )
@@ -251,7 +254,6 @@ export default function People({
       })
       setIsLoading(false)
       setDisplayMode('slides')
-      console.log('Server response:', response.data)
     } catch (error) {
       toast.error('Error submitting data!', {
         position: 'top-right',
@@ -260,14 +262,29 @@ export default function People({
       setFailed()
     }
   }
+
+  // Modified useEffect for scroll behavior
+  useEffect(() => {
+    if (containerRef.current) {
+      if (isInitialDataLoad) {
+        // For initial data load, scroll to top
+        requestAnimationFrame(() => {
+          containerRef.current?.scrollTo({
+            top: 0,
+            behavior: 'instant',
+          })
+        })
+      }
+    }
+  }, [people, isInitialDataLoad])
   const fetchSlideData = async () => {
     const payload = {
       type: "People",
-      title: heading,
+      title: slideTitle,
       documentID,
       outlineID,
-    };
-  
+    }
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/people`,
@@ -277,71 +294,77 @@ export default function People({
             Authorization: `Bearer ${authToken}`,
           },
         }
-      );
-  
+      )
+
       if (response.status === 200) {
         const slideData = response.data;
+        setIsInitialDataLoad(true)
   
-        if (slideData.slideName) setSlideTitle(slideData.slideName);
+        if (slideData.title) setSlideTitle(slideData.title);
   
         if (slideData.people && Array.isArray(slideData.people)) {
-            interface Person {
-              name: string;
-              designation: string;
-              company: string;
-              description: string;
-              image: string;
-              loading: boolean;
-            }
+          interface Person {
+            name: string
+            designation: string
+            company: string
+            description: string
+            image: string
+            loading: boolean
+          }
 
-            interface SlideData {
-              slideName: string;
-              people: Person[];
-            }
+          interface SlideData {
+            slideName: string
+            people: Person[]
+          }
 
-            const filteredPeople: Person[] = (slideData as SlideData).people
-              .map((person: Person) => ({
-                name: person.name?.trim() || "",
-                designation: person.designation?.trim() || "",
-                company: person.company?.trim() || "",
-                description: person.description?.trim() || "",
-                image: person.image?.trim() || "",
-                loading: false, // Ensure loading state is initialized
-              }))
-              .filter(
-                (person: { name: string; description: string }) =>
-                  person.name !== "" && person.description !== "" // Ensure essential fields are present
-              );
-  
-          setPeople(filteredPeople.length > 0 ? filteredPeople : [
-            {
-              name: "",
-              designation: "",
-              company: "",
-              description: "",
-              image: "",
-              loading: false,
-            },
-            {
-              name: "",
-              designation: "",
-              company: "",
-              description: "",
-              image: "",
-              loading: false,
-            },
-          ]);
+          const filteredPeople: Person[] = (slideData as SlideData).people
+            .map((person: Person) => ({
+              name: person.name?.trim() || '',
+              designation: person.designation?.trim() || '',
+              company: person.company?.trim() || '',
+              description: person.description?.trim() || '',
+              image: person.image?.trim() || '',
+              loading: false, // Ensure loading state is initialized
+            }))
+            .filter(
+              (person: { name: string; description: string }) =>
+                person.name !== '' && person.description !== '' // Ensure essential fields are present
+            )
+
+          setPeople(
+            filteredPeople.length > 0
+              ? filteredPeople
+              : [
+                  {
+                    name: '',
+                    designation: '',
+                    company: '',
+                    description: '',
+                    image: '',
+                    loading: false,
+                  },
+                  {
+                    name: '',
+                    designation: '',
+                    company: '',
+                    description: '',
+                    image: '',
+                    loading: false,
+                  },
+                ]
+          )
         }
       }
     } catch (error) {
-      console.error("Error fetching slide data:", error);
+      console.error('Error fetching slide data:', error)
+      setIsInitialDataLoad(false)
     }
-  };
-  
+  }
+
   useEffect(() => {
-    fetchSlideData(); // Fetch data on mount
-  }, [documentID, outlineID, orgId]); // Run when dependencies change
-  
+    fetchSlideData() // Fetch data on mount
+  }, [documentID, outlineID, orgId]) // Run when dependencies change
+
   const refineText = async (type: string, index?: number) => {
     const newRefineLoadingStates = [...refineLoadingStates]
     newRefineLoadingStates[index!] = true // Set loading for this specific index

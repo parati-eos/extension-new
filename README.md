@@ -1,6 +1,57 @@
-# Slide State Management
+# Code Explaination and Understanding
 
-Manages the state of slides using `outlineID` as the key identifier for values. `useEffect` and function calls to modify and monitor changes efficiently.
+Comments are used above every functions and logic in the code in each components to explain what does the code below do.
+
+# Code / File Structure
+
+- Auth folder contains the login/signup component
+
+- History folder contains HistoryContainer file which is the main component and HistoryThumbnail file which is the iframe/
+  thumbnail display component for the history items.
+
+- Landing-Page folder contains the landing page components. Landing page pricing section has its own API call in its own file to get pricing plans data.
+
+- Onboarding folder contains a shared folder for the next and back buttons, onboarding-sections folder for the 5 onboarding forms component, a Sidebar file which is the progress bar with the section names and OnboardingContainer file which is the main container which triggers all the actions and API calls.
+
+- Organization Profile folder contains the view and edit organization pages components.
+
+- Payment folder contains PaymentGateway file which is used to open razorpay modal for individual exports, other files are socket and socket provider code for the subscription flow.
+
+- pitchZynthShare folder contains the Pitch Deck share page code (older version)
+
+- Presentation-Type folder contains the select presentation type page component
+
+- Presentation-View folder contains the shared components, individual components and the sidebars, modals and loaders in the presentation view page along with the main container file ViewPresentation.tsx which has all the functions, API calls, socket connection for the functionalities and flow.
+
+- Share-Presentation contains the new share page code with the sidebar and outline modal in mobile
+
+- Shared folder contains the Navbar file, Pricing Modal and Protected Routes
+
+- Pages folder contains all the pages code in which components are imported
+
+- Redux folder contains the redux flow and logic to pass user plan data to different components and pages
+
+- Types folder contains the interfaces and types of all the data and components
+
+- Utils folder contains the data file which has the loader messages, industrySector file for mapping industry sector data, remove bg for logo, sectionMapping and aws file upload code.
+
+# API Calls and Submit / Generate Buttons
+
+- useEffects are used to trigger GET requests to fetch data in every components wherever its needed and socket connections.
+
+- handleSubmit, handleGenerate, generateSlide, refineText, etc certain functions are used to trigger POST / PATCH request API calls for data submission.
+
+# User plan and pricing plans data flow
+
+- Select Presentation Type, History, View and Edit Org Profile and Presentation View pages trigger GET request API calls to fetch user plan data from fetch org profile get req and pricing plans data from the plans get request.
+
+- User plan is passed through the components and pages through redux after being saved when APIs are triggered and successfull response is recorded.
+
+- Pricing plans data is passed to the pricing modal component through props after being saved when APIs are triggered and successfull response is recorded.
+
+# Presentation View State Management
+
+- All the states which are key value pair objects use `outlineID` as the key identifier for corresponding values depending on the state. `useEffect` and function calls are used to modify and monitor changes.
 
 ## Table of Contents
 
@@ -53,13 +104,13 @@ The following states are managed using React hooks:
 - `currentSlide`: Stores the currently active slide number.
 - `currentOutline`: Stores the outline text of the current slide.
 - `currentOutlineID`: Stores the ID of the current outline.
-- `outlineType`: Stores the type of outline.
+- `outlineType`: Stores the type of slide/outline.
 - `outlines`: Stores an array of all outlines.
 - `displayModes`: Stores the display modes for different slides.
 - `slideRefs`: A reference array to store DOM elements of slides.
-- `totalSlides`: Stores the total number of slides of an individual outline.
+- `totalSlides`: Stores the total number of slides versions of an individual outline.
 - `slidesId`: Stores an array of slide IDs.
-- `currentSlideIndex`: Stores the index of the currently active slide.
+- `currentSlideIndex`: Stores the index of the currently active slide version of an outline.
 
 ### Subscription & Pricing
 
@@ -84,7 +135,7 @@ The following states are managed using React hooks:
 
 - `slidesArray`: Stores `outlineID`s as keys and an array of `slideID`s as values.
 - `isNewSlideLoading`: Tracks the loading state of new slide versions.
-- `initialSlides`: Stores the initial number of slide versions for outlines.
+- `initialSlides`: Stores the initial number of slide versions for outlines before generating new version.
 - `slideStates`: Stores the state of all slides.
 - `finalizedSlides`: Stores finalized slides.
 - `newSlideGenerated`: Stores details of newly generated slides.
@@ -96,7 +147,7 @@ The following states are managed using React hooks:
 
 ### Loading & Refs
 
-- `displayBoxLoading`: Controls whether the display box is loading.
+- `displayBoxLoading`: Controls whether the whole display box is loading.
 - `slidesArrayRef`: A reference to `slidesArray` for maintaining consistency across re-renders.
 - `newSlideLoadingRef`: A reference to `isNewSlideLoading` for keeping track of slide load status.
 - `slideStatesRef`: A reference to `slideStates` for managing slide-related updates.

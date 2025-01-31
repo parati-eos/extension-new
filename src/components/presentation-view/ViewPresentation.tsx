@@ -145,15 +145,12 @@ export default function ViewPresentation() {
       setCurrentSlideLoaderMessageIndex((prevIndex) =>
         prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : 0
       )
-      // setCurrentSlideLoaderMessageIndex(
-      //   (prevIndex) =>
-      //     prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : prevIndex // Stop incrementing at the last message
-      // )
     }, 10000)
 
     return () => clearInterval(interval)
-  }, [slideStates[currentOutlineID]?.isLoading])
+  }, [currentOutlineID, slideStates])
 
+  // Open Pricing Modal On clicking export
   const openPricingModal = async () => {
     setIsPricingModalOpen(true)
     try {
@@ -285,6 +282,7 @@ export default function ViewPresentation() {
     }
   }
 
+  // Handles the countdown timer which is shown on clicking export
   useEffect(() => {
     if (countdown === null || countdown === 0) {
       if (countdown === 0) {
@@ -843,8 +841,6 @@ export default function ViewPresentation() {
             subscriptionId={subId}
             handleBack={() => {
               if (!slidesArray[currentOutlineID]) {
-                console.log('Reached Here')
-
                 setSlideStates((prev) => ({
                   ...prev,
                   [currentOutlineID]: {
@@ -874,12 +870,14 @@ export default function ViewPresentation() {
               }))
             }}
             handleQuickGenerate={async () => {
-              updateSlideState(outlineid, {
-                isLoading: true,
-                isNoGeneratedSlide: false,
-                retryCount: 0,
-                lastUpdated: Date.now(),
-              })
+              if (slidesArrayRef.current[currentOutlineID]?.length === 0) {
+                updateSlideState(outlineid, {
+                  isLoading: true,
+                  isNoGeneratedSlide: false,
+                  retryCount: 0,
+                  lastUpdated: Date.now(),
+                })
+              }
               await handleQuickGenerate()
             }}
             handleCustomBuilderClick={() => {
@@ -956,8 +954,6 @@ export default function ViewPresentation() {
             authToken={authToken!}
             handleBack={() => {
               if (!slidesArray[currentOutlineID]) {
-                console.log('Reached Here')
-
                 setSlideStates((prev) => ({
                   ...prev,
                   [currentOutlineID]: {
@@ -1015,7 +1011,7 @@ export default function ViewPresentation() {
                     ...prev[currentOutlineID],
                     isLoading:
                       !slidesArray[currentOutlineID] ||
-                      slidesArray[currentOutlineID].length === 0,
+                      slidesArrayRef.current[currentOutlineID].length === 0,
                     isNoGeneratedSlide: false,
                     lastUpdated: Date.now(),
                   },
@@ -1038,6 +1034,7 @@ export default function ViewPresentation() {
     }
   }
 
+  // Handles slide states when outline list changes
   useEffect(() => {
     // Get stored outline IDs from sessionStorage
     const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
@@ -1048,6 +1045,7 @@ export default function ViewPresentation() {
       for (const outline of outlines) {
         if (!updatedStates[outline.outlineID]) {
           // Initialize slide state if it doesn't exist
+
           updatedStates[outline.outlineID] = createInitialSlideState()
         } else if (
           outline.outlineID === currentOutlineID &&
@@ -1122,7 +1120,7 @@ export default function ViewPresentation() {
       if (!isOutlineIDInSessionStorage(currentOutlineID)) {
         setSlideStates((prev) => {
           const currentState = prev[currentOutlineID]
-          const hasExistingSlides = hasSlidesForOutline(currentOutline)
+          const hasExistingSlides = hasSlidesForOutline(currentOutlineID)
 
           // Don't set loading if we already have slides
           if (hasExistingSlides) {
@@ -1141,7 +1139,9 @@ export default function ViewPresentation() {
           // Only set loading if we need new slides
           const shouldBeLoading =
             isNewSlideLoading[currentOutlineID] ||
-            (!currentState?.genSlideID && !hasExistingSlides)
+            (!currentState?.genSlideID &&
+              !hasExistingSlides &&
+              !slidesArrayRef.current[currentOutlineID])
 
           return {
             ...prev,
@@ -1190,8 +1190,6 @@ export default function ViewPresentation() {
           },
         }))
 
-        console.log('Timeout Slides')
-
         setIsNewSlideLoading((prev) => {
           if (prev[currentOutlineID]) {
             setNewSlideGenerated((prev) => ({
@@ -1236,7 +1234,7 @@ export default function ViewPresentation() {
                 ...prev,
                 [currentOutlineID]: false,
               }))
-              console.log('Socket Effect')
+
               setNewSlideGenerated((prev) => ({
                 ...prev,
                 [currentOutlineID]: 'Yes',
@@ -1429,7 +1427,7 @@ export default function ViewPresentation() {
   // Effect to monitor changes
   useEffect(() => {
     if (totalSlides !== prevTotalSlides) {
-      updateSlideState(currentOutline, {
+      updateSlideState(currentOutlineID, {
         isLoading: false,
         isNoGeneratedSlide: false,
         retryCount: 0,
@@ -1451,16 +1449,12 @@ export default function ViewPresentation() {
       setNewVersionBackDisabled(false)
     }
 
-    console.log('Initial Slides State: ', initialSlides[currentOutlineID])
-
     if (
       initialSlides[currentOutlineID] &&
       initialSlides[currentOutlineID] !== totalSlides
     ) {
       setIsNewSlideLoading((prev) => {
         if (prev[currentOutlineID]) {
-          console.log('Pagination Effect')
-
           setNewSlideGenerated((prev) => ({
             ...prev,
             [currentOutlineID]: 'Yes',
@@ -1481,8 +1475,6 @@ export default function ViewPresentation() {
         return prev
       })
     }
-    console.log('Initial Slides', initialSlides[currentOutlineID])
-    console.log('Current Slides', totalSlides)
 
     setPrevTotalSlides(totalSlides)
   }, [totalSlides, prevTotalSlides])
@@ -1657,10 +1649,7 @@ export default function ViewPresentation() {
       {showCountdown && (
         <div className="modal">
           <div className="modal-content">
-            <p>
-              Payment has been done! Your download will start in {countdown}{' '}
-              seconds...
-            </p>
+            <p>Your download will start in {countdown} seconds...</p>
           </div>
         </div>
       )}

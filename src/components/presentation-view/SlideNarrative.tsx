@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '../../types/presentationView'
@@ -151,7 +151,6 @@ export default function SlideNarrative({
           },
         }
       )
-      console.log('Server response:', response.data)
       if (response.data === 'ok') {
         setNarrative('')
         setDisplayMode('slides')
@@ -194,6 +193,33 @@ export default function SlideNarrative({
   ) => {
     setSelectedOption(selected)
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/fetch-input/${orgId}`,
+          {
+            type: slideType,
+            documentID: documentID,
+            outlineID: outlineID,
+            title: heading,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        if (response.data.input && response.data.input !== 'null') {
+          setNarrative(response.data.input)
+        }
+      } catch (error) {}
+    }
+
+    fetchData()
+  }, [])
 
   return (
     <div className="flex flex-col p-2 lg:p-4 h-full">

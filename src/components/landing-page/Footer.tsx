@@ -3,7 +3,7 @@ import freepikbg from '../../assets/freepik.png'
 import createimage from '../../assets/zynthworks1.png'
 import evolutionimage from '../../assets/image4.png'
 import zynthtext from '../../assets/zynth-text.png'
-import { useNavigate } from 'react-router-dom' 
+import { Link, useNavigate } from 'react-router-dom' 
 
 const Footer: React.FC = () => {
   const navigate = useNavigate()
@@ -127,9 +127,9 @@ const Footer: React.FC = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="https://zynth.ai/contact" className="text-gray-600 hover:underline" target="_blank">
-                    Contact us
-                  </a>
+                <Link to="/contact-us" className="text-gray-600 hover:underline">
+  Contact us
+</Link>
                 </li>
                 <li>
                 

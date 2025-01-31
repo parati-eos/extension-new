@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { FaPlus } from 'react-icons/fa'
+import { FaMinus, FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from '../../presentation-view/custom-builder/shared/attachimage' // Import AttachImage component
 import { BackButton } from './shared/BackButton'
@@ -34,6 +34,7 @@ export default function Timeline({
 }: TimelineProps) {
   const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const [loading, setLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null) // Add selected image state
@@ -74,6 +75,7 @@ export default function Timeline({
 
   const addNewPoint = () => {
     if (timeline.length < 6) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setTimeline([...timeline, ''])
       setDescription([...description, ''])
     }
@@ -154,6 +156,23 @@ export default function Timeline({
     }
   }
 
+  // Modified useEffect for scroll behavior
+  useEffect(() => {
+    if (containerRef.current) {
+      if (!isInitialDataLoad) {
+        // Only scroll to bottom when adding new points
+        containerRef.current.scrollTop = containerRef.current.scrollHeight
+      } else {
+        // For initial data load, scroll to top
+        requestAnimationFrame(() => {
+          containerRef.current?.scrollTo({
+            top: 0,
+            behavior: 'instant',
+          })
+        })
+      }
+    }
+  }, [timeline, isInitialDataLoad])
   const refineText = async (type: string, index?: number) => {
     const newRefineLoadingStates = [...refineLoadingStates]
     newRefineLoadingStates[index!] = true // Set loading for this specific index
@@ -205,7 +224,14 @@ export default function Timeline({
       setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
     }
   }
-
+  const removeTimelinePoint = (index: number) => {
+    if (timeline.length > 1) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
+      setTimeline(timeline.filter((_, i) => i !== index));
+      setDescription(description.filter((_, i) => i !== index));
+    }
+  };
+  
   const handleFileSelect = async (file: File | null) => {
     setIsLoading(true)
     if (file) {
@@ -258,8 +284,9 @@ export default function Timeline({
   
         if (response.status === 200) {
           const slideData = response.data;
+          setIsInitialDataLoad(true)
   
-          if (slideData.slideName) setSlideTitle(slideData.slideName);
+          if (slideData.title) setSlideTitle(slideData.title);
           if (slideData.phases) {
             setTimeline(slideData.phases.map((phase: any) => phase.timeline));
             setDescription(slideData.phases.map((phase: any) => phase.description));
@@ -267,7 +294,7 @@ export default function Timeline({
           if (slideData.image) setSelectedImage(slideData.image);
         }
       } catch (error) {
-       
+        setIsInitialDataLoad(false)
       
       } 
     };
@@ -337,11 +364,12 @@ export default function Timeline({
             {timeline.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col lg:flex-row  lg:gap-4 lg:px-0 py-2 lg:py-0 p-1  lg:mb-0 ${
+                className={`flex flex-row gap-2 lg:gap-4 lg:px-0 py-2 lg:py-0 p-1  lg:mb-0 items-center ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <div className="flex flex-col lg:w-[25%]">
+    
+                <div className="flex flex-col lg:w-[25%] ">
                   <input
                     type="text"
                     value={timeline[index]}
@@ -420,7 +448,21 @@ export default function Timeline({
                     {description[index].length}/150 characters
                   </span>
                 </div>
+                <button
+  onClick={() => removeTimelinePoint(index)}
+  disabled={timeline.length <= 1} // Prevents removing if only 1 timeline remains
+  className={`${
+    timeline.length <= 1
+      ? 'text-gray-400 cursor-not-allowed' // Disabled state
+      : 'text-[#3667B2] hover:bg-red-100' // Active state
+  } bg-white  flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition mb-6`}
+>
+  <FaMinus />
+</button>
+
               </div>
+
+    
             ))}
 
             {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}

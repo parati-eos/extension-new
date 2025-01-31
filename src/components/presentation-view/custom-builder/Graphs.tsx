@@ -19,6 +19,12 @@ interface GraphProps {
   setFailed: () => void
 }
 
+interface Row {
+  label: string
+  services: string
+  series3: string
+}
+
 export default function Graphs({
   heading,
   slideType,
@@ -34,6 +40,7 @@ export default function Graphs({
     'chartSelection' | 'inputScreen'
   >('chartSelection')
   const [selectedChart, setSelectedChart] = useState<string | null>(null)
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const [rows, setRows] = useState([{ label: '', services: '', series3: '' }])
   const [series, setSeries] = useState(1)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
@@ -69,7 +76,9 @@ export default function Graphs({
   }
 
   const addRow = () => {
+
     if (rows.length < 10) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setRows([...rows, { label: '', services: '', series3: '' }])
     } else {
       toast.info('Maximum 10 rows can be added')
@@ -231,14 +240,28 @@ export default function Graphs({
 
   const onBack = () => {
     if (currentScreen === 'chartSelection') {
-      setDisplayMode('customBuilder')
+      setDisplayMode('customBuilder');
     } else if (currentScreen === 'inputScreen') {
-      setCurrentScreen('chartSelection')
-      setSeries(1) // Reset series to default
-      setHeaders(['', '']) // Reset headers
+      setCurrentScreen('chartSelection');
+      setSelectedChart(''); // Reset selectedChart to trigger useEffect on back
+      setSeries(1); // Reset series to default
+      setHeaders(['', '']); // Reset headers
+    }
+  };
+// Modified useEffect for scroll behavior
+useEffect(() => {
+  if (tableRef.current) {
+    if (isInitialDataLoad) {
+      // For initial data load, scroll to top
+      requestAnimationFrame(() => {
+        tableRef.current?.scrollTo({
+          top: 0,
+          behavior: 'instant',
+        })
+      })
     }
   }
-
+}, [rows,isInitialDataLoad])
   const [showTooltip, setShowTooltip] = useState(false)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [tooltipMessage, setTooltipMessage] = useState<JSX.Element | null>(null)
@@ -295,6 +318,107 @@ export default function Graphs({
   useEffect(() => {
     validateData()
   }, [slideTitle, slideType, rows, series, headers])
+  const fetchSlideData = async () => {
+    const payload = {
+        type: "Graphs",
+        title: slideTitle,
+        documentID,
+        outlineID,
+    };
+
+    try {
+        const response = await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/graphs`,
+            payload,
+            {
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            const { chartType, chart, slideName } = response.data;
+
+            // Ensure that chart type is compared correctly (case-insensitive comparison)
+            if (selectedChart && selectedChart.toLowerCase() !== chartType.toLowerCase()) {
+                console.log(`Chart type mismatch: selected(${selectedChart}) vs response(${chartType})`);
+                return; // Exit if the chart types don't match
+            }
+            const slideData = response.data;
+            setIsInitialDataLoad(true) 
+
+            // If the chart types match, update the slide title and other states
+            if (slideName && slideName !== slideData.title) {
+                setSlideTitle(slideData.title);
+            }
+
+            // Update the selected chart if it's different from the response
+            if (selectedChart !== chartType.charAt(0).toUpperCase() + chartType.slice(1)) {
+                setSelectedChart(chartType.charAt(0).toUpperCase() + chartType.slice(1));
+            }
+
+            // Extract headers and set them
+            const headers: string[] = chart.series.map((s: { key: string }) => s.key);
+            setHeaders(headers);
+
+            // Get the max number of rows from the longest series
+            const maxRows: number = Math.max(...chart.series.map((s: { key: string; value: string[] }) => s.value.length));
+
+            // Dynamically create rows based on max rows
+            const rowsData: Row[] = Array.from({ length: maxRows }, (_, rowIndex) => {
+                const row: Row = {
+                    label: "",
+                    services: "",
+                    series3: "",
+                };
+
+                interface Series {
+                  key: string;
+                  value: string[];
+                }
+
+                interface Chart {
+                  series: Series[];
+                }
+
+                interface SlideData {
+                  chartType: string;
+                  chart: Chart;
+                  slideName: string;
+                }
+
+                chart.series.forEach((series: Series, index: number) => {
+                  if (index === 0) row.label = series.value[rowIndex] || "";
+                  else if (index === 1) row.services = series.value[rowIndex] || "";
+                  else if (index === 2) row.series3 = series.value[rowIndex] || "";
+                });
+
+                return row;
+            });
+
+            // Update rows and series count without affecting other states
+            setRows(rowsData.map((row) => ({ ...row, series3: row.series3 || "" })));
+            setSeries(chart.series.length - 1); // Subtract 1 from the number of series
+        }
+    } catch (error) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
+        console.error("Error fetching slide data:", error);
+    }
+};
+
+  
+  
+
+
+
+
+useEffect(() => {
+  if (selectedChart) {
+      fetchSlideData();
+  }
+}, [documentID, outlineID, orgId, selectedChart
+]);
 
   return (
     <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
@@ -352,7 +476,7 @@ export default function Graphs({
             </div>
           )}
           {currentScreen === 'chartSelection' ? (
-            <div className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
+            <div     className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
               <div className="grid  grid-cols-3 lg:grid-cols-4 gap-4 mt-4 mr-5 h-28 ">
                 {['Line', 'Bar', 'Pie'].map((chart) => (
                   <div
@@ -377,7 +501,9 @@ export default function Graphs({
               </div>
             </div>
           ) : (
-            <div className="flex flex-col w-full h-full bg-white   overflow-x-auto scrollbar-none lg:p-1">
+            <div 
+           
+            className="flex flex-col w-full h-full bg-white   overflow-x-auto scrollbar-none lg:p-1">
               <div
                 className="mt-4 overflow-y-auto scrollbar-none  "
                 ref={tableRef}

@@ -60,8 +60,6 @@ function Login() {
     }
   }
 
-  // const serverurl = process.env.REACT_APP_BACKEND_URL || ''
-
   const saveUserData = async (userData: Record<string, any>) => {
     setIsLoading(true)
     const signupLink = localStorage.getItem('sign_up_link') || ''

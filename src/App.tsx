@@ -15,11 +15,9 @@ import PitchDeckShare from './components/pitchZynthShare/Share.jsx'
 import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import PricingPage from './pages/PricingPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
-import { SocketProvider } from './components/shared/SubscriptionSocket.tsx'
-import RazorpayWebhooks from './components/shared/RazorPayWebHooks.tsx'
-
+import { SocketProvider } from './components/payment/SubscriptionSocket.tsx'
+import ContactUsPage from './pages/ContactUsPage.tsx'
 const App: React.FC = () => {
-  const orgId = sessionStorage.getItem('orgId')
   useEffect(() => {
     const currentUrl = window.location.href
 
@@ -131,6 +129,7 @@ const App: React.FC = () => {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/contact-us" element={<ContactUsPage />} />
             <Route
               path="/*"
               element={
@@ -157,10 +156,6 @@ const App: React.FC = () => {
                   </Routes>
                 </ProtectedRoutes>
               }
-            />
-            <Route
-              path="/razorpay"
-              element={<RazorpayWebhooks orgId={orgId!} />}
             />
             <Route path="/presentation-share" element={<PresentationShare />} />
             <Route path="/share" element={<PitchDeckShare />} />
