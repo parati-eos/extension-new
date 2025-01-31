@@ -282,7 +282,7 @@ export default function Points({
     }
 
     fetchSlideData() // Fetch data on mount
-  }, [documentID, outlineID, orgId, slideTitle, authToken]) // Dependency array ensures re-fetch when dependencies change
+  }, [documentID, outlineID, orgId, authToken]) // Dependency array ensures re-fetch when dependencies change
 
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">
