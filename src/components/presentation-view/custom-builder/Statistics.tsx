@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useState, useRef, useEffect } from 'react'
-import { FaPlus } from 'react-icons/fa'
+import { FaMinus, FaPlus } from 'react-icons/fa'
 import AttachImage from './shared/attachimage'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
@@ -104,7 +104,14 @@ export default function Statistics({
       (point, index) => point.trim() === '' || description[index].trim() === ''
     ) ||
     !slideTitle.trim()
-
+    const removePoint = (index: number) => {
+      if (title.length > 2) {
+        setIsInitialDataLoad(false) 
+        setTitle(title.filter((_, i) => i !== index));
+        setDescription(description.filter((_, i) => i !== index));
+      }
+    };
+    
   const handleGenerateSlide = async () => {
     toast.info(`Request sent to a generate new version for ${heading}`, {
       position: 'top-right',
@@ -345,7 +352,7 @@ export default function Statistics({
             {title.map((point, index) => (
               <div
                 key={index}
-                className={`flex  gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 ${
+                className={`flex  gap-2 px-1 py-1 lg:py-1 lg:px-0 mb-2 lg:mb-0 items-center ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
@@ -397,8 +404,23 @@ export default function Statistics({
                     {description[index].length}/25 characters
                   </span>
                 </div>
-              </div>
+                <button
+  onClick={() => removePoint(index)}
+  disabled={title.length <= 2} // Prevents removing if only 2 points remain
+  className={`${
+    title.length <= 2
+      ? 'text-gray-400 cursor-not-allowed' // Disabled state
+      : 'text-[#3667B2] hover:bg-red-100' // Active state
+  } bg-white flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 ml-2 transition mb-4`}
+>
+  <FaMinus />
+</button>
+
+                               </div>
+                              
+                
             ))}
+ 
 
             {title.length < 6 && (
               <button
