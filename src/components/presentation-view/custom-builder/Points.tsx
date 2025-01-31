@@ -155,10 +155,10 @@ export default function Points({
   const removePoint = (index: number) => {
     if (points.length > 1) {
       setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
-      setPoints(points.filter((_, i) => i !== index));
+      setPoints(points.filter((_, i) => i !== index))
     }
-  };
-  
+  }
+
   const refineText = async (type: string, index?: number) => {
     const newRefineLoadingStates = [...refineLoadingStates]
     newRefineLoadingStates[index!] = true // Set loading for this specific index
@@ -346,61 +346,59 @@ export default function Points({
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <div className='flex flex-row gap-2 w-full items-center'>
-                <div className="relative hidden lg:block w-full">
-                  <input
-                    type="text"
-                    value={point}
-                    onBlur={() => setFocusedInput(null)} // Remove focus
-                    onChange={(e) => handleInputChange(e.target.value, index)}
-                    onFocus={(e) => {
-                      setFocusedInput(index)
-                      const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
-                      input.scrollLeft = input.scrollWidth // Scroll to the end on focus
-                    }}
-                    style={{
-                      textOverflow: 'ellipsis', // Truncate text with dots
-                      whiteSpace: 'nowrap', // Prevent text wrapping
-                      overflow: 'hidden', // Hide overflowing text
-                    }}
-                    placeholder={`Enter Point ${index + 1}`}
-                    className="flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                <div className="flex flex-row gap-2 w-full items-center">
+                  <div className="relative hidden lg:block w-full">
+                    <input
+                      type="text"
+                      value={point}
+                      onBlur={() => setFocusedInput(null)} // Remove focus
+                      onChange={(e) => handleInputChange(e.target.value, index)}
+                      onFocus={(e) => {
+                        setFocusedInput(index)
+                        const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
+                        input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                      }}
+                      style={{
+                        textOverflow: 'ellipsis', // Truncate text with dots
+                        whiteSpace: 'nowrap', // Prevent text wrapping
+                        overflow: 'hidden', // Hide overflowing text
+                      }}
+                      placeholder={`Enter Point ${index + 1}`}
+                      className="flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
                 text-ellipsis overflow-hidden whitespace-nowrap pr-10" // Ensure padding for the icon
-                  />
-                  {refineLoadingStates[index] ? (
-                    <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
-                      <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                    </div>
-                  ) : (
-                    <div className="absolute top-1/2 right-2 transform -translate-y-1/2 ">
-                      <div className="relative group">
-                        <FontAwesomeIcon
-                          icon={faWandMagicSparkles}
-                          onClick={() => refineText('points', index)}
-                          className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                        />
-                        {/* Tooltip */}
-                        <span className="absolute w-max top-[-25px] right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-                          Click to refine text.
-                        </span>
+                    />
+                    {refineLoadingStates[index] ? (
+                      <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
+                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="absolute top-1/2 right-2 transform -translate-y-1/2 ">
+                        <div className="relative group">
+                          <FontAwesomeIcon
+                            icon={faWandMagicSparkles}
+                            onClick={() => refineText('points', index)}
+                            className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                          />
+                          {/* Tooltip */}
+                          <span className="absolute w-max top-[-25px] right-0 bg-black text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                            Click to refine text.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => removePoint(index)}
+                    disabled={points.length <= 1} // Prevents removing if only 1 point remains
+                    className={`${
+                      points.length <= 1
+                        ? 'text-gray-400 cursor-not-allowed' // Disabled state
+                        : 'text-[#3667B2] hover:bg-red-100' // Active state
+                    } bg-white hidden lg:flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
+                  >
+                    <FaMinus />
+                  </button>
                 </div>
-                <button
-  onClick={() => removePoint(index)}
-  disabled={points.length <= 1} // Prevents removing if only 1 point remains
-  className={`${
-    points.length <= 1
-      ? 'text-gray-400 cursor-not-allowed' // Disabled state
-      : 'text-[#3667B2] hover:bg-red-100' // Active state
-  } bg-white hidden lg:flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
->
-  <FaMinus />
-</button>
-</div>
-
-
 
                 {/* Character Counter (outside the input container) */}
                 <span
@@ -415,43 +413,42 @@ export default function Points({
                   {point.length}/150 characters
                 </span>
                 {/* Mobile View Input */}
-                <div className='flex flex-row gap-2 w-full items-center'>
-                <div className="relative lg:hidden w-full">
-                  <input
-                    type="text"
-                    value={point}
-                    onFocus={() => setFocusedInput(index)} // Set focus
-                    onBlur={() => setFocusedInput(null)} // Remove focus
-                    onChange={(e) => handleInputChange(e.target.value, index)}
-                    placeholder={`Enter Point ${index + 1}`}
-                    className=" w-full text-[#5D5F61] p-3 pr-7 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {refineLoadingStates[index] ? (
-                    <>
-                      <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                      </div>
-                    </>
-                  ) : (
-                    <FontAwesomeIcon
-                      icon={faWandMagicSparkles}
-                      onClick={() => refineText('points', index)}
-                      className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                <div className="flex flex-row gap-2 w-full items-center">
+                  <div className="relative lg:hidden w-full">
+                    <input
+                      type="text"
+                      value={point}
+                      onFocus={() => setFocusedInput(index)} // Set focus
+                      onBlur={() => setFocusedInput(null)} // Remove focus
+                      onChange={(e) => handleInputChange(e.target.value, index)}
+                      placeholder={`Enter Point ${index + 1}`}
+                      className=" w-full text-[#5D5F61] p-3 pr-7 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                  )}
-                 
-</div>
-<button
-  onClick={() => removePoint(index)}
-  disabled={points.length <= 1} // Prevents removing if only 1 point remains
-  className={`${
-    points.length <= 1
-      ? 'text-gray-400 cursor-not-allowed' // Disabled state
-      : 'text-[#3667B2] hover:bg-red-100' // Active state
-  } bg-white lg:hidden flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
->
-  <FaMinus />
-</button>
+                    {refineLoadingStates[index] ? (
+                      <>
+                        <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+                          <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                        </div>
+                      </>
+                    ) : (
+                      <FontAwesomeIcon
+                        icon={faWandMagicSparkles}
+                        onClick={() => refineText('points', index)}
+                        className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+                      />
+                    )}
+                  </div>
+                  <button
+                    onClick={() => removePoint(index)}
+                    disabled={points.length <= 1} // Prevents removing if only 1 point remains
+                    className={`${
+                      points.length <= 1
+                        ? 'text-gray-400 cursor-not-allowed' // Disabled state
+                        : 'text-[#3667B2] hover:bg-red-100' // Active state
+                    } bg-white lg:hidden flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
+                  >
+                    <FaMinus />
+                  </button>
                 </div>
                 {/* Character Counter (outside the input container) */}
                 <span
