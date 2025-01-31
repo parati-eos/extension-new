@@ -43,6 +43,13 @@ export default function Points({
     new Array(points.length).fill(false)
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
+  const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const isGenerateDisabled =
+    points.every((point) => point.trim() === '') || !slideTitle.trim()
+  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
 
   const handleInputChange = (value: string, index: number) => {
     if (value.length <= 150) {
@@ -52,19 +59,14 @@ export default function Points({
     }
   }
 
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight
-    }
-  }, [points])
-
   const addNewPoint = () => {
     if (points.length < 6) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
+
       setPoints([...points, ''])
     }
   }
-  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
+
   const handleFileSelect = async (file: File | null) => {
     setIsImageLoading(true)
     if (file) {
@@ -138,7 +140,7 @@ export default function Points({
           autoClose: 3000,
         })
       }
-      console.log('Server response:', response.data)
+
       setDisplayMode('slides')
     } catch (error) {
       toast.error('Error submitting data!', {
@@ -207,56 +209,75 @@ export default function Points({
     setDisplayMode('customBuilder')
   }
 
-  const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
-  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
-  const isGenerateDisabled =
-    points.every((point) => point.trim() === '') || !slideTitle.trim()
-    useEffect(() => {
-      const fetchSlideData = async () => {
+  // Modified useEffect for scroll behavior
+  useEffect(() => {
+    if (containerRef.current) {
+      if (!isInitialDataLoad) {
+        // Only scroll to bottom when adding new points
+        containerRef.current.scrollTop = containerRef.current.scrollHeight
+      } else {
+        // For initial data load, scroll to top
+        requestAnimationFrame(() => {
+          containerRef.current?.scrollTo({
+            top: 0,
+            behavior: 'instant',
+          })
+        })
+      }
+    }
+  }, [points, isInitialDataLoad])
 
-    
-        const payload = {
-          type: "Points",
-          title: slideTitle, 
-          documentID,
-          outlineID,
-        };
-    
-        try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/points`,
-            payload,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
-    
-          if (response.status === 200) {
-            const slideData = response.data;
-    
-            // Update states based on response data
-            if (slideData.title) setSlideTitle(slideData.title); // Set slide title
-            if (Array.isArray(slideData.pointers)) setPoints(slideData.pointers); // Set points
-            if (Array.isArray(slideData.image) && slideData.image.length > 0) {
-              setSelectedImage(slideData.image[0]); // If there's an image, set the first one
-            } else {
-              setSelectedImage(null); // No image if array is empty
-            }
-            if (slideData.externalData) {
-              // Optionally, store externalData for further usage (if needed)
-              console.log("External data:", slideData.externalData);
-            }
+  useEffect(() => {
+    const fetchSlideData = async () => {
+      const payload = {
+        type: 'Points',
+        title: slideTitle, // Make sure this is defined in state
+        documentID,
+        outlineID,
+      }
+
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/points`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
           }
-        } catch (error) {
-          
-        } 
-      };
-    
-      fetchSlideData(); // Fetch data on mount
-    }, [documentID, outlineID, orgId,authToken]); // Dependency array ensures re-fetch when dependencies change
-    
+        )
+
+        if (response.status === 200) {
+          const slideData = response.data
+
+          setIsInitialDataLoad(true)
+
+          // Update states based on response data
+          if (slideData.slideName) setSlideTitle(slideData.slideName) // Set slide title
+
+          if (Array.isArray(slideData.pointers)) {
+            setPoints(slideData.pointers)
+          } // Set points
+
+          if (Array.isArray(slideData.image) && slideData.image.length > 0) {
+            setSelectedImage(slideData.image[0]) // If there's an image, set the first one
+          } else {
+            setSelectedImage(null) // No image if array is empty
+          }
+
+          if (slideData.externalData) {
+            // Optionally, store externalData for further usage (if needed)
+            console.log('External data:', slideData.externalData)
+          }
+        }
+      } catch (error) {
+        setIsInitialDataLoad(false)
+      }
+    }
+
+    fetchSlideData() // Fetch data on mount
+  }, [documentID, outlineID, orgId, slideTitle, authToken]) // Dependency array ensures re-fetch when dependencies change
+
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">
       {isLoading ? (

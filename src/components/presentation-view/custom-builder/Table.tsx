@@ -273,7 +273,6 @@ export default function Table({
           setIsLoading(false)
           setDisplayMode('slides')
         })
-      console.log(response)
     } catch (error) {
       toast.error('Error submitting data!', {
         position: 'top-right',
@@ -283,38 +282,43 @@ export default function Table({
     }
   }
   const refineText = async (type: string, text?: string) => {
-    let payload;
-  
-    if (type === "slideTitle") {
-      setRefineLoadingSlideTitle(true);
-      payload = text;
-    } else if (type === "tables") {
-      setRefineLoadingTable(true);
-  
-      const rowHeaders = tableData.rowHeaders.map((header) => header || "");
-      const columnHeaders = tableData.columnHeaders.map((header) => header || "");
-  
+    let payload
+
+    if (type === 'slideTitle') {
+      setRefineLoadingSlideTitle(true)
+      payload = text
+    } else if (type === 'tables') {
+      setRefineLoadingTable(true)
+
+      const rowHeaders = tableData.rowHeaders.map((header) => header || '')
+      const columnHeaders = tableData.columnHeaders.map(
+        (header) => header || ''
+      )
+
       const tablePayload = {
         ...rowHeaders.reduce<Record<string, string>>((acc, header, index) => {
-          acc[`rowHeader${index + 1}`] = header;
-          return acc;
+          acc[`rowHeader${index + 1}`] = header
+          return acc
         }, {}),
-        ...columnHeaders.reduce<Record<string, string>>((acc, header, index) => {
-          acc[`columnHeader${index + 1}`] = header;
-          return acc;
-        }, {}),
+        ...columnHeaders.reduce<Record<string, string>>(
+          (acc, header, index) => {
+            acc[`columnHeader${index + 1}`] = header
+            return acc
+          },
+          {}
+        ),
         rows: tableData.rows.map((row) => ({
-          attribute1: row[0] || "",
-          attribute2: row[1] || "",
-          attribute3: row[2] || "",
-          attribute4: row[3] || "",
-          attribute5: row[4] || "",
+          attribute1: row[0] || '',
+          attribute2: row[1] || '',
+          attribute3: row[2] || '',
+          attribute4: row[3] || '',
+          attribute5: row[4] || '',
         })),
-      };
-  
-      payload = tablePayload;
+      }
+
+      payload = tablePayload
     }
-  
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/refineText`,
@@ -327,103 +331,109 @@ export default function Table({
             Authorization: `Bearer ${authToken}`,
           },
         }
-      );
-  
-      if (response.status === 200 && type === "slideTitle") {
-        setSlideTitle(response.data.refinedText);
-        setRefineLoadingSlideTitle(false);
-      } else if (response.status === 200 && type === "tables") {
-        setRefineLoadingTable(false);
-        const refinedTableData = response.data.refinedtext;
-  
+      )
+
+      if (response.status === 200 && type === 'slideTitle') {
+        setSlideTitle(response.data.refinedText)
+        setRefineLoadingSlideTitle(false)
+      } else if (response.status === 200 && type === 'tables') {
+        setRefineLoadingTable(false)
+        const refinedTableData = response.data.refinedtext
+
         // Extract row headers
         const refinedRowHeaders = Object.keys(refinedTableData)
-          .filter((key) => key.startsWith("rowHeader"))
+          .filter((key) => key.startsWith('rowHeader'))
           .sort(
             (a, b) =>
-              parseInt(a.replace("rowHeader", ""), 10) -
-              parseInt(b.replace("rowHeader", ""), 10)
+              parseInt(a.replace('rowHeader', ''), 10) -
+              parseInt(b.replace('rowHeader', ''), 10)
           )
-          .map((key) => refinedTableData[key] || "");
-  
+          .map((key) => refinedTableData[key] || '')
+
         // Extract and filter column headers
         const refinedColumnHeaders = Object.keys(refinedTableData)
-          .filter((key) => key.startsWith("columnHeader") && key !== "columnHeader0")
+          .filter(
+            (key) => key.startsWith('columnHeader') && key !== 'columnHeader0'
+          )
           .sort(
             (a, b) =>
-              parseInt(a.replace("columnHeader", ""), 10) -
-              parseInt(b.replace("columnHeader", ""), 10)
+              parseInt(a.replace('columnHeader', ''), 10) -
+              parseInt(b.replace('columnHeader', ''), 10)
           )
-          .map((key) => refinedTableData[key] || "");
-  
+          .map((key) => refinedTableData[key] || '')
+
         // Determine maxAttributes dynamically based on non-empty column headers
-        let maxAttributes = refinedColumnHeaders.filter((header) => header !== "").length;
-  
+        let maxAttributes = refinedColumnHeaders.filter(
+          (header) => header !== ''
+        ).length
+
         // Ensure at least 2 columns are always shown
-        maxAttributes = Math.max(maxAttributes, 2);
-  
+        maxAttributes = Math.max(maxAttributes, 2)
+
         // Extract rows dynamically
         const refinedRows = Object.keys(refinedTableData)
-          .filter((key) => key.startsWith("rows"))
+          .filter((key) => key.startsWith('rows'))
           .sort(
             (a, b) =>
-              parseInt(a.replace("rows", ""), 10) -
-              parseInt(b.replace("rows", ""), 10)
+              parseInt(a.replace('rows', ''), 10) -
+              parseInt(b.replace('rows', ''), 10)
           )
           .map((key) => {
-            const row = refinedTableData[key] || {};
+            const row = refinedTableData[key] || {}
             return [
-              row["attribute1"] || "",
-              row["attribute2"] || "",
-              row["attribute3"] || "",
-              row["attribute4"] || "",
-              row["attribute5"] || "",
-            ];
-          });
-  
+              row['attribute1'] || '',
+              row['attribute2'] || '',
+              row['attribute3'] || '',
+              row['attribute4'] || '',
+              row['attribute5'] || '',
+            ]
+          })
+
         // Trim rows based on maxAttributes
-        const trimmedRows = refinedRows.map((row) => row.slice(0, maxAttributes));
-  
+        const trimmedRows = refinedRows.map((row) =>
+          row.slice(0, maxAttributes)
+        )
+
         // Ensure at least 2 rows with at least 2 attributes (even if empty)
         while (trimmedRows.length < 2) {
-          trimmedRows.push(Array(maxAttributes).fill(""));
+          trimmedRows.push(Array(maxAttributes).fill(''))
         }
-  
+
         // Ensure at least 2 column headers exist
         while (refinedColumnHeaders.length < 2) {
-          refinedColumnHeaders.push("");
+          refinedColumnHeaders.push('')
         }
-  
+
         // Update state
         setTableData((prevData) => ({
           ...prevData,
-          rowHeaders: refinedRowHeaders.length > 0 ? refinedRowHeaders : ["", ""],
+          rowHeaders:
+            refinedRowHeaders.length > 0 ? refinedRowHeaders : ['', ''],
           columnHeaders: refinedColumnHeaders.slice(0, maxAttributes),
           rows: trimmedRows,
-        }));
+        }))
       }
     } catch (error) {
-      toast.error("Error refining text!", {
-        position: "top-right",
+      toast.error('Error refining text!', {
+        position: 'top-right',
         autoClose: 3000,
-      });
-      setRefineLoadingSlideTitle(false);
-      setRefineLoadingTable(false);
+      })
+      setRefineLoadingSlideTitle(false)
+      setRefineLoadingTable(false)
     }
-  };
-  
+  }
 
   const onBack = () => {
     setDisplayMode('customBuilder')
   }
   const fetchSlideData = async () => {
     const payload = {
-      type: "Tables",
+      type: 'Tables',
       title: slideTitle,
       documentID,
       outlineID,
-    };
-  
+    }
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/tables`,
@@ -433,8 +443,8 @@ export default function Table({
             Authorization: `Bearer ${authToken}`,
           },
         }
-      );
-  
+      )
+
       if (response.status === 200) {
         const slideData = response.data;
   
@@ -442,49 +452,50 @@ export default function Table({
   
         // Extract row headers dynamically
         const rowHeaders = Object.keys(slideData)
-          .filter((key) => key.startsWith("rowHeader"))
+          .filter((key) => key.startsWith('rowHeader'))
           .map((key) => slideData[key]?.trim())
-          .filter((header) => header && header !== "");
-  
+          .filter((header) => header && header !== '')
+
         // Extract column headers dynamically
         const columnHeaders = Object.keys(slideData)
-          .filter((key) => key.startsWith("columnHeader"))
+          .filter((key) => key.startsWith('columnHeader'))
           .map((key) => slideData[key]?.trim())
-          .filter((header) => header && header !== "");
-  
+          .filter((header) => header && header !== '')
+
         // Extract rows dynamically
         const rowsData = Object.keys(slideData)
-          .filter((key) => key.startsWith("rows"))
-          .map((key) => slideData[key]);
-  
+          .filter((key) => key.startsWith('rows'))
+          .map((key) => slideData[key])
+
         const rows = rowsData
           .map((row) =>
             row
               ? Object.values(row).map((cell) =>
-                  typeof cell === "string" && cell.trim() !== "" ? cell : null
+                  typeof cell === 'string' && cell.trim() !== '' ? cell : null
                 )
               : []
           )
-          .filter((row) => row.some((cell) => cell !== null));
-  
+          .filter((row) => row.some((cell) => cell !== null))
+
         // Set table data
         setTableData({
           rowHeaders,
           columnHeaders,
-          rows: rows.map((row) => row.filter((cell) => cell !== null) as string[]),
-        });
+          rows: rows.map(
+            (row) => row.filter((cell) => cell !== null) as string[]
+          ),
+        })
       }
     } catch (error) {
-      console.error("Error fetching slide data:", error);
+      console.error('Error fetching slide data:', error)
     }
-  };
-  
+  }
+
   // Fetch data on mount
   useEffect(() => {
-    fetchSlideData();
-  }, [documentID, outlineID, orgId]);
-  
-  
+    fetchSlideData()
+  }, [documentID, outlineID, orgId])
+
   return (
     <div className="flex flex-col w-full h-full lg:p-4 p-2">
       {isLoading ? (
@@ -605,7 +616,7 @@ export default function Table({
                         >
                           <FaMinus />
                         </button>
-                      {refineLoadingTable ? (
+                        {refineLoadingTable ? (
                           <div className="relative group ml-1 flex items-center justify-center">
                             <div className="absolute w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                           </div>
@@ -621,7 +632,7 @@ export default function Table({
                               Click to refine table.
                             </span>
                           </div>
-                        )} 
+                        )}
                       </div>
                     </th>
                   </tr>

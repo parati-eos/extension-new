@@ -50,7 +50,6 @@ const LogoForm: React.FC<LogoFormProps> = ({
 
       try {
         // Upload file to S3 and get the URL
-        console.log('File selected:', file)
         const processedFile = await removeBackground(file)
         const processedLogo = {
           name: processedFile.name,
