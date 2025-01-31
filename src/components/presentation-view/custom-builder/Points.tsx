@@ -253,7 +253,7 @@ export default function Points({
           setIsInitialDataLoad(true)
 
           // Update states based on response data
-          if (slideData.slideName) setSlideTitle(slideData.slideName) // Set slide title
+          if (slideData.title) setSlideTitle(slideData.title) // Set slide title
 
           if (Array.isArray(slideData.pointers)) {
             setPoints(slideData.pointers)
