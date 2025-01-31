@@ -438,7 +438,7 @@ export default function Table({
       if (response.status === 200) {
         const slideData = response.data;
   
-        if (slideData.slideName) setSlideTitle(slideData.slideName);
+        if (slideData.title) setSlideTitle(slideData.title);
   
         // Extract row headers dynamically
         const rowHeaders = Object.keys(slideData)

@@ -152,7 +152,7 @@ export default function Statistics({
   const fetchSlideData = async () => {
     const payload = {
       type: 'Statistics',
-      title: heading,
+      title: slideTitle,
       documentID,
       outlineID,
     };
@@ -171,7 +171,7 @@ export default function Statistics({
       if (response.status === 200) {
         const slideData = response.data;
   
-        if (slideData.slideName) setSlideTitle(slideData.slideName);
+        if (slideData.title) setSlideTitle(slideData.title);
   
         if (slideData.stats && Array.isArray(slideData.stats)) {
           const extractedTitles = slideData.stats.map((stat: { label?: string }) =>

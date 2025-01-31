@@ -259,7 +259,7 @@ export default function Timeline({
         if (response.status === 200) {
           const slideData = response.data;
   
-          if (slideData.slideName) setSlideTitle(slideData.slideName);
+          if (slideData.title) setSlideTitle(slideData.title);
           if (slideData.phases) {
             setTimeline(slideData.phases.map((phase: any) => phase.timeline));
             setDescription(slideData.phases.map((phase: any) => phase.description));

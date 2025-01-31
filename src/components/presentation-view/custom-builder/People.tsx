@@ -263,7 +263,7 @@ export default function People({
   const fetchSlideData = async () => {
     const payload = {
       type: "People",
-      title: heading,
+      title: slideTitle,
       documentID,
       outlineID,
     };
@@ -282,7 +282,7 @@ export default function People({
       if (response.status === 200) {
         const slideData = response.data;
   
-        if (slideData.slideName) setSlideTitle(slideData.slideName);
+        if (slideData.title) setSlideTitle(slideData.title);
   
         if (slideData.people && Array.isArray(slideData.people)) {
             interface Person {

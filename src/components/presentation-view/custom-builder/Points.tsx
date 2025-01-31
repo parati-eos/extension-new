@@ -217,7 +217,7 @@ export default function Points({
     
         const payload = {
           type: "Points",
-          title: slideTitle, // Make sure this is defined in state
+          title: slideTitle, 
           documentID,
           outlineID,
         };
@@ -237,7 +237,7 @@ export default function Points({
             const slideData = response.data;
     
             // Update states based on response data
-            if (slideData.slideName) setSlideTitle(slideData.slideName); // Set slide title
+            if (slideData.title) setSlideTitle(slideData.title); // Set slide title
             if (Array.isArray(slideData.pointers)) setPoints(slideData.pointers); // Set points
             if (Array.isArray(slideData.image) && slideData.image.length > 0) {
               setSelectedImage(slideData.image[0]); // If there's an image, set the first one
@@ -255,7 +255,7 @@ export default function Points({
       };
     
       fetchSlideData(); // Fetch data on mount
-    }, [documentID, outlineID, orgId, slideTitle, authToken]); // Dependency array ensures re-fetch when dependencies change
+    }, [documentID, outlineID, orgId,authToken]); // Dependency array ensures re-fetch when dependencies change
     
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">

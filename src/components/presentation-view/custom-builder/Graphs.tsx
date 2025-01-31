@@ -329,10 +329,11 @@ export default function Graphs({
                 console.log(`Chart type mismatch: selected(${selectedChart}) vs response(${chartType})`);
                 return; // Exit if the chart types don't match
             }
+            const slideData = response.data;
 
             // If the chart types match, update the slide title and other states
-            if (slideName && slideName !== slideTitle) {
-                setSlideTitle(slideName);
+            if (slideName && slideName !== slideData.title) {
+                setSlideTitle(slideData.title);
             }
 
             // Update the selected chart if it's different from the response
