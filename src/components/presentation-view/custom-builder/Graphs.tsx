@@ -40,6 +40,7 @@ export default function Graphs({
     'chartSelection' | 'inputScreen'
   >('chartSelection')
   const [selectedChart, setSelectedChart] = useState<string | null>(null)
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const [rows, setRows] = useState([{ label: '', services: '', series3: '' }])
   const [series, setSeries] = useState(1)
   const [isButtonDisabled, setIsButtonDisabled] = useState(true)
@@ -75,7 +76,9 @@ export default function Graphs({
   }
 
   const addRow = () => {
+
     if (rows.length < 10) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setRows([...rows, { label: '', services: '', series3: '' }])
     } else {
       toast.info('Maximum 10 rows can be added')
@@ -245,7 +248,20 @@ export default function Graphs({
       setHeaders(['', '']); // Reset headers
     }
   };
-
+// Modified useEffect for scroll behavior
+useEffect(() => {
+  if (tableRef.current) {
+    if (isInitialDataLoad) {
+      // For initial data load, scroll to top
+      requestAnimationFrame(() => {
+        tableRef.current?.scrollTo({
+          top: 0,
+          behavior: 'instant',
+        })
+      })
+    }
+  }
+}, [rows,isInitialDataLoad])
   const [showTooltip, setShowTooltip] = useState(false)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [tooltipMessage, setTooltipMessage] = useState<JSX.Element | null>(null)
@@ -330,6 +346,7 @@ export default function Graphs({
                 return; // Exit if the chart types don't match
             }
             const slideData = response.data;
+            setIsInitialDataLoad(true) 
 
             // If the chart types match, update the slide title and other states
             if (slideName && slideName !== slideData.title) {
@@ -385,6 +402,7 @@ export default function Graphs({
             setSeries(chart.series.length - 1); // Subtract 1 from the number of series
         }
     } catch (error) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
         console.error("Error fetching slide data:", error);
     }
 };
@@ -458,7 +476,7 @@ useEffect(() => {
             </div>
           )}
           {currentScreen === 'chartSelection' ? (
-            <div className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
+            <div     className="w-full h-full flex-row lg:flex-col  lg:ml-1 ml-2 mt-2 ">
               <div className="grid  grid-cols-3 lg:grid-cols-4 gap-4 mt-4 mr-5 h-28 ">
                 {['Line', 'Bar', 'Pie'].map((chart) => (
                   <div
@@ -483,7 +501,9 @@ useEffect(() => {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col w-full h-full bg-white   overflow-x-auto scrollbar-none lg:p-1">
+            <div 
+           
+            className="flex flex-col w-full h-full bg-white   overflow-x-auto scrollbar-none lg:p-1">
               <div
                 className="mt-4 overflow-y-auto scrollbar-none  "
                 ref={tableRef}

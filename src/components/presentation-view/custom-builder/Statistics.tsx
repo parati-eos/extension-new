@@ -32,6 +32,8 @@ export default function Statistics({
   setIsSlideLoading,
   setFailed,
 }: StatisticProps) {
+
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const [title, setTitle] = useState(['', '', '']) // Initialize with 3 empty strings
   const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
   const [showTooltip, setShowTooltip] = useState(false)
@@ -52,7 +54,20 @@ export default function Statistics({
       setTitle(updatedPoints)
     }
   }
-
+ // Modified useEffect for scroll behavior
+ useEffect(() => {
+  if (containerRef.current) {
+    if (isInitialDataLoad) {
+      // For initial data load, scroll to top
+      requestAnimationFrame(() => {
+        containerRef.current?.scrollTo({
+          top: 0,
+          behavior: 'instant',
+        })
+      })
+    }
+  }
+}, [title, isInitialDataLoad])
   const handleInputDescription = (value: string, index: number) => {
     if (value.length <= 25) {
       const updatedPoints = [...description]
@@ -71,6 +86,8 @@ export default function Statistics({
 
   const addNewPoint = () => {
     if (title.length < 6) {
+      
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setTitle([...title, ''])
       setDescription([...description, ''])
       setIsRowAdded(true) // Set flag to trigger scrolling
@@ -170,6 +187,7 @@ export default function Statistics({
   
       if (response.status === 200) {
         const slideData = response.data;
+        setIsInitialDataLoad(true) // Ensure we scroll to bottom for new points
   
         if (slideData.title) setSlideTitle(slideData.title);
   
@@ -195,6 +213,7 @@ export default function Statistics({
       }
     } catch (error) {
       console.error('Error fetching slide data:', error);
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
     }
   };
   

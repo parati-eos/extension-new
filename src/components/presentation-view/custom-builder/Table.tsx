@@ -45,6 +45,7 @@ export default function Table({
     rowHeaders: ['', ''],
   })
   const [canGenerate, setCanGenerate] = useState(false)
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [isRowAdded, setIsRowAdded] = useState(false)
@@ -71,6 +72,7 @@ export default function Table({
 
   const handleAddRow = () => {
     if (tableData.rows.length < 8) {
+      setIsInitialDataLoad(false) 
       setTableData((prev) => ({
         ...prev,
         rows: [...prev.rows, Array(prev.columnHeaders.length).fill('')],
@@ -422,7 +424,20 @@ export default function Table({
       setRefineLoadingTable(false)
     }
   }
-
+// Modified useEffect for scroll behavior
+useEffect(() => {
+  if (containerRef.current) {
+    if (isInitialDataLoad) {
+      // For initial data load, scroll to top
+      requestAnimationFrame(() => {
+        containerRef.current?.scrollTo({
+          top: 0,
+          behavior: 'instant',
+        })
+      })
+    }
+  }
+}, [tableData,isInitialDataLoad])
   const onBack = () => {
     setDisplayMode('customBuilder')
   }
@@ -447,6 +462,7 @@ export default function Table({
 
       if (response.status === 200) {
         const slideData = response.data;
+        setIsInitialDataLoad(true) 
   
         if (slideData.title) setSlideTitle(slideData.title);
   
@@ -487,6 +503,7 @@ export default function Table({
         })
       }
     } catch (error) {
+      setIsInitialDataLoad(false) 
       console.error('Error fetching slide data:', error)
     }
   }

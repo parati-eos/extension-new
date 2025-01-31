@@ -59,6 +59,7 @@ export default function People({
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
   const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -161,10 +162,12 @@ export default function People({
   }
 
   const addNewPerson = () => {
+    setIsInitialDataLoad(false)
     const currentPerson = people[people.length - 1]
 
     // Ensure the mandatory fields are filled before adding a new person
     if (!currentPerson.name.trim() || !currentPerson.description.trim()) {
+     
       alert(
         'Please fill in the required fields (Name and Description) before adding a new person.'
       )
@@ -259,6 +262,21 @@ export default function People({
       setFailed()
     }
   }
+
+  // Modified useEffect for scroll behavior
+  useEffect(() => {
+    if (containerRef.current) {
+      if (isInitialDataLoad) {
+        // For initial data load, scroll to top
+        requestAnimationFrame(() => {
+          containerRef.current?.scrollTo({
+            top: 0,
+            behavior: 'instant',
+          })
+        })
+      }
+    }
+  }, [people, isInitialDataLoad])
   const fetchSlideData = async () => {
     const payload = {
       type: "People",
@@ -280,6 +298,7 @@ export default function People({
 
       if (response.status === 200) {
         const slideData = response.data;
+        setIsInitialDataLoad(true)
   
         if (slideData.title) setSlideTitle(slideData.title);
   
@@ -338,6 +357,7 @@ export default function People({
       }
     } catch (error) {
       console.error('Error fetching slide data:', error)
+      setIsInitialDataLoad(false)
     }
   }
 

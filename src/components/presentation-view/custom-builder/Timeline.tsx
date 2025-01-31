@@ -34,6 +34,7 @@ export default function Timeline({
 }: TimelineProps) {
   const [timeline, setTimeline] = useState([''])
   const [description, setDescription] = useState([''])
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const [loading, setLoading] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null) // Add selected image state
@@ -74,6 +75,7 @@ export default function Timeline({
 
   const addNewPoint = () => {
     if (timeline.length < 6) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setTimeline([...timeline, ''])
       setDescription([...description, ''])
     }
@@ -154,6 +156,23 @@ export default function Timeline({
     }
   }
 
+  // Modified useEffect for scroll behavior
+  useEffect(() => {
+    if (containerRef.current) {
+      if (!isInitialDataLoad) {
+        // Only scroll to bottom when adding new points
+        containerRef.current.scrollTop = containerRef.current.scrollHeight
+      } else {
+        // For initial data load, scroll to top
+        requestAnimationFrame(() => {
+          containerRef.current?.scrollTo({
+            top: 0,
+            behavior: 'instant',
+          })
+        })
+      }
+    }
+  }, [timeline, isInitialDataLoad])
   const refineText = async (type: string, index?: number) => {
     const newRefineLoadingStates = [...refineLoadingStates]
     newRefineLoadingStates[index!] = true // Set loading for this specific index
@@ -258,6 +277,7 @@ export default function Timeline({
   
         if (response.status === 200) {
           const slideData = response.data;
+          setIsInitialDataLoad(true)
   
           if (slideData.title) setSlideTitle(slideData.title);
           if (slideData.phases) {
@@ -267,7 +287,7 @@ export default function Timeline({
           if (slideData.image) setSelectedImage(slideData.image);
         }
       } catch (error) {
-       
+        setIsInitialDataLoad(false)
       
       } 
     };
