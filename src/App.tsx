@@ -16,6 +16,7 @@ import ProtectedRoutes from './components/shared/ProtectedRoutes.tsx'
 import PricingPage from './pages/PricingPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
 import { SocketProvider } from './components/payment/SubscriptionSocket.tsx'
+import ContactUsPage from './pages/ContactUsPage.tsx'
 const App: React.FC = () => {
   useEffect(() => {
     const currentUrl = window.location.href
@@ -128,6 +129,7 @@ const App: React.FC = () => {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/contact-us" element={<ContactUsPage />} />
             <Route
               path="/*"
               element={
