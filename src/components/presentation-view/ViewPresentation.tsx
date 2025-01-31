@@ -145,14 +145,10 @@ export default function ViewPresentation() {
       setCurrentSlideLoaderMessageIndex((prevIndex) =>
         prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : 0
       )
-      // setCurrentSlideLoaderMessageIndex(
-      //   (prevIndex) =>
-      //     prevIndex < slideLoaderMessages.length - 1 ? prevIndex + 1 : prevIndex // Stop incrementing at the last message
-      // )
     }, 10000)
 
     return () => clearInterval(interval)
-  }, [slideStates[currentOutlineID]?.isLoading])
+  }, [currentOutlineID, slideStates])
 
   const openPricingModal = async () => {
     setIsPricingModalOpen(true)
@@ -1016,7 +1012,7 @@ export default function ViewPresentation() {
                     ...prev[currentOutlineID],
                     isLoading:
                       !slidesArray[currentOutlineID] ||
-                      slidesArray[currentOutlineID].length === 0,
+                      slidesArrayRef.current[currentOutlineID].length === 0,
                     isNoGeneratedSlide: false,
                     lastUpdated: Date.now(),
                   },

@@ -65,7 +65,7 @@ function Login() {
     const signupLink = localStorage.getItem('sign_up_link') || ''
     try {
       const ipInfoResponse = await fetch(
-        'https://cors-anywhere.herokuapp.com/https://ipinfo.io/json?token=f0e9cf876d422e'
+        'https://ipinfo.io/json?token=f0e9cf876d422e'
       )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
