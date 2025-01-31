@@ -43,6 +43,13 @@ export default function Points({
     new Array(points.length).fill(false)
   )
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
+  const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
+  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
+  const isGenerateDisabled =
+    points.every((point) => point.trim() === '') || !slideTitle.trim()
+  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
 
   const handleInputChange = (value: string, index: number) => {
     if (value.length <= 150) {
@@ -52,19 +59,14 @@ export default function Points({
     }
   }
 
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight
-    }
-  }, [points])
-
   const addNewPoint = () => {
     if (points.length < 6) {
+      setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
+
       setPoints([...points, ''])
     }
   }
-  const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
+
   const handleFileSelect = async (file: File | null) => {
     setIsImageLoading(true)
     if (file) {
@@ -207,10 +209,24 @@ export default function Points({
     setDisplayMode('customBuilder')
   }
 
-  const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
-  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
-  const isGenerateDisabled =
-    points.every((point) => point.trim() === '') || !slideTitle.trim()
+  // Modified useEffect for scroll behavior
+  useEffect(() => {
+    if (containerRef.current) {
+      if (!isInitialDataLoad) {
+        // Only scroll to bottom when adding new points
+        containerRef.current.scrollTop = containerRef.current.scrollHeight
+      } else {
+        // For initial data load, scroll to top
+        requestAnimationFrame(() => {
+          containerRef.current?.scrollTo({
+            top: 0,
+            behavior: 'instant',
+          })
+        })
+      }
+    }
+  }, [points, isInitialDataLoad])
+
   useEffect(() => {
     const fetchSlideData = async () => {
       const payload = {
@@ -234,20 +250,29 @@ export default function Points({
         if (response.status === 200) {
           const slideData = response.data
 
+          setIsInitialDataLoad(true)
+
           // Update states based on response data
           if (slideData.slideName) setSlideTitle(slideData.slideName) // Set slide title
-          if (Array.isArray(slideData.pointers)) setPoints(slideData.pointers) // Set points
+
+          if (Array.isArray(slideData.pointers)) {
+            setPoints(slideData.pointers)
+          } // Set points
+
           if (Array.isArray(slideData.image) && slideData.image.length > 0) {
             setSelectedImage(slideData.image[0]) // If there's an image, set the first one
           } else {
             setSelectedImage(null) // No image if array is empty
           }
+
           if (slideData.externalData) {
             // Optionally, store externalData for further usage (if needed)
             console.log('External data:', slideData.externalData)
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        setIsInitialDataLoad(false)
+      }
     }
 
     fetchSlideData() // Fetch data on mount
