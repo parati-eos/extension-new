@@ -138,7 +138,7 @@ export default function Points({
           autoClose: 3000,
         })
       }
-      console.log('Server response:', response.data)
+
       setDisplayMode('slides')
     } catch (error) {
       toast.error('Error submitting data!', {
@@ -211,52 +211,48 @@ export default function Points({
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const isGenerateDisabled =
     points.every((point) => point.trim() === '') || !slideTitle.trim()
-    useEffect(() => {
-      const fetchSlideData = async () => {
+  useEffect(() => {
+    const fetchSlideData = async () => {
+      const payload = {
+        type: 'Points',
+        title: slideTitle, // Make sure this is defined in state
+        documentID,
+        outlineID,
+      }
 
-    
-        const payload = {
-          type: "Points",
-          title: slideTitle, // Make sure this is defined in state
-          documentID,
-          outlineID,
-        };
-    
-        try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/points`,
-            payload,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
-    
-          if (response.status === 200) {
-            const slideData = response.data;
-    
-            // Update states based on response data
-            if (slideData.slideName) setSlideTitle(slideData.slideName); // Set slide title
-            if (Array.isArray(slideData.pointers)) setPoints(slideData.pointers); // Set points
-            if (Array.isArray(slideData.image) && slideData.image.length > 0) {
-              setSelectedImage(slideData.image[0]); // If there's an image, set the first one
-            } else {
-              setSelectedImage(null); // No image if array is empty
-            }
-            if (slideData.externalData) {
-              // Optionally, store externalData for further usage (if needed)
-              console.log("External data:", slideData.externalData);
-            }
+      try {
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/points`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
           }
-        } catch (error) {
-          
-        } 
-      };
-    
-      fetchSlideData(); // Fetch data on mount
-    }, [documentID, outlineID, orgId, slideTitle, authToken]); // Dependency array ensures re-fetch when dependencies change
-    
+        )
+
+        if (response.status === 200) {
+          const slideData = response.data
+
+          // Update states based on response data
+          if (slideData.slideName) setSlideTitle(slideData.slideName) // Set slide title
+          if (Array.isArray(slideData.pointers)) setPoints(slideData.pointers) // Set points
+          if (Array.isArray(slideData.image) && slideData.image.length > 0) {
+            setSelectedImage(slideData.image[0]) // If there's an image, set the first one
+          } else {
+            setSelectedImage(null) // No image if array is empty
+          }
+          if (slideData.externalData) {
+            // Optionally, store externalData for further usage (if needed)
+            console.log('External data:', slideData.externalData)
+          }
+        }
+      } catch (error) {}
+    }
+
+    fetchSlideData() // Fetch data on mount
+  }, [documentID, outlineID, orgId, slideTitle, authToken]) // Dependency array ensures re-fetch when dependencies change
+
   return (
     <div className="flex flex-col lg:p-4 p-2 h-full">
       {isLoading ? (

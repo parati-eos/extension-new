@@ -150,6 +150,7 @@ export default function ViewPresentation() {
     return () => clearInterval(interval)
   }, [currentOutlineID, slideStates])
 
+  // Open Pricing Modal On clicking export
   const openPricingModal = async () => {
     setIsPricingModalOpen(true)
     try {
@@ -571,8 +572,6 @@ export default function ViewPresentation() {
     }
     // Set loading state at the start
     setSlideStates((prev) => {
-      console.log('Quick Generate Slide State')
-
       return {
         ...prev,
         [currentOutlineID]: {
@@ -1006,7 +1005,6 @@ export default function ViewPresentation() {
                   slidesArrayRef.current[currentOutlineID]?.length ?? 0,
               }))
               setSlideStates((prev) => {
-                console.log('Render Content Slide State')
                 return {
                   ...prev,
                   [currentOutlineID]: {
@@ -1047,7 +1045,6 @@ export default function ViewPresentation() {
       for (const outline of outlines) {
         if (!updatedStates[outline.outlineID]) {
           // Initialize slide state if it doesn't exist
-          console.log('Outline Effect Slide State')
 
           updatedStates[outline.outlineID] = createInitialSlideState()
         } else if (
@@ -1652,10 +1649,7 @@ export default function ViewPresentation() {
       {showCountdown && (
         <div className="modal">
           <div className="modal-content">
-            <p>
-              Payment has been done! Your download will start in {countdown}{' '}
-              seconds...
-            </p>
+            <p>Your download will start in {countdown} seconds...</p>
           </div>
         </div>
       )}

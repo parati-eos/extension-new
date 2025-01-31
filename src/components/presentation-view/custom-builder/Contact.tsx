@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
 import { toast } from 'react-toastify'
@@ -257,15 +257,14 @@ export default function Contact({
     setShowTooltip(false)
   }
 
-
   const fetchContactData = async () => {
     const payload = {
-      type: "Contact",
+      type: 'Contact',
       title: heading,
       documentID,
       outlineID,
     }
-  
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/fetch-document/${orgId}/contact`,
@@ -276,24 +275,23 @@ export default function Contact({
           },
         }
       )
-  
+
       if (response.status === 200) {
         const contactData = response.data
-        console.log('Fetched contact data:', contactData) // Log fetched data for debugging
-  
+
         // Set state based on the response data
         setWebsiteLink(contactData.websiteLink || '') // Ensure it handles missing data
         setEmail(contactData.contactEmail || '') // Ensure it handles missing data
         setPhone(contactData.contactPhone || '') // Ensure it handles missing data
         setLinkedin(contactData.linkedinLink || '') // Ensure it handles missing data
-  
+
         // If there is an image array and it's not empty, set the first image
         if (contactData.image && contactData.image.length > 0) {
           setSelectedImage(contactData.image[0]) // Set first image from the array
         } else {
           setSelectedImage(null) // Reset image if no image data is found
         }
-  
+
         // Run validations after fetching data
         validateWebsiteLink(contactData.websiteLink || '') // Validate fetched website link
         validateEmail(contactData.contactEmail || '') // Validate fetched email
@@ -304,7 +302,7 @@ export default function Contact({
       console.error('Error fetching contact data:', error)
     }
   }
-  
+
   useEffect(() => {
     fetchContactData()
   }, [documentID, outlineID, orgId, heading, authToken]) // Dependency array ensures re-fetch when dependencies change

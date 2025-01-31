@@ -175,10 +175,8 @@ const HistoryContainer: React.FC = () => {
       }
 
       const result = await response.json()
-      console.log('Result:', result)
 
       const url = result.data.PresentationURL
-      console.log('URL:', url)
 
       if (!url || typeof url !== 'string') {
         throw new Error('Invalid URL in response')
@@ -268,7 +266,6 @@ const HistoryContainer: React.FC = () => {
           }
         )
         const result = await response.json()
-        console.log('History Result: ', result.data)
 
         // Handle empty response
         if (Array.isArray(result.data) && result.data.length === 0) {
@@ -305,7 +302,6 @@ const HistoryContainer: React.FC = () => {
         )
         .then((response) => {
           const country = ipInfoData!.country!
-          console.log('Country:', country)
 
           if (country !== 'IN' && country !== 'India' && country !== 'In') {
             setMonthlyPlan(response.data.items[4])

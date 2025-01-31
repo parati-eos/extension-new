@@ -151,7 +151,6 @@ export default function SlideNarrative({
           },
         }
       )
-      console.log('Server response:', response.data)
       if (response.data === 'ok') {
         setNarrative('')
         setDisplayMode('slides')
