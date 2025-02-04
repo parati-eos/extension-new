@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FaPlus, FaChartPie, FaChartLine, FaChartBar } from 'react-icons/fa'
+import { FaPlus, FaChartPie, FaChartLine, FaChartBar, FaMinus } from 'react-icons/fa'
 import axios from 'axios'
 import { BackButton } from './shared/BackButton'
 import { DisplayMode } from '../../../types/presentationView'
@@ -263,6 +263,12 @@ useEffect(() => {
   }
 }, [rows,isInitialDataLoad])
   const [showTooltip, setShowTooltip] = useState(false)
+  const removeLastRow = () => {
+    if (rows.length > 1) {
+      setRows(rows.slice(0, -1)); // Removes the last row
+    }
+  };
+  
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [tooltipMessage, setTooltipMessage] = useState<JSX.Element | null>(null)
 
@@ -599,11 +605,12 @@ useEffect(() => {
                 </table>
               </div>
               {rows.length < 10 && (
+                <>
                 <div className="flex justify-between lg:mt-4 mt-2  ">
                   <button
                     onClick={addRow}
                     disabled={isAddRowDisabled}
-                    className={`flex items-center md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61]  transition ${
+                    className={`flex items-center w-[40%] lg:w-[18%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61]  transition ${
                       isAddRowDisabled
                         ? 'cursor-not-allowed'
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'
@@ -612,6 +619,20 @@ useEffect(() => {
                     <FaPlus className="mr-2" /> Add Data
                   </button>
                 </div>
+                <div className="flex justify-between lg:mt-4 mt-2">
+  <button
+    onClick={removeLastRow}
+    disabled={rows.length <= 3} // Prevents removal if only 1 row remains
+    className={`flex items-center w-[40%] lg:w-[18%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61] transition ${
+      rows.length <= 3
+        ? 'cursor-not-allowed'
+        : 'bg-white text-[#5D5F61] hover:bg-red-500 hover:text-white'
+    }`}
+  >
+    <FaMinus className="mr-2" /> Remove Data
+  </button>
+</div>
+</>
               )}
               <div className="hidden mt-auto lg:flex w-full justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
                 <button
