@@ -81,9 +81,10 @@ const LogoForm: React.FC<LogoFormProps> = ({
   }
 
   return (
-    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
+    <div className="lg:p-0 p-2 w-full h-full xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col  md:p-4">
       {/* Heading */}
-      <div className="flex flex-col items-center gap-1 lg:mb-8">
+      <div className='w-full justify-center'>
+      <div className="flex flex-col justify-center items-center gap-1 lg:mb-8">
         <FaBullseye className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">Company Logo</h1>
         <p className="text-[#5D5F61]">Upload your company logo</p>
@@ -91,7 +92,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
+        className="flex flex-col items-center  flex-grow w-full justify-center items-center max-w-md mx-auto"
       >
         {/* Input */}
         <div
@@ -111,7 +112,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
               <img
                 src={logo}
                 alt="Uploaded Logo"
-                className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                 className="w-24 h-24 rounded-full  shadow-md object-contain aspect-auto"
               />
             ) : (
               <>
@@ -130,10 +131,16 @@ const LogoForm: React.FC<LogoFormProps> = ({
             </button>
           </div>
         </div>
+     
+      
+
+ 
+      
+     
 
         {/* Buttons */}
         <div
-          className={`flex flex-col items-center justify-center mt-[3.5rem] md:mt-7 ${
+          className={`flex flex-col items-center justify-center mt-[3.5rem] md:mt-[7.3rem] max-w-sm mx-auto ${
             logo !== '' ? 'md:mt-1' : ''
           } w-full space-y-2 `}
         >
@@ -149,8 +156,9 @@ const LogoForm: React.FC<LogoFormProps> = ({
           {/* Back Button */}
           <BackButton onClick={onBack} />
         </div>
-      </form>
-    </div>
+            </form>      
+          </div>
+        </div>
   )
 }
 

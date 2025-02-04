@@ -196,11 +196,18 @@ export default function SlideNarrative({
 
   useEffect(() => {
     const fetchData = async () => {
+      let slideTypeToBePassed
+      if (selectedOption) {
+        slideTypeToBePassed = selectedOption.value
+      } else {
+        slideTypeToBePassed = slideType
+      }
+
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/fetch-input/${orgId}`,
           {
-            type: slideType,
+            type: slideTypeToBePassed,
             documentID: documentID,
             outlineID: outlineID,
             title: heading,
@@ -219,7 +226,7 @@ export default function SlideNarrative({
     }
 
     fetchData()
-  }, [])
+  }, [selectedOption])
 
   return (
     <div className="flex flex-col p-2 lg:p-4 h-full">
