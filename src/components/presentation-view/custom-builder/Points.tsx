@@ -68,6 +68,14 @@ export default function Points({
   }
 
   const handleFileSelect = async (file: File | null) => {
+    if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setIsImageLoading(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsImageLoading(true)
     if (file) {
       try {
@@ -267,8 +275,10 @@ export default function Points({
 
           if (Array.isArray(slideData.image) && slideData.image.length > 0) {
             setSelectedImage(slideData.image[0]) // If there's an image, set the first one
+            setFileName(slideData.image[0].split('/').pop())
           } else {
             setSelectedImage(null) // No image if array is empty
+            setFileName(null)
           }
 
           if (slideData.externalData) {
@@ -493,11 +503,13 @@ export default function Points({
           <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
             {/* Use AttachImage component */}
             <AttachImage
-              onFileSelected={handleFileSelect}
-              isLoading={isImageLoading}
-              fileName={fileName}
-              uploadCompleted={uploadCompleted}
-            />
+  onFileSelected={handleFileSelect}
+  isLoading={isImageLoading}
+  fileName={fileName}
+  uploadCompleted={uploadCompleted}
+  selectedImage={selectedImage}  // Pass selectedImage
+/>
+
 
             {/* Generate Slide Button */}
             <div
@@ -542,6 +554,7 @@ export default function Points({
                 isLoading={isImageLoading}
                 fileName={fileName}
                 uploadCompleted={uploadCompleted}
+                selectedImage={selectedImage}
               />
             </div>
 

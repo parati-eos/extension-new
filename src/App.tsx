@@ -131,7 +131,7 @@ const App: React.FC = () => {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
-            <Route path="/refer" element={<ReferPage />} />
+            {/* <Route path="/refer" element={<ReferPage />} /> */}
             <Route
               path="/*"
               element={

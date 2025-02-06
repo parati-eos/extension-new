@@ -233,6 +233,14 @@ export default function Timeline({
   };
   
   const handleFileSelect = async (file: File | null) => {
+    if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setUploadCompleted(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsLoading(true)
     if (file) {
       try {
@@ -292,6 +300,11 @@ export default function Timeline({
             setDescription(slideData.phases.map((phase: any) => phase.description));
           }
           if (slideData.image) setSelectedImage(slideData.image);
+          setFileName(slideData.image[0].split('/').pop())
+        }
+        else {
+          setSelectedImage(null) // No image if array is empty
+          setFileName(null)
         }
       } catch (error) {
         setIsInitialDataLoad(false)
@@ -495,6 +508,7 @@ export default function Timeline({
               isLoading={isLoading}
               fileName={fileName}
               uploadCompleted={uploadCompleted}
+              selectedImage={selectedImage}  // Pass selectedImage
             />
             <button
               onClick={(e) => {

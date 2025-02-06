@@ -213,10 +213,13 @@ export default function Statistics({
           setDescription(['', '', '']);
         }
   
-        if (slideData.image) {
-          setSelectedImage(slideData.image);
-          setUploadCompleted(true);
-        }
+        if (slideData.image) setSelectedImage(slideData.image);
+        setFileName(slideData.image[0].split('/').pop())
+      }
+      else {
+        setSelectedImage(null) // No image if array is empty
+        setFileName(null)
+      
       }
     } catch (error) {
       console.error('Error fetching slide data:', error);
@@ -261,6 +264,14 @@ export default function Statistics({
   }
 
   const handleFileSelect = async (file: File | null) => {
+    if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setUploadCompleted(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsImageLoading(true)
     if (file) {
       try {
@@ -447,6 +458,7 @@ export default function Statistics({
               isLoading={isImageLoading}
               fileName={fileName}
               uploadCompleted={uploadCompleted}
+              selectedImage={selectedImage} 
             />
             <div className="hidden lg:flex w-full lg:justify-end lg:w-auto lg:gap-4">
               <div className="flex-1 relative">
@@ -500,6 +512,7 @@ export default function Statistics({
                 isLoading={isImageLoading}
                 fileName={fileName}
                 uploadCompleted={uploadCompleted}
+                selectedImage={selectedImage} 
               />
             </div>
 

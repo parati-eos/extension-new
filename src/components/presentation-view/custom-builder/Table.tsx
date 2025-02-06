@@ -821,7 +821,7 @@ useEffect(() => {
                   className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
                     canGenerate && slideTitle
                       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
-                      : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                   }`}
                 >
                   Generate Slide
