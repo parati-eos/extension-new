@@ -48,11 +48,10 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (isValidLink && websiteLink) {
-      onContinue({ websiteLink })
-    }
-  }
+    e.preventDefault();
+    onContinue({ websiteLink }); // Allows an empty or filled website link
+  };
+  
 
   return (
     <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
@@ -99,7 +98,8 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
               <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
             </div>
           ) : (
-            <NextButton disabled={!isValidLink} text={'Next'} />
+            <NextButton text={'Next'} />
+
           )}
 
           {/* Back Button */}

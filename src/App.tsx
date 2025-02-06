@@ -17,6 +17,7 @@ import PricingPage from './pages/PricingPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
 import { SocketProvider } from './components/payment/SubscriptionSocket.tsx'
 import ContactUsPage from './pages/ContactUsPage.tsx'
+import ReferPage from './pages/ReferPage.tsx'
 const App: React.FC = () => {
   useEffect(() => {
     const currentUrl = window.location.href
@@ -130,6 +131,7 @@ const App: React.FC = () => {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
+            {/* <Route path="/refer" element={<ReferPage />} /> */}
             <Route
               path="/*"
               element={

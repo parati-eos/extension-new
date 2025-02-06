@@ -92,7 +92,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center  flex-grow w-full justify-center items-center max-w-md mx-auto"
+        className="flex flex-col items-center  flex-grow w-full justify-center  max-w-md mx-auto"
       >
         {/* Input */}
         <div
@@ -122,6 +122,7 @@ const LogoForm: React.FC<LogoFormProps> = ({
                 </p>
               </>
             )}
+            <div className='p-2'>
             <button
               type="button"
               onClick={handleButtonClick}
@@ -131,6 +132,8 @@ const LogoForm: React.FC<LogoFormProps> = ({
             </button>
           </div>
         </div>
+        </div>
+
      
       
 

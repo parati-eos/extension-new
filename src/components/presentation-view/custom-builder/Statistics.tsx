@@ -213,10 +213,13 @@ export default function Statistics({
           setDescription(['', '', '']);
         }
   
-        if (slideData.image) {
-          setSelectedImage(slideData.image);
-          setUploadCompleted(true);
-        }
+        if (slideData.image) setSelectedImage(slideData.image);
+        setFileName(slideData.image[0].split('/').pop())
+      }
+      else {
+        setSelectedImage(null) // No image if array is empty
+        setFileName(null)
+      
       }
     } catch (error) {
       console.error('Error fetching slide data:', error);
@@ -261,6 +264,14 @@ export default function Statistics({
   }
 
   const handleFileSelect = async (file: File | null) => {
+    if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setUploadCompleted(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsImageLoading(true)
     if (file) {
       try {
@@ -308,7 +319,7 @@ export default function Statistics({
               <input
                 type="text"
                 value={slideTitle}
-                maxLength={25}
+                maxLength={50}
                 onChange={(e) => setSlideTitle(e.target.value)}
                 onFocus={(e) => {
                   const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
@@ -327,6 +338,7 @@ export default function Statistics({
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
               ) : (
+                slideTitle.length>0 &&(
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
                   <div className="relative group">
                     <FontAwesomeIcon
@@ -340,6 +352,7 @@ export default function Statistics({
                     </span>
                   </div>
                 </div>
+                )
               )}
             </div>
           </div>
@@ -365,7 +378,7 @@ export default function Statistics({
                     onChange={(e) => handleInputTitle(e.target.value, index)}
                     placeholder={`Enter Data Label ${index + 1}`}
                     className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={25}
+                    maxLength={50}
                   />
                   <span
                     className={`text-xs mt-1 ml-1 ${
@@ -390,7 +403,7 @@ export default function Statistics({
                     }
                     placeholder={`Enter Value ${index + 1}`}
                     className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={25}
+                    maxLength={50}
                   />
                   <span
                     className={`text-xs mt-1 ml-1 ${
@@ -445,6 +458,7 @@ export default function Statistics({
               isLoading={isImageLoading}
               fileName={fileName}
               uploadCompleted={uploadCompleted}
+              selectedImage={selectedImage} 
             />
             <div className="hidden lg:flex w-full lg:justify-end lg:w-auto lg:gap-4">
               <div className="flex-1 relative">
@@ -498,6 +512,7 @@ export default function Statistics({
                 isLoading={isImageLoading}
                 fileName={fileName}
                 uploadCompleted={uploadCompleted}
+                selectedImage={selectedImage} 
               />
             </div>
 

@@ -52,6 +52,14 @@ export default function Table({
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
   const [refineLoadingTable, setRefineLoadingTable] = useState(false)
+// Function to check if at least one table cell, row header, or column header has data
+const isAnyTableDataFilled = () => {
+  return (
+    tableData.columnHeaders.some((header) => header.trim() !== '') ||
+    tableData.rowHeaders.some((rowHeader) => rowHeader.trim() !== '') ||
+    tableData.rows.some((row) => row.some((cell) => cell.trim() !== ''))
+  );
+};
 
   useEffect(() => {
     // Count fully completed rows
@@ -540,7 +548,7 @@ useEffect(() => {
                   whiteSpace: 'nowrap', // Prevent text wrapping
                   overflow: 'hidden', // Hide overflowing text
                 }}
-                maxLength={25}
+                maxLength={50}
                 placeholder="Add Slide Title"
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
@@ -548,6 +556,7 @@ useEffect(() => {
                 {refineLoadingSlideTitle ? (
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 ) : (
+                  slideTitle.length>0 && (
                   <div className="relative group">
                     <FontAwesomeIcon
                       icon={faWandMagicSparkles}
@@ -559,6 +568,7 @@ useEffect(() => {
                       Click to refine text.
                     </span>
                   </div>
+                  )
                 )}
               </div>
             </div>
@@ -638,17 +648,21 @@ useEffect(() => {
                             <div className="absolute w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                           </div>
                         ) : (
-                          <div className="relative group ml-1">
-                            <FontAwesomeIcon
-                              icon={faWandMagicSparkles}
-                              onClick={() => refineText('tables')}
-                              className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                            />
-                            {/* Tooltip */}
-                            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-                              Click to refine table.
-                            </span>
-                          </div>
+                          <>
+                            {isAnyTableDataFilled() && !refineLoadingTable ? (
+                              <div className="relative group ml-1">
+                                <FontAwesomeIcon
+                                  icon={faWandMagicSparkles}
+                                  onClick={() => refineText('tables')}
+                                  className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                                />
+                                {/* Tooltip */}
+                                <span className="absolute top-[-10px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                                  Click to refine table.
+                                </span>
+                              </div>
+                            ) : null}
+                          </>
                         )}
                       </div>
                     </th>
@@ -807,7 +821,7 @@ useEffect(() => {
                   className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
                     canGenerate && slideTitle
                       ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
-                      : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                   }`}
                 >
                   Generate Slide

@@ -108,7 +108,7 @@ const Heading: React.FC = () => {
           ref={videoRef}
             controls className="w-full h-full rounded-md object-contain z-10">
               <source
-                src="https://d2zu6flr7wd65l.cloudfront.net/uploads/Zynth+Demo+Web+Video.mp4"
+                src="https://d2zu6flr7wd65l.cloudfront.net/uploads/Copy+of+31st+Jan+Zynth+Demo+Web+Video.mp4"
                 type="video/mp4"
               />
               Your browser does not support the video tag.
