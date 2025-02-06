@@ -42,7 +42,7 @@ export default function Contact({
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isImageLoading, setIsImageLoading] = useState(false)
-  const [fileName, setFileName] = useState('')
+  const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [showTooltip, setShowTooltip] = useState(false)
 
@@ -223,6 +223,14 @@ export default function Contact({
   }
 
   const handleFileSelect = async (file: File | null) => {
+    if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setIsImageLoading(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsImageLoading(true)
     if (file) {
       try {
@@ -288,9 +296,12 @@ export default function Contact({
         // If there is an image array and it's not empty, set the first image
         if (contactData.image && contactData.image.length > 0) {
           setSelectedImage(contactData.image[0]) // Set first image from the array
-        } else {
-          setSelectedImage(null) // Reset image if no image data is found
-        }
+
+        setFileName(contactData.image[0].split('/').pop())
+          } else {
+            setSelectedImage(null) // No image if array is empty
+            setFileName(null)
+          }
 
         // Run validations after fetching data
         validateWebsiteLink(contactData.websiteLink || '') // Validate fetched website link
@@ -396,6 +407,7 @@ export default function Contact({
           isLoading={isImageLoading}
           fileName={fileName}
           uploadCompleted={uploadCompleted}
+          selectedImage={selectedImage}
         />
         <div
           className="relative"
@@ -434,6 +446,7 @@ export default function Contact({
             isLoading={isImageLoading}
             fileName={fileName}
             uploadCompleted={uploadCompleted}
+            selectedImage={selectedImage}
           />
         </div>
 

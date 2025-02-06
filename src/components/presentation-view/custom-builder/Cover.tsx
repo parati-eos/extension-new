@@ -37,7 +37,7 @@ export default function Cover({
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isImageLoading, setIsImageLoading] = useState(false)
-  const [fileName, setFileName] = useState('')
+  const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false)
   const [tagline, setTagline] = useState('')
   const [companyName, setCompanyName] = useState('')
@@ -79,6 +79,14 @@ export default function Cover({
   }
 
   const handleFileSelect = async (file: File | null) => {
+    if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setIsImageLoading(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsUploading(true)
     if (file) {
       try {
@@ -214,6 +222,11 @@ export default function Cover({
         // Example: if there's an image, you can set it similarly
         if (slideData.image && slideData.image.length > 0) {
           setSelectedImage(slideData.image[0]) // Assume the first image
+          setFileName(slideData.image[0].split('/').pop())
+          
+        }else {
+          setSelectedImage(null) // No image if array is empty
+          setFileName(null)
         }
       }
     } catch (error) {}
@@ -258,7 +271,7 @@ export default function Cover({
                 <img
                   src={logo}
                   alt="Uploaded Logo"
-                  className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                  className="w-16 h-16 lg:w-24 lg:h-24 rounded-full   object-contain aspect-auto"
                 />
                 {isImageLoading && (
                   <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-500">
@@ -285,13 +298,14 @@ export default function Cover({
         </div>
       </div>
       {/* Button Container */}
-      <div className="hidden w-full lg:flex  lg:flex-row justify-end gap-2  lg:mt-8 mt-2">
+      <div className="hidden mt-auto gap-2 lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4">
         {/* Attach Image Component */}
         <AttachImage
           onFileSelected={handleFileSelect}
           isLoading={isUploading}
           fileName={fileName}
           uploadCompleted={uploadCompleted}
+          selectedImage={selectedImage}
         />
 
         {/* Generate Slide Button */}
@@ -300,7 +314,7 @@ export default function Cover({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={handleGenerateSlide}
-            className={`py-2 px-6 rounded-md transition-all duration-200 transform ${
+            className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
               !logo || !tagline.trim() || isUploading
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : 'bg-[#3667B2] text-white hover:bg-[#274a89]'

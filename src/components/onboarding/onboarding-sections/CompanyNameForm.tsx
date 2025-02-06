@@ -18,6 +18,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
     setCompanyName(e.target.value)
   }
 
+ 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (companyName) {
@@ -31,9 +32,9 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
       <div className="flex flex-col items-center gap-1 md:mb-8">
         <FaBuilding className="text-[#3667B2] text-6xl lg:text-4xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">
-          Your Company Name
+          Organization Name
         </h1>
-        <p className="text-[#5D5F61]">Provide your company name</p>
+        <p className="text-[#5D5F61]">Provide your organization name</p>
       </div>
 
       <form
@@ -46,12 +47,12 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
             htmlFor="companyName"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
           >
-            Company Name
+           Organization Name 
           </label>
           <input
             type="text"
             id="companyName"
-            placeholder="Enter company name"
+            placeholder="Enter organization name"
             className="mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2]"
             value={companyName}
             onChange={handleInputChange}

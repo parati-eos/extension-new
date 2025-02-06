@@ -85,6 +85,14 @@ export default function SlideNarrative({
   ]
 
   const handleFileSelect = async (file: File | null) => {
+      if (!file) {
+      // If no file is provided (user removed image), reset states properly
+      setUploadCompleted(false) // Ensure loading is stopped
+      setSelectedImage(null)
+      setUploadCompleted(false)
+      setFileName(null)
+      return
+    }
     setIsLoading(true)
     if (file) {
       try {
@@ -196,13 +204,8 @@ export default function SlideNarrative({
 
   useEffect(() => {
     const fetchData = async () => {
-      let slideTypeToBePassed
-      if (selectedOption) {
-        slideTypeToBePassed = selectedOption.value
-      } else {
-        slideTypeToBePassed = slideType
-      }
-
+      let slideTypeToBePassed = selectedOption ? selectedOption.value : slideType;
+  
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/fetch-input/${orgId}`,
@@ -217,16 +220,32 @@ export default function SlideNarrative({
               Authorization: `Bearer ${authToken}`,
             },
           }
-        )
-
-        if (response.data.input && response.data.input !== 'null') {
-          setNarrative(response.data.input)
+        );
+  
+        if (response.data) {
+          setNarrative(response.data.input && response.data.input !== "null" ? response.data.input : "");
+  
+          if (Array.isArray(response.data.image) && response.data.image.length > 0) {
+            setSelectedImage(response.data.image[0]);
+            setFileName(response.data.image[0].split("/").pop());
+          } else {
+            // 🛑 Ensure the image gets hidden
+            setSelectedImage(null);
+            setFileName(null);
+          }
         }
-      } catch (error) {}
-    }
-
-    fetchData()
-  }, [selectedOption])
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, [selectedOption]); // Runs when selectedOption changes
+  
+  
+  
+  
+  
 
   return (
     <div className="flex flex-col p-2 lg:p-4 h-full">
@@ -312,6 +331,7 @@ export default function SlideNarrative({
           isLoading={isLoading}
           fileName={fileName}
           uploadCompleted={uploadCompleted}
+          selectedImage={selectedImage}
         />
         {/* Generate Slide Button with Tooltip */}
         <div
@@ -348,6 +368,7 @@ export default function SlideNarrative({
             isLoading={isLoading}
             fileName={fileName}
             uploadCompleted={uploadCompleted}
+            selectedImage={selectedImage}
           />
         </div>
         {/* Generate Slide Button with Tooltip */}

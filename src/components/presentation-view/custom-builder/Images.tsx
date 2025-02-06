@@ -261,7 +261,7 @@ export default function Images({
                   whiteSpace: 'nowrap', // Prevent text wrapping
                   overflow: 'hidden', // Hide overflowing text
                 }}
-                maxLength={25}
+                maxLength={50}
                 placeholder="Add Slide Title"
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
@@ -270,6 +270,7 @@ export default function Images({
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
               ) : (
+                slideTitle.length>0 && (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
                   <div className="relative group">
                     <FontAwesomeIcon
@@ -283,6 +284,7 @@ export default function Images({
                     </span>
                   </div>
                 </div>
+                )
               )}
             </div>
           </div>
@@ -456,7 +458,7 @@ export default function Images({
                 className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
                   images.length > 0 && slideTitle
                     ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
-                    : 'bg-gray-400 text-gray-200 cursor-not-allowed' // Disabled styles
+                    : 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                 }`}
               >
                 Generate Slide
