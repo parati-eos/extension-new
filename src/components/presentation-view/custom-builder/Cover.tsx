@@ -258,7 +258,7 @@ export default function Cover({
                 <img
                   src={logo}
                   alt="Uploaded Logo"
-                  className="w-16 h-16 lg:w-24 lg:h-24 object-fit mb-2"
+                  className="w-16 h-16 lg:w-24 lg:h-24 rounded-full   object-contain aspect-auto"
                 />
                 {isImageLoading && (
                   <div className="absolute inset-0 flex justify-center items-center bg-opacity-50 bg-gray-500">

@@ -331,7 +331,7 @@ export default function Timeline({
                   whiteSpace: 'nowrap', // Prevent text wrapping
                   overflow: 'hidden', // Hide overflowing text
                 }}
-                maxLength={25}
+                maxLength={50}
                 placeholder="Add Slide Title"
                 className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
@@ -340,6 +340,7 @@ export default function Timeline({
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
               ) : (
+                slideTitle.length>0 && (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
                   <div className="relative group">
                     <FontAwesomeIcon
@@ -353,6 +354,7 @@ export default function Timeline({
                     </span>
                   </div>
                 </div>
+                )
               )}
             </div>
           </div>
@@ -419,6 +421,7 @@ export default function Timeline({
                         <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                       </div>
                     ) : (
+                      description[index].length >0 &&(
                       <div className="absolute top-[35%] right-2 transform -translate-y-1/2">
                         <div className="relative group">
                           <FontAwesomeIcon
@@ -434,6 +437,7 @@ export default function Timeline({
                           </span>
                         </div>
                       </div>
+                      )
                     )}
                   </>
                   <span

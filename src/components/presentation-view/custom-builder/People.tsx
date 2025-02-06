@@ -467,7 +467,7 @@ export default function People({
               <input
                 type="text"
                 value={slideTitle}
-                maxLength={25}
+                maxLength={50}
                 onChange={(e) => setSlideTitle(e.target.value)}
                 onFocus={(e) => {
                   const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
@@ -485,7 +485,7 @@ export default function People({
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
-              ) : (
+              ) : (  slideTitle.length>0 && (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
                   <div className="relative group">
                     <FontAwesomeIcon
@@ -499,6 +499,7 @@ export default function People({
                     </span>
                   </div>
                 </div>
+              )
               )}
             </div>
           </div>
@@ -616,6 +617,7 @@ export default function People({
                         <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                       </div>
                     ) : (
+                      person.description.length>0 &&(
                       <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
                         <div className="relative group">
                           <FontAwesomeIcon
@@ -629,6 +631,7 @@ export default function People({
                           </span>
                         </div>
                       </div>
+                      )
                     )}
                   </div>
                   <span

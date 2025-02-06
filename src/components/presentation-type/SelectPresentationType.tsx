@@ -85,6 +85,8 @@ const SelectPresentationType: React.FC = () => {
   const [generateinput, setGenerateInput] = useState('')
   const [pptCount, setPptCount] = useState(0)
   const [pptCountMonthly, setPptCountMonthly] = useState(0)
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -246,7 +248,10 @@ const SelectPresentationType: React.FC = () => {
   }
 
   const isButtonDisabled =
-    selectedType === 8 ? !customTypeInput.trim() : !selectedType
+  selectedType === 8
+    ? !customTypeInput.trim() || (userPlan !== "pro" && !eligibleForGeneration)
+    : !selectedType || (userPlan !== "pro" && !eligibleForGeneration);
+
 
   // API CALL TO GET PRICING DATA FOR MODAL AND USER PLAN
   useEffect(() => {
@@ -301,9 +306,9 @@ const SelectPresentationType: React.FC = () => {
         const subscriptionId = response.data.plan.subscriptionId
         setPptCount(response.data.pptcount)
         setPptCountMonthly(response.data.pptcount_monthly)
-        if (response.data.is_eligible === true) {
+        if (planName === "pro" || response.data.is_eligible === true) {
           setEligibleForGeneration(true)
-        } else {
+        } else  {
           setEligibleForGeneration(false)
         }
         dispatch(setUserPlan(planName))
@@ -321,7 +326,15 @@ const SelectPresentationType: React.FC = () => {
   const yearlyPlanAmount = yearlyPlan?.item.amount! / 100
   const yearlyPlanId = yearlyPlan?.id
   const [visibleTooltip, setVisibleTooltip] = useState<string | null>(null)
-
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (!isHovered && visibleTooltip === "generate") {
+      timeout = setTimeout(() => {
+        setVisibleTooltip(null);
+      }, 3000);
+    }
+    return () => clearTimeout(timeout);
+  }, [isHovered, visibleTooltip]);
   const handleMouseEnterGenerate = () => {
     setVisibleTooltip('generate')
   }
@@ -454,38 +467,54 @@ const SelectPresentationType: React.FC = () => {
 
       {/* Generate Buttons for medium and large screens */}
       <div className="hidden relative group lg:flex w-max justify-center mt-4 ml-16">
-        <div
-          className="relative group"
-          onMouseEnter={handleMouseEnterGenerate}
-          onMouseLeave={handleMouseLeaveGenerate}
-        >
-          <button
-            id="generate-presentation"
-            onClick={() => setIsRefineModalOpen(true)}
-            disabled={
-              !selectedType || isButtonDisabled || !eligibleForGeneration
-            }
-            className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
-              !selectedType || isButtonDisabled || !eligibleForGeneration
-                ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-[#3667B2] hover:bg-[#0A8568]'
-            }`}
-          >
-            Generate Presentation
-          </button>
-          {isButtonDisabled && isGenerateVisible && (
-            <div
-              className="absolute top-full mt-2 w-[12rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center"
-              onMouseEnter={handleMouseEnterGenerate}
-              onMouseLeave={handleMouseLeaveGenerate}
-            >
-              <p className="text-sm text-center text-gray-800">
-                Please select a presentation type.
-              </p>
-            </div>
-          )}
-        </div>
+      <div
+      className="relative group"
+      onMouseEnter={() => {
+        setVisibleTooltip("generate");
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+    <button
+      id="generate-presentation"
+      onClick={() => setIsRefineModalOpen(true)}
+      disabled={
+        !selectedType || isButtonDisabled || !eligibleForGeneration 
+      }
+      className={`h-[3.1rem] text-white px-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 mr-4 flex items-center ${
+        !selectedType || isButtonDisabled || !eligibleForGeneration
+          ? 'bg-gray-300 cursor-not-allowed'
+          : 'bg-[#3667B2] hover:bg-[#0A8568]'
+      }`}
+    >
+      Generate Presentation
+    </button>
+
+    {isButtonDisabled && isGenerateVisible && (
+      <div 
+        className="absolute top-full right-[5%] mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center opacity-100 transition-opacity duration-300"
+      >
+    <p className="text-sm text-center text-gray-800">
+  {!eligibleForGeneration ? (
+    <>
+      Please{" "}
+      <span
+        onClick={() => setIsPricingModalOpen(true)}
+        className="text-blue-600 font-semibold hover:underline cursor-pointer"
+      >
+        upgrade
+      </span>{" "}
+      to generate more presentations.
+    </>
+  ) : (
+    "Please select a presentation type."
+  )}
+</p>
+
       </div>
+    )}
+  </div>
+</div>
 
       {/* Pricing Modal */}
       {isPricingModalOpen && userPlan === 'free' ? (
@@ -509,7 +538,7 @@ const SelectPresentationType: React.FC = () => {
 
       {/* Refine Modal */}
       {isRefineModalOpen && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center">
+        <div className="fixed inset-0 z-10 flex justify-center items-center">
           {/* Dimmed Background */}
           <div
             className="absolute inset-0 bg-gray-900 bg-opacity-50"
@@ -583,21 +612,48 @@ const SelectPresentationType: React.FC = () => {
               </div>
             </div>
 
-            {/* Refine Button */}
-            <div className="items-center justify-center">
-              <button
-                onClick={pdfLink ? handleRefinePPT : handleGenerate}
-                className="flex items-center justify-center bg-[#3667B2] w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-white py-2 px-4 rounded-xl disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-95 transition transform duration-300"
-                disabled={
-                  pdfUploading ||
-                  !selectedType ||
-                  isButtonDisabled ||
-                  !eligibleForGeneration
-                }
-              >
-                <span>Generate Presentation</span>
-              </button>
-            </div>
+       
+            <div className="items-center justify-center relative">
+  <button
+    onClick={pdfLink ? handleRefinePPT : handleGenerate}
+    className="flex items-center justify-center bg-[#3667B2] w-full mt-4 h-[3.1rem] border border-[#5D5F61] text-white py-2 px-4 rounded-xl disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-95 transition transform duration-300 relative"
+    disabled={
+      pdfUploading || !selectedType || isButtonDisabled || !eligibleForGeneration
+    }
+    onTouchStart={(e) => {
+      if (pdfUploading || !selectedType || isButtonDisabled || !eligibleForGeneration) {
+        e.stopPropagation();
+        setShowTooltip(true);
+        setTimeout(() => setShowTooltip(false), 3000); // Hide after 3 sec
+      }
+    }}
+  >
+    <span>Generate Presentation</span>
+  </button>
+
+  {/* Tooltip for Mobile View */}
+  {(pdfUploading || !selectedType || isButtonDisabled || !eligibleForGeneration) && showTooltip && (
+    <div className="absolute bottm-full left-[20%] mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg text-center">
+      <p className="text-sm text-gray-800">
+      {!eligibleForGeneration ? (
+        <>
+          Please{" "}
+          <span
+            onClick={() => setIsPricingModalOpen(true)}
+            className="text-blue-600 font-semibold hover:underline cursor-pointer"
+          >
+            upgrade
+          </span>{" "}
+          to generate more presentations.
+        </>
+      ) : (
+        "Please select a presentation type."
+      )}
+    </p>
+    </div>
+  )}
+</div>
+
           </div>
         </div>
       )}

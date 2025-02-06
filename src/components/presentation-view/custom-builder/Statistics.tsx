@@ -308,7 +308,7 @@ export default function Statistics({
               <input
                 type="text"
                 value={slideTitle}
-                maxLength={25}
+                maxLength={50}
                 onChange={(e) => setSlideTitle(e.target.value)}
                 onFocus={(e) => {
                   const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
@@ -327,6 +327,7 @@ export default function Statistics({
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
               ) : (
+                slideTitle.length>0 &&(
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
                   <div className="relative group">
                     <FontAwesomeIcon
@@ -340,6 +341,7 @@ export default function Statistics({
                     </span>
                   </div>
                 </div>
+                )
               )}
             </div>
           </div>
@@ -365,7 +367,7 @@ export default function Statistics({
                     onChange={(e) => handleInputTitle(e.target.value, index)}
                     placeholder={`Enter Data Label ${index + 1}`}
                     className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={25}
+                    maxLength={50}
                   />
                   <span
                     className={`text-xs mt-1 ml-1 ${
@@ -390,7 +392,7 @@ export default function Statistics({
                     }
                     placeholder={`Enter Value ${index + 1}`}
                     className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={25}
+                    maxLength={50}
                   />
                   <span
                     className={`text-xs mt-1 ml-1 ${

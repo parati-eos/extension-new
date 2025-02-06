@@ -298,37 +298,41 @@ export default function Points({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="w-full p-1">
-            <div className="relative">
-              <input
-                type="text"
-                value={slideTitle}
-                onChange={(e) => setSlideTitle(e.target.value)}
-                placeholder="Add Slide Title"
-                maxLength={25}
-                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {refineLoadingSlideTitle ? (
-                <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                  <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                </div>
-              ) : (
-                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
-                  <div className="relative group">
-                    <FontAwesomeIcon
-                      icon={faWandMagicSparkles}
-                      onClick={() => refineText('slideTitle')}
-                      className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                    />
-                    {/* Tooltip */}
-                    <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-                      Click to refine text.
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+<div className="w-full p-1">
+  <div className="relative">
+    <input
+      type="text"
+      value={slideTitle}
+      onChange={(e) => setSlideTitle(e.target.value)}
+      placeholder="Add Slide Title"
+      maxLength={50}
+      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    
+    {refineLoadingSlideTitle ? (
+      <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+        <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+      </div>
+    ) : (
+      slideTitle.length > 0 && ( // Only show if slideTitle has text
+        <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+          <div className="relative group">
+            <FontAwesomeIcon
+              icon={faWandMagicSparkles}
+              onClick={() => refineText('slideTitle')}
+              className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+            />
+            {/* Tooltip */}
+            <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+              Click to refine text.
+            </span>
           </div>
+        </div>
+      )
+    )}
+  </div>
+</div>
+
           {/* Input Section with Scrolling */}
           <div
             ref={containerRef}
@@ -372,6 +376,7 @@ export default function Points({
                         <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                       </div>
                     ) : (
+                      point.length > 0 && (
                       <div className="absolute top-1/2 right-2 transform -translate-y-1/2 ">
                         <div className="relative group">
                           <FontAwesomeIcon
@@ -385,6 +390,7 @@ export default function Points({
                           </span>
                         </div>
                       </div>
+                      )
                     )}
                   </div>
                   <button
@@ -414,30 +420,32 @@ export default function Points({
                 </span>
                 {/* Mobile View Input */}
                 <div className="flex flex-row gap-2 w-full items-center">
-                  <div className="relative lg:hidden w-full">
-                    <input
-                      type="text"
-                      value={point}
-                      onFocus={() => setFocusedInput(index)} // Set focus
-                      onBlur={() => setFocusedInput(null)} // Remove focus
-                      onChange={(e) => handleInputChange(e.target.value, index)}
-                      placeholder={`Enter Point ${index + 1}`}
-                      className=" w-full text-[#5D5F61] p-3 pr-7 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    {refineLoadingStates[index] ? (
-                      <>
-                        <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                          <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                        </div>
-                      </>
-                    ) : (
-                      <FontAwesomeIcon
-                        icon={faWandMagicSparkles}
-                        onClick={() => refineText('points', index)}
-                        className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
-                      />
-                    )}
-                  </div>
+                <div className="relative lg:hidden w-full">
+  <input
+    type="text"
+    value={point}
+    onFocus={() => setFocusedInput(index)} // Set focus
+    onBlur={() => setFocusedInput(null)} // Remove focus
+    onChange={(e) => handleInputChange(e.target.value, index)}
+    placeholder={`Enter Point ${index + 1}`}
+    className="w-full text-[#5D5F61] p-3 pr-7 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+  
+  {refineLoadingStates[index] ? (
+    <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
+      <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+    </div>
+  ) : (
+    point.length > 0 && ( // Only show the refine icon if point has text
+      <FontAwesomeIcon
+        icon={faWandMagicSparkles}
+        onClick={() => refineText('points', index)}
+        className="absolute top-1/2 right-2 hover:scale-105 hover:cursor-pointer active:scale-95 transform -translate-y-1/2 text-[#3667B2]"
+      />
+    )
+  )}
+</div>
+
                   <button
                     onClick={() => removePoint(index)}
                     disabled={points.length <= 1} // Prevents removing if only 1 point remains

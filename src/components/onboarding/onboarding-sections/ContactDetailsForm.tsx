@@ -117,7 +117,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             htmlFor="email"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
           >
-            Company Email
+            Email
           </label>
           <input
             type="text"
@@ -140,7 +140,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             htmlFor="phone"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
           >
-            Company Phone
+             Phone
           </label>
           <input
             type="tel"
@@ -164,7 +164,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             htmlFor="linkedin"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
           >
-            Company LinkedIn
+            LinkedIn
           </label>
           <input
             type="text"
