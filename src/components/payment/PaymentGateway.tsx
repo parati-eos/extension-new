@@ -89,141 +89,154 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   }
 
   const handlePayment = async () => {
-    // const couponResult = await verifyCoupon(organizationId) // Verify the coupon
-
-    let finalAmount = paymentData.amount // Start with the original amount
-
-    finalAmount = Math.round(finalAmount)
     try {
-      console.log('Sending payment data to generate Razorpay order:', {
-        amount: finalAmount,
-        currency: paymentData.currency,
-      })
-
+      // Fetch organization profile using orgId
+      const orgResponse = await fetch(
+        `http://34.239.191.112:5001/api/v1/data/organizationprofile/organization/${productinfo.orgId}`
+      );
+      if (!orgResponse.ok) {
+        throw new Error(`Failed to fetch organization profile`);
+      }
+      const orgData = await orgResponse.json();
+      const { credits, orgId } = orgData; // Extract credits and orgId
+  
+      // Define credit value
+      const creditValue = paymentData.currency === "INR" ? 250 : 4.5;
+      let totalCreditValue = credits * creditValue;
+  
+      // Calculate how many credits are needed
+      let neededCredits = Math.floor(paymentData.amount / creditValue);
+      let creditsToUse = Math.min(credits, neededCredits); // Use only required credits
+      let creditDiscount = creditsToUse * creditValue; // Discount based on used credits
+  
+      // Calculate final amount after deducting credit discount
+      let finalAmount = paymentData.amount - creditDiscount;
+      finalAmount = finalAmount < 0 ? 0 : Math.round(finalAmount);
+  
+      console.log("Credits Available:", credits);
+      console.log("Total Credit Value:", totalCreditValue);
+      console.log("Credits Needed:", neededCredits);
+      console.log("Credits Used:", creditsToUse);
+      console.log("Final Amount after discount:", finalAmount);
+  
+      // Calculate remaining credits
+      let newCredits = credits - creditsToUse;
+  
+      // Proceed if payment is required, else process as free transaction
+      if (finalAmount === 0) {
+        console.log("No payment needed, processing as free transaction.");
+        
+        // Update remaining credits in organization profile
+        await fetch(
+          `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ credits: newCredits }),
+          }
+        );
+  
+        return onSuccess({ message: "Payment waived due to credits." });
+      }
+  
+      // Generate Razorpay order
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
-        // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-magiccoupon`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify({
             amount: finalAmount,
             currency: paymentData.currency,
-            // amount: finalAmount, // in paise.
-            // currency: paymentData.currency,
-            // receipt: 'receipt#1',
-            // line_items_total: finalAmount, // in paise.
-            // line_items: [
-            //   {
-            //     sku: '1g234',
-            //     variant_id: '12r34',
-            //     other_product_codes: {
-            //       upc: '12r34',
-            //       ean: '123r4',
-            //       unspsc: '123s4',
-            //     },
-            //     price: finalAmount, // in paise.
-            //     offer_price: finalAmount, // in paise.
-            //     tax_amount: 0,
-            //     quantity: 1,
-            //     name: 'TEST',
-            //     description: 'TEST',
-            //     weight: 1700,
-            //     dimensions: {
-            //       length: 1700,
-            //       width: 1700,
-            //       height: 1700,
-            //     },
-            //     image_url: 'url',
-            //     product_url: 'url',
-            //     notes: {},
-            //   },
-            // ],
           }),
         }
-      )
-
+      );
+  
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const result = await response.json()
-      const { id: order_id, amount, currency } = result
-
-      // Update the order ID
-      await updateOrderId(order_id)
-
+  
+      const result = await response.json();
+      const { id: order_id, amount, currency } = result;
+  
+      // Update the order ID in the backend
+      await updateOrderId(order_id);
+  
       const options = {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: 'Zynth',
-        description: 'Purchase of presentation',
+        name: "Zynth",
+        description: "Purchase of presentation",
         order_id,
         handler: async function (response: any) {
-          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
-            response
-
           try {
+            // Verify payment
             const verifyResponse = await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/verify-payment`,
               {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                   Authorization: `Bearer ${authToken}`,
                 },
                 body: JSON.stringify({
-                  razorpay_payment_id,
-                  razorpay_order_id,
-                  razorpay_signature,
-                  customer_name: paymentData.firstname,
-                  customer_email: paymentData.email,
-                  customer_contact: '1234567890', // Update or handle contact dynamically
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature,
                   amount: finalAmount,
                 }),
               }
-            )
-
+            );
+  
             if (!verifyResponse.ok) {
-              throw new Error('Payment verification failed')
+              throw new Error("Payment verification failed");
             }
-
-            const verifyResult = await verifyResponse.json()
-            if (onSuccess) {
-              onSuccess(verifyResult)
-            }
-
-            setCountdown(8) // Start 8-second countdown
-            setShowModal(true) // Show the modal
+  
+            const verifyResult = await verifyResponse.json();
+  
+            // Update remaining credits in organization profile
+            await fetch(
+              `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+              {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${authToken}`,
+                },
+                body: JSON.stringify({ credits: newCredits }),
+              }
+            );
+  
+            onSuccess(verifyResult);
+            setCountdown(8); // Start countdown
+            setShowModal(true); // Show modal
           } catch (error) {
-            console.error('Error verifying payment:', error)
-            alert('Payment verification failed. Please try again.')
+            console.error("Error verifying payment:", error);
+            alert("Payment verification failed. Please try again.");
           }
         },
-        prefill: {
-          // name: paymentData.firstname,
-          // email: paymentData.email,
-          // contact: paymentData.phone,
-        },
-        theme: {
-          color: '#3399cc',
-        },
-      }
-
-      const rzp = new window.Razorpay(options)
-      rzp.open()
+        theme: { color: "#3399cc" },
+      };
+  
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
-      console.error('Error processing payment:', error)
+      console.error("Error processing payment:", error);
       alert(
-        'SORRY!\nWe were unable to process your payment\nError Reason: ' +
+        "SORRY!\nWe were unable to process your payment\nError Reason: " +
           (error as Error).message
-      )
+      );
     }
-  }
+  };
+  
+  
 
   useEffect(() => {
     if (countdown === null || countdown === 0) return
