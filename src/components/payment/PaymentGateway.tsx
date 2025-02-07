@@ -92,7 +92,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     try {
       // Fetch organization profile using orgId
       const orgResponse = await fetch(
-        `http://34.239.191.112:5001/api/v1/data/organizationprofile/organization/${productinfo.orgId}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${productinfo.orgId}`
       );
       if (!orgResponse.ok) {
         throw new Error(`Failed to fetch organization profile`);
@@ -102,33 +102,27 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   
       // Define credit value
       const creditValue = paymentData.currency === "INR" ? 250 : 4.5;
-      let totalCreditValue = credits * creditValue;
-  
-      // Calculate how many credits are needed
       let neededCredits = Math.floor(paymentData.amount / creditValue);
-      let creditsToUse = Math.min(credits, neededCredits); // Use only required credits
-      let creditDiscount = creditsToUse * creditValue; // Discount based on used credits
+      let creditsToUse = Math.min(credits, neededCredits); // Only use necessary credits
+      let creditDiscount = creditsToUse * creditValue; // Discounted amount
   
-      // Calculate final amount after deducting credit discount
+      // Calculate final amount after deducting credits
       let finalAmount = paymentData.amount - creditDiscount;
       finalAmount = finalAmount < 0 ? 0 : Math.round(finalAmount);
+      let newCredits = credits - creditsToUse; // Remaining credits
   
       console.log("Credits Available:", credits);
-      console.log("Total Credit Value:", totalCreditValue);
-      console.log("Credits Needed:", neededCredits);
       console.log("Credits Used:", creditsToUse);
-      console.log("Final Amount after discount:", finalAmount);
+      console.log("Final Amount:", finalAmount);
+      console.log("Remaining Credits:", newCredits);
   
-      // Calculate remaining credits
-      let newCredits = credits - creditsToUse;
-  
-      // Proceed if payment is required, else process as free transaction
+      // If final amount is zero, mark payment as successful and update credits
       if (finalAmount === 0) {
         console.log("No payment needed, processing as free transaction.");
         
-        // Update remaining credits in organization profile
+        // Update remaining credits (only once)
         await fetch(
-          `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
           {
             method: "PATCH",
             headers: {
@@ -165,7 +159,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       const result = await response.json();
       const { id: order_id, amount, currency } = result;
   
-      // Update the order ID in the backend
+      // Update order ID in backend
       await updateOrderId(order_id);
   
       const options = {
@@ -201,7 +195,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   
             const verifyResult = await verifyResponse.json();
   
-            // Update remaining credits in organization profile
+            // Update remaining credits (only once after successful payment)
             await fetch(
               `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
               {
