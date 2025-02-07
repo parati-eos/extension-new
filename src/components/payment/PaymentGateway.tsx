@@ -197,7 +197,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   
             // Update remaining credits (only once after successful payment)
             await fetch(
-              `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+              `http://34.239.191.112:5001/api/v1/data/organizationprofile/organizationedit/${orgId}`,
               {
                 method: "PATCH",
                 headers: {

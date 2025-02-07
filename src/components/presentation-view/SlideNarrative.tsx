@@ -46,7 +46,12 @@ export default function SlideNarrative({
     value: string
     label: string
     icon: string
-  } | null>(null)
+  } | null>({
+    value: "points",
+    label: "Points",
+    icon: PointsIcon, // Replace with the appropriate icon
+  })
+  
 
   const CustomOption = (props: any) => {
     const { data, innerRef, innerProps } = props
@@ -204,6 +209,10 @@ export default function SlideNarrative({
 
   useEffect(() => {
     const fetchData = async () => {
+        // Clear all states first
+    setNarrative('');
+    setSelectedImage(null);
+    setFileName(null);
       let slideTypeToBePassed = selectedOption ? selectedOption.value : slideType;
   
       try {
@@ -221,26 +230,53 @@ export default function SlideNarrative({
             },
           }
         );
+          // Handle error response
+      if (response.data?.error) {
+        setNarrative('');
+        setSelectedImage(null);
+        setFileName(null);
+        return;
+      }
   
         if (response.data) {
-          setNarrative(response.data.input && response.data.input !== "null" ? response.data.input : "");
+          setNarrative(
+            response.data.input && response.data.input !== "null" ? response.data.input : ""
+          );
   
-          if (Array.isArray(response.data.image) && response.data.image.length > 0) {
-            setSelectedImage(response.data.image[0]);
-            setFileName(response.data.image[0].split("/").pop());
+          const imageData = response.data.image;
+          // Handle all image cases explicitly
+          if (Array.isArray(imageData)) {
+            // Empty array case
+            if (imageData.length > 0) {
+              setSelectedImage(imageData[0]);
+              setFileName(imageData[0].split("/").pop());
+            } else {
+              setSelectedImage(null);
+              setFileName(null);
+            }
+          } else if (typeof imageData === "string") {
+            // Empty string case
+            if (imageData.trim()) {
+              setSelectedImage(imageData);
+              setFileName(response.data.image.split("/").pop());
+            } else {
+              setSelectedImage(null);
+              setFileName(null);
+            }
           } else {
-            // 🛑 Ensure the image gets hidden
+            // Null/undefined case
             setSelectedImage(null);
             setFileName(null);
           }
         }
-      } catch (error) {
+      }  catch (error) {
         console.error("Error fetching data:", error);
       }
     };
   
     fetchData();
-  }, [selectedOption]); // Runs when selectedOption changes
+  }, [selectedOption, outlineID, documentID, orgId, authToken, heading, slideType]); // Removed selectedImage from dependencies
+  
   
   
   

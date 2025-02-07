@@ -1,15 +1,51 @@
-import React from 'react';
-import LandingPageNavbar from '../components/landing-page/LandingPageNavbar';
+import React, { useEffect, useState } from 'react';
 import ReferralPage from '../components/landing-page/Refer';
+import Navbar from '../components/shared/Navbar';
+import axios from 'axios';
 
 const ReferPage: React.FC = () => {
+  const [userPlan, setUserPlan] = useState("free"); // Default plan
+  const [referredByOrgId, setReferredByOrgId] = useState<string | null>(null);
+  const [referredByUserId, setReferredByUserId] = useState<string | null>(null);
+
+  const authToken = localStorage.getItem("authToken");
+  const orgId = localStorage.getItem("orgId");
+
+ 
+
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      if (!orgId || !authToken) return; // Prevent API call if values are missing
+
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+
+        setUserPlan(response.data.plan.plan_name); // Update state
+      } catch (error) {
+        console.error("Error fetching user plan:", error);
+      }
+    };
+
+    fetchUserPlan();
+  }, [orgId, authToken]);
+
   return (
-    <div className=" h-dvh bg-gray-100 no-scrollbar no-scrollbar::-webkit-scrollbar ">
-      <LandingPageNavbar />
-    <div className='bg-gray-50 pt-20'>
-        <ReferralPage />
-        </div>
-     
+    <div className="h-dvh bg-gray-100 no-scrollbar">
+      <Navbar />
+      <div className="bg-gray-50">
+        <ReferralPage 
+          userPlan={userPlan} 
+          referredByOrgId={referredByOrgId} 
+          referredByUserId={referredByUserId} 
+        />
+      </div>
     </div>
   );
 };
