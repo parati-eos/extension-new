@@ -108,8 +108,8 @@ const OnboardingContainer: React.FC = () => {
   
     try {
       await axios.patch(
-        `${process.env.REACT_APP_BACKEND_URL}api/v1/data/referral/update-successful-referrals/${referredByOrgId}`,
-        {},
+        `http://34.239.191.112:5001/api/v1/data/referral/update-successful-referrals/${referredByOrgId}`,
+        {       orgId, userId },
         {
           headers: {
             Authorization: `Bearer ${authToken}`,

@@ -8,8 +8,8 @@ const ReferPage: React.FC = () => {
   const [referredByOrgId, setReferredByOrgId] = useState<string | null>(null);
   const [referredByUserId, setReferredByUserId] = useState<string | null>(null);
 
-  const authToken = localStorage.getItem("authToken");
-  const orgId = localStorage.getItem("orgId");
+  const authToken = sessionStorage.getItem("authToken");
+  const orgId = sessionStorage.getItem("orgId");
 
  
 
@@ -19,7 +19,7 @@ const ReferPage: React.FC = () => {
 
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          `http://34.239.191.112:5001/api/v1/data/organizationprofile/organization/${orgId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,

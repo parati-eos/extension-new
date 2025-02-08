@@ -24,43 +24,44 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
   const userId = sessionStorage.getItem("userEmail"); 
   const [referralLink, setReferralLink] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [successfulReferrals, setSuccessfulReferrals] = useState(2);
-  const [referralCredits, setReferralCredits] = useState(5)
+  const [successfulReferrals, setSuccessfulReferrals] = useState(0);
+  const [referralCredits, setReferralCredits] = useState(0)
  
  
 
 
-  useEffect(() => {
-    async function fetchReferralData() {
-      if (!orgId || !authToken) {
-        console.error("Missing orgId or authToken");
-        return;
-      }
-
-      try {
-        console.log("Auth Token:", authToken);
-
-        const response = await axios.patch(
-          `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-          {
-            headers: { Authorization: `Bearer ${authToken}` }, // ✅ Proper header placement
-          }
-        );
-
-        const { successfulReferrals = 0, credits = 5 } = response.data;
-        setSuccessfulReferrals(successfulReferrals);
-        setReferralCredits(credits);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error("Error fetching referral data:", error.response?.data || error.message);
-        } else {
-          console.error("Error fetching referral data:", error);
-        }
-      }
+  const fetchReferralData = async () => {
+    if (!orgId || !authToken) {
+      console.error("Missing orgId or authToken");
+      return;
     }
-
+  
+    try {
+      console.log("Auth Token:", authToken);
+  
+      const response = await axios.patch(
+        `http://34.239.191.112:5001/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+        { orgId, userId },
+        {
+          headers: { Authorization: `Bearer ${authToken}` }, // ✅ Correct header placement
+        }
+      );
+  
+      const { successfulReferrals = 0, credits = 0 } = response.data;
+      setSuccessfulReferrals(successfulReferrals);
+      setReferralCredits(credits);
+    } catch (error) {
+      console.error(
+        "Error fetching referral data:",
+        axios.isAxiosError(error) ? error.response?.data || error.message : error
+      );
+    }
+  };
+  
+  // Call function on page load
+  useEffect(() => {
     fetchReferralData();
-  }, [orgId, authToken]); // ✅ Re-run if authToken changes
+  }, []);
  console.log("userPlan", userPlan);
   useEffect(() => {
     async function fetchIpInfo() {
@@ -105,7 +106,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       
       const response = await axios.patch(
      
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/referral/generate-referral`,
+        `http://34.239.191.112:5001/api/v1/data/referral/generate-referral`,
         { orgId, userId },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -169,8 +170,8 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
             className="w-full mt-4 p-3 border text-[#4A4B4D66] text-xs rounded-lg bg-[#E1E3E5] focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
-          <div className="flex gap-4 mt-4 justify-between p-2">
-            <button className="flex flex-row w-[50%] text-white hover:bg-[#274a89]  hover:border-[#3667B2] bg-[#3667B2] border border-[#3667B2] items-center justify-center gap-2  py-3 text-sm rounded-lg shadow ">
+          <div className="flex gap-4 mt-[1.05rem] justify-between p-2">
+            <button className="flex flex-row w-[50%]   text-white hover:bg-[#274a89]  hover:border-[#3667B2] bg-[#3667B2] border border-[#3667B2] items-center justify-center gap-2  py-2 text-sm rounded-lg shadow ">
               <img src={button1} alt="Refer a Friend" className="w-4  " />
               Send Email
             </button>
@@ -194,23 +195,23 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
             Earn 1 credit for every successful referral.
           </p>
           {userPlan === "free" ? (
-            <p className="text-[#4A4B4D] text-center font-normal text-sm mt-9">
+            <p className="text-[#4A4B4D] text-center font-normal text-sm mt-[2.8rem]">
               1 credit = {currency} {freeCredit}
             </p>
           ) : (
-            <p className="text-[#4A4B4D] text-center font-normal text-sm mt-9">
+            <p className="text-[#4A4B4D] text-center font-normal text-sm mt-10">
             1 credit = {currency} {proCredit}
             </p>
           )}
 
-          <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-[0.58rem]">
             <div className="text-center">
               <p className="text-[#4A4B4D] text-xs p-2">Successful Referrals</p>
-              <div className="bg-white border border-gray-200 p-1 rounded-lg text-lg font-bold">{"*".repeat(successfulReferrals)}</div>
+              <div className="bg-white border border-gray-200 p-1 rounded-lg text-lg font-bold min-w-[50px] min-h-[40px] flex items-center justify-center">{"*".repeat(successfulReferrals)}</div>
             </div>
             <div className="text-center">
               <p className="text-[#4A4B4D] text-xs p-2">Referral Credits Left</p>
-              <div className="bg-white border border-gray-200 p-1 rounded-lg text-lg font-bold">{referralCredits}</div>
+              <div className="bg-white border border-gray-200 p-1 rounded-lg text-lg font-bold min-w-[50px] min-h-[40px] flex items-center justify-center">{referralCredits}</div>
             </div>
             </div>
           </div>
