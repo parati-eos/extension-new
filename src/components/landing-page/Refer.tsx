@@ -207,7 +207,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
           <div className="flex justify-between mt-[0.58rem]">
             <div className="text-center">
               <p className="text-[#4A4B4D] text-xs p-2">Successful Referrals</p>
-              <div className="bg-white border border-gray-200 p-1 rounded-lg text-lg font-bold min-w-[50px] min-h-[40px] flex items-center justify-center">{"*".repeat(successfulReferrals)}</div>
+              <div className="bg-white border border-gray-200 p-1 rounded-lg text-lg font-bold min-w-[50px] min-h-[40px] flex items-center justify-center">{successfulReferrals}</div>
             </div>
             <div className="text-center">
               <p className="text-[#4A4B4D] text-xs p-2">Referral Credits Left</p>
