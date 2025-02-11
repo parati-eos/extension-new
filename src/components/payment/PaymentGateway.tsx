@@ -31,6 +31,8 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 
   const [countdown, setCountdown] = useState<number | null>(null) // State to hold countdown value
   const [showModal, setShowModal] = useState(false) // State to control modal visibility
+  const orgId = sessionStorage.getItem("orgId");
+  
 
   useEffect(() => {
     const detectCurrency = async () => {
@@ -92,13 +94,16 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     try {
       // Fetch organization profile using orgId
       const orgResponse = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${productinfo.orgId}`
+        `http://34.239.191.112:5001/api/v1/data/organizationprofile/organization/${orgId}`,
+        {
+          headers: { Authorization: `Bearer ${authToken}` }, // ✅ Correct header placement
+        }
       );
       if (!orgResponse.ok) {
         throw new Error(`Failed to fetch organization profile`);
       }
       const orgData = await orgResponse.json();
-      const { credits, orgId } = orgData; // Extract credits and orgId
+      const { credits} = orgData; // Extract credits and orgId
   
       // Define credit value
       const creditValue = paymentData.currency === "INR" ? 250 : 4.5;
@@ -197,7 +202,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   
             // Update remaining credits (only once after successful payment)
             await fetch(
-              `https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+              `http://34.239.191.112:5001/api/v1/data/organizationprofile/organizationedit/${orgId}`,
               {
                 method: "PATCH",
                 headers: {

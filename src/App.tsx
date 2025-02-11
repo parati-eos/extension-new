@@ -49,6 +49,30 @@ const App: React.FC = () => {
       console.log('URL already stored:', storedUrl)
     }
 
+   
+
+    // Extract referral details from URL
+    const referralCode = urlParams.get('referralCode')
+    const referredByOrgId = urlParams.get('orgId')
+    const referredByUserId = urlParams.get('userId')
+
+    // Store in sessionStorage if they exist
+    if (referredByOrgId) {
+      sessionStorage.setItem('referredByOrgId', referredByOrgId)
+    }
+    if (referredByUserId) {
+      sessionStorage.setItem('referredByUserId', referredByUserId)
+    }
+    if (referralCode) {
+      sessionStorage.setItem('referralCode', referralCode)
+    }
+
+    console.log('Session Storage Updated:', {
+      referredByOrgId,
+      referredByUserId,
+      referralCode
+    })
+
     const INACTIVITY_THRESHOLD = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
     const CURRENT_USER_EMAIL = sessionStorage.getItem('userEmail') // Replace with actual logic to get logged-in user's email
     // Store the current timestamp of user activity in localStorage with the email as key
@@ -131,7 +155,7 @@ const App: React.FC = () => {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
-            {/* <Route path="/refer" element={<ReferPage />} /> */}
+
             <Route
               path="/*"
               element={
@@ -155,6 +179,7 @@ const App: React.FC = () => {
                       element={<PresentationViewPage />}
                     />
                     <Route path="history" element={<HistoryPage />} />
+                    <Route path="refer" element={<ReferPage />} />
                   </Routes>
                 </ProtectedRoutes>
               }

@@ -23,12 +23,11 @@ const AttachImage: React.FC<AttachImageProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  useEffect(() => {
-    // Update preview if selectedImage is updated from parent
-    if (selectedImage) {
-      setImagePreview(selectedImage)
-    }
-  }, [selectedImage])
+ // Update the useEffect to handle null/undefined cases
+useEffect(() => {
+  // Clear preview when selectedImage is cleared from parent
+  setImagePreview(selectedImage || null)
+}, [selectedImage]) // Now properly responds to parent image changes
 
   
 
@@ -61,6 +60,9 @@ const AttachImage: React.FC<AttachImageProps> = ({
       fileInputRef.current.value = ''
     }
     onFileSelected(null)
+    // Add this line to ensure parent state clears completely
+    if (!selectedImage) return
+    setImagePreview(null)
   }
 
 

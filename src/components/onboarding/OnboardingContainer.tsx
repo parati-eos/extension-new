@@ -97,7 +97,30 @@ const OnboardingContainer: React.FC = () => {
       })
     }
   }
-
+  
+  const updateSuccessfulReferrals = async () => {
+    const referredByOrgId = sessionStorage.getItem('referredByOrgId');
+    
+    if (!referredByOrgId || referredByOrgId === 'false') {
+      console.log('No valid referredByOrgId found, skipping referral update.');
+      return;
+    }
+  
+    try {
+      await axios.patch(
+        `http://34.239.191.112:5001/api/v1/data/referral/update-successful-referrals/${referredByOrgId}`,
+        {       orgId, userId },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      console.log('Successful referrals updated.');
+    } catch (error) {
+      console.error('Error updating successful referrals:', error);
+    }
+  };
   // Function to handle "Continue" button
   const handleContinue = async (data: Partial<typeof formData>) => {
     setFormData((prevData) => ({ ...prevData, ...data }))
@@ -120,7 +143,8 @@ const OnboardingContainer: React.FC = () => {
       }
     } else {
       if (!isNextLoading) {
-        navigate('/new-presentation')
+        await updateSuccessfulReferrals(); // Call the new PATCH request here
+        navigate('/new-presentation');
       }
     }
   }

@@ -213,6 +213,12 @@ const Navbar: React.FC<NavbarProps> = ({
               >
                 Subscription Plans
               </button>
+              <button
+               onClick={() => navigate('/refer')}
+                className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
+              >
+                Refer & Earn
+              </button>
 
               <button
                 className="w-full text-[#5D5F61] text-left text-sm py-1 px-4 hover:bg-gray-100 overflow-hidden text-ellipsis whitespace-nowrap"
