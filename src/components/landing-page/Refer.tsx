@@ -95,28 +95,21 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       alert("Missing organization ID or user ID.");
       return;
     }
-
+  
     try {
-      const payload = {
-        
-        orgId,
-        userId,
-       
-      }
-      
       const response = await axios.patch(
-     
         `http://34.239.191.112:5001/api/v1/data/referral/generate-referral`,
         { orgId, userId },
         {
           headers: { Authorization: `Bearer ${authToken}` },
         }
       );
-
+  
       const link = response.data.referralLink;
-    setReferralLink(link);
+      
       if (link) {
-        await navigator.clipboard.writeText(link);
+        setReferralLink(link); // Set state first
+        await navigator.clipboard.writeText(link); // Copy after setting state
         setCopySuccess(true);
         setTimeout(() => setCopySuccess(false), 2000);
       }

@@ -75,10 +75,9 @@ const LogoForm: React.FC<LogoFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (logo) {
-      onContinue({ logo }) // Send URL to parent on form submit
-    }
+    onContinue({ logo: logo ?? '' }) // Ensure logo is always a string
   }
+  
 
   return (
     <div className="lg:p-0 p-2 w-full h-full xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col  md:p-4">
@@ -134,34 +133,19 @@ const LogoForm: React.FC<LogoFormProps> = ({
         </div>
         </div>
 
-     
-      
-
- 
-      
-     
-
-        {/* Buttons */}
-        <div
-          className={`flex flex-col items-center justify-center mt-[3.5rem] md:mt-[7.3rem] max-w-sm mx-auto ${
-            logo !== '' ? 'md:mt-1' : ''
-          } w-full space-y-2 `}
-        >
-          {/* Next Button or Loader */}
-          {isNextLoading ? (
-            <div className="w-full flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <NextButton disabled={!logo} text={'Next'} />
-          )}
-
-          {/* Back Button */}
-          <BackButton onClick={onBack} />
-        </div>
-            </form>      
+          <div className="flex flex-col items-center justify-center mt-[3.5rem] md:mt-[7.3rem] max-w-sm mx-auto w-full space-y-2">
+            {isNextLoading ? (
+              <div className="w-full flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <NextButton text={'Next'} />
+            )}
+            <BackButton onClick={onBack} />
           </div>
-        </div>
+        </form>
+      </div>
+    </div>
   )
 }
 
