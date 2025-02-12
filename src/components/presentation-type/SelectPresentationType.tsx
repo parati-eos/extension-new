@@ -117,7 +117,7 @@ const SelectPresentationType: React.FC = () => {
       return
     }
     // Regular expression to validate a URL
-    const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+    const urlRegex = /^(:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
     setIsValidLink(urlRegex.test(link))
   }
 
@@ -758,12 +758,12 @@ const SelectPresentationType: React.FC = () => {
 
       if (updatedValue === '') {
         setWebsiteUrl('');
-        setIsValidLink(false);
+        setIsValidLink(true); // Set to true when empty
         return;
       }
 
       setWebsiteUrl(updatedValue);
-      const urlRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+      const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
 
       setIsValidLink(urlRegex.test(updatedValue));
     }}
@@ -773,12 +773,12 @@ const SelectPresentationType: React.FC = () => {
       }
     }}
     className={`w-full p-2 border rounded-lg text-start shadow-sm outline-none focus:ring-2 ${
-      isValidLink ? 'border-gray-300 focus:ring-[#3667B2]' : 'border-red-500 focus:ring-red-500'
+      websiteUrl.length > 0 && !isValidLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-[#3667B2]'
     }`}
     placeholder="Enter website URL"
   />
 
-  {!isValidLink && websiteUrl && (
+  {websiteUrl.length > 0 && !isValidLink && (
     <p className="text-red-500 text-sm mt-2">
       Please enter a valid website link.
     </p>
@@ -844,7 +844,7 @@ const SelectPresentationType: React.FC = () => {
   {/* Generate Presentation Button */}
   <div className="flex w-full justify-center">
   <button 
-  disabled={!isValidLink}
+  disabled={websiteUrl.length > 0 && !isValidLink}
   className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
     ${!isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
   onClick={handleButtonClick}

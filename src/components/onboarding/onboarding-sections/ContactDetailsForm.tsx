@@ -158,7 +158,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     <NextButton text="Finish" disabled={!isFormValid}  onClick={handleSubmit} />
   ) : (
     // Show "Skip" button if all fields are empty
-    <NextButton text="Skip" onClick={() => onContinue({ contactEmail: '', contactPhone: '', linkedinLink: '' })} />
+    <NextButton text="Finish" onClick={() => onContinue({ contactEmail: '', contactPhone: '', linkedinLink: '' })} />
   )}
   <BackButton onClick={onBack} />
 </div>
