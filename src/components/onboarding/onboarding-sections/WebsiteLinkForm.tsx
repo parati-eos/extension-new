@@ -14,7 +14,7 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
 
   useEffect(() => {
     setWebsiteLink(initialData)
-    validateLink(initialData) // Validate the initial data if provided
+    validateLink(initialData) // Validate initial data if provided
   }, [initialData])
 
   const validateLink = (link: string | undefined) => {
@@ -27,46 +27,43 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
     setIsValidLink(urlRegex.test(link))
   }
 
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleInputFocus = () => {
     if (!websiteLink) {
       setWebsiteLink('https://') // Pre-fill "https://" if empty
     }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let updatedValue = e.target.value
+    const updatedValue = e.target.value
 
-    // Allow backspace to completely clear the input
     if (updatedValue === '') {
-      setWebsiteLink('') // Allow clearing the field
-      validateLink('') // Validate empty value
+      setWebsiteLink('')
+      validateLink('')
       return
     }
 
-    setWebsiteLink(updatedValue) // Update website link state
-    validateLink(updatedValue) // Call validation
+    setWebsiteLink(updatedValue)
+    validateLink(updatedValue)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onContinue({ websiteLink }); // Allows an empty or filled website link
-  };
-  
+    e.preventDefault()
+    onContinue({ websiteLink }) // Allows an empty or filled website link
+  }
 
   return (
-    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:justify-between md:p-4">
-      {/* Heading */}
-      <div className="flex flex-col items-center gap-1 lg:mb-8">
-        <FaGlobe className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
+    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-between md:p-4">
+      
+      {/* Heading Section */}
+      <div className="flex flex-col items-center gap-1 p-2 lg:p-0">
+        <FaGlobe className="text-[#3667B2] text-6xl lg:text-4xl xl:text-6xl mb-2" />
         <h1 className="text-2xl text-[#091220] font-bold mb-1">Website Link</h1>
         <p className="text-[#5D5F61]">Provide your website link</p>
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto"
-      >
-        {/* Input */}
-        <div className="w-full mt-[4.2rem] md:mt-12 xl:mb-[7rem] lg:mb-[9.5rem] ">
+
+      {/* Input Section */}
+      <form onSubmit={handleSubmit} className="w-full max-w-sm mx-auto flex-grow flex flex-col justify-center">
+        <div className="w-full ">
           <label
             htmlFor="websiteLink"
             className="mb-3 font-semibold text-[#4A4B4D] block text-left"
@@ -88,24 +85,23 @@ const WebsiteLinkForm: React.FC<WebsiteLinkFormProps> = ({
             </p>
           )}
         </div>
-
-        {/* Buttons */}
-        {/* Buttons */}
-        <div className="flex flex-col items-center justify-center  xl:mt-0 md:mt-4 w-full space-y-2 mt-[3.5rem]">
-          {/* Next Button or Loader */}
-          {isNextLoading ? (
-            <div className="w-full flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <NextButton text={'Next'} />
-
-          )}
-
-          {/* Back Button */}
-          <BackButton onClick={onBack} />
-        </div>
       </form>
+
+     {/* Buttons Section */}
+<div className="lg:w-[40%] flex flex-col items-center p-2 mt-auto lg:pb-20 gap-2">
+  {isNextLoading ? (
+    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+  ) : websiteLink.length > 0 ? ( 
+    // If websiteLink has a value, show "Continue" button
+    <NextButton text={'Continue'} disabled={!isValidLink} onClick={handleSubmit} />
+  ) : ( 
+    // If websiteLink is empty, show "Skip" button
+    <NextButton text={'Skip'} onClick={() => onContinue({ websiteLink: '' })} />
+  )}
+  <BackButton onClick={onBack} />
+</div>
+
+      
     </div>
   )
 }

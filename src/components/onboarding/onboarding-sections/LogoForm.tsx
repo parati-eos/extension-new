@@ -77,27 +77,21 @@ const LogoForm: React.FC<LogoFormProps> = ({
     e.preventDefault()
     onContinue({ logo: logo ?? '' }) // Ensure logo is always a string
   }
-  
 
   return (
-    <div className="lg:p-0 p-2 w-full h-full xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col  md:p-4">
-      {/* Heading */}
-      <div className='w-full justify-center'>
-      <div className="flex flex-col justify-center items-center gap-1 lg:mb-8">
-        <FaBullseye className="text-[#3667B2] lg:text-4xl text-6xl xl:text-6xl mb-2" />
-        <h1 className="text-2xl text-[#091220] font-bold mb-1">Company Logo</h1>
+    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-between md:p-4">
+      
+      {/* Heading Section */}
+      <div className="flex flex-col items-center gap-1">
+        <FaBullseye className="text-[#3667B2] text-6xl lg:text-4xl xl:text-6xl mb-2" />
+        <h1 className="text-2xl text-[#091220] font-bold mb-1">Branding</h1>
         <p className="text-[#5D5F61]">Upload your company logo</p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center  flex-grow w-full justify-center  max-w-md mx-auto"
-      >
-        {/* Input */}
+      {/* Input Section */}
+      <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto p-12">
         <div
-          className={`w-full border border-gray-200 mt-4 md:mt-9 ${
-            logo !== '' ? 'md:mt-0' : ''
-          } p-7 rounded-lg hover:scale-105`}
+          className="w-full border border-gray-200 p-7 rounded-lg hover:scale-105 flex flex-col items-center"
         >
           <input
             type="file"
@@ -106,45 +100,45 @@ const LogoForm: React.FC<LogoFormProps> = ({
             onChange={handleFileChange}
             className="hidden"
           />
-          <div className="flex flex-col items-center">
-            {logo ? (
-              <img
-                src={logo}
-                alt="Uploaded Logo"
-                 className="w-24 h-24 rounded-full  shadow-md object-contain aspect-auto"
-              />
-            ) : (
-              <>
-                <FaImage className="text-gray-500 text-4xl mb-4" />
-                <p className="text-gray-500 mb-4">
-                  {isUploading ? 'Uploading...' : 'Upload Your Logo'}
-                </p>
-              </>
-            )}
-            <div className='p-2'>
-            <button
-              type="button"
-              onClick={handleButtonClick}
-              className="px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white transition"
-            >
-              {logo ? 'Upload Again' : 'Upload Logo'}
-            </button>
-          </div>
+          {logo ? (
+            <img
+              src={logo}
+              alt="Uploaded Logo"
+              className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+            />
+          ) : (
+            <>
+              <FaImage className="text-gray-500 text-4xl mb-4" />
+              <p className="text-gray-500 mb-4">
+                {isUploading ? 'Uploading...' : 'Upload Your Logo'}
+              </p>
+            </>
+          )}
+          <button
+            type="button"
+            onClick={handleButtonClick}
+            className="mt-2 px-4 py-2 border font-semibold rounded-xl text-gray-500 hover:bg-[#3667B2] hover:border-none hover:text-white transition"
+          >
+            {logo ? 'Upload Again' : 'Upload Logo'}
+          </button>
         </div>
-        </div>
+      </form>
 
-          <div className="flex flex-col items-center justify-center mt-[3.5rem] md:mt-[7.3rem] max-w-sm mx-auto w-full space-y-2">
-            {isNextLoading ? (
-              <div className="w-full flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-              </div>
-            ) : (
-              <NextButton text={'Next'} />
-            )}
-            <BackButton onClick={onBack} />
-          </div>
-        </form>
-      </div>
+{/* Buttons - Positioned moderately above the bottom using `mt-auto` */}
+<div className="lg:w-[40%] w-full flex flex-col items-center p-2 mt-auto lg:pb-20 gap-2">
+  {isNextLoading ? (
+    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+  ) : logo ? ( 
+    // If logo exists, show Continue button
+    <NextButton text={'Continue'} onClick={handleSubmit} />
+  ) : ( 
+    // If no logo, show Skip button (Wrapped in an arrow function)
+    <NextButton text={'Skip'} onClick={() => onContinue({ logo: '' })} />
+  )}
+  <BackButton onClick={onBack} />
+</div>
+
+
     </div>
   )
 }

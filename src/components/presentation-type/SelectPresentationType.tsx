@@ -27,6 +27,7 @@ import uploadFileToS3 from '../../utils/uploadFileToS3'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 import { Dialog } from '@headlessui/react'
+import WebsiteLinkForm from '../onboarding/onboarding-sections/WebsiteLinkForm'
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -109,8 +110,16 @@ const SelectPresentationType: React.FC = () => {
   const [generatedDocumentIDoutline, setGeneratedDocumentIDoutline] = useState<string | null>(null);
   const [brandingColors, setBrandingColors] = useState<string[]>([]); // Initialize branding colors
   const [isLoading, setIsLoading] = useState<boolean>(false); // Add a loading state
-
-
+  const [isValidLink, setIsValidLink] = useState(false)
+  const validateLink = (link: string | undefined) => {
+    if (!link) {
+      setIsValidLink(false)
+      return
+    }
+    // Regular expression to validate a URL
+    const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+    setIsValidLink(urlRegex.test(link))
+  }
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -225,7 +234,7 @@ const SelectPresentationType: React.FC = () => {
       );
   
       if (response.status === 200) {
-        const colors = response.data.colors; // Extract color object
+        const colors = response.data.colors as string[]; // Extract color object
   
         // Convert object values into an array
         const colorArray: string[] = [
@@ -478,6 +487,57 @@ const SelectPresentationType: React.FC = () => {
       console.error("Error generating document:", error);
     }
   };
+  useEffect(() => {
+    const fetchOrganizationData = async () => {
+      if (!orgId) {
+        console.error("Error: Organization ID is missing.");
+        return;
+      }
+
+      setLoading(true);
+      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`;
+
+      try {
+        console.log("Fetching Organization Data:", requestUrl);
+
+        const response = await axios.get(requestUrl, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+
+        if (response.status !== 200) throw new Error("Failed to fetch organization data");
+
+        const data = response.data;
+
+        setWebsiteUrl(data.websiteLink  || "");
+        if (data.color) {
+          const colors = Object.values(data.color) as string[];
+          
+          // Selecting specific colors based on the provided indices
+          const colorArray = [
+            colors[0], // P100
+            colors[3], // P25_S75
+            colors[2], // P50_S50
+            colors[4], // S100
+            colors[1], // P75_S25
+          ];
+
+          setBrandingColors(colorArray);
+          setPrimaryColor(colors[0] || "#000000"); // Set Primary Color (P100)
+          setSecondaryColor(colors[4] || "#FFFFFF"); // Set Secondary Color (S100)
+        }
+
+
+        console.log("Fetched Data:", data);
+      } catch (error) {
+        console.error("Error fetching organization data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrganizationData();
+  }, [orgId, authToken]); // Runs when `orgId` or `authToken` changes
+
   return (
     <div className="flex p-4 flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]"> 
 <div className="relative  w-full    text-center flex flex-col items-center mt-[-20vh]">
@@ -671,32 +731,60 @@ const SelectPresentationType: React.FC = () => {
   {/* Content Wrapper - Space Out Sections Evenly */}
   <div className="flex flex-col space-y-10">
     
-    {/* Reference Web URL */}
-    <div className="relative space-y-2">
-      <label className="font-semibold text-gray-700 flex items-center gap-2">
-        Reference Web URL (optional)
-        <span
-          className="text-[#3667B2] cursor-pointer relative"
-          onMouseEnter={() => setShowTooltip3(true)}
-          onMouseLeave={() => setShowTooltip3(false)}
-        >
-          <FaInfoCircle className="text-base" />
-          {showTooltip3 && (
-            <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
-              <p className="font-semibold">Why add a reference URL?</p>
-              <p>Provide a web URL from which you would like us to include information for the presentation.</p>
-            </div>
-          )}
-        </span>
-      </label>
-      <input
-        type="text"
-        value={websiteUrl}
-        onChange={(e) => setWebsiteUrl(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded-lg text-start shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
-        placeholder="Enter website URL"
-      />
-    </div>
+   {/* Reference Web URL */}
+<div className="relative space-y-2">
+  <label className="font-semibold text-gray-700 flex items-center gap-2">
+    Reference Web URL (optional)
+    <span
+      className="text-[#3667B2] cursor-pointer relative"
+      onMouseEnter={() => setShowTooltip3(true)}
+      onMouseLeave={() => setShowTooltip3(false)}
+    >
+      <FaInfoCircle className="text-base" />
+      {showTooltip3 && (
+        <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
+          <p className="font-semibold">Why add a reference URL?</p>
+          <p>Provide a web URL from which you would like us to include information for the presentation.</p>
+        </div>
+      )}
+    </span>
+  </label>
+
+  <input
+    type="text"
+    value={websiteUrl}
+    onChange={(e) => {
+      const updatedValue = e.target.value;
+
+      if (updatedValue === '') {
+        setWebsiteUrl('');
+        setIsValidLink(false);
+        return;
+      }
+
+      setWebsiteUrl(updatedValue);
+      const urlRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+
+      setIsValidLink(urlRegex.test(updatedValue));
+    }}
+    onFocus={() => {
+      if (!websiteUrl) {
+        setWebsiteUrl('https://');
+      }
+    }}
+    className={`w-full p-2 border rounded-lg text-start shadow-sm outline-none focus:ring-2 ${
+      isValidLink ? 'border-gray-300 focus:ring-[#3667B2]' : 'border-red-500 focus:ring-red-500'
+    }`}
+    placeholder="Enter website URL"
+  />
+
+  {!isValidLink && websiteUrl && (
+    <p className="text-red-500 text-sm mt-2">
+      Please enter a valid website link.
+    </p>
+  )}
+</div>
+
 
     {/* Branding Colors */}
     <div>
@@ -738,7 +826,7 @@ const SelectPresentationType: React.FC = () => {
   {/* Change Colors Button */}
   <button
     className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
-    hover:bg-[#3667B2] hover:text-white text-base font-medium px-4 py-2 
+    hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-base lg:font-medium px-4 py-2 
     rounded-md active:scale-95 transition transform duration-300 ${
       isLoading ? "opacity-50 cursor-not-allowed" : ""
     }`}
@@ -756,9 +844,11 @@ const SelectPresentationType: React.FC = () => {
   {/* Generate Presentation Button */}
   <div className="flex w-full justify-center">
   <button 
-    className="lg:w-1/2 w-[80%] bg-[#3667B2]  hover:bg-[#0A8568] text-white py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4"
-    onClick={handleButtonClick}
-  >
+  disabled={!isValidLink}
+  className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
+    ${!isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
+  onClick={handleButtonClick}
+>
     Generate Presentation
   </button>
 </div>

@@ -15,13 +15,13 @@ import { Section } from '../../types/onboardingTypes'
 const sections: Section[] = [
   {
     id: 1,
-    title: 'Company Name',
-    subheading: 'Provide company details',
+    title: 'Organization Name',
+    subheading: 'Provide Organization details',
     icon: <FaBuilding />,
   },
   {
     id: 2,
-    title: 'Logo',
+    title: 'Branding',
     subheading: 'Upload your logo',
     icon: <FaBullseye />,
   },
