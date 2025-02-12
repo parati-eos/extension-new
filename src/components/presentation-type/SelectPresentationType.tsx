@@ -846,7 +846,7 @@ const SelectPresentationType: React.FC = () => {
   <button 
   disabled={websiteUrl.length > 0 && !isValidLink}
   className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
-    ${!isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
+    ${websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
   onClick={handleButtonClick}
 >
     Generate Presentation
