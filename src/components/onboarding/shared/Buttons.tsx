@@ -3,16 +3,19 @@ import React from 'react'
 interface NextButtonProps {
   disabled?: boolean
   text: string
+  onClick?: (e: React.FormEvent<HTMLButtonElement>) => void // Add this line
 }
 
 export const NextButton: React.FC<NextButtonProps> = ({
   disabled = false,
   text,
+  onClick, // Receive the onClick prop
 }) => {
   return (
     <button
       type="submit"
       disabled={disabled}
+      onClick={onClick} // Use the onClick prop
       className={`px-6 py-2 rounded-xl lg:h-[2.8rem] h-[3.3rem] active:scale-95 transform duration-300 transition w-full ${
         disabled
           ? 'bg-[#E6EAF0] text-[#797C81] cursor-not-allowed'

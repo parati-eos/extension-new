@@ -53,31 +53,8 @@ export default function SlideNarrative({
   })
   
 
-  const CustomOption = (props: any) => {
-    const { data, innerRef, innerProps } = props
-    return (
-      <div
-        ref={innerRef}
-        {...innerProps}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '8px',
-        }}
-      >
-        <img
-          src={data.icon}
-          alt={data.label}
-          style={{
-            width: '30px',
-            height: '30px',
-            marginRight: '4px',
-          }}
-        />
-        <span className="ml-2">{data.label}</span>
-      </div>
-    )
-  }
+
+  
 
   const options = [
     { value: 'Points', label: 'Points', icon: PointsIcon },
@@ -293,46 +270,38 @@ export default function SlideNarrative({
 
       {/* Slide Type Dropdown */}
       <div className="py-2">
-        <Select
-          options={options}
-          getOptionLabel={(e) => (e ? e.label : '')}
-          components={{ Option: CustomOption }}
-          placeholder="Select Slide Type"
-          value={selectedOption}
-          onChange={handleSelectChange}
-          className="w-full lg:w-[25%] items-center"
-          isSearchable={false} // Disable search to prevent keypad
-          styles={{
-            control: (provided, state) => ({
-              ...provided,
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer', // Hand cursor for the dropdown area
-              backgroundColor: state.isFocused ? '#f9f9f9' : 'white', // Optional hover effect
-            }),
-            option: (provided, state) => ({
-              ...provided,
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer', // Hand cursor for each dropdown option
-              padding: '10px',
-              fontSize: '20px',
-              backgroundColor: state.isFocused ? '#f0f0f0' : 'white', // Optional: highlight option on hover
-            }),
-            menu: (provided) => ({
-              ...provided,
-              cursor: 'pointer', // Ensure dropdown menu respects pointer style
-            }),
-            dropdownIndicator: (provided) => ({
-              ...provided,
-              cursor: 'pointer', // Hand cursor for dropdown indicator (arrow)
-            }),
-            placeholder: (provided) => ({
-              ...provided,
-              cursor: 'pointer', // Hand cursor for placeholder text
-            }),
-          }}
-        />
+      <Select
+  options={options}
+  getOptionLabel={(e) => e.label}
+  placeholder="Select Slide Type"
+  value={selectedOption}
+  onChange={handleSelectChange}
+  className="w-full lg:w-[25%] items-center"
+  isSearchable={false} // Disable search
+  formatOptionLabel={(data) => (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <img
+        src={data.icon}
+        alt={data.label}
+        style={{
+          width: '24px',
+          height: '24px',
+          marginRight: '8px',
+        }}
+      />
+      <span>{data.label}</span>
+    </div>
+  )}
+  styles={{
+    control: (provided) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      cursor: 'pointer',
+    }),
+  }}
+/>
+
       </div>
 
       {/* Input Section for Desktop */}

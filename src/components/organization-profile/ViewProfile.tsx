@@ -72,13 +72,20 @@ const ViewProfile: React.FC = () => {
             {/* Content Box */}
             <div className="absolute left-1/2 top-1/2 h-[80%] transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 sm:p-4 rounded-lg shadow-lg w-[90%] sm:w-[70%] md:w-[50%] lg:w-[35%] z-10 flex flex-col items-center space-y-8">
               {/* Top Section: Logo, Organization Info */}
-              <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
-                {/* Circular Logo */}
-                <img
-                  src={organizationData?.logo}
-                  alt="Organization Logo"
-                  className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
-                />
+              <div className="w-full flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+               {/* Circular Logo */}
+{organizationData?.logo ? (
+  <img
+    src={organizationData.logo}
+    alt="Organization Logo"
+    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+  />
+) : (
+  <div className="w-24 h-24 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
+    {organizationData?.companyName?.charAt(0) || "?"}
+  </div>
+)}
+
 
                 {/* Organization Info */}
                 <div className="text-center sm:text-left">

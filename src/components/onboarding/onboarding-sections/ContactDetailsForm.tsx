@@ -96,113 +96,75 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
       (linkedinLink === '' || isLinkedinValid)) // At least one filled and valid
 
   return (
-  
-         <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-center md:p-4">
-            {/* Heading */}
-            <div className="flex flex-col items-center gap-1 lg:mb-8">
-            <FaPhone className="text-[#3667B2] lg:text-4xl text-5xl xl:text-6xl mb-2" />
-        <h1 className="text-2xl text-[#091220] font-bold mb-1">
-          Contact Details
-        </h1>
+    <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-between md:p-4">
+      {/* Heading Section */}
+      <div className="flex flex-col items-center gap-2 mb-6">
+        <FaPhone className="text-[#3667B2] text-5xl xl:text-6xl mb-2" />
+        <h1 className="text-2xl text-[#091220] font-bold">Contact Details</h1>
         <p className="text-[#5D5F61]">Provide your contact details</p>
-            </div>
+      </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-center flex-grow w-full max-w-sm mx-auto mb-4"
-      >
-        {/* Email */}
-        <div className="w-full mt-4 lg:mt-0 ">
-          <label
-            htmlFor="email"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
-            Email
-          </label>
-          <input
-            type="text"
-            id="email"
-            placeholder="Enter email"
-            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
-              !isEmailValid ? 'border-red-500' : ''
-            }`}
-            value={contactEmail}
-            onChange={handleEmailChange}
-          />
-          {!isEmailValid && (
-            <p className="text-red-500 text-sm">
-              Please enter a valid email address.
-            </p>
-          )}
+      {/* Form Section */}
+      <form onSubmit={handleSubmit} className="w-full max-w-lg mx-auto flex-grow flex flex-col justify-center">
+        <div className="flex flex-col gap-4">
+          {/* Email Input */}
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-[#4A4B4D]">Email</label>
+            <input
+              type="text"
+              placeholder="Enter email"
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isEmailValid ? 'border-red-500' : ''}`}
+              value={contactEmail}
+              onChange={handleEmailChange}
+            />
+            {!isEmailValid && <p className="text-red-500 text-sm">Invalid email address.</p>}
+          </div>
 
-          {/* Phone */}
-          <label
-            htmlFor="phone"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
-             Phone
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            placeholder="Enter phone number"
-            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
-              !isPhoneValid && contactPhone.length !== 0  ? 'border-red-500' : ''
-            }`}
-            value={contactPhone}
-            onChange={handlePhoneChange}
-          />
-          {!isPhoneValid && contactPhone.length !== 0 &&(
-            <p className="text-red-500 text-sm">
-              Please enter a valid phone number. Remove 0 from the start if
-              present.
-            </p>
-          )}
+          {/* Phone Input */}
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-[#4A4B4D]">Phone</label>
+            <input
+              type="tel"
+              placeholder="Enter phone number"
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isPhoneValid && contactPhone ? 'border-red-500' : ''}`}
+              value={contactPhone}
+              onChange={handlePhoneChange}
+            />
+            {!isPhoneValid && contactPhone && <p className="text-red-500 text-sm">Invalid phone number.</p>}
+          </div>
 
-          {/* LinkedIn */}
-          <label
-            htmlFor="linkedin"
-            className="mb-3 font-semibold text-[#4A4B4D] block text-left"
-          >
-            LinkedIn
-          </label>
-          <input
-            type="text"
-            id="linkedin"
-            placeholder="Link of your LinkedIn profile"
-            className={`mb-4 lg:p-2 p-4 border w-full rounded-xl outline-[#3667B2] ${
-              !isLinkedinValid && linkedinLink.length !== 0 ? 'border-red-500' : ''
-            }`}
-            value={linkedinLink}
-            onFocus={handleLinkedinFocus} // Add "https://" on focus
-  onChange={handleLinkedinChange}
-          />
-          {!isLinkedinValid && linkedinLink.length !== 0 && (
-            <p className="text-[#FF0000] text-sm text-left">
-              Please enter a valid LinkedIn URL
-            </p>
-          )}
+          {/* LinkedIn Input */}
+          <div className="flex flex-col gap-2">
+            <label className="font-semibold text-[#4A4B4D]">LinkedIn</label>
+            <input
+              type="text"
+              placeholder="Enter LinkedIn URL"
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isLinkedinValid && linkedinLink ? 'border-red-500' : ''}`}
+              value={linkedinLink}
+              onChange={handleLinkedinChange}
+            />
+            {!isLinkedinValid && linkedinLink && <p className="text-red-500 text-sm">Invalid LinkedIn URL.</p>}
+          </div>
         </div>
+      </form>
 
-        {/* Buttons */}
-       {/* Buttons */}
-<div className="flex flex-col items-center justify-center w-full space-y-2 lg:mt-0">
-  {/* Next Button or Loader */}
+      {/* Button Section */}
+     {/* Button Section */}
+<div className="lg:w-[40%] flex flex-col items-center lg:p-2 py-4 px-2 mt-auto lg:pb-20 gap-2">
   {isNextLoading ? (
-    <div className="w-full flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-    </div>
+    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+  ) : contactEmail.length > 0 || contactPhone.length > 0 || linkedinLink.length > 0 ? (
+    // Show "Finish" button if any field is filled
+    <NextButton text="Finish" disabled={!isFormValid}  onClick={handleSubmit} />
   ) : (
-    <NextButton text="Finish" disabled={!isFormValid} />
+    // Show "Skip" button if all fields are empty
+    <NextButton text="Skip" onClick={() => onContinue({ contactEmail: '', contactPhone: '', linkedinLink: '' })} />
   )}
-
-  {/* Back Button */}
   <BackButton onClick={onBack} />
 </div>
 
-      </form>
     </div>
-  )
-}
+  );
+};
 
-export default ContactDetailsForm
+export default ContactDetailsForm;

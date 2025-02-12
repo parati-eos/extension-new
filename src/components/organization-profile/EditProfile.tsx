@@ -363,11 +363,24 @@ const EditProfile: React.FC = () => {
                   />
                 </div>
                 <div className="flex items-center gap-4 border rounded-lg p-4">
-                  <img
-                    src={logo && !isUploading ? logo : formData.logo}
-                    alt="Organization Logo"
-                    className="w-24 h-24 rounded-full  shadow-md object-contain aspect-auto"
-                  />
+                {logo && !isUploading ? (
+  <img
+    src={logo}
+    alt="Organization Logo"
+    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+  />
+) : formData.logo ? (
+  <img
+    src={formData.logo}
+    alt="Organization Logo"
+    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+  />
+) : (
+  <div className="w-24 h-24 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
+    {formData.companyName?.charAt(0) || "?"}
+  </div>
+)}
+
                   <button
                     className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
                     onClick={handleButtonClick}
