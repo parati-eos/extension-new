@@ -309,13 +309,17 @@ export default function Cover({
         />
 
         {/* Generate Slide Button */}
-        <div className="relative">
+        <div 
+  className="relative" 
+  onMouseEnter={handleMouseEnter} 
+  onMouseLeave={handleMouseLeave}
+>
           <button
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+           
+            disabled={!tagline.trim() || isLoading || isUploading ||isImageLoading}
             onClick={handleGenerateSlide}
             className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-              !logo || !tagline.trim() || isUploading
+              !tagline.trim() || isLoading || isUploading||isImageLoading
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
             }`}
@@ -347,16 +351,18 @@ export default function Cover({
           />
         </div>
 
-        <div className="relative flex-1">
+        <div className="relative flex-1"
+         onMouseEnter={handleMouseEnter}
+         onMouseLeave={handleMouseLeave}
+        >
           <button
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+           
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onClick={handleGenerateSlide}
-            disabled={!logo || !tagline.trim() || isLoading || isUploading}
+            disabled={!tagline.trim() || isLoading || isUploading ||isImageLoading}
             className={`w-full py-2 rounded-md ${
-              !logo || !tagline.trim() || isLoading || isUploading
+              !tagline.trim() || isLoading || isUploading||isImageLoading
                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 : 'bg-[#3667B2] text-white hover:bg-[#274a89]'
             }`}

@@ -47,7 +47,7 @@ export default function SlideNarrative({
     label: string
     icon: string
   } | null>({
-    value: "points",
+    value: "Points",
     label: "Points",
     icon: PointsIcon, // Replace with the appropriate icon
   })
@@ -57,13 +57,13 @@ export default function SlideNarrative({
   
 
   const options = [
-    { value: 'Points', label: 'Points', icon: PointsIcon },
-    { value: 'Phases', label: 'Timeline', icon: TimelineIcon },
-    { value: 'Images', label: 'Images', icon: ImagesIcon },
-    { value: 'Tables', label: 'Table', icon: TableIcon },
-    { value: 'People', label: 'People', icon: PeopleIcon },
-    { value: 'Statistics', label: 'Statistics', icon: StatisticsIcon },
-    { value: 'Graphs', label: 'Graphs', icon: GraphIcon },
+    { value: 'Points', label: 'Points', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg" },
+    { value: 'Phases', label: 'Timeline', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg"  },
+    { value: 'Images', label: 'Images', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg"},
+    { value: 'Tables', label: 'Table', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435575006_table.svg"},
+    { value: 'People', label: 'People',icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg"},
+    { value: 'Statistics', label: 'Statistics', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435650523_statistics.svg" },
+    { value: 'Graphs', label: 'Graphs', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435703873_graphs.svg" },
   ]
 
   const handleFileSelect = async (file: File | null) => {

@@ -18,6 +18,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
   const [currency, setCurrency] = useState("INR");
   const [freeCredit, setFreeCredit] = useState(250);
   const [proCredit, setProCredit] = useState(500);
+  const [referralEmail, setReferralEmail] = useState("");
 
   const authToken = sessionStorage.getItem("authToken");
   const orgId = sessionStorage.getItem("orgId");
@@ -29,7 +30,60 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
  
  
 
-
+  const handleEmailClick = async () => {
+    if (!orgId || !userId) {
+      alert("Missing organization ID or user ID.");
+      return;
+    }
+  
+    try {
+      // Step 1: Generate Referral Link
+      const response = await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/referral/generate-referral`,
+        { orgId, userId },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+  
+      const link = response.data.referralLink;
+  
+      if (link) {
+        setReferralLink(link); // Set state first
+      
+  
+        // Step 2: Get user details from session storage
+        const userEmail = sessionStorage.getItem("userEmail");
+        const referrerName = sessionStorage.getItem("referrerName"); // Assuming referrer name is stored in session
+  
+        if (!userEmail || !referrerName) {
+          console.error("User email or referrer name is missing in session storage.");
+          return;
+        }
+  
+        // Step 3: Send Referral Email
+        await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/emails/queue-referral-email`,
+          {
+            emails: [
+              {
+                userName: userEmail,
+                recipient: referralEmail,
+                signupLink: link,
+                referrerName: referrerName,
+              },
+            ],
+          },
+      
+        );
+  
+        console.log("Referral email queued successfully.");
+      }
+    } catch (error) {
+      console.error("Error handling referral process:", error);
+    }
+  };
+  
   const fetchReferralData = async () => {
     if (!orgId || !authToken) {
       console.error("Missing orgId or authToken");
@@ -40,7 +94,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       console.log("Auth Token:", authToken);
   
       const response = await axios.patch(
-        `http://34.239.191.112:5001/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
         { orgId, userId },
         {
           headers: { Authorization: `Bearer ${authToken}` }, // ✅ Correct header placement
@@ -98,7 +152,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
   
     try {
       const response = await axios.patch(
-        `http://34.239.191.112:5001/api/v1/data/referral/generate-referral`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/referral/generate-referral`,
         { orgId, userId },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -160,11 +214,15 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
           <input
             type="email"
             placeholder="Friend’s email"
+            value={referralEmail}
+            onChange={(e) => setReferralEmail(e.target.value)} // ✅ Makes input controlled
             className="w-full mt-4 p-3 border text-[#4A4B4D66] text-xs rounded-lg bg-[#E1E3E5] focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           <div className="flex gap-4 mt-[1.05rem] justify-between p-2">
-            <button className="flex flex-row w-[50%]   text-white hover:bg-[#274a89]  hover:border-[#3667B2] bg-[#3667B2] border border-[#3667B2] items-center justify-center gap-2  py-2 text-sm rounded-lg shadow ">
+            <button className="flex flex-row w-[50%]   text-white hover:bg-[#274a89]  hover:border-[#3667B2] bg-[#3667B2] border border-[#3667B2] items-center justify-center gap-2  py-2 text-sm rounded-lg shadow "
+                 onClick={handleEmailClick}
+            >
               <img src={button1} alt="Refer a Friend" className="w-4  " />
               Send Email
             </button>

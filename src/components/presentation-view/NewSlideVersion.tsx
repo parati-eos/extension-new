@@ -1,7 +1,5 @@
-import CustomBuilderIcon from '../../assets/custom-builder.svg'
+
 import { useState } from 'react'
-import SlideNarrativeIcon from '../../assets/Slide narrative.svg'
-import QuickGenerateIcon from '../../assets/quick generate.svg'
 import { BackButton } from './custom-builder/shared/BackButton'
 import { DisplayMode } from '@/src/types/presentationView'
 import { PricingModal } from '../shared/PricingModal'
@@ -82,7 +80,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                 onClick={handleQuickGenerate}
               >
                 <img
-                  src={QuickGenerateIcon}
+                  src="https://d2zu6flr7wd65l.cloudfront.net/uploads/1739431010012_quick%20generate.svg"
                   alt="Quick Generate"
                   className="h-12 w-12"
                 />
@@ -117,7 +115,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                 onClick={handleSlideNarrative}
               >
                 <img
-                  src={SlideNarrativeIcon}
+                  src="https://d2zu6flr7wd65l.cloudfront.net/uploads/1739431178626_Slide%20narrative.svg"
                   alt="Slide Narrative"
                   className="h-12 w-12"
                 />
@@ -160,7 +158,7 @@ export const MobileNewSlideVersion: React.FC<ButtonProps> = ({
                 onClick={handleCustomBuilderClick}
               >
                 <img
-                  src={CustomBuilderIcon}
+                  src="https://d2zu6flr7wd65l.cloudfront.net/uploads/1739431230230_custom-builder.svg"
                   alt="Custom Builder"
                   className="h-12 w-12"
                 />
@@ -297,7 +295,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 onClick={handleQuickGenerate}
               >
                 <img
-                  src={QuickGenerateIcon}
+                 src="https://d2zu6flr7wd65l.cloudfront.net/uploads/1739431010012_quick%20generate.svg"
                   alt="Quick Generate"
                   className="object-none mb-4 mt-4"
                 />
@@ -323,7 +321,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 onClick={handleSlideNarrative}
               >
                 <img
-                  src={SlideNarrativeIcon}
+                   src="https://d2zu6flr7wd65l.cloudfront.net/uploads/1739431178626_Slide%20narrative.svg"
                   alt="Slide Narrative"
                   className="object-none mb-4 mt-4"
                 />
@@ -355,7 +353,7 @@ export const DesktopNewSlideVersion: React.FC<ButtonProps> = ({
                 onClick={handleCustomBuilderClick}
               >
                 <img
-                  src={CustomBuilderIcon}
+                  src="https://d2zu6flr7wd65l.cloudfront.net/uploads/1739431230230_custom-builder.svg"
                   alt="Custom Builder"
                   className="object-none mb-4 mt-4"
                 />

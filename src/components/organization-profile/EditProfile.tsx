@@ -51,6 +51,11 @@ const EditProfile: React.FC = () => {
   const userId = sessionStorage.getItem('userEmail')
   const authToken = sessionStorage.getItem('authToken')
   const [industryOptions, setIndustryOptions] = useState<string[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false); // Add a loading state
+      const [brandingColors, setBrandingColors] = useState<string[]>([]); // Initialize branding colors
+        const [primaryColor, setPrimaryColor] = useState('#000000'); // Define the primary color
+         const [secondaryColor, setSecondaryColor] = useState('#FFFFFF'); // Define the secondary color
+        const [isModalOpen, setIsModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{
     contactPhone?: string
     linkedinLink?: string
@@ -128,7 +133,39 @@ const EditProfile: React.FC = () => {
     }
     return undefined
   }
-
+  const handleSaveColors = async () => {
+    setIsLoading(true); // Show loading state
+  
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile//organization/updateColors/${orgId}`,
+        { primaryColor, secondaryColor },
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+  
+      if (response.status === 200) {
+        const colors = response.data.colors as string[]; // Extract color object
+  
+        // Convert object values into an array
+        const colorArray: string[] = [
+          colors[0],
+          colors[3],
+          colors[2],
+          colors[4],
+          colors[1],
+            
+         
+         
+        ];
+  
+       await setBrandingColors([...colorArray]); // Ensure React detects state change
+      }
+    } catch (error) {
+      console.error("Error updating branding colors:", error);
+    } finally {
+      setIsLoading(false); // Hide loading state
+    }
+  };
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -168,7 +205,62 @@ const EditProfile: React.FC = () => {
       setOtherIndustry('') // Clear otherIndustry input
     }
   }
+  useEffect(() => {
+    const fetchOrganizationData = async () => {
+      if (!orgId) {
+        console.error("Error: Organization ID is missing.");
+        return;
+      }
 
+      setLoading(true);
+      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`;
+
+      try {
+        console.log("Fetching Organization Data:", requestUrl);
+
+        const response = await axios.get(requestUrl, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+
+        if (response.status !== 200) throw new Error("Failed to fetch organization data");
+
+        const data = response.data;
+
+// Ensure colors exist before processing
+if (data.color && typeof data.color === "object") {
+  const colorMap = {
+    P100: data.color.P100 || "#000000",
+    P75_S25: data.color.P75_S25 || "#290000",
+    P50_S50: data.color.P50_S50 || "#520000",
+    P25_S75: data.color.P25_S75 || "#7A0000",
+    S100: data.color.S100 || "#a30000",
+  };
+
+  const colorArray = [
+    colorMap.P100,
+    colorMap.P75_S25,
+    colorMap.P50_S50,
+    colorMap.P25_S75,
+    colorMap.S100,
+  ];
+
+
+  setBrandingColors(colorArray);
+  setPrimaryColor(colorMap.P100);
+  setSecondaryColor(colorMap.S100);
+        }
+
+
+        console.log("Fetched Data:", data);
+      } catch (error) {
+        console.error("Error fetching organization data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrganizationData();
+  }, [orgId, authToken]); // Runs when `orgId` or `authToken` changes
   const handleUpdate = async () => {
     setLoading(true)
     try {
@@ -229,22 +321,20 @@ const EditProfile: React.FC = () => {
         setLoading(false)
         navigate('/organization-profile')
       } else {
-        setLoading(false)
-        toast.info('No changes detected', {
-          position: 'top-right',
-          autoClose: 3000,
-        })
+        setLoading(false);
+        navigate('/organization-profile')
+       
       }
     } catch (error: any) {
-      console.error('Failed to update profile', error)
+      console.error("Failed to update profile", error);
       if (error.response?.status === 404) {
-        toast.error('Error updating profile data', {
-          position: 'top-right',
+        toast.error("Error updating profile data", {
+          position: "top-right",
           autoClose: 3000,
-        })
+        });
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -329,10 +419,11 @@ const EditProfile: React.FC = () => {
   }
 
   const isButtonDisabled = () => {
-    const hasErrors = Object.values(validationErrors).some((error) => error)
-
-    return hasErrors || loading
-  }
+    const hasErrors = Object.values(validationErrors).some((error) => error);
+  
+    return hasErrors || loading || isLoading;
+  };
+  
 
   return (
     <>
@@ -442,6 +533,127 @@ const EditProfile: React.FC = () => {
                     />
                   )}
                 </div>
+                   {/* Branding Colors */}
+                   <div>
+                    <div className="flex items-center relative">
+                      
+                      <div
+                        className="relative flex items-center ml-2"
+                       
+                      >
+                       
+                       
+                      </div>
+                    </div>
+              
+                 {/* Branding Colors Display */}
+              <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
+                
+                {/* Rectangular Color Strip */}
+                <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+                  {isLoading ? (
+                    <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
+                  ) : (
+                    brandingColors?.map((color, index) => (
+                      <div
+                        key={index}
+                        className="h-full flex-1 transition-transform transform hover:scale-105"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))
+                  )}
+                </div>
+              
+                {/* Change Colors Button  */}
+                <button
+                  className={`bg-white lg:h-[3rem] border-[#3667B2] border text-[#3667B2] 
+                  hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-xs lg:font-medium 
+                  rounded-md active:scale-95 transition transform duration-300 ${
+                    isLoading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={() => !isLoading && setIsModalOpen(true)}
+                  disabled={isLoading}
+                >
+                  Change Branding Colors
+                </button>
+              </div>
+              
+              
+                  </div>
+                   {/* Color Selection Modal */}
+{isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+    <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
+      <h2 className="text-xl font-bold text-[#091220] mb-4 text-center">
+        Select Branding Colors
+      </h2>
+
+      <div className="space-y-4">
+        {/* Primary Color */}
+        <div className="grid grid-cols-3 items-center gap-2">
+          <label className="font-semibold text-gray-700">Primary Color:</label>
+          <input
+            type="text"
+            value={primaryColor}
+            onChange={(e) => setPrimaryColor(e.target.value)}
+            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+          />
+          <div className="relative w-12 h-12">
+            <input
+              type="color"
+              value={primaryColor}
+              onChange={(e) => setPrimaryColor(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div
+              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+              style={{ backgroundColor: primaryColor }}
+            />
+          </div>
+        </div>
+
+        {/* Secondary Color */}
+        <div className="grid grid-cols-3 items-center gap-2">
+          <label className="font-semibold text-gray-700">Secondary Color:</label>
+          <input
+            type="text"
+            value={secondaryColor}
+            onChange={(e) => setSecondaryColor(e.target.value)}
+            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+          />
+          <div className="relative w-12 h-12">
+            <input
+              type="color"
+              value={secondaryColor}
+              onChange={(e) => setSecondaryColor(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div
+              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+              style={{ backgroundColor: secondaryColor }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Buttons */}
+      <div className="mt-6 flex justify-end space-x-4">
+        <button
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
+          onClick={() => setIsModalOpen(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition-all shadow-md"
+          onClick={() => { handleSaveColors(); setIsModalOpen(false); }}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
               </div>
 
               {/* Third Grid: Website Link and Industry */}
@@ -509,7 +721,9 @@ const EditProfile: React.FC = () => {
                     />
                   )}
                 </div>
+                   
               </div>
+              
             </div>
 
             <div className=" md:hidden grid grid-cols-1 gap-4">
@@ -660,6 +874,128 @@ const EditProfile: React.FC = () => {
                   />
                 )}
               </div>
+
+                  {/* Branding Colors */}
+                  <div>
+                    <div className="flex items-center relative">
+                      <label className="font-semibold text-gray-700">Branding Colors</label>
+                      <div
+                        className="relative flex items-center ml-2"
+                       
+                      >
+                       
+                       
+                      </div>
+                    </div>
+              
+                 {/* Branding Colors Display */}
+              <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
+                
+                {/* Rectangular Color Strip */}
+                <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+                  {isLoading ? (
+                    <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
+                  ) : (
+                    brandingColors?.map((color, index) => (
+                      <div
+                        key={index}
+                        className="h-full flex-1 transition-transform transform hover:scale-105"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))
+                  )}
+                </div>
+              
+                {/* Change Colors Button */}
+                <button
+                  className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
+                  hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-base lg:font-medium px-4 py-2
+                  rounded-md active:scale-95 transition transform duration-300 ${
+                    isLoading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                  onClick={() => !isLoading && setIsModalOpen(true)}
+                  disabled={isLoading}
+                >
+                  Change Branding Colors
+                </button>
+              </div>
+              
+              
+                  </div>
+                   {/* Color Selection Modal */}
+{isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+    <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
+      <h2 className="text-xl font-bold text-[#091220] mb-4 text-center">
+        Select Branding Colors
+      </h2>
+
+      <div className="space-y-4">
+        {/* Primary Color */}
+        <div className="grid grid-cols-3 items-center gap-2">
+          <label className="font-semibold text-gray-700">Primary Color:</label>
+          <input
+            type="text"
+            value={primaryColor}
+            onChange={(e) => setPrimaryColor(e.target.value)}
+            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+          />
+          <div className="relative w-12 h-12">
+            <input
+              type="color"
+              value={primaryColor}
+              onChange={(e) => setPrimaryColor(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div
+              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+              style={{ backgroundColor: primaryColor }}
+            />
+          </div>
+        </div>
+
+        {/* Secondary Color */}
+        <div className="grid grid-cols-3 items-center gap-2">
+          <label className="font-semibold text-gray-700">Secondary Color:</label>
+          <input
+            type="text"
+            value={secondaryColor}
+            onChange={(e) => setSecondaryColor(e.target.value)}
+            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+          />
+          <div className="relative w-12 h-12">
+            <input
+              type="color"
+              value={secondaryColor}
+              onChange={(e) => setSecondaryColor(e.target.value)}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <div
+              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+              style={{ backgroundColor: secondaryColor }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Buttons */}
+      <div className="mt-6 flex justify-end space-x-4">
+        <button
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
+          onClick={() => setIsModalOpen(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition-all shadow-md"
+          onClick={() => { handleSaveColors(); setIsModalOpen(false); }}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
             </div>
           </div>
           <div>
@@ -755,7 +1091,7 @@ const EditProfile: React.FC = () => {
           <div className="flex flex-col lg:flex-row justify-end mt-4 lg:gap-x-2 p-4 border-t">
             <button
               onClick={handleUpdate}
-              disabled={isButtonDisabled()}
+              disabled={isButtonDisabled() }
               className={`px-4 py-3 lg:py-2 lg:w-[12%] rounded-lg mb-2 lg:mb-0 ${
                 isButtonDisabled()
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
