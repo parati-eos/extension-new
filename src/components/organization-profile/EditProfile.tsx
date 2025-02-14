@@ -65,7 +65,27 @@ const EditProfile: React.FC = () => {
   const [originalData, setOriginalData] = useState<OrganizationData | null>(
     null
   )
-
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      color: {
+        P100: primaryColor,
+        S100: secondaryColor,
+        P75_S25: prevData.color.P75_S25 || '',
+        P50_S50: prevData.color.P50_S50 || '',
+        P25_S75: prevData.color.P25_S75 || '',
+        F_P100: prevData.color.F_P100 || '',
+        F_P75_S25: prevData.color.F_P75_S25 || '',
+        F_P50_S50: prevData.color.F_P50_S50 || '',
+        F_P25_S75: prevData.color.F_P25_S75 || '',
+        F_S100: prevData.color.F_S100 || '',
+        SCL: prevData.color.SCL || '',
+        SCD: prevData.color.SCD || '',
+      },
+    }));
+  }, [primaryColor, secondaryColor]);
+  
+  
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
@@ -144,15 +164,15 @@ const EditProfile: React.FC = () => {
       );
   
       if (response.status === 200) {
-        const colors = response.data.colors as string[]; // Extract color object
+        const colors = response.data.colors ; // Extract color object
   
         // Convert object values into an array
         const colorArray: string[] = [
-          colors[0],
-          colors[3],
-          colors[2],
-          colors[4],
-          colors[1],
+          colors.P100,
+          colors.P75_S25,
+          colors.P50_S50,
+          colors.P25_S75,
+          colors.S100,
             
          
          
@@ -262,7 +282,7 @@ if (data.color && typeof data.color === "object") {
     fetchOrganizationData();
   }, [orgId, authToken]); // Runs when `orgId` or `authToken` changes
   const handleUpdate = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const sectorData = sector === 'Other' ? otherSector : sector
       const industryData = industry === 'Other' ? otherIndustry : industry
@@ -297,18 +317,52 @@ if (data.color && typeof data.color === "object") {
           changedFields.linkedinLink = formData.linkedinLink
         }
         if (logo && logo !== originalData.logo) {
-          changedFields.logo = logo
+          changedFields.logo = logo;
+        }
+        if (primaryColor !== originalData.color.P100) {
+          changedFields.color = { 
+            ...changedFields.color, 
+            P100: primaryColor,
+            P75_S25: formData.color.P75_S25 || '',
+            P50_S50: formData.color.P50_S50 || '',
+            P25_S75: formData.color.P25_S75 || '',
+            S100: formData.color.S100 || '',
+            F_P100: formData.color.F_P100 || '',
+            F_P75_S25: formData.color.F_P75_S25 || '',
+            F_P50_S50: formData.color.F_P50_S50 || '',
+            F_P25_S75: formData.color.F_P25_S75 || '',
+            F_S100: formData.color.F_S100 || '',
+            SCL: formData.color.SCL || '',
+            SCD: formData.color.SCD || ''
+          };
+        }
+        if (secondaryColor !== originalData.color.S100) {
+          changedFields.color = { 
+            ...changedFields.color, 
+            S100: secondaryColor,
+            P100: changedFields.color?.P100 || '',
+            P75_S25: changedFields.color?.P75_S25 || '',
+            P50_S50: changedFields.color?.P50_S50 || '',
+            P25_S75: changedFields.color?.P25_S75 || '',
+            F_P100: changedFields.color?.F_P100 || '',
+            F_P75_S25: changedFields.color?.F_P75_S25 || '',
+            F_P50_S50: changedFields.color?.F_P50_S50 || '',
+            F_P25_S75: changedFields.color?.F_P25_S75 || '',
+            F_S100: changedFields.color?.F_S100 || '',
+            SCL: changedFields.color?.SCL || '',
+            SCD: changedFields.color?.SCD || ''
+          };
         }
       }
-
+  
       // Only make the API call if there are actually changed fields
       if (Object.keys(changedFields).length > 0) {
         const updatedData = {
           ...changedFields,
           orgId: orgId,
           userId: userId,
-        }
-
+        };
+  
         await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
           updatedData,
@@ -317,13 +371,12 @@ if (data.color && typeof data.color === "object") {
               Authorization: `Bearer ${authToken}`,
             },
           }
-        )
-        setLoading(false)
-        navigate('/organization-profile')
+        );
+        setLoading(false);
+        navigate("/organization-profile");
       } else {
         setLoading(false);
-        navigate('/organization-profile')
-       
+        navigate("/organization-profile");
       }
     } catch (error: any) {
       console.error("Failed to update profile", error);
@@ -336,7 +389,8 @@ if (data.color && typeof data.color === "object") {
     } finally {
       setLoading(false);
     }
-  }
+  };
+  
 
   const handleCancel = () => {
     navigate('/organization-profile')
@@ -421,7 +475,7 @@ if (data.color && typeof data.color === "object") {
   const isButtonDisabled = () => {
     const hasErrors = Object.values(validationErrors).some((error) => error);
   
-    return hasErrors || loading || isLoading;
+    return hasErrors || loading || isLoading ||isUploading;
   };
   
 
@@ -755,11 +809,23 @@ if (data.color && typeof data.color === "object") {
                   />
                 </div>
                 <div className="flex items-center gap-4 border rounded-lg p-4">
-                  <img
-                    src={logo && !isUploading ? logo : formData.logo}
-                    alt="Organization Logo"
-                    className="w-28 h-28 rounded-full shadow-md object-contain aspect-auto"
-                  />
+                {logo && !isUploading ? (
+  <img
+    src={logo}
+    alt="Organization Logo"
+    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+  />
+) : formData.logo ? (
+  <img
+    src={formData.logo}
+    alt="Organization Logo"
+    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+  />
+) : (
+  <div className="w-24 h-24 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
+    {formData.companyName?.charAt(0) || "?"}
+  </div>
+)}
 
                   <button
                     className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
