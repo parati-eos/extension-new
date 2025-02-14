@@ -328,15 +328,12 @@ export default function Cover({
           </button>
 
           {/* Tooltip */}
-          {isTooltipVisible && (!logo || !tagline.trim()) && (
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
-              {!logo
-                ? 'Please upload a logo.'
-                : !tagline.trim()
-                ? 'Please enter a tagline.'
-                : ''}
-            </div>
-          )}
+{isTooltipVisible && !tagline.trim() && (
+  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
+    Please enter a tagline.
+  </div>
+)}
+
         </div>
       </div>
 
@@ -371,15 +368,13 @@ export default function Cover({
           </button>
 
           {/* Tooltip */}
-          {isTooltipVisible && (!logo || !tagline.trim()) && (
-            <div className="absolute -top-12 left-1/2 w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md">
-              {!logo
-                ? 'Please upload a logo.'
-                : !tagline.trim()
-                ? 'Please enter a tagline.'
-                : ''}
-            </div>
-          )}
+     {/* Tooltip */}
+{isTooltipVisible && !tagline.trim() && (
+  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
+    Please enter a tagline.
+  </div>
+)}
+
         </div>
       </div>
     </div>

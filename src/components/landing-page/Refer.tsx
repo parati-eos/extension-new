@@ -6,6 +6,7 @@ import image1 from "../../assets/image_left_shadow.png";
 import button1 from "../../assets/octicon_cross-reference-16.png";
 import button2 from "../../assets/carbon_copy-link.png";
 import axios from "axios";
+import { toast } from "react-toastify";
 interface ReferralPageProps {
   userPlan: string; // Accept userPlan as a prop
   referredByOrgId: string | null;
@@ -63,7 +64,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
   
         // Step 3: Send Referral Email
         await axios.post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/emails/queue-referral-email`,
+          `http://34.239.191.112:5000/api/emails/queue-referral-email`,
           {
             emails: [
               {
@@ -77,7 +78,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       
         );
   
-        console.log("Referral email queued successfully.");
+       toast.success("Referral email sent successfully!");
       }
     } catch (error) {
       console.error("Error handling referral process:", error);
@@ -220,12 +221,20 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
           />
 
           <div className="flex gap-4 mt-[1.05rem] justify-between p-2">
-            <button className="flex flex-row w-[50%]   text-white hover:bg-[#274a89]  hover:border-[#3667B2] bg-[#3667B2] border border-[#3667B2] items-center justify-center gap-2  py-2 text-sm rounded-lg shadow "
-                 onClick={handleEmailClick}
-            >
-              <img src={button1} alt="Refer a Friend" className="w-4  " />
-              Send Email
-            </button>
+          <button 
+    disabled={referralEmail.length === 0}
+    className={`flex flex-row w-[50%] items-center justify-center gap-2 py-2 text-sm rounded-lg shadow transition 
+        ${referralEmail.length === 0 
+            ? "bg-gray-400 border-gray-400 text-gray-200 cursor-not-allowed" 
+            : "text-white hover:bg-[#274a89] hover:border-[#3667B2] bg-[#3667B2] border border-[#3667B2] cursor-pointer"
+        }`
+    }
+    onClick={handleEmailClick}
+>
+    <img src={button1} alt="Refer a Friend" className="w-4" />
+    Send Email
+</button>
+
             <button
         className="flex flex-row w-[50%] bg-gray-200 items-center justify-center gap-2 hover:bg-gray-300  text-black py-3 text-sm rounded-lg shadow "
         onClick={handleReferralClick}
