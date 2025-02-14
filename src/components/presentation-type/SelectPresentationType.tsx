@@ -28,6 +28,22 @@ import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 import { Dialog } from '@headlessui/react'
 import WebsiteLinkForm from '../onboarding/onboarding-sections/WebsiteLinkForm'
+// Define an interface for colors
+interface Colors {
+  P100: string;
+  P75_S25: string;
+  P50_S50: string;
+  P25_S75: string;
+  S100: string;
+  F_P100: string;
+  F_P75_S25: string;
+  F_P50_S50: string;
+  F_P25_S75: string;
+  F_S100: string;
+  SCL: string;
+  SCD: string;
+}
+
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -109,8 +125,10 @@ const SelectPresentationType: React.FC = () => {
   const [outline, setOutline] = useState(null);
   const [generatedDocumentIDoutline, setGeneratedDocumentIDoutline] = useState<string | null>(null);
   const [brandingColors, setBrandingColors] = useState<string[]>([]); // Initialize branding colors
+  const [brandingColorsSave, setBrandingColorsSave] = useState<string[]>([]); // Initialize branding colors
   const [isLoading, setIsLoading] = useState<boolean>(false); // Add a loading state
   const [isValidLink, setIsValidLink] = useState(false)
+  const [organizationColors, setOrganizationColors] = useState<Colors | null>(null);
   const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
   const handleCloseModal = () => {
     setGeneratedDocumentIDoutline(null); // Reset ID when closing
@@ -236,20 +254,36 @@ const SelectPresentationType: React.FC = () => {
       );
   
       if (response.status === 200) {
-        const colors = response.data.colors as string[]; // Extract color object
+        const colors = response.data.colors || organizationColors; // Use fetched colors if API doesn't return any
+
   
         // Convert object values into an array
         const colorArray: string[] = [
-          colors[0],
-          colors[3],
-          colors[2],
-          colors[4],
-          colors[1],
+          colors.P100,
+          colors.P75_S25,
+          colors.P50_S50,
+          colors.P25_S75,
+          colors.S100,
          
          
         ];
+        const colorArraySave: string[] = [
+          colors.P100,
+          colors.P75_S25,
+          colors.P50_S50,
+          colors.P25_S75,
+          colors.S100,
+          colors.F_P100,
+          colors.F_P75_S25,
+          colors.F_P50_S50,
+          colors.F_P25_S75,
+          colors.F_S100,
+          colors.SCL,
+          colors.SCD
+        ];
   
        await setBrandingColors([...colorArray]); // Ensure React detects state change
+       await setBrandingColorsSave([...colorArraySave]); // Ensure React detects state change
       }
     } catch (error) {
       console.error("Error updating branding colors:", error);
@@ -454,10 +488,22 @@ const SelectPresentationType: React.FC = () => {
       setLoading(false);
       return;
     }
+    const colorsToUse = brandingColorsSave.length ? brandingColorsSave : Object.values(organizationColors || {});
+
+    const colorKeys = [
+      "P100", "P75_S25", "P50_S50", "P25_S75", "S100",
+      "F_P100", "F_P75_S25", "F_P50_S50", "F_P25_S75", "F_S100",
+      "SCL", "SCD"
+    ];
   
     const payload = {
       websiteUrl: websiteUrl || "",
+      colors: colorKeys.reduce((acc: { [key: string]: string }, key, index) => {
+        acc[key] = colorsToUse[index] || "#000000"; // Default to black if missing
+        return acc;
+      }, {} as { [key: string]: string })
     };
+  
   
     try {
       const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${generatedDocumentIDoutline}`;
@@ -523,6 +569,13 @@ const SelectPresentationType: React.FC = () => {
             P50_S50: data.color.P50_S50 || "#520000",
             P25_S75: data.color.P25_S75 || "#7A0000",
             S100: data.color.S100 || "#a30000",
+            F_P100: data.color.F_P100 || "#FFFFFF",
+            F_P75_S25: data.color.F_P75_S25 || "#FFFFFF",
+            F_P50_S50: data.color.F_P50_S50 || "#FFFFFF",
+            F_P25_S75: data.color.F_P25_S75 || "#E9E9E9",
+            F_S100: data.color.F_S100 || "#EADFF2",
+            SCL: data.color.SCL || "#FFFFFF",
+            SCD: data.color.SCD || "#000000",
           };
   
           const colorArray = [
@@ -534,6 +587,7 @@ const SelectPresentationType: React.FC = () => {
           ];
   
           setBrandingColors(colorArray);
+          setOrganizationColors(colorMap);
           setPrimaryColor(colorMap.P100);
           setSecondaryColor(colorMap.S100);
         }
