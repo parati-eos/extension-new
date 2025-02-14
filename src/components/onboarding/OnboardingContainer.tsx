@@ -14,9 +14,10 @@ import { setUserPlan } from '../../redux/slices/userSlice.ts'
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
-  const [visitedSections, setVisitedSections] = useState<number[]>([1]) // Start with the first section visited
+  const [visitedSections, setVisitedSections] = useState<number[]>([1])
   const [isMediumOrLargerScreen, setIsMediumOrLargerScreen] = useState(false)
   const [isNextLoading, setIsNextLoading] = useState(false)
+  const [orgCreated, setOrgCreated] = useState(false) // ✅ Track if org was created
   const [formData, setFormData] = useState<FormData>({
     companyName: '',
     contactEmail: '',
@@ -54,83 +55,77 @@ const OnboardingContainer: React.FC = () => {
   // Function to handle API calls (POST for first section, PATCH for others)
   const submitFormData = async (data: Partial<typeof formData>) => {
     setIsNextLoading(true)
+
     try {
-      if (currentSection === 1) {
-        await axios
-          .post(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationcreate-patch`,
-            {
-              ...data,
-              orgId: orgId,
-              userId: userId,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          .then((response) => {
-            dispatch(setUserPlan(response.data.plan.plan_name))
-            setIsNextLoading(false)
-          })
+      if (!orgCreated) {
+        // ✅ If organization is NOT created yet, create it first
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationcreate-patch`,
+          { ...data, orgId, userId },
+          { headers: { Authorization: `Bearer ${authToken}` } }
+        )
+        dispatch(setUserPlan(response.data.plan.plan_name))
+        setOrgCreated(true) // ✅ Mark organization as created
       } else {
-        await axios
-          .patch(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-            data,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          )
-          .then((response) => {
-            setIsNextLoading(false)
-            setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
-          })
+        // ✅ If organization is already created, only update changed data
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          data,
+          { headers: { Authorization: `Bearer ${authToken}` } }
+        )
       }
+      setSubmittedData((prev) => ({ ...prev, [currentSection]: data }))
     } catch (error) {
       toast.error('Error submitting form data', {
         position: 'top-right',
         autoClose: 3000,
       })
+    } finally {
+      setIsNextLoading(false)
+    }
+  }
+
+  const updateCompanyName = async (companyName: string) => {
+    // ✅ PATCH only the company name if it changes later
+    try {
+      await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+        { companyName },
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      )
+      setFormData((prevData) => ({ ...prevData, companyName })) // Update local state
+    } catch (error) {
+      toast.error('Error updating company name', { position: 'top-right', autoClose: 3000 })
     }
   }
   
   const updateSuccessfulReferrals = async () => {
-    const referredByOrgId = sessionStorage.getItem('referredByOrgId');
-    
-    if (!referredByOrgId || referredByOrgId === 'false') {
-      console.log('No valid referredByOrgId found, skipping referral update.');
-      return;
-    }
-  
+    const referredByOrgId = sessionStorage.getItem('referredByOrgId')
+    if (!referredByOrgId || referredByOrgId === 'false') return
+
     try {
       await axios.patch(
-        `http://34.239.191.112:5001/api/v1/data/referral/update-successful-referrals/${referredByOrgId}`,
-        {       orgId, userId },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      console.log('Successful referrals updated.');
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/referral/update-successful-referrals/${referredByOrgId}`,
+        { orgId, userId },
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      )
     } catch (error) {
-      console.error('Error updating successful referrals:', error);
+      console.error('Error updating successful referrals:', error)
     }
-  };
-  // Function to handle "Continue" button
+  }
+
   const handleContinue = async (data: Partial<typeof formData>) => {
     setFormData((prevData) => ({ ...prevData, ...data }))
-    const isDataChanged =
-      JSON.stringify(submittedData[currentSection] || {}) !==
-      JSON.stringify(data)
 
-    //API CALL
+    const isDataChanged = JSON.stringify(submittedData[currentSection] || {}) !== JSON.stringify(data)
+
     if (isDataChanged) {
-      await submitFormData(data)
+      if (currentSection === 1 && orgCreated) {
+        // ✅ If updating company name later, do NOT create org again—just PATCH
+        await updateCompanyName(data.companyName || '')
+      } else {
+        await submitFormData(data)
+      }
     }
 
     const nextSection = currentSection + 1
@@ -172,53 +167,17 @@ const OnboardingContainer: React.FC = () => {
           />
         )
       case 2:
-        return (
-          <LogoForm
-            onContinue={handleContinue}
-            onBack={handleBack}
-            initialData={formData.logo}
-            isNextLoading={isNextLoading}
-          />
-        )
+        return <LogoForm onContinue={handleContinue} onBack={handleBack} initialData={formData.logo} isNextLoading={isNextLoading} />
       case 3:
-        return (
-          <WebsiteLinkForm
-            onContinue={handleContinue}
-            onBack={handleBack}
-            initialData={formData.websiteLink}
-            isNextLoading={isNextLoading}
-          />
-        )
+        return <WebsiteLinkForm onContinue={handleContinue} onBack={handleBack} initialData={formData.websiteLink} isNextLoading={isNextLoading} />
       case 4:
-        return (
-          <IndustryForm
-            onContinue={handleContinue}
-            onBack={handleBack}
-            isNextLoading={isNextLoading}
-            initialData={{
-              sector: formData.sector,
-              industry: formData.industry,
-            }}
-          />
-        )
+        return <IndustryForm onContinue={handleContinue} onBack={handleBack} isNextLoading={isNextLoading} initialData={{ sector: formData.sector, industry: formData.industry }} />
       case 5:
-        return (
-          <ContactDetailsForm
-            onContinue={handleContinue}
-            onBack={handleBack}
-            isNextLoading={isNextLoading}
-            initialData={{
-              contactEmail: formData.contactEmail,
-              contactPhone: formData.contactPhone,
-              linkedinLink: formData.linkedin,
-            }}
-          />
-        )
+        return <ContactDetailsForm onContinue={handleContinue} onBack={handleBack} isNextLoading={isNextLoading} initialData={{ contactEmail: formData.contactEmail, contactPhone: formData.contactPhone, linkedinLink: formData.linkedin }} />
       default:
         return null
     }
   }
-
   return (
     <>
       {/* Progress Bar for Small and Medium Screens */}

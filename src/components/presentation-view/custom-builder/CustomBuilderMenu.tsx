@@ -1,11 +1,4 @@
 import React from 'react'
-import PeopleIcon from '../../../assets/people.svg'
-import GraphIcon from '../../../assets/graphs.svg'
-import StatisticsIcon from '../../../assets/statistics.svg'
-import PointsIcon from '../../../assets/points.svg'
-import TimelineIcon from '../../../assets/Presentation.svg'
-import TableIcon from '../../../assets/table.svg'
-import ImagesIcon from '../../../assets/images.svg'
 import { DisplayMode } from '../../../types/presentationView'
 import { BackButton } from './shared/BackButton'
 
@@ -19,13 +12,13 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   setDisplayMode,
 }) => {
   const slideTypes: { name: DisplayMode; icon: string }[] = [
-    { name: 'Points', icon: PointsIcon },
-    { name: 'Timeline', icon: TimelineIcon },
-    { name: 'Images', icon: ImagesIcon },
-    { name: 'Table', icon: TableIcon },
-    { name: 'People', icon: PeopleIcon },
-    { name: 'Statistics', icon: StatisticsIcon },
-    { name: 'Graphs', icon: GraphIcon },
+    { name: 'Points', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg" },
+    { name: 'Timeline', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg" },
+    { name: 'Images', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg" },
+    { name: 'Table', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435575006_table.svg" },
+    { name: 'People', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg" },
+    { name: 'Statistics', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435650523_statistics.svg" },
+    { name: 'Graphs', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435703873_graphs.svg" },
   ]
 
   const onBack = () => {

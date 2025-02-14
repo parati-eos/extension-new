@@ -28,6 +28,7 @@ function Login() {
     const decoded: DecodedToken = jwtDecode(credentialResponse.credential)
     sessionStorage.setItem('userEmail', decoded.email)
     sessionStorage.setItem('userDP', decoded.picture)
+    sessionStorage.setItem('referrerName', decoded.name)
 
     const userData = {
       name: decoded.name,
@@ -52,6 +53,8 @@ function Login() {
         saveUserData(userData)
         sessionStorage.setItem('userEmail', userData.email)
         sessionStorage.setItem('userDP', userData.picture)
+  
+
       } else {
         throw new Error('Microsoft Login Failed: No access token found')
       }

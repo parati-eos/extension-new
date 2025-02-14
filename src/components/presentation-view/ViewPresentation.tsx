@@ -607,69 +607,51 @@ export default function ViewPresentation() {
     let slideType = outlineType
 
     try {
-      await axios
-        .post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
-          {
-            type: slideType,
-            title: currentOutline.replace(/^\d+\.\s*/, ''),
-            documentID: documentID,
-            outlineID: currentOutlineID,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        .then((response) => {
-          toast.info(
-            `Slide Generation Started for ${currentOutline.replace(
-              /^\d+\.\s*/,
-              ''
-            )}`,
-            {
-              position: 'top-right',
-              autoClose: 3000,
-            }
-          )
-        })
-        .catch((error) => {
-          toast.error('Error while generating slide', {
-            position: 'top-right',
-            autoClose: 3000,
-          })
-          setSlideStates((prev) => {
-            const genSlideID = prev[currentOutlineID]?.genSlideID
-            return {
-              ...prev,
-              [currentOutlineID]: {
-                ...prev[currentOutlineID],
-                isLoading: false,
-                isNoGeneratedSlide: !genSlideID || genSlideID === '',
-                lastUpdated: Date.now(),
-              },
-            }
-          })
-          setDisplayModes((prev) => ({ ...prev, [currentOutlineID]: 'slides' }))
-          setIsNewSlideLoading((prev) => ({
-            ...prev,
-            [currentOutlineID]: false,
-          }))
-        })
-    } catch (error) {
-      console.error('Error generating slide:', error)
-      toast.error('Error while generating slide', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-
-      // Reset loading state on error
+      // ✅ Properly handle async/await instead of .then()
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}`,
+        {
+          type: slideType,
+          title: currentOutline.replace(/^\d+\.\s*/, ''),
+          documentID: documentID,
+          outlineID: currentOutlineID,
+        },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+  
+      toast.success(
+        `Slide Generation Started for ${currentOutline.replace(/^\d+\.\s*/, '')}`,
+        { position: 'top-right', autoClose: 3000 }
+      );
+  
+      // ✅ Ensure the loader stops after success
       setSlideStates((prev) => ({
         ...prev,
         [currentOutlineID]: {
           ...prev[currentOutlineID],
           isLoading: false,
+          lastUpdated: Date.now(),
+        },
+      }));
+  
+      setIsNewSlideLoading((prev) => ({
+        ...prev,
+        [currentOutlineID]: false,
+      }));
+    } catch (error) {
+      console.error('Error generating slide:', error);
+  
+      toast.error('Error while generating slide', { position: 'top-right', autoClose: 3000 });
+  
+      // ❌ Stop loader on error
+      setSlideStates((prev) => ({
+        ...prev,
+        [currentOutlineID]: {
+          ...prev[currentOutlineID],
+          isLoading: false,
+          isNoGeneratedSlide: !prev[currentOutlineID]?.genSlideID,
           lastUpdated: Date.now(),
         },
       }))

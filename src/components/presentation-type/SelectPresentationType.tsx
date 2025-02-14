@@ -28,6 +28,22 @@ import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 import { Dialog } from '@headlessui/react'
 import WebsiteLinkForm from '../onboarding/onboarding-sections/WebsiteLinkForm'
+// Define an interface for colors
+interface Colors {
+  P100: string;
+  P75_S25: string;
+  P50_S50: string;
+  P25_S75: string;
+  S100: string;
+  F_P100: string;
+  F_P75_S25: string;
+  F_P50_S50: string;
+  F_P25_S75: string;
+  F_S100: string;
+  SCL: string;
+  SCD: string;
+}
+
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
@@ -109,17 +125,21 @@ const SelectPresentationType: React.FC = () => {
   const [outline, setOutline] = useState(null);
   const [generatedDocumentIDoutline, setGeneratedDocumentIDoutline] = useState<string | null>(null);
   const [brandingColors, setBrandingColors] = useState<string[]>([]); // Initialize branding colors
+  const [brandingColorsSave, setBrandingColorsSave] = useState<string[]>([]); // Initialize branding colors
   const [isLoading, setIsLoading] = useState<boolean>(false); // Add a loading state
   const [isValidLink, setIsValidLink] = useState(false)
-  const validateLink = (link: string | undefined) => {
-    if (!link) {
-      setIsValidLink(false)
-      return
+  const [organizationColors, setOrganizationColors] = useState<Colors | null>(null);
+  const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
+  const handleCloseModal = () => {
+    setGeneratedDocumentIDoutline(null); // Reset ID when closing
+    setIsRefineModalOpen(false);
+  };
+  useEffect(() => {
+    if (websiteUrl) {
+      setIsValidLink(urlRegex.test(websiteUrl));
     }
-    // Regular expression to validate a URL
-    const urlRegex = /^(:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
-    setIsValidLink(urlRegex.test(link))
-  }
+  }, [websiteUrl]); // Re-run validation when `websiteUrl` changes
+  
 
   const generateDocumentID = () => {
     return 'Document-' + Date.now()
@@ -234,20 +254,36 @@ const SelectPresentationType: React.FC = () => {
       );
   
       if (response.status === 200) {
-        const colors = response.data.colors as string[]; // Extract color object
+        const colors = response.data.colors || organizationColors; // Use fetched colors if API doesn't return any
+
   
         // Convert object values into an array
         const colorArray: string[] = [
-          colors[0],
-          colors[3],
-          colors[2],
-          colors[4],
-          colors[1],
+          colors.P100,
+          colors.P75_S25,
+          colors.P50_S50,
+          colors.P25_S75,
+          colors.S100,
          
          
         ];
+        const colorArraySave: string[] = [
+          colors.P100,
+          colors.P75_S25,
+          colors.P50_S50,
+          colors.P25_S75,
+          colors.S100,
+          colors.F_P100,
+          colors.F_P75_S25,
+          colors.F_P50_S50,
+          colors.F_P25_S75,
+          colors.F_S100,
+          colors.SCL,
+          colors.SCD
+        ];
   
        await setBrandingColors([...colorArray]); // Ensure React detects state change
+       await setBrandingColorsSave([...colorArraySave]); // Ensure React detects state change
       }
     } catch (error) {
       console.error("Error updating branding colors:", error);
@@ -452,10 +488,22 @@ const SelectPresentationType: React.FC = () => {
       setLoading(false);
       return;
     }
+    const colorsToUse = brandingColorsSave.length ? brandingColorsSave : Object.values(organizationColors || {});
+
+    const colorKeys = [
+      "P100", "P75_S25", "P50_S50", "P25_S75", "S100",
+      "F_P100", "F_P75_S25", "F_P50_S50", "F_P25_S75", "F_S100",
+      "SCL", "SCD"
+    ];
   
     const payload = {
       websiteUrl: websiteUrl || "",
+      colors: colorKeys.reduce((acc: { [key: string]: string }, key, index) => {
+        acc[key] = colorsToUse[index] || "#000000"; // Default to black if missing
+        return acc;
+      }, {} as { [key: string]: string })
     };
+  
   
     try {
       const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${generatedDocumentIDoutline}`;
@@ -493,50 +541,70 @@ const SelectPresentationType: React.FC = () => {
         console.error("Error: Organization ID is missing.");
         return;
       }
-
+  
       setLoading(true);
       const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`;
-
+  
       try {
         console.log("Fetching Organization Data:", requestUrl);
-
+  
         const response = await axios.get(requestUrl, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
-
-        if (response.status !== 200) throw new Error("Failed to fetch organization data");
-
-        const data = response.data;
-
-        setWebsiteUrl(data.websiteLink  || "");
-        if (data.color) {
-          const colors = Object.values(data.color) as string[];
-          
-          // Selecting specific colors based on the provided indices
-          const colorArray = [
-            colors[0], // P100
-            colors[3], // P25_S75
-            colors[2], // P50_S50
-            colors[4], // S100
-            colors[1], // P75_S25
-          ];
-
-          setBrandingColors(colorArray);
-          setPrimaryColor(colors[0] || "#000000"); // Set Primary Color (P100)
-          setSecondaryColor(colors[4] || "#FFFFFF"); // Set Secondary Color (S100)
+  
+        if (response.status !== 200) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
-
-
-        console.log("Fetched Data:", data);
+  
+        const data = response.data;
+        console.log("Fetched Organization Data:", data);
+  
+        setWebsiteUrl(data.websiteLink || "");
+  
+        // Ensure colors exist before processing
+        if (data.color && typeof data.color === "object") {
+          const colorMap = {
+            P100: data.color.P100 || "#000000",
+            P75_S25: data.color.P75_S25 || "#290000",
+            P50_S50: data.color.P50_S50 || "#520000",
+            P25_S75: data.color.P25_S75 || "#7A0000",
+            S100: data.color.S100 || "#a30000",
+            F_P100: data.color.F_P100 || "#FFFFFF",
+            F_P75_S25: data.color.F_P75_S25 || "#FFFFFF",
+            F_P50_S50: data.color.F_P50_S50 || "#FFFFFF",
+            F_P25_S75: data.color.F_P25_S75 || "#E9E9E9",
+            F_S100: data.color.F_S100 || "#EADFF2",
+            SCL: data.color.SCL || "#FFFFFF",
+            SCD: data.color.SCD || "#000000",
+          };
+  
+          const colorArray = [
+            colorMap.P100,
+            colorMap.P75_S25,
+            colorMap.P50_S50,
+            colorMap.P25_S75,
+            colorMap.S100,
+          ];
+  
+          setBrandingColors(colorArray);
+          setOrganizationColors(colorMap);
+          setPrimaryColor(colorMap.P100);
+          setSecondaryColor(colorMap.S100);
+        }
       } catch (error) {
-        console.error("Error fetching organization data:", error);
+        if (error instanceof Error) {
+          console.error("Error fetching organization data:", error.message);
+        } else {
+          console.error("Error fetching organization data:", error);
+        }
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchOrganizationData();
-  }, [orgId, authToken]); // Runs when `orgId` or `authToken` changes
+  }, [orgId, authToken]); // Dependencies
+  
 
   return (
     <div className="flex p-4 flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]"> 
@@ -717,7 +785,8 @@ const SelectPresentationType: React.FC = () => {
   
   {/* Close Button */}
   <button
-    onClick={() => setIsRefineModalOpen(false)}
+
+    onClick={handleCloseModal}
     className="absolute top-4 right-4 p-2 bg-gray-200 rounded-full"
   >
     <FaTimes className="text-gray-600" />
@@ -844,9 +913,9 @@ const SelectPresentationType: React.FC = () => {
   {/* Generate Presentation Button */}
   <div className="flex w-full justify-center">
   <button 
-  disabled={websiteUrl.length > 0 && !isValidLink}
+  disabled={isLoading || websiteUrl.length > 0 && !isValidLink  }
   className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
-    ${websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
+    ${isLoading||websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
   onClick={handleButtonClick}
 >
     Generate Presentation
