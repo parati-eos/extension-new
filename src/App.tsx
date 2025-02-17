@@ -149,44 +149,30 @@ const App: React.FC = () => {
     <>
       <SocketProvider>
         <Router>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/contact-us" element={<ContactUsPage />} />
+        <Routes>
+  {/* Public Routes */}
+  <Route path="/" element={<LandingPage />} />
+  <Route path="/auth" element={<AuthPage />} />
+  <Route path="/pricing" element={<PricingPage />} />
+  <Route path="/blog" element={<BlogPage />} />
+  <Route path="/contact-us" element={<ContactUsPage />} />
 
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoutes>
-                  <Routes>
-                    <Route path="onboarding" element={<OnboardingPage />} />
-                    <Route
-                      path="organization-profile"
-                      element={<ViewOrganizationProfilePage />}
-                    />
-                    <Route
-                      path="edit-organization-profile"
-                      element={<EditOrganizationProfilePage />}
-                    />
-                    <Route
-                      path="new-presentation"
-                      element={<PresentationTypePage />}
-                    />
-                    <Route
-                      path="presentation-view"
-                      element={<PresentationViewPage />}
-                    />
-                    <Route path="history" element={<HistoryPage />} />
-                    <Route path="refer" element={<ReferPage />} />
-                  </Routes>
-                </ProtectedRoutes>
-              }
-            />
-            <Route path="/presentation-share" element={<PresentationShare />} />
-            <Route path="/share" element={<PitchDeckShare />} />
-          </Routes>
+  {/* Protected Routes */}
+  <Route element={<ProtectedRoutes />}>
+    <Route path="/onboarding" element={<OnboardingPage />} />
+    <Route path="/organization-profile" element={<ViewOrganizationProfilePage />} />
+    <Route path="/edit-organization-profile" element={<EditOrganizationProfilePage />} />
+    <Route path="/new-presentation" element={<PresentationTypePage />} />
+    <Route path="/presentation-view" element={<PresentationViewPage />} />
+    <Route path="/history" element={<HistoryPage />} />
+    <Route path="/refer" element={<ReferPage />} />
+  </Route>
+
+  {/* Sharing Routes */}
+  <Route path="/presentation-share" element={<PresentationShare />} />
+  <Route path="/share" element={<PitchDeckShare />} />
+</Routes>
+
         </Router>
         <ToastContainer />
       </SocketProvider>
