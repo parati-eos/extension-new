@@ -12,6 +12,7 @@ type DesktopActionButtonsProps = {
   userPlan: string
   deleteFinalizeDisabled: boolean
   newVersionDisabled: boolean
+  isQuickGenerating: boolean
 }
 
 export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
@@ -23,10 +24,13 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
   userPlan,
   deleteFinalizeDisabled,
   newVersionDisabled,
+  isQuickGenerating,
 }) => {
   const [isDialogVisible, setIsDialogVisible] = useState(false)
   const [isDialogVisibledelete, setIsDialogVisibledelete] = useState(false)
   const [isDialogVisibleNew, setIsDialogVisibleNew] = useState(false)
+
+  if (isQuickGenerating) return null;
 
   return (
     <div className="flex gap-2">
@@ -36,25 +40,12 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
         onClick={onDelete}
         disabled={deleteFinalizeDisabled}
         className="hover:text-red-600 border border-gray-300 p-2 rounded-md flex items-center active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
-        onMouseEnter={() => {
-          if (userPlan === 'free' || userPlan !== 'free')
-            setIsDialogVisibledelete(true)
-        }}
-        onMouseLeave={() => {
-          if (userPlan === 'free' || userPlan !== 'free')
-            setIsDialogVisibledelete(false)
-        }}
+        onMouseEnter={() => setIsDialogVisibledelete(true)}
+        onMouseLeave={() => setIsDialogVisibledelete(false)}
       >
         <FaTrash className="h-4 w-4 text-[#5D5F61] mr-1" />
         <span className="hidden text-[#5D5F61] lg:block">Delete Version</span>
       </button>
-      {isDialogVisibledelete && (
-        <div className="absolute  transform -translate-x-[20%] -translate-y-full w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
-          <p className="text-sm text-center text-gray-800">
-            Delete the selected slide version from the presentation.
-          </p>
-        </div>
-      )}
 
       {/* Finalize Button */}
       <button
@@ -62,34 +53,14 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
         onClick={onFinalize}
         disabled={deleteFinalizeDisabled}
         className={`p-2 rounded-md flex items-center border active:scale-95 transition transform duration-300 disabled:cursor-not-allowed ${
-          currentSlideId && finalized
-            ? 'border-[#0A8568] bg-[#36fa810a]'
-            : 'border-gray-300'
+          currentSlideId && finalized ? 'border-[#0A8568] bg-[#36fa810a]' : 'border-gray-300'
         }`}
-        onMouseEnter={() => {
-          if (userPlan === 'free' || userPlan !== 'free')
-            setIsDialogVisible(true)
-        }}
-        onMouseLeave={() => {
-          if (userPlan === 'free' || userPlan !== 'free')
-            setIsDialogVisible(false)
-        }}
+        onMouseEnter={() => setIsDialogVisible(true)}
+        onMouseLeave={() => setIsDialogVisible(false)}
       >
-        <FaCheck
-          className={`h-4 w-4 mr-1 ${
-            finalized ? 'text-[#0A8568]' : 'text-[#5D5F61]'
-          }`}
-        />
+        <FaCheck className={`h-4 w-4 mr-1 ${finalized ? 'text-[#0A8568]' : 'text-[#5D5F61]'}`} />
         <span className="hidden text-[#5D5F61] lg:block">Finalize Version</span>
       </button>
-      {isDialogVisible && (
-        <div className="absolute transform translate-x-1/2 -translate-y-full w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
-          <p className="text-sm text-center text-gray-800">
-            Finalize the selected slide version to add it to the final
-            presentation.
-          </p>
-        </div>
-      )}
 
       {/* New Version Button */}
       <button
@@ -97,26 +68,12 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
         id="new-version"
         disabled={newVersionDisabled}
         className="hover:text-blue-600 border border-[#3667B2] p-2 rounded-md flex items-center active:scale-95 transition transform duration-300 disabled:cursor-not-allowed"
-        onMouseEnter={() => {
-          if (userPlan === 'free' || userPlan !== 'free')
-            setIsDialogVisibleNew(true)
-        }}
-        onMouseLeave={() => {
-          if (userPlan === 'free' || userPlan !== 'free')
-            setIsDialogVisibleNew(false)
-        }}
+        onMouseEnter={() => setIsDialogVisibleNew(true)}
+        onMouseLeave={() => setIsDialogVisibleNew(false)}
       >
         <FaPlus className="h-4 w-4 mr-1 text-[#3667B2]" />
         <span className="hidden text-[#3667B2] lg:block">New Version</span>
       </button>
-      {isDialogVisibleNew && (
-        <div className="absolute  left-1/2 -translate-x-[40%] -translate-y-full w-[15rem] bg-gray-200 text-black p-3 rounded-lg shadow-lg flex items-center justify-center">
-          <p className="text-sm text-center text-gray-800">
-            Generate a new slide version for the selected section in the
-            outline.
-          </p>
-        </div>
-      )}
     </div>
   )
 }
@@ -130,6 +87,7 @@ type MobileActionButtonsProps = {
   displayMode: string
   deleteFinalizeDisabled: boolean
   newVersionDisabled: boolean
+  isQuickGenerating: boolean
 }
 
 export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
@@ -141,7 +99,10 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
   displayMode,
   deleteFinalizeDisabled,
   newVersionDisabled,
+  isQuickGenerating,
 }) => {
+  if (isQuickGenerating) return null;
+
   return (
     <div className="flex gap-4">
       {/* Delete Button */}
@@ -160,16 +121,10 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
         onClick={onFinalize}
         disabled={deleteFinalizeDisabled}
         className={`border disabled:cursor-not-allowed ${
-          currentSlideId && finalized
-            ? 'border-[#0A8568] bg-[#36fa810a]'
-            : 'border-gray-300'
+          currentSlideId && finalized ? 'border-[#0A8568] bg-[#36fa810a]' : 'border-gray-300'
         } p-2 rounded-md flex items-center`}
       >
-        <FaCheck
-          className={`h-4 w-4 ${
-            finalized ? 'text-[#0A8568]' : 'text-[#5D5F61]'
-          }`}
-        />
+        <FaCheck className={`h-4 w-4 ${finalized ? 'text-[#0A8568]' : 'text-[#5D5F61]'}`} />
       </button>
 
       {/* New Version Button */}
@@ -181,11 +136,7 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
           displayMode === 'newContent' ? 'border-gray-300' : 'border-[#3667B2]'
         } p-2 rounded-md flex items-center`}
       >
-        <FaPlus
-          className={`h-4 w-4 ${
-            displayMode === 'newContent' ? 'text-[#5D5F61]' : 'text-[#3667B2]'
-          }`}
-        />
+        <FaPlus className={`h-4 w-4 ${displayMode === 'newContent' ? 'text-[#5D5F61]' : 'text-[#3667B2]'}`} />
       </button>
       <GuidedTour />
       <GuidedTourMobile />

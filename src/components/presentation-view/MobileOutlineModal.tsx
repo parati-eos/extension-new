@@ -123,7 +123,7 @@ export default function MobileOutlineModal({
       {/* Dropdown Button */}
       <div
         id="dropdown-mobile"
-        className="border w-full rounded-lg p-4 bg-white cursor-pointer"
+        className="border w-full rounded-lg p-3 lg:p-4 bg-white cursor-pointer"
         onClick={() => setIsOutlinesOpen(true)}
       >
         {isLoading ? (

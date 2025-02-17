@@ -1,18 +1,9 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
+import { Outlet, Navigate } from 'react-router-dom'
 
-interface ProtectedRoutesProps {
-  children: React.ReactNode
-}
-
-const ProtectedRoutes: React.FC<ProtectedRoutesProps> = ({ children }) => {
+const ProtectedRoutes = () => {
   const authToken = sessionStorage.getItem('authToken')
 
-  if (!authToken) {
-    return <Navigate to="/auth" replace />
-  }
-
-  return <>{children}</>
+  return authToken ? <Outlet /> : <Navigate to="/auth" replace />
 }
 
 export default ProtectedRoutes

@@ -7,6 +7,9 @@ const PresentationViewPage: React.FC = () => {
   <div className='overflow-hidden h-dvh'>
        <Navbar showHistoryId={true} showOrganizationProfileId={true} />
       <ViewPresentation />
+
+
+
       </div>
     </>
   )
