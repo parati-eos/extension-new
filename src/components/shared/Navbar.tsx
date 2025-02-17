@@ -200,6 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({
             <div
               ref={dropdownRef} // Attach the reference to the dropdown container
               className="fixed top-20 lg:top-17 right-2 lg:right-4 bg-white shadow-lg rounded-md p-2 z-50 w-48 h-32"
+              onClick={() => setDropdownOpen(false)} // Close on any click inside
             >
               <button
                 onClick={() => navigate('/organization-profile')}

@@ -422,7 +422,8 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         window.location.pathname !== '/presentation-view' &&
         window.location.pathname !== '/new-presentation' &&
         window.location.pathname !== '/organization-profile' &&
-        window.location.pathname !== '/history'
+        window.location.pathname !== '/history'&&
+              window.location.pathname !== '/edit-organization-profile'
           ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
           : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
       }`}
