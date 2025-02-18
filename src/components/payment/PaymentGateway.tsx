@@ -94,7 +94,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     try {
       // Fetch organization profile using orgId
       const orgResponse = await fetch(
-        `http://34.239.191.112:5001/api/v1/data/organizationprofile/organization/${orgId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
         {
           headers: { Authorization: `Bearer ${authToken}` }, // ✅ Correct header placement
         }
@@ -202,7 +202,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   
             // Update remaining credits (only once after successful payment)
             await fetch(
-              `http://34.239.191.112:5001/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+              `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
               {
                 method: "PATCH",
                 headers: {

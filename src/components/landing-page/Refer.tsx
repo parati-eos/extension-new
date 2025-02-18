@@ -67,7 +67,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
   
       // Step 4: Send Referral Emails
       await axios.post(
-        `http://34.239.191.112:5000/api/emails/queue-referral-email`,
+        `https://d3rodhz1nayiby.cloudfront.net/api/emails/queue-referral-email`,
         {
           emails: emailList.map(email => ({
             userName: userEmail,
