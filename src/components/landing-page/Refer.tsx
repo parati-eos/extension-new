@@ -146,9 +146,20 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
 
     fetchIpInfo();
   }, []);
-  const handleReferralClick = async () => {
+  const copyToClipboardFallback = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+  };
+  
+  const handleReferralClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault(); // Prevents unintended form submission or reload
+  
     if (!orgId || !userId) {
-      alert("Missing organization ID or user ID.");
+      toast.error("Missing organization ID or user ID.");
       return;
     }
   
@@ -165,24 +176,20 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       
       if (link) {
         setReferralLink(link); // Set state first
-        await navigator.clipboard.writeText(link); // Copy after setting state
+  
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(link);
+        } else {
+          copyToClipboardFallback(link);
+        }
+  
         setCopySuccess(true);
+        toast.success("Referral link copied to clipboard!");
         setTimeout(() => setCopySuccess(false), 2000);
       }
     } catch (error) {
       console.error("Error generating referral link:", error);
-    }
-  };
-
-  const copyToClipboard = async () => {
-    if (referralLink) {
-      try {
-        await navigator.clipboard.writeText(referralLink);
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000);
-      } catch (error) {
-        console.error("Failed to copy:", error);
-      }
+      toast.error("Failed to generate referral link.");
     }
   };
   return (

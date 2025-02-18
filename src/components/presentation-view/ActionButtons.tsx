@@ -124,7 +124,8 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
           currentSlideId && finalized ? 'border-[#0A8568] bg-[#36fa810a]' : 'border-gray-300'
         } p-2 rounded-md flex items-center`}
       >
-        <FaCheck className={`h-4 w-4 ${finalized ? 'text-[#0A8568]' : 'text-[#5D5F61]'}`} />
+<FaCheck className={`h-4 w-4 ${currentSlideId && finalized ? 'text-[#0A8568]' : 'text-[#5D5F61]'}`} />
+
       </button>
 
       {/* New Version Button */}

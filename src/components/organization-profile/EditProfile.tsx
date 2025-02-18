@@ -634,9 +634,9 @@ if (data.color && typeof data.color === "object") {
         
                   )}
                               {activeTab === "branding" && (
-           <div className="hidden  md:flex flex-col gap-3 w-full items-center justify-center">
+           <div className="hidden  md:flex flex-row gap-6  w-full items-center justify-center">
          {/* Logo Upload Section */}
-<div className="flex flex-col items-center justify-center gap-4 w-[50%] max-w-sm border rounded-2xl p-6 shadow-md bg-white">
+<div className="flex flex-col items-center justify-center gap-4 w-[50%] max-w-sm   bg-white">
   {/* Logo Display */}
   {logo && !isUploading ? (
     <img

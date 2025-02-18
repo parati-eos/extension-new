@@ -169,7 +169,7 @@ export default function MobileOutlineModal({
 
       {/* Full-Screen Outlines List */}
       {isOutlinesOpen && (
-        <div className="fixed inset-0 z-50 bg-white p-4">
+        <div className="overflow-y-auto scrollbar-none fixed inset-0 z-50 bg-white p-4">
           {/* Header */}
           <div className="flex justify-between items-center mt-5 mb-5">
             <h2 className="text-lg font-semibold text-[#091220]">Outline</h2>
@@ -195,7 +195,7 @@ export default function MobileOutlineModal({
           </div>
 
           {/* Outlines List */}
-          <div className="overflow-y-auto h-dvh">
+          <div className=" h-dvh">
             <ul className="space-y-2">
               {outlines.map((outline, index) => (
                 <li
