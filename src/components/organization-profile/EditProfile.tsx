@@ -477,7 +477,7 @@ if (data.color && typeof data.color === "object") {
   
     return hasErrors || loading || isLoading ||isUploading;
   };
-  
+  const [activeTab, setActiveTab] = useState("basic");
 
   return (
     <>
@@ -489,583 +489,476 @@ if (data.color && typeof data.color === "object") {
       <div className="bg-gray-100 flex items-center justify-center p-4">
         <div className="relative bg-white rounded-lg shadow-xl w-full md:w-[95%] h-[85vh] mt-2 flex flex-col p-6 overflow-y-auto scrollbar-none">
           <h2 className="text-2xl font-semibold mb-4">Edit your profile</h2>
-          <div className="border-b pb-4 mb-4">
-            <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
-            <div className="hidden md:grid  md:grid-cols-3 gap-6">
-              {/* First Grid: Company Name and Logo */}
-              <div className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleInputChange}
-                    placeholder="Enter Company Name"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex items-center gap-4 border rounded-lg p-4">
-                {logo && !isUploading ? (
-  <img
-    src={logo}
-    alt="Organization Logo"
-    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
-  />
-) : formData.logo ? (
-  <img
-    src={formData.logo}
-    alt="Organization Logo"
-    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
-  />
-) : (
-  <div className="w-24 h-24 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
-    {formData.companyName?.charAt(0) || "?"}
-  </div>
-)}
-
-                  <button
-                    className="border text-gray-700 px-3 py-1 rounded hover:bg-blue-600 hover:text-white transition"
-                    onClick={handleButtonClick}
-                  >
-                    Change Logo
-                  </button>
-                  <input
-                    type="file"
-                    id="changeLogoInput"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  {isUploading && <p>Uploading...</p>}
-                </div>
-              </div>
-
-              {/* Second Grid: Tagline and Sector */}
-              <div className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Tagline
-                  </label>
-                  <input
-                    type="text"
-                    name="tagline"
-                    value={formData.tagline}
-                    onChange={handleInputChange}
-                    placeholder="Enter Your Tagline"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Sector
-                  </label>
-                  <select
-                    name="sector"
-                    value={sector}
-                    onChange={handleSectorChange}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="" disabled>
-                      Select sector
-                    </option>
-                    {Object.keys(industrySectorMap).map((sectorKey) => (
-                      <option key={sectorKey} value={sectorKey}>
-                        {sectorKey}
-                      </option>
-                    ))}
-                  </select>
-                  {sector === 'Other' && (
-                    <input
-                      type="text"
-                      placeholder="Enter Your Sector"
-                      value={otherSector}
-                      onChange={(e) => setOtherSector(e.target.value)}
-                      className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  )}
-                </div>
-                   {/* Branding Colors */}
-                   <div>
-                    <div className="flex items-center relative">
-                      
-                      <div
-                        className="relative flex items-center ml-2"
-                       
-                      >
-                       
-                       
-                      </div>
-                    </div>
-              
-                 {/* Branding Colors Display */}
-              <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
-                
-                {/* Rectangular Color Strip */}
-                <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
-                  {isLoading ? (
-                    <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
-                  ) : (
-                    brandingColors?.map((color, index) => (
-                      <div
-                        key={index}
-                        className="h-full flex-1 transition-transform transform hover:scale-105"
-                        style={{ backgroundColor: color }}
-                      />
-                    ))
-                  )}
-                </div>
-              
-                {/* Change Colors Button  */}
-                <button
-                  className={`bg-white lg:h-[3rem] border-[#3667B2] border text-[#3667B2] 
-                  hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-xs lg:font-medium 
-                  rounded-md active:scale-95 transition transform duration-300 ${
-                    isLoading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  onClick={() => !isLoading && setIsModalOpen(true)}
-                  disabled={isLoading}
-                >
-                  Change Branding Colors
-                </button>
-              </div>
-              
-              
-                  </div>
-                   {/* Color Selection Modal */}
-{isModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
-    <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
-      <h2 className="text-xl font-bold text-[#091220] mb-4 text-center">
-        Select Branding Colors
-      </h2>
-
-      <div className="space-y-4">
-        {/* Primary Color */}
-        <div className="grid grid-cols-3 items-center gap-2">
-          <label className="font-semibold text-gray-700">Primary Color:</label>
-          <input
-            type="text"
-            value={primaryColor}
-            onChange={(e) => setPrimaryColor(e.target.value)}
-            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
-          />
-          <div className="relative w-12 h-12">
-            <input
-              type="color"
-              value={primaryColor}
-              onChange={(e) => setPrimaryColor(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div
-              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
-              style={{ backgroundColor: primaryColor }}
-            />
-          </div>
-        </div>
-
-        {/* Secondary Color */}
-        <div className="grid grid-cols-3 items-center gap-2">
-          <label className="font-semibold text-gray-700">Secondary Color:</label>
-          <input
-            type="text"
-            value={secondaryColor}
-            onChange={(e) => setSecondaryColor(e.target.value)}
-            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
-          />
-          <div className="relative w-12 h-12">
-            <input
-              type="color"
-              value={secondaryColor}
-              onChange={(e) => setSecondaryColor(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div
-              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
-              style={{ backgroundColor: secondaryColor }}
-            />
-          </div>
-        </div>
+          <div className="pb-4 mb-4">
+     {/* Tabs Navigation */}
+     <div className="flex border-b mb-4">
+        {[
+          { id: "basic", label: "Basic Information" },
+          { id: "branding", label: "Branding" },
+          { id: "contact", label: "Contact Information" },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors duration-300 ${
+              activeTab === tab.id ? "border-blue-500 text-blue-600" : "border-transparent text-gray-600"
+            }`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
+            {/* Tab Content */}
+            {activeTab === "basic" && (
+         <div className="w-full mx-auto p-4 bg-white">
+         <h3 className="text-xl font-semibold text-center mb-6">Basic Information</h3>
+       
+         <div className="grid md:grid-cols-3 gap-6">
+           {/* Company Name */}
+           <div className="flex flex-col items-start gap-2">
+             <label className="text-gray-700 text-sm font-medium text-left">Company Name</label>
+             <input
+               type="text"
+               name="companyName"
+               value={formData.companyName}
+               onChange={handleInputChange}
+               placeholder="Enter Company Name"
+               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
+             />
+           </div>
+       
+           {/* Tagline */}
+           <div className="flex flex-col items-start gap-2">
+             <label className="text-gray-700 text-sm font-medium text-left">Tagline</label>
+             <input
+               type="text"
+               name="tagline"
+               value={formData.tagline}
+               onChange={handleInputChange}
+               placeholder="Enter Your Tagline"
+               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
+             />
+           </div>
+       
+           {/* Website Link */}
+           <div className="flex flex-col items-start gap-2">
+             <label className="text-gray-700 text-sm font-medium text-left">Website Link</label>
+             <input
+               type="text"
+               name="websiteLink"
+               value={formData.websiteLink}
+               onChange={handlevalidationChange}
+               placeholder="Enter Website Link"
+               className={`w-full border px-4 py-3 rounded-lg focus:ring-2 ${
+                 validationErrors.websiteLink ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+               }`}
+             />
+             {validationErrors.websiteLink && (
+               <p className="text-red-500 text-sm">{validationErrors.websiteLink}</p>
+             )}
+           </div>
+       
+           {/* Sector */}
+           <div className="flex flex-col items-start gap-2">
+             <label className="text-gray-700 text-sm font-medium text-left">Sector</label>
+             <div className="relative w-full">
+               <select
+                 name="sector"
+                 value={sector}
+                 onChange={handleSectorChange}
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+               >
+                 <option value="" disabled>Select sector</option>
+                 {Object.keys(industrySectorMap).map((sectorKey) => (
+                   <option key={sectorKey} value={sectorKey}>{sectorKey}</option>
+                 ))}
+               </select>
+       
+               {/* Custom Dropdown Arrow */}
+               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                 <svg className="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                 </svg>
+               </div>
+             </div>
+       
+             {sector === 'Other' && (
+               <input
+                 type="text"
+                 placeholder="Enter Your Sector"
+                 value={otherSector}
+                 onChange={(e) => setOtherSector(e.target.value)}
+                 className="w-full border mt-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
+               />
+             )}
+           </div>
+       
+           {/* Industry */}
+           <div className="flex flex-col items-start gap-2">
+             <label className="text-gray-700 text-sm font-medium text-left">Industry</label>
+             <div className="relative w-full">
+               <select
+                 name="industry"
+                 value={industry}
+                 onChange={handleIndustryChange}
+                 disabled={!sector || sector === 'Other'}
+                 className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+               >
+                 {sector !== 'Other' && <option value="" disabled>Select industry</option>}
+                 {industryOptions.map((industryOption) => (
+                   <option key={industryOption} value={industryOption}>{industryOption}</option>
+                 ))}
+               </select>
+       
+               {/* Custom Dropdown Arrow */}
+               <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                 <svg className="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                 </svg>
+               </div>
+             </div>
+       
+             {(industry === 'Other' || sector === 'Other') && (
+               <input
+                 type="text"
+                 placeholder="Enter Your Industry"
+                 value={otherIndustry}
+                 onChange={(e) => setOtherIndustry(e.target.value)}
+                 className="w-full border mt-2 border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500"
+               />
+             )}
+           </div>
+         </div>
+       </div>
+       
+        
+                  )}
+                              {activeTab === "branding" && (
+           <div className="hidden  md:flex flex-col gap-3 w-full items-center justify-center">
+         {/* Logo Upload Section */}
+<div className="flex flex-col items-center justify-center gap-4 w-[50%] max-w-sm border rounded-2xl p-6 shadow-md bg-white">
+  {/* Logo Display */}
+  {logo && !isUploading ? (
+    <img
+      src={logo}
+      alt="Organization Logo"
+      className="w-28 h-28 rounded-full shadow-md object-contain aspect-auto"
+    />
+  ) : formData.logo ? (
+    <img
+      src={formData.logo}
+      alt="Organization Logo"
+      className="w-28 h-28 rounded-full shadow-md object-contain aspect-auto"
+    />
+  ) : (
+    <div className="w-28 h-28 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
+      {formData.companyName?.charAt(0) || "?"}
+    </div>
+  )}
 
-      {/* Modal Buttons */}
-      <div className="mt-6 flex justify-end space-x-4">
+  {/* Upload Button */}
+  <button
+    className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-300 shadow-md
+      ${isUploading 
+        ? "bg-gray-400 text-white cursor-not-allowed" 
+        : "bg-[#3667B2] text-white hover:bg-[#274b8a] active:scale-95"}`}
+    onClick={handleButtonClick}
+    disabled={isUploading}
+  >
+    {isUploading ? "Uploading..." : "Change Logo"}
+  </button>
+
+  {/* Hidden File Input */}
+  <input
+    type="file"
+    id="changeLogoInput"
+    accept="image/*"
+    onChange={handleFileChange}
+    className="hidden"
+  />
+</div>
+
+         
+           {/* Branding Colors Section */}
+           <div className="flex flex-col items-center justify-center">
+             {/* Branding Colors Display */}
+             <div className="flex flex-col items-center w-full">
+               <h3 className="text-lg font-semibold text-gray-700 mb-2">Branding Colors</h3>
+         
+               <div className="flex w-full max-w-md h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+                 {isLoading ? (
+                   <p className="text-gray-500 flex items-center justify-center w-full">
+                     Loading colors...
+                   </p>
+                 ) : (
+                   brandingColors?.map((color, index) => (
+                     <div
+                       key={index}
+                       className="h-full flex-1 transition-transform transform hover:scale-105"
+                       style={{ backgroundColor: color }}
+                     />
+                   ))
+                 )}
+               </div>
+         
+               <button
+                 className={`mt-4 px-5 py-2 border border-[#3667B2] text-[#3667B2] 
+                   hover:bg-[#3667B2] hover:text-white font-medium rounded-lg transition 
+                   ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                 onClick={() => !isLoading && setIsModalOpen(true)}
+                 disabled={isLoading}
+               >
+                 Change Branding Colors
+               </button>
+             </div>
+           </div>
+         
+           {/* Branding Color Picker Modal */}
+           {isModalOpen && (
+             <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+               <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md">
+                 <h2 className="text-xl font-bold text-center text-[#091220] mb-4">
+                   Select Branding Colors
+                 </h2>
+         
+                 <div className="space-y-4">
+                   {/* Primary Color */}
+                   <div className="grid grid-cols-3 items-center gap-4">
+                     <label className="font-semibold text-gray-700">Primary Color:</label>
+                     <input
+                       type="text"
+                       value={primaryColor}
+                       onChange={(e) => setPrimaryColor(e.target.value)}
+                       className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+                     />
+                     <div className="relative w-12 h-12">
+                       <input
+                         type="color"
+                         value={primaryColor}
+                         onChange={(e) => setPrimaryColor(e.target.value)}
+                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                       />
+                       <div
+                         className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+                         style={{ backgroundColor: primaryColor }}
+                       />
+                     </div>
+                   </div>
+         
+                   {/* Secondary Color */}
+                   <div className="grid grid-cols-3 items-center gap-4">
+                     <label className="font-semibold text-gray-700">Secondary Color:</label>
+                     <input
+                       type="text"
+                       value={secondaryColor}
+                       onChange={(e) => setSecondaryColor(e.target.value)}
+                       className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+                     />
+                     <div className="relative w-12 h-12">
+                       <input
+                         type="color"
+                         value={secondaryColor}
+                         onChange={(e) => setSecondaryColor(e.target.value)}
+                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                       />
+                       <div
+                         className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+                         style={{ backgroundColor: secondaryColor }}
+                       />
+                     </div>
+                   </div>
+                 </div>
+         
+                 {/* Modal Buttons */}
+                 <div className="mt-6 flex justify-end space-x-4">
+                   <button
+                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                     onClick={() => setIsModalOpen(false)}
+                   >
+                     Cancel
+                   </button>
+                   <button
+                     className="px-4 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition shadow-md"
+                     onClick={() => {
+                       handleSaveColors();
+                       setIsModalOpen(false);
+                     }}
+                   >
+                     Save
+                   </button>
+                 </div>
+               </div>
+             </div>
+           )}
+         </div>
+         
+                  
+
+                )}
+
+                
+{activeTab === "branding" && (
+  <div className="md:hidden grid grid-cols-1 gap-4">
+    {/* Logo Upload Section */}
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 items-center border rounded-lg p-4">
+        {/* Display Logo */}
+        {logo && !isUploading ? (
+          <img
+            src={logo}
+            alt="Organization Logo"
+            className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+          />
+        ) : formData.logo ? (
+          <img
+            src={formData.logo}
+            alt="Organization Logo"
+            className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
+          />
+        ) : (
+          <div className="w-24 h-24 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
+            {formData.companyName?.charAt(0) || "?"}
+          </div>
+        )}
+        
+        {/* Change Logo Button */}
         <button
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-          onClick={() => setIsModalOpen(false)}
+          className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
+          onClick={handleButtonClick}
         >
-          Cancel
+          {isUploading ? 'Uploading...' : 'Change Logo'}
         </button>
+        
+        <input
+          type="file"
+          id="changeLogoInput"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+      </div>
+    </div>
+
+    {/* Branding Colors Section */}
+    <div>
+      <div className="flex items-center relative">
+        <label className="font-semibold text-gray-700">Branding Colors</label>
+      </div>
+  
+      {/* Branding Colors Display */}
+      <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
+        
+        {/* Rectangular Color Strip */}
+        <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+          {isLoading ? (
+            <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
+          ) : (
+            brandingColors?.map((color, index) => (
+              <div
+                key={index}
+                className="h-full flex-1 transition-transform transform hover:scale-105"
+                style={{ backgroundColor: color }}
+              />
+            ))
+          )}
+        </div>
+      
+        {/* Change Colors Button */}
         <button
-          className="px-4 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition-all shadow-md"
-          onClick={() => { handleSaveColors(); setIsModalOpen(false); }}
+          className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
+          hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-base lg:font-medium px-4 py-2
+          rounded-md active:scale-95 transition transform duration-300 ${
+            isLoading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={() => !isLoading && setIsModalOpen(true)}
+          disabled={isLoading}
         >
-          Save
+          Change Branding Colors
         </button>
       </div>
     </div>
-  </div>
-)}
-              </div>
 
-              {/* Third Grid: Website Link and Industry */}
-              <div className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-1">
-                    Website Link
-                  </label>
-                  <input
-                    type="text"
-                    name="websiteLink"
-                    value={formData.websiteLink}
-                    onChange={handlevalidationChange}
-                    placeholder="Enter Website Name"
-                    className={`w-full border ${
-                      validationErrors.websiteLink
-                        ? 'border-red-500'
-                        : 'border-gray-300'
-                    } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
-                      validationErrors.websiteLink
-                        ? 'focus:ring-red-500'
-                        : 'focus:ring-blue-500'
-                    }`}
-                  />
-                  {validationErrors.websiteLink && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {validationErrors.websiteLink}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Industry
-                  </label>
-                  <select
-                    name="industry"
-                    value={industry}
-                    onChange={handleIndustryChange}
-                    disabled={!sector || sector === 'Other'}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {sector !== 'Other' && (
-                      <option value="" disabled>
-                        Select industry
-                      </option>
-                    )}
-                    {sector === 'Other' && (
-                      <option value="" disabled>
-                        Other
-                      </option>
-                    )}
-                    {industryOptions.map((industryOption) => (
-                      <option key={industryOption} value={industryOption}>
-                        {industryOption}
-                      </option>
-                    ))}
-                  </select>
-                  {(industry === 'Other' || sector === 'Other') && (
-                    <input
-                      type="text"
-                      placeholder="Enter Your Industry"
-                      value={otherIndustry}
-                      onChange={(e) => setOtherIndustry(e.target.value)}
-                      className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  )}
-                </div>
-                   
-              </div>
-              
-            </div>
+    {/* Color Selection Modal */}
+    {isModalOpen && (
+      <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+        <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
+          <h2 className="text-xl font-bold text-[#091220] mb-4 text-center">
+            Select Branding Colors
+          </h2>
 
-            <div className=" md:hidden grid grid-cols-1 gap-4">
-              <div className="flex flex-col gap-4">
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleInputChange}
-                    placeholder="Enter Company Name"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2">
-                    Tagline
-                  </label>
-                  <input
-                    type="text"
-                    name="tagline"
-                    value={formData.tagline}
-                    onChange={handleInputChange}
-                    placeholder="Enter Your Tagline"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex items-center gap-4 border rounded-lg p-4">
-                {logo && !isUploading ? (
-  <img
-    src={logo}
-    alt="Organization Logo"
-    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
-  />
-) : formData.logo ? (
-  <img
-    src={formData.logo}
-    alt="Organization Logo"
-    className="w-24 h-24 rounded-full shadow-md object-contain aspect-auto"
-  />
-) : (
-  <div className="w-24 h-24 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
-    {formData.companyName?.charAt(0) || "?"}
-  </div>
-)}
-
-                  <button
-                    className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
-                    onClick={handleButtonClick}
-                  >
-                    {isUploading ? 'Uploading...' : 'Change Logo'}
-                  </button>
-                  <input
-                    type="file"
-                    id="changeLogoInput"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-
-              {/* First: Website Link */}
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-1">
-                  Website Link
-                </label>
+          <div className="space-y-4">
+            {/* Primary Color */}
+            <div className="grid grid-cols-3 items-center gap-2">
+              <label className="font-semibold text-gray-700">Primary Color:</label>
+              <input
+                type="text"
+                value={primaryColor}
+                onChange={(e) => setPrimaryColor(e.target.value)}
+                className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+              />
+              <div className="relative w-12 h-12">
                 <input
-                  type="text"
-                  name="websiteLink"
-                  value={formData.websiteLink}
-                  onChange={handlevalidationChange}
-                  placeholder="Enter Website Name"
-                  className={`w-full border ${
-                    validationErrors.websiteLink
-                      ? 'border-red-500'
-                      : 'border-gray-300'
-                  } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
-                    validationErrors.websiteLink
-                      ? 'focus:ring-red-500'
-                      : 'focus:ring-blue-500'
-                  }`}
+                  type="color"
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                {validationErrors.websiteLink && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {validationErrors.websiteLink}
-                  </p>
-                )}
+                <div
+                  className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+                  style={{ backgroundColor: primaryColor }}
+                />
               </div>
+            </div>
 
-              {/* Second: Sector */}
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Sector
-                </label>
-                <select
-                  name="sector"
-                  value={sector}
-                  onChange={handleSectorChange}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="" disabled>
-                    Select sector
-                  </option>
-                  {Object.keys(industrySectorMap).map((sectorKey) => (
-                    <option key={sectorKey} value={sectorKey}>
-                      {sectorKey}
-                    </option>
-                  ))}
-                </select>
-                {sector === 'Other' && (
-                  <input
-                    type="text"
-                    placeholder="Enter Your Sector"
-                    value={otherSector}
-                    onChange={(e) => setOtherSector(e.target.value)}
-                    className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                )}
+            {/* Secondary Color */}
+            <div className="grid grid-cols-3 items-center gap-2">
+              <label className="font-semibold text-gray-700">Secondary Color:</label>
+              <input
+                type="text"
+                value={secondaryColor}
+                onChange={(e) => setSecondaryColor(e.target.value)}
+                className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
+              />
+              <div className="relative w-12 h-12">
+                <input
+                  type="color"
+                  value={secondaryColor}
+                  onChange={(e) => setSecondaryColor(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div
+                  className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
+                  style={{ backgroundColor: secondaryColor }}
+                />
               </div>
-
-              {/* Third: Industry */}
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Industry
-                </label>
-                <select
-                  name="industry"
-                  value={industry}
-                  onChange={handleIndustryChange}
-                  disabled={!sector || sector === 'Other'}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {sector !== 'Other' && (
-                    <option value="" disabled>
-                      Select industry
-                    </option>
-                  )}
-                  {sector === 'Other' && (
-                    <option value="" disabled>
-                      Other
-                    </option>
-                  )}
-                  {industryOptions.map((industryOption) => (
-                    <option key={industryOption} value={industryOption}>
-                      {industryOption}
-                    </option>
-                  ))}
-                </select>
-                {(industry === 'Other' || sector === 'Other') && (
-                  <input
-                    type="text"
-                    placeholder="Enter Your Industry"
-                    value={otherIndustry}
-                    onChange={(e) => setOtherIndustry(e.target.value)}
-                    className="w-full border mt-2 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                )}
-              </div>
-
-                  {/* Branding Colors */}
-                  <div>
-                    <div className="flex items-center relative">
-                      <label className="font-semibold text-gray-700">Branding Colors</label>
-                      <div
-                        className="relative flex items-center ml-2"
-                       
-                      >
-                       
-                       
-                      </div>
-                    </div>
-              
-                 {/* Branding Colors Display */}
-              <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
-                
-                {/* Rectangular Color Strip */}
-                <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
-                  {isLoading ? (
-                    <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
-                  ) : (
-                    brandingColors?.map((color, index) => (
-                      <div
-                        key={index}
-                        className="h-full flex-1 transition-transform transform hover:scale-105"
-                        style={{ backgroundColor: color }}
-                      />
-                    ))
-                  )}
-                </div>
-              
-                {/* Change Colors Button */}
-                <button
-                  className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
-                  hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-base lg:font-medium px-4 py-2
-                  rounded-md active:scale-95 transition transform duration-300 ${
-                    isLoading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  onClick={() => !isLoading && setIsModalOpen(true)}
-                  disabled={isLoading}
-                >
-                  Change Branding Colors
-                </button>
-              </div>
-              
-              
-                  </div>
-                   {/* Color Selection Modal */}
-{isModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
-    <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
-      <h2 className="text-xl font-bold text-[#091220] mb-4 text-center">
-        Select Branding Colors
-      </h2>
-
-      <div className="space-y-4">
-        {/* Primary Color */}
-        <div className="grid grid-cols-3 items-center gap-2">
-          <label className="font-semibold text-gray-700">Primary Color:</label>
-          <input
-            type="text"
-            value={primaryColor}
-            onChange={(e) => setPrimaryColor(e.target.value)}
-            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
-          />
-          <div className="relative w-12 h-12">
-            <input
-              type="color"
-              value={primaryColor}
-              onChange={(e) => setPrimaryColor(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div
-              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
-              style={{ backgroundColor: primaryColor }}
-            />
-          </div>
-        </div>
-
-        {/* Secondary Color */}
-        <div className="grid grid-cols-3 items-center gap-2">
-          <label className="font-semibold text-gray-700">Secondary Color:</label>
-          <input
-            type="text"
-            value={secondaryColor}
-            onChange={(e) => setSecondaryColor(e.target.value)}
-            className="w-24 p-2 border border-gray-300 rounded-lg text-center shadow-sm focus:ring-2 focus:ring-[#3667B2] outline-none"
-          />
-          <div className="relative w-12 h-12">
-            <input
-              type="color"
-              value={secondaryColor}
-              onChange={(e) => setSecondaryColor(e.target.value)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-            <div
-              className="w-12 h-12 rounded-full border border-gray-300 shadow-md cursor-pointer transition-transform hover:scale-110"
-              style={{ backgroundColor: secondaryColor }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Modal Buttons */}
-      <div className="mt-6 flex justify-end space-x-4">
-        <button
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
-          onClick={() => setIsModalOpen(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="px-4 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition-all shadow-md"
-          onClick={() => { handleSaveColors(); setIsModalOpen(false); }}
-        >
-          Save
-        </button>
-      </div>
-    </div>
-  </div>
-)}
             </div>
           </div>
+
+          {/* Modal Buttons */}
+          <div className="mt-6 flex justify-end space-x-4">
+            <button
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-4 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition-all shadow-md"
+              onClick={() => { handleSaveColors(); setIsModalOpen(false); }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+          </div>
+          
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
+          {activeTab === "contact" && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-1">
@@ -1153,6 +1046,7 @@ if (data.color && typeof data.color === "object") {
                 )}
               </div>
             </div>
+          )}
           </div>
           <div className="flex flex-col lg:flex-row justify-end mt-4 lg:gap-x-2 p-4 border-t">
             <button

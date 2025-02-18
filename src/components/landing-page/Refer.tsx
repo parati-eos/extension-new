@@ -42,46 +42,47 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/referral/generate-referral`,
         { orgId, userId },
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
+        { headers: { Authorization: `Bearer ${authToken}` } }
       );
   
       const link = response.data.referralLink;
+      setReferralLink(link); // Store the referral link in state
   
-      if (link) {
-        setReferralLink(link); // Set state first
-      
+      // Step 2: Get user details from session storage
+      const userEmail = sessionStorage.getItem("userEmail");
+      const referrerName = sessionStorage.getItem("referrerName");
   
-        // Step 2: Get user details from session storage
-        const userEmail = sessionStorage.getItem("userEmail");
-        const referrerName = sessionStorage.getItem("referrerName"); // Assuming referrer name is stored in session
-  
-        if (!userEmail || !referrerName) {
-          console.error("User email or referrer name is missing in session storage.");
-          return;
-        }
-  
-        // Step 3: Send Referral Email
-        await axios.post(
-          `http://34.239.191.112:5000/api/emails/queue-referral-email`,
-          {
-            emails: [
-              {
-                userName: userEmail,
-                recipient: referralEmail,
-                signupLink: link,
-                referrerName: referrerName,
-              },
-            ],
-          },
-      
-        );
-  
-       toast.success("Referral email sent successfully!");
+      if (!userEmail || !referrerName) {
+        console.error("User email or referrer name is missing in session storage.");
+        return;
       }
+  
+      // Step 3: Format multiple email recipients
+      const emailList = referralEmail.split(",").map(email => email.trim()).filter(email => email);
+  
+      if (emailList.length === 0) {
+        toast.error("Please enter a valid email.");
+        return;
+      }
+  
+      // Step 4: Send Referral Emails
+      await axios.post(
+        `http://34.239.191.112:5000/api/emails/queue-referral-email`,
+        {
+          emails: emailList.map(email => ({
+            userName: userEmail,
+            recipient: email,
+            signupLink: link,
+            referrerName: referrerName,
+          })),
+        }
+      );
+
+      toast.success("Referral email(s) sent successfully!");
+      setReferralEmail(""); // Clear the input field after sending
     } catch (error) {
       console.error("Error handling referral process:", error);
+      toast.error("Failed to send referral emails.");
     }
   };
   

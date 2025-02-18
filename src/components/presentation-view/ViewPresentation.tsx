@@ -539,8 +539,11 @@ export default function ViewPresentation() {
     })
   }
 
+  const [isQuickGenerating, setIsQuickGenerating] = useState(false);
+
   // Quick Generate Slide
   const handleQuickGenerate = async () => {
+    setIsQuickGenerating(true); // Start Quick Generate
     toast.info(
       `Request sent to a generate new version for ${currentOutline.replace(
         /^\d+\.\s*/,
@@ -626,23 +629,42 @@ export default function ViewPresentation() {
         { position: 'top-right', autoClose: 3000 }
       );
   
-      // ✅ Ensure the loader stops after success
-      setSlideStates((prev) => ({
-        ...prev,
-        [currentOutlineID]: {
-          ...prev[currentOutlineID],
-          isLoading: false,
-          lastUpdated: Date.now(),
-        },
-      }));
+      // ✅ Poll the backend to check when the slide is available
+      const checkSlideGenerated = async () => {
+        try {
+          const slideResponse = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/check-status/${currentOutlineID}`,
+            {
+              headers: { Authorization: `Bearer ${authToken}` },
+            }
+          );
   
-      setIsNewSlideLoading((prev) => ({
-        ...prev,
-        [currentOutlineID]: false,
-      }));
+          if (slideResponse.data?.status === 'completed') {
+            setSlideStates((prev) => ({
+              ...prev,
+              [currentOutlineID]: {
+                ...prev[currentOutlineID],
+                isLoading: false,
+                lastUpdated: Date.now(),
+              },
+            }));
+  
+            setIsNewSlideLoading((prev) => ({
+              ...prev,
+              [currentOutlineID]: false,
+            }));
+            setIsQuickGenerating(false);
+          } else {
+            setTimeout(checkSlideGenerated, 3000); // Retry every 3 seconds
+          }
+        } catch (err) {
+          console.error('Error checking slide generation status:', err);
+        }
+      };
+  
+      checkSlideGenerated();
     } catch (error) {
       console.error('Error generating slide:', error);
-  
       toast.error('Error while generating slide', { position: 'top-right', autoClose: 3000 });
   
       // ❌ Stop loader on error
@@ -660,7 +682,10 @@ export default function ViewPresentation() {
         [currentOutlineID]: false,
       }))
     }
-  }
+      setIsQuickGenerating(false); // End Quick Generate
+    
+  };
+  
 
   // MEDIUM LARGE SCREENS: Sidebar Outline Select
   const handleOutlineSelect = (outlineid: string) => {
@@ -1742,6 +1767,7 @@ export default function ViewPresentation() {
           <div className="flex items-center justify-between ml-12">
             <DesktopButtonSection
               userPlan={userPlan}
+              isQuickGenerating={isQuickGenerating} // ✅ Passing the prop
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutlineID)}
@@ -1757,6 +1783,7 @@ export default function ViewPresentation() {
             />
 
             {/* MEDIUM LARGE SCREEN: PAGINATION BUTTONS */}
+            {!isQuickGenerating && (
             <div className="flex items-center gap-2 mr-14">
               <button
                 id="arrows"
@@ -1793,6 +1820,7 @@ export default function ViewPresentation() {
                 <FaArrowRight className="h-4 w-4 text-[#5D5F61]" />
               </button>
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -1869,6 +1897,7 @@ export default function ViewPresentation() {
         <div className={`relative flex items-center justify-between w-full`}>
           {displayModes[currentOutlineID] === 'slides' ? (
             <MobileButtonSection
+            isQuickGenerating={isQuickGenerating} // ✅ Passing the prop
               onDelete={handleDelete}
               onFinalize={handleFinalize}
               onNewVersion={() => handlePlusClick(currentOutlineID)}
@@ -1892,6 +1921,7 @@ export default function ViewPresentation() {
           )}
 
           {/* MOBILE: PAGINATION BUTTONS */}
+          {!isQuickGenerating && (
           <div className="flex items-center gap-2">
             <button
               id="arrow-mobile"
@@ -1926,6 +1956,7 @@ export default function ViewPresentation() {
               <FaArrowRight className="h-4 w-4 text-[#091220]" />
             </button>
           </div>
+          )}
         </div>
       </div>
       <GuidedTour />
