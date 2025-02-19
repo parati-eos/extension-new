@@ -147,13 +147,15 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
     fetchIpInfo();
   }, []);
   const copyToClipboardFallback = (text: string) => {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.select();
+    const textField = document.createElement("input"); // Use input instead of textarea
+    textField.value = text;
+    document.body.appendChild(textField);
+    textField.select();
+    textField.setSelectionRange(0, textField.value.length); // Ensure selection works properly
     document.execCommand("copy");
-    document.body.removeChild(textArea);
+    document.body.removeChild(textField);
   };
+  
   
   const handleReferralClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault(); // Prevents unintended form submission or reload
@@ -173,14 +175,15 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       );
   
       const link = response.data.referralLink;
-      
-      if (link) {
-        setReferralLink(link); // Set state first
   
+      if (link) {
+        setReferralLink(link); // Update state first
+  
+        // Clipboard API (modern browsers)
         if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(link);
         } else {
-          copyToClipboardFallback(link);
+          copyToClipboardFallback(link); // Fallback for mobile
         }
   
         setCopySuccess(true);

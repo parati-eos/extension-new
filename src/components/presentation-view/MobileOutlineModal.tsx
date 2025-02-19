@@ -273,12 +273,18 @@ export default function MobileOutlineModal({
             />
             {/* Action Buttons */}
             {!isAddingSlide && (
-              <button
-                onClick={handleAddSlide}
-                className="w-full bg-[#3667B2] text-white p-4 rounded-lg mt-4"
-              >
-                Add Slide
-              </button>
+             <button
+             onClick={handleAddSlide}
+             className={`w-full p-4 rounded-lg mt-4 ${
+               newSlideTitle && newSlidePosition
+                 ? "bg-[#3667B2] text-white"
+                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
+             }`}
+             disabled={!newSlideTitle || !newSlidePosition}
+           >
+             Add Slide
+           </button>
+           
             )}
             {isAddingSlide && (
               <div className="w-full h-full flex items-center justify-center mt-4">
