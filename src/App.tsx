@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import OnboardingPage from './pages/OnboardingPage.tsx'
@@ -18,166 +18,88 @@ import BlogPage from './pages/BlogPage.tsx'
 import { SocketProvider } from './components/payment/SubscriptionSocket.tsx'
 import ContactUsPage from './pages/ContactUsPage.tsx'
 import ReferPage from './pages/ReferPage.tsx'
+import ReactGA from 'react-ga';
+// Initialize Google Analytics
+ReactGA.initialize('G-YHL4Z27NY0');
+
+const TrackPageView = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.pageview(location.pathname + location.search);
+  }, [location]);
+
+  return null; // No UI component, just tracking
+};
+
 const App: React.FC = () => {
   useEffect(() => {
-    const currentUrl = window.location.href
+    const currentUrl = window.location.href;
 
     // Normalize the URL
     const normalizedUrl = currentUrl.endsWith('/')
       ? currentUrl.slice(0, -1)
-      : currentUrl
+      : currentUrl;
 
     // Parse the URL for UTM parameters
-    const urlParams = new URLSearchParams(window.location.search)
+    const urlParams = new URLSearchParams(window.location.search);
 
     // Construct the full URL including UTM parameters
-    const fullUrlWithUtm = urlParams.toString()
-      ? `${normalizedUrl}`
-      : normalizedUrl
+    const fullUrlWithUtm = urlParams.toString() ? normalizedUrl : normalizedUrl;
 
-    // Debug: Check if UTM parameters are present
-    console.log('URL Parameters:', urlParams.toString())
+    console.log('URL Parameters:', urlParams.toString());
 
-    // Check if 'sign_up_link' is already in localStorage
-    const storedUrl = localStorage.getItem('sign_up_link')
+    const storedUrl = localStorage.getItem('sign_up_link');
 
-    // Always update the stored URL if UTM parameters are present or if it's the first time
-    if (!storedUrl || (storedUrl && storedUrl !== fullUrlWithUtm)) {
-      localStorage.setItem('sign_up_link', fullUrlWithUtm)
-      console.log('URL with UTM parameters stored:', fullUrlWithUtm)
-    } else {
-      console.log('URL already stored:', storedUrl)
+    if (!storedUrl || storedUrl !== fullUrlWithUtm) {
+      localStorage.setItem('sign_up_link', fullUrlWithUtm);
+      console.log('URL with UTM parameters stored:', fullUrlWithUtm);
     }
 
-   
+    // Store referral details in sessionStorage
+    const referralCode = urlParams.get('referralCode');
+    const referredByOrgId = urlParams.get('orgId');
+    const referredByUserId = urlParams.get('userId');
 
-    // Extract referral details from URL
-    const referralCode = urlParams.get('referralCode')
-    const referredByOrgId = urlParams.get('orgId')
-    const referredByUserId = urlParams.get('userId')
+    if (referredByOrgId) sessionStorage.setItem('referredByOrgId', referredByOrgId);
+    if (referredByUserId) sessionStorage.setItem('referredByUserId', referredByUserId);
+    if (referralCode) sessionStorage.setItem('referralCode', referralCode);
 
-    // Store in sessionStorage if they exist
-    if (referredByOrgId) {
-      sessionStorage.setItem('referredByOrgId', referredByOrgId)
-    }
-    if (referredByUserId) {
-      sessionStorage.setItem('referredByUserId', referredByUserId)
-    }
-    if (referralCode) {
-      sessionStorage.setItem('referralCode', referralCode)
-    }
+    console.log('Session Storage Updated:', { referredByOrgId, referredByUserId, referralCode });
 
-    console.log('Session Storage Updated:', {
-      referredByOrgId,
-      referredByUserId,
-      referralCode
-    })
-
-    const INACTIVITY_THRESHOLD = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
-    const CURRENT_USER_EMAIL = sessionStorage.getItem('userEmail') // Replace with actual logic to get logged-in user's email
-    // Store the current timestamp of user activity in localStorage with the email as key
-    const storeActivityTimestamp = () => {
-      localStorage.setItem(
-        `lastActivity_${CURRENT_USER_EMAIL}`,
-        Date.now().toString()
-      )
-    }
-    // Check if 3 hours of inactivity have passed
-    const checkInactivity = () => {
-      const lastActivity = localStorage.getItem(
-        `lastActivity_${CURRENT_USER_EMAIL}`
-      )
-      const currentPath = window.location.pathname
-      // Define paths for exclusion
-      const exactExcludedPaths = ['/'] // Paths that require an exact match
-      const prefixExcludedPaths = ['/share', '/presentation-share', '/auth'] // Paths that start with these prefixes
-
-      // Check if current path matches any excluded paths
-      const isExactExcludedPath = exactExcludedPaths.includes(currentPath)
-      const isPrefixExcludedPath = prefixExcludedPaths.some((path) =>
-        currentPath.startsWith(path)
-      )
-
-      // Skip inactivity logic if the path is excluded
-      if (
-        isExactExcludedPath ||
-        isPrefixExcludedPath ||
-        !lastActivity ||
-        Date.now() - parseInt(lastActivity, 10) <= INACTIVITY_THRESHOLD
-      ) {
-        return
-      }
-      // Inactivity detected, show alert and redirect
-      alert('You have been logged out due to inactivity.')
-      localStorage.removeItem(`lastActivity_${CURRENT_USER_EMAIL}`)
-      window.location.href = '/' // Redirect to login page
-    }
-    // Add event listeners for user activity
-    const activityEvents = ['click', 'mousemove', 'keypress', 'scroll']
-    activityEvents.forEach((event) => {
-      window.addEventListener(event, storeActivityTimestamp)
-    })
-    // Set the initial timestamp when the app loads
-    storeActivityTimestamp()
-
-    // Check inactivity every minute (or adjust interval as needed)
-    const inactivityInterval = setInterval(checkInactivity, 60 * 1000)
-
-    // Listen for storage events to synchronize activity between tabs for the same email
-    const handleStorageEvent = (event: StorageEvent) => {
-      if (
-        event.key === `lastActivity_${CURRENT_USER_EMAIL}` &&
-        event.newValue
-      ) {
-        checkInactivity() // Recheck inactivity when another tab updates the timestamp
-      }
-    }
-
-    window.addEventListener('storage', handleStorageEvent)
-
-    // Cleanup event listeners and intervals on component unmount
-    return () => {
-      activityEvents.forEach((event) => {
-        window.removeEventListener(event, storeActivityTimestamp)
-      })
-      clearInterval(inactivityInterval)
-      window.removeEventListener('storage', handleStorageEvent)
-    }
-  }, [])
+  }, []);
 
   return (
-    <>
-      <SocketProvider>
-        <Router>
+    <SocketProvider>
+      <Router>
+        <TrackPageView />
         <Routes>
-  {/* Public Routes */}
-  <Route path="/" element={<LandingPage />} />
-  <Route path="/auth" element={<AuthPage />} />
-  <Route path="/pricing" element={<PricingPage />} />
-  <Route path="/blog" element={<BlogPage />} />
-  <Route path="/contact-us" element={<ContactUsPage />} />
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/contact-us" element={<ContactUsPage />} />
 
-  {/* Protected Routes */}
-  <Route element={<ProtectedRoutes />}>
-    <Route path="/onboarding" element={<OnboardingPage />} />
-    <Route path="/organization-profile" element={<ViewOrganizationProfilePage />} />
-    <Route path="/edit-organization-profile" element={<EditOrganizationProfilePage />} />
-    <Route path="/new-presentation" element={<PresentationTypePage />} />
-    <Route path="/presentation-view" element={<PresentationViewPage />} />
-    <Route path="/history" element={<HistoryPage />} />
-    <Route path="/refer" element={<ReferPage />} />
-  </Route>
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoutes />}>
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="/organization-profile" element={<ViewOrganizationProfilePage />} />
+            <Route path="/edit-organization-profile" element={<EditOrganizationProfilePage />} />
+            <Route path="/new-presentation" element={<PresentationTypePage />} />
+            <Route path="/presentation-view" element={<PresentationViewPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/refer" element={<ReferPage />} />
+          </Route>
 
-  {/* Sharing Routes */}
-  <Route path="/presentation-share" element={<PresentationShare />} />
-  <Route path="/share" element={<PitchDeckShare />} />
-</Routes>
+          {/* Sharing Routes */}
+          <Route path="/presentation-share" element={<PresentationShare />} />
+          <Route path="/share" element={<PitchDeckShare />} />
+        </Routes>
+      </Router>
+      <ToastContainer />
+    </SocketProvider>
+  );
+};
 
-        </Router>
-        <ToastContainer />
-      </SocketProvider>
-    </>
-  )
-}
-
-export default App
+export default App;
