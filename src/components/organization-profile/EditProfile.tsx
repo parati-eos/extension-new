@@ -7,6 +7,21 @@ import { industrySectorMap } from '../../utils/industrySector'
 import { toast } from 'react-toastify'
 
 type SectorType = keyof typeof industrySectorMap
+type Color = {
+  P100: string;
+  P75_S25: string;
+  P50_S50: string;
+  P25_S75: string;
+  S100: string;
+  F_P100: string;
+  F_P75_S25: string;
+  F_P50_S50: string;
+  F_P25_S75: string;
+  F_S100: string;
+  SCL: string;
+  SCD: string;
+};
+
 
 const EditProfile: React.FC = () => {
   const [formData, setFormData] = useState<OrganizationData>({
@@ -40,12 +55,18 @@ const EditProfile: React.FC = () => {
   })
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
+  const [colorData, setColorData] = useState<Record<string, string>>({}); // Stores full color object
   const [sector, setSector] = useState(formData.sector)
   const [industry, setIndustry] = useState(formData.industry)
+  const [description, setDescription] = useState("");
+  const [productsAndServices, setProductsAndServices] = useState("");
+  const countriesList = ["United States", "Canada", "India", "United Kingdom", "Germany"];
+  const [country, setCountry] = useState("");
   const [otherSector, setOtherSector] = useState('')
   const [otherIndustry, setOtherIndustry] = useState('')
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [errors, setErrors] = useState<string[]>([]);
   const navigate = useNavigate()
   const orgId = sessionStorage.getItem('orgId')
   const userId = sessionStorage.getItem('userEmail')
@@ -85,33 +106,93 @@ const EditProfile: React.FC = () => {
     }));
   }, [primaryColor, secondaryColor]);
   
-  
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      setIsUploading(true) // Indicate uploading
-
-      try {
-        const uploadedFile = {
-          name: file.name,
-          type: file.type,
-          body: file,
-        }
-
-        // Upload file to S3 and get the URL
-        const url = await uploadFileToS3(uploadedFile)
-        setLogo(url)
-      } catch (error) {
-        console.error('Error uploading logo:', error)
-      } finally {
-        setIsUploading(false)
+    if (!e.target.files || e.target.files.length === 0) return;
+  
+    const file = e.target.files[0];
+    setIsUploading(true);
+  
+    try {
+      const uploadedFile = {
+        name: file.name,
+        type: file.type,
+        body: file,
+      };
+  
+      // Upload file to S3 and get the logo URL
+      const url = await uploadFileToS3(uploadedFile);
+      
+      if (!url) {
+        throw new Error("File upload failed, URL not returned");
       }
+  
+      setLogo(url); // Set logo state
+  
+      // Automatically fetch colors based on the uploaded logo
+      const response = await fetchColors(url);
+      
+      if (response && response.colorData) {
+        const colors = response.colorData;
+  
+        // Convert color object values into an array
+        const colorArray: string[] = [
+          colors.P100,
+          colors.P75_S25,
+          colors.P50_S50,
+          colors.P25_S75,
+          colors.S100,
+         
+        ];
+  
+        // Automatically update branding colors
+        await setBrandingColors([...colorArray]);
+      setColorData(colors); // Update colorData state
+      setPrimaryColor(colors.P100);
+      setSecondaryColor(colors.S100);
+      }
+    } catch (error) {
+      console.error("Error uploading logo or fetching colors:", error);
+      setError("Failed to upload logo and fetch colors");
+    } finally {
+      setIsUploading(false);
     }
-  }
+  };
+  
+  
+  const handleButtonClick = async () => {
+    document.getElementById("changeLogoInput")?.click();
+  
+    try {
+      if (logo) {
+        await fetchColors(logo); // Call fetchColors API on button click
+      }
+    } catch (error) {
+      console.error("Error fetching colors:", error);
+      setError("Failed to fetch branding colors");
+    }
+  };
+  
   const [error, setError] = useState('')
-  const handleButtonClick = () => {
-    document.getElementById('changeLogoInput')?.click()
-  }
+  const fetchColors = async (logoUrl: string) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/fetchColors`,
+        { logo: logoUrl },
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+  
+      if (response.status === 200) {
+        return response.data; // Return color data
+      }
+    
+    } catch (error) {
+      console.error("Error fetching colors:", error);
+      setError("Failed to fetch colors");
+    }
+    return null;
+  };
+  
+  
   // Independent validation functions for each field
   const validateContactPhone = (value: string) => {
     if (value.trim() === '') return undefined // Skip validation if input is empty
@@ -153,32 +234,83 @@ const EditProfile: React.FC = () => {
     }
     return undefined
   }
-  const handleSaveColors = async () => {
+  const [teamMembers, setTeamMembers] = useState([
+    { name: "", designation: "", expertise: "", linkedin: "" },
+  ]);
+
+  const handleAddMember = () => {
+    setTeamMembers([...teamMembers, { name: "", designation: "", expertise: "", linkedin: "" }]);
+  };
+
+  const handleRemoveMember = (index: number) => {
+    setTeamMembers(teamMembers.filter((_, i) => i !== index));
+  };
+
+  const handleChange = (index: number, field: keyof (typeof teamMembers)[0], value: string) => {
+    const updatedMembers = [...teamMembers];
+    updatedMembers[index][field] = value;
+    setTeamMembers(updatedMembers);
+
+    // Validate LinkedIn URL when updating
+    if (field === "linkedin") {
+      const updatedErrors = [...errors];
+      if (value && !linkedinRegex.test(value)) {
+        updatedErrors[index] = "Invalid LinkedIn URL";
+      } else {
+        updatedErrors[index] = "";
+      }
+      setErrors(updatedErrors);
+    }
+  };
+  
+  const handleSaveColors = async (logoUrl?: string) => {
     setIsLoading(true); // Show loading state
   
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile//organization/updateColors/${orgId}`,
-        { primaryColor, secondaryColor },
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
+      let colors;
   
-      if (response.status === 200) {
-        const colors = response.data.colors ; // Extract color object
+      // If a logo URL is provided, fetch colors based on the logo
+      if (logoUrl) {
+        const logoResponse = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/fetchColors`,
+          { logo: logoUrl },
+          {
+            headers: { Authorization: `Bearer ${authToken}` },
+          }
+        );
   
-        // Convert object values into an array
+        if (logoResponse.status === 200) {
+          colors = logoResponse.data.colorData; // Extract colorData from logo response
+        }
+      } else {
+        // Otherwise, update colors normally with primary and secondary colors
+        const response = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/updateColors/${orgId}`,
+          { primaryColor, secondaryColor },
+          { headers: { Authorization: `Bearer ${authToken}` } }
+        );
+  
+        if (response.status === 200) {
+          colors = response.data.colors; // Extract colors from normal update
+        }
+      }
+  
+      // Convert color object values into an array if colors exist
+      if (colors) {
         const colorArray: string[] = [
           colors.P100,
           colors.P75_S25,
           colors.P50_S50,
           colors.P25_S75,
           colors.S100,
-            
-         
-         
+        
         ];
   
-       await setBrandingColors([...colorArray]); // Ensure React detects state change
+        await setBrandingColors([...colorArray]); // Update state with new colors
+        await setColorData(colors); // Update colorData state
+        setPrimaryColor(colors.P100);
+        setSecondaryColor(colors.S100);
+        
       }
     } catch (error) {
       console.error("Error updating branding colors:", error);
@@ -217,6 +349,9 @@ const EditProfile: React.FC = () => {
       setOtherIndustry('')
     }
   }
+  const linkedinRegex =
+  /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/;
+
 
   const handleIndustryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
@@ -266,6 +401,7 @@ if (data.color && typeof data.color === "object") {
 
 
   setBrandingColors(colorArray);
+  setColorData(data.color);
   setPrimaryColor(colorMap.P100);
   setSecondaryColor(colorMap.S100);
         }
@@ -293,72 +429,40 @@ if (data.color && typeof data.color === "object") {
       // Compare current values with original values
       if (originalData) {
         if (formData.companyName !== originalData.companyName) {
-          changedFields.companyName = formData.companyName
+          changedFields.companyName = formData.companyName;
         }
         if (formData.tagline !== originalData.tagline) {
-          changedFields.tagline = formData.tagline
+          changedFields.tagline = formData.tagline;
         }
         if (sectorData !== originalData.sector) {
-          changedFields.sector = sectorData
+          changedFields.sector = sectorData;
         }
         if (industryData !== originalData.industry) {
-          changedFields.industry = industryData
+          changedFields.industry = industryData;
         }
         if (formData.websiteLink !== originalData.websiteLink) {
-          changedFields.websiteLink = formData.websiteLink
+          changedFields.websiteLink = formData.websiteLink;
         }
         if (formData.contactPhone !== originalData.contactPhone) {
-          changedFields.contactPhone = formData.contactPhone
+          changedFields.contactPhone = formData.contactPhone;
         }
         if (formData.contactEmail !== originalData.contactEmail) {
-          changedFields.contactEmail = formData.contactEmail
+          changedFields.contactEmail = formData.contactEmail;
         }
         if (formData.linkedinLink !== originalData.linkedinLink) {
-          changedFields.linkedinLink = formData.linkedinLink
+          changedFields.linkedinLink = formData.linkedinLink;
         }
         if (logo && logo !== originalData.logo) {
           changedFields.logo = logo;
         }
-        if (primaryColor !== originalData.color.P100) {
-          changedFields.color = { 
-            ...changedFields.color, 
-            P100: primaryColor,
-            P75_S25: formData.color.P75_S25 || '',
-            P50_S50: formData.color.P50_S50 || '',
-            P25_S75: formData.color.P25_S75 || '',
-            S100: formData.color.S100 || '',
-            F_P100: formData.color.F_P100 || '',
-            F_P75_S25: formData.color.F_P75_S25 || '',
-            F_P50_S50: formData.color.F_P50_S50 || '',
-            F_P25_S75: formData.color.F_P25_S75 || '',
-            F_S100: formData.color.F_S100 || '',
-            SCL: formData.color.SCL || '',
-            SCD: formData.color.SCD || ''
-          };
-        }
-        if (secondaryColor !== originalData.color.S100) {
-          changedFields.color = { 
-            ...changedFields.color, 
-            S100: secondaryColor,
-            P100: changedFields.color?.P100 || '',
-            P75_S25: changedFields.color?.P75_S25 || '',
-            P50_S50: changedFields.color?.P50_S50 || '',
-            P25_S75: changedFields.color?.P25_S75 || '',
-            F_P100: changedFields.color?.F_P100 || '',
-            F_P75_S25: changedFields.color?.F_P75_S25 || '',
-            F_P50_S50: changedFields.color?.F_P50_S50 || '',
-            F_P25_S75: changedFields.color?.F_P25_S75 || '',
-            F_S100: changedFields.color?.F_S100 || '',
-            SCL: changedFields.color?.SCL || '',
-            SCD: changedFields.color?.SCD || ''
-          };
-        }
+      
       }
   
       // Only make the API call if there are actually changed fields
-      if (Object.keys(changedFields).length > 0) {
+      if (Object.keys(changedFields).length > 0 || Object.keys(colorData).length > 0) {
         const updatedData = {
-          ...changedFields,
+          ...changedFields, // Include only changed fields
+          colors: colorData, // Always include full colors data
           orgId: orgId,
           userId: userId,
         };
@@ -366,11 +470,7 @@ if (data.color && typeof data.color === "object") {
         await axios.patch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
           updatedData,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${authToken}` } }
         );
         setLoading(false);
         navigate("/organization-profile");
@@ -475,7 +575,12 @@ if (data.color && typeof data.color === "object") {
   const isButtonDisabled = () => {
     const hasErrors = Object.values(validationErrors).some((error) => error);
   
-    return hasErrors || loading || isLoading ||isUploading;
+    // Check LinkedIn errors for each team member
+    const linkedinErrors = teamMembers.some((member) => {
+      return member.linkedin && !linkedinRegex.test(member.linkedin);
+    });
+  
+    return hasErrors || linkedinErrors || loading || isLoading || isUploading;
   };
   const [activeTab, setActiveTab] = useState("basic");
 
@@ -491,9 +596,10 @@ if (data.color && typeof data.color === "object") {
           <h2 className="text-2xl font-semibold mb-4">Edit your profile</h2>
           <div className="pb-4 mb-4">
      {/* Tabs Navigation */}
-     <div className="flex border-b mb-4">
+     <div className="flex border-b lg:gap-4 mb-4 overflow-x-auto ">
         {[
           { id: "basic", label: "Basic Information" },
+          // { id: "team", label: "Team" }, // Added Team Tab
           { id: "branding", label: "Branding" },
           { id: "contact", label: "Contact Information" },
         ].map((tab) => (
@@ -510,8 +616,8 @@ if (data.color && typeof data.color === "object") {
       </div>
             {/* Tab Content */}
             {activeTab === "basic" && (
-         <div className="w-full mx-auto p-4 bg-white">
-         <h3 className="text-xl font-semibold text-center mb-6">Basic Information</h3>
+         <div className="w-full mx-auto p-4 bg-white gap-6">
+         
        
          <div className="grid md:grid-cols-3 gap-6">
            {/* Company Name */}
@@ -628,46 +734,198 @@ if (data.color && typeof data.color === "object") {
                />
              )}
            </div>
+           {/* Country */}
+<div className="flex flex-col items-start gap-2 relative w-full">
+  <label className="text-gray-700 text-sm font-medium text-left">Country</label>
+  <div className="relative w-full">
+    <select
+      name="country"
+      value={country}
+      onChange={(e) => setCountry(e.target.value)}
+      className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
+    >
+      <option value="" disabled>Select country</option>
+      {countriesList.map((countryOption) => (
+        <option key={countryOption} value={countryOption}>{countryOption}</option>
+      ))}
+    </select>
+
+    {/* Custom Dropdown Arrow (Corrected Position) */}
+   {/* Custom Dropdown Arrow */}
+   <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                 <svg className="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                 </svg>
+               </div>
+  </div>
+</div>
+             {/* Description
+  <div className="md:hidden flex flex-col items-start gap-2">
+    <label className="text-gray-700 text-sm font-medium text-left">Description</label>
+    <textarea
+      placeholder="Enter a brief description"
+      value={description}
+      onChange={(e) => setDescription(e.target.value)}
+      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 resize-none h-24"
+    />
+  </div> */}
+
+  {/* Products and Services
+  <div className="md:hidden flex flex-col items-start gap-2">
+    <label className="text-gray-700 text-sm font-medium text-left">Products and Services</label>
+    <textarea
+      placeholder="List your products and services"
+      value={productsAndServices}
+      onChange={(e) => setProductsAndServices(e.target.value)}
+      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 resize-none h-24"
+    />
+  </div>
+ */}
+
+
+
          </div>
+                {/* Description */}
+                {/* <div className='grid md:grid-cols-1 gap-6 mt-6'> */}
+                {/* <div className="hidden lg:flex flex-col items-start gap-2"> */}
+    {/* <label className="text-gray-700 text-sm font-medium text-left">Company Description</label>
+    <textarea
+      placeholder="Enter a brief description"
+      value={description}
+      onChange={(e) => setDescription(e.target.value)}
+      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 resize-none h-24"
+    />
+  </div> */}
+
+  {/* Products and Services */}
+  {/* <div className="hidden lg:flex flex-col items-start gap-2"> */}
+    {/* <label className="text-gray-700 text-sm font-medium text-left">Products and Services</label> */}
+    {/* <textarea */}
+      {/* placeholder="List your products and services"
+      value={productsAndServices}
+      onChange={(e) => setProductsAndServices(e.target.value)}
+      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 resize-none h-24"
+    /> */}
+      {/* </div>
+     </div> */}
+
        </div>
+       
        
         
                   )}
+                    {/* Team Section */}
+      {activeTab === "team" && (
+    <div className="space-y-4">
+    {teamMembers.map((member, index) => (
+      <div key={index} className="px-4 py-6 border rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6"> {/* Increased gap size to 6 */}
+          {/* First row: Name, Designation, and LinkedIn */}
+          <div className="w-full">
+            <input
+              type="text"
+              placeholder="Name"
+              value={member.name}
+              onChange={(e) => handleChange(index, "name", e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="w-full">
+            <input
+              type="text"
+              placeholder="Designation"
+              value={member.designation}
+              onChange={(e) => handleChange(index, "designation", e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="w-full">
+            <input
+              type="text"
+              placeholder="LinkedIn Profile URL"
+              value={member.linkedin}
+              onChange={(e) => handleChange(index, "linkedin", e.target.value)}
+              className={`w-full p-2 border rounded ${errors[index] ? "border-red-500" : ""}`}
+            />
+               {/* Error Message Below the LinkedIn Input */}
+        {errors[index] && (
+          <p className="text-red-500 text-sm  ">
+            {errors[index] === "Invalid LinkedIn URL"
+              ? "Please enter a valid LinkedIn URL."
+              : errors[index] === "LinkedIn URL is required."
+              ? "LinkedIn URL is required."
+              : ""}
+          </p>
+        )}
+          </div>
+        </div>
+  
+     
+  
+        {/* Second row: Expertise (full width) */}
+        <div className="w-full mt-6">
+          <input
+            type="text"
+            placeholder="Expertise"
+            value={member.expertise}
+            onChange={(e) => handleChange(index, "expertise", e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+  
+        {/* Remove button (if more than one member) */}
+        {teamMembers.length > 1 && (
+          <button
+            onClick={() => handleRemoveMember(index)}
+            className="mt-4 text-red-500 hover:text-red-700"
+          >
+            Remove
+          </button>
+        )}
+      </div>
+    ))}
+  
+    <button
+      onClick={handleAddMember}
+      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition"
+    >
+      + Add More
+    </button>
+  </div>
+  
+   
+   
+    
+      )}
                               {activeTab === "branding" && (
-           <div className="hidden  md:flex flex-row gap-6  w-full items-center justify-center">
+         <div className="hidden md:flex flex-row gap-10 w-full items-start">
+  
          {/* Logo Upload Section */}
-<div className="flex flex-col items-center justify-center gap-4 w-[50%] max-w-sm   bg-white">
-  {/* Logo Display */}
-  {logo && !isUploading ? (
-    <img
-      src={logo}
-      alt="Organization Logo"
-      className="w-28 h-28 rounded-full shadow-md object-contain aspect-auto"
-    />
-  ) : formData.logo ? (
-    <img
-      src={formData.logo}
-      alt="Organization Logo"
-      className="w-28 h-28 rounded-full shadow-md object-contain aspect-auto"
-    />
-  ) : (
-    <div className="w-28 h-28 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
-      {formData.companyName?.charAt(0) || "?"}
-    </div>
-  )}
-
-  {/* Upload Button */}
-  <button
-    className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-300 shadow-md
-      ${isUploading 
-        ? "bg-gray-400 text-white cursor-not-allowed" 
-        : "bg-[#3667B2] text-white hover:bg-[#274b8a] active:scale-95"}`}
-    onClick={handleButtonClick}
-    disabled={isUploading}
-  >
-    {isUploading ? "Uploading..." : "Change Logo"}
-  </button>
-
+         <div className="flex flex-col items-center justify-between max-w-xs w-full bg-white p-4  min-h-[250px]">
+           <h3 className="text-lg font-semibold text-gray-700 mb-2">Logo</h3>
+           
+           {/* Logo Display */}
+           {logo && !isUploading ? (
+             <img src={logo} alt="Organization Logo" className="w-28 h-28 rounded-full shadow-md object-contain" />
+           ) : formData.logo ? (
+             <img src={formData.logo} alt="Organization Logo" className="w-28 h-28 rounded-full shadow-md object-contain" />
+           ) : (
+             <div className="w-28 h-28 rounded-full shadow-md bg-red-400 flex items-center justify-center text-white text-3xl font-bold">
+               {formData.companyName?.charAt(0) || "?"}
+             </div>
+           )}
+       
+           {/* Upload Button */}
+           <button
+             className={`mt-4 px-5 py-2 border border-[#3667B2] text-[#3667B2] 
+               hover:bg-[#3667B2] hover:text-white font-medium rounded-lg transition 
+               ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
+             onClick={handleButtonClick}
+             disabled={isUploading}
+           >
+             {isUploading ? "Uploading..." : "Change Logo"}
+           </button>
+               
   {/* Hidden File Input */}
   <input
     type="file"
@@ -676,43 +934,36 @@ if (data.color && typeof data.color === "object") {
     onChange={handleFileChange}
     className="hidden"
   />
-</div>
-
-         
-           {/* Branding Colors Section */}
-           <div className="flex flex-col items-center justify-center">
-             {/* Branding Colors Display */}
-             <div className="flex flex-col items-center w-full">
-               <h3 className="text-lg font-semibold text-gray-700 mb-2">Branding Colors</h3>
-         
-               <div className="flex w-full max-w-md h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
-                 {isLoading ? (
-                   <p className="text-gray-500 flex items-center justify-center w-full">
-                     Loading colors...
-                   </p>
-                 ) : (
-                   brandingColors?.map((color, index) => (
-                     <div
-                       key={index}
-                       className="h-full flex-1 transition-transform transform hover:scale-105"
-                       style={{ backgroundColor: color }}
-                     />
-                   ))
-                 )}
-               </div>
-         
-               <button
-                 className={`mt-4 px-5 py-2 border border-[#3667B2] text-[#3667B2] 
-                   hover:bg-[#3667B2] hover:text-white font-medium rounded-lg transition 
-                   ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-                 onClick={() => !isLoading && setIsModalOpen(true)}
-                 disabled={isLoading}
-               >
-                 Change Branding Colors
-               </button>
-             </div>
+       </div>
+       
+         {/* Branding Colors Section */}
+         <div className="flex flex-col items-center justify-between max-w-sm w-full bg-white p-4  min-h-[250px]">
+           <h3 className="text-lg font-semibold text-gray-700 mb-2">Branding Colors</h3>
+       
+           {/* Branding Colors Display */}
+           <div className="flex w-full max-w-md h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+             {isLoading ? (
+               <p className="text-gray-500 flex items-center justify-center w-full">
+                 Loading colors...
+               </p>
+             ) : (
+               brandingColors?.map((color, index) => (
+                 <div key={index} className="h-full flex-1 transition-transform transform hover:scale-105" style={{ backgroundColor: color }} />
+               ))
+             )}
            </div>
-         
+       
+           {/* Change Branding Colors Button */}
+           <button
+             className={`mt-4 px-5 py-2 border border-[#3667B2] text-[#3667B2] 
+               hover:bg-[#3667B2] hover:text-white font-medium rounded-lg transition 
+               ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+             onClick={() => !isLoading && setIsModalOpen(true)}
+             disabled={isLoading}
+           >
+             Change Branding Colors
+           </button>
+         </div>
            {/* Branding Color Picker Modal */}
            {isModalOpen && (
              <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
@@ -790,7 +1041,8 @@ if (data.color && typeof data.color === "object") {
                </div>
              </div>
            )}
-         </div>
+       </div>
+       
          
                   
 
@@ -823,7 +1075,8 @@ if (data.color && typeof data.color === "object") {
         
         {/* Change Logo Button */}
         <button
-          className="border text-gray-700 px-2 py-1 rounded hover:bg-blue-600 hover:text-white transition"
+          className=" px-5 py-2 border border-[#3667B2] text-[#3667B2] 
+                   hover:bg-[#3667B2] hover:text-white font-medium rounded-lg transition "
           onClick={handleButtonClick}
         >
           {isUploading ? 'Uploading...' : 'Change Logo'}
