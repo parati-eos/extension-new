@@ -5,20 +5,40 @@ import { useNavigate } from 'react-router-dom';
 const Heading: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [videoSrc, setVideoSrc] = useState('');
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Detect screen size and set the appropriate video source
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setVideoSrc('https://d2zu6flr7wd65l.cloudfront.net/uploads/Copy+of+17th+Feb+New+Zynth+Demo+Mobile+Video.mp4');
+      } else {
+        setVideoSrc('');
+      }
+    };
+
+    handleResize(); // Run on mount
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isModalOpen && videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.error('Video play failed:', error);
+      });
+    }
+  }, [isModalOpen]);
+
   const closeModal = (e: React.MouseEvent) => {
     e.stopPropagation(); // Stop event bubbling
     setIsModalOpen(false);
   };
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Play the video when the modal is opened
-  useEffect(() => {
-    if (isModalOpen && videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.error("Video play failed:", error);
-      });
-    }
-  }, [isModalOpen]);
   const stopPropagation = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent click events on the modal from closing it
   };
@@ -88,7 +108,7 @@ const Heading: React.FC = () => {
         </div>
       </div>
 
-          {/* Modal */}
+      {/* Modal */}
       {isModalOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -99,16 +119,18 @@ const Heading: React.FC = () => {
             onClick={stopPropagation} // Prevent event bubbling to the backdrop
           >
             <button
-         onClick={(e) => closeModal(e)} // Ensure the event is passed properly
+              onClick={(e) => closeModal(e)} // Ensure the event is passed properly
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl font-bold z-50"
             >
               &times;
             </button>
             <video
-          ref={videoRef}
-            controls className="w-full h-full rounded-md object-contain z-10">
+              ref={videoRef}
+              controls
+              className="w-full h-full rounded-md object-contain z-10"
+            >
               <source
-                src="https://d2zu6flr7wd65l.cloudfront.net/uploads/Copy+of+31st+Jan+Zynth+Demo+Web+Video.mp4"
+                src={videoSrc || 'https://d2zu6flr7wd65l.cloudfront.net/uploads/13th+Feb+Zynth+Demo+Web+Video.mp4'}
                 type="video/mp4"
               />
               Your browser does not support the video tag.
@@ -117,7 +139,7 @@ const Heading: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Heading
+export default Heading;
