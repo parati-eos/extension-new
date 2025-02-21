@@ -107,37 +107,37 @@ const Heading: React.FC = () => {
           />
         </div>
       </div>
+{/* Modal */}
+{isModalOpen && (
+  <div
+    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    onClick={() => setIsModalOpen(false)} // Close modal on outside click
+  >
+    <div
+      className="bg-white rounded-lg shadow-lg w-[90%] md:w-[60%] lg:w-[80%] lg:h-[80%] xl:w-[90%] xl:h-[85%] relative flex items-center justify-center"
+      onClick={stopPropagation} // Prevent event bubbling to the backdrop
+    >
+      <button
+        onClick={(e) => closeModal(e)} // Ensure the event is passed properly
+        className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl font-bold z-50"
+      >
+        &times;
+      </button>
+      <video
+        ref={videoRef}
+        controls
+        className="w-full h-full rounded-md object-contain z-10"
+      >
+        <source
+          src={videoSrc || 'https://d2zu6flr7wd65l.cloudfront.net/uploads/13th+Feb+Zynth+Demo+Web+Video.mp4'}
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+)}
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-          onClick={() => setIsModalOpen(false)} // Close modal on outside click
-        >
-          <div
-            className="bg-white rounded-lg shadow-lg w-[90%] md:w-[60%] lg:w-[40%] h-[60%] relative flex items-center justify-center"
-            onClick={stopPropagation} // Prevent event bubbling to the backdrop
-          >
-            <button
-              onClick={(e) => closeModal(e)} // Ensure the event is passed properly
-              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl font-bold z-50"
-            >
-              &times;
-            </button>
-            <video
-              ref={videoRef}
-              controls
-              className="w-full h-full rounded-md object-contain z-10"
-            >
-              <source
-                src={videoSrc || 'https://d2zu6flr7wd65l.cloudfront.net/uploads/13th+Feb+Zynth+Demo+Web+Video.mp4'}
-                type="video/mp4"
-              />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

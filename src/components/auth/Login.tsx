@@ -79,8 +79,7 @@ function Login() {
         pptCount: 0,
         userIPCountry: ipInfoData.country!,
         signupLink: signupLink,
-        signupTime: new Date().toString(),
-        latestLogin: new Date().toString(),
+      
       }
 
       const res = await fetch(
