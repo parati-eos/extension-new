@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const UseCasesMarketing: React.FC = () => {
    const navigate = useNavigate();
   return (
-    <div className="bg-gray-50 text-[#101828] p-2 md:p-12">
+    <div className="bg-gray-50 text-[#101828] px-4 py-8 md:p-12">
       {/* Hero Section */}
       <section className="text-center max-w-4xl mx-auto">
         <h1 className="text-3xl text-[#101828]  font-bold mb-4">
