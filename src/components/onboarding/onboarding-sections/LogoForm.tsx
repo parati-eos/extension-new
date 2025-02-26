@@ -26,7 +26,8 @@ const LogoForm: React.FC<LogoFormProps> = ({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       // Validation logic
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/svg','image/webp',]
+
       const maxSize = 5 * 1024 * 1024 // 5 MB
       const validType = allowedTypes.includes(file.type)
       const validSize = file.size <= maxSize
@@ -50,7 +51,13 @@ const LogoForm: React.FC<LogoFormProps> = ({
 
       try {
         // Upload file to S3 and get the URL
-        const processedFile = await removeBackground(file)
+        let processedFile = file;
+
+        // Skip background removal for SVGs
+        if (file.type !== 'image/svg+xml' && file.type !== 'image/svg') {
+          processedFile = await removeBackground(file);
+        }
+  
         const processedLogo = {
           name: processedFile.name,
           type: processedFile.type,

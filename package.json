@@ -23,6 +23,7 @@
     "firebase": "^11.0.2",
     "framer-motion": "^11.13.1",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.476.0",
     "mime-types": "^2.1.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
