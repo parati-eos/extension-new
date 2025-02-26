@@ -1,10 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import zynthtext from '../../assets/zynth-text.png';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation ,NavLink} from 'react-router-dom';
+import { ChevronDown,X,ChevronUp } from "lucide-react";
 
 const LandingPageNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+ 
+  
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
+  const openDropdown = () => {
+    if (closeTimeout) clearTimeout(closeTimeout); // Cancel any existing close timer
+    setIsDropdownOpen(true);
+  };
+  interface ToggleDropdownEvent extends React.MouseEvent<HTMLButtonElement, MouseEvent> {}
+
+  interface ToggleDropdownEvent extends React.MouseEvent<HTMLButtonElement, MouseEvent> {}
+
+  const toggleDropdown = (event: ToggleDropdownEvent): void => {
+    event.stopPropagation(); // Stop click from triggering outside click
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+
+  const closeDropdown = () => {
+    // Set a 3-second delay before closing the dropdown
+    const timeout = setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 3000);
+
+    setCloseTimeout(timeout);
+  };
+  const handleClickOutside = (event: MouseEvent) => {
+    if (!(event.target as HTMLElement).closest(".use-cases-dropdown")) {
+      setIsDropdownOpen(false);
+      if (closeTimeout) clearTimeout(closeTimeout); // Cancel the delayed close
+    }
+  };
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [isDropdownOpen]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null); // Track active section
   const navigate = useNavigate();
@@ -46,6 +89,7 @@ const LandingPageNavbar: React.FC = () => {
     document.addEventListener('mousemove', handleMouseEnter);
 
     startInactivityTimer();
+    
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -166,49 +210,69 @@ const LandingPageNavbar: React.FC = () => {
 
         {/* Desktop Center Links */}
         <div className="hidden lg:flex space-x-10 items-center">
-          <a
-            href="#how-it-works"
-            className={`${
-              activeSection === 'how-it-works' ? 'text-blue-600' : 'text-[#5D5F61]'
-            } hover:text-blue-600 transition-colors duration-200`}
-            onClick={(e) => handleNavigation(e, 'how-it-works')}
-          >
-            How Zynth Works
-          </a>
-          <a
-            href="#sample-presentation"
-            className={`${
-              activeSection === 'sample-presentation' ? 'text-blue-600' : 'text-[#5D5F61]'
-            } hover:text-blue-600 transition-colors duration-200`}
-            onClick={(e) => handleNavigation(e, 'sample-presentations')}
-          >
-            Sample Presentation
-          </a>
-          <a
-            href="#pricing"
-            className={`${
-              location.pathname === '/pricing' ? 'text-blue-600' : 'text-[#5D5F61]'
-            } hover:text-blue-600 transition-colors duration-200`}
-            onClick={(e) => {
-              e.preventDefault();
-              window.open('/pricing', '_blank');
-            }}
-          >
-            Pricing
-          </a>
-          <a
-            href="#blog"
-            className={`${
-              location.pathname === '/blog' ? 'text-blue-600' : 'text-[#5D5F61]'
-            } hover:text-blue-600 transition-colors duration-200`}
-            onClick={(e) => {
-              e.preventDefault();
-              window.open('/blog', '_blank');
-            }}
-          >
-            Blog
-          </a>
-        </div>
+      <a
+        href="#how-it-works"
+        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+      >
+        How Zynth Works
+      </a>
+      <a
+        href="#sample-presentation"
+        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+      >
+        Sample Presentation
+      </a>
+      
+       {/* Use Cases Dropdown with 3-second delay */}
+       <div className="relative" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
+       <button className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 flex items-center">
+  Use Cases <ChevronDown className="ml-1 w-5 h-5" />
+</button>
+        {isDropdownOpen && (
+          <div className="absolute top-8 left-0 bg-white shadow-lg rounded-lg py-2 w-56 border">
+            {[
+              { name: "Sales", path: "/use-cases-sales" },
+              { name: "Product", path: "/use-cases-product" },
+              { name: "Pitch Decks", path: "/use-cases-pitch" },
+              { name: "Marketing", path: "/use-cases-marketing" },
+              { name: "Employee Engagement", path: "/use-cases-employee" },
+              { name: "Project Proposal", path: "/use-cases-project" },
+              { name: "Board Presentations", path: "/use-cases-board" },
+              { name: "Education", path: "/use-cases-education" },
+            ].map((item, index) => (
+              <NavLink
+                key={index}
+                to={item.path}
+                className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200"
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <a
+        href="#pricing"
+        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+        onClick={(e) => {
+          e.preventDefault();
+          window.open("/pricing", "_blank");
+        }}
+      >
+        Pricing
+      </a>
+      <a
+        href="#blog"
+        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+        onClick={(e) => {
+          e.preventDefault();
+          window.open("/blog", "_blank");
+        }}
+      >
+        Blog
+      </a>
+    </div>
 
         {/* Right Buttons */}
         <div className="hidden lg:flex space-x-10">
@@ -229,11 +293,11 @@ const LandingPageNavbar: React.FC = () => {
 
       {/* Dropdown for Mobile */}
       {isMenuOpen && (
-        <div className="lg:hidden  bg-white shadow-md">
+        <div className="lg:hidden bg-white shadow-md">
           <ul className="flex flex-col items-center space-y-2 p-4">
             <li>
               <a
-                onClick={(e) => handleNavigation(e, 'how-it-works')}
+                onClick={(e) => handleNavigation(e, "how-it-works")}
                 href="#how-it-works"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
@@ -242,18 +306,55 @@ const LandingPageNavbar: React.FC = () => {
             </li>
             <li>
               <a
-                onClick={(e) => handleNavigation(e, 'sample-presentations')}
+                onClick={(e) => handleNavigation(e, "sample-presentations")}
                 href="#sample-presentation"
                 className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
               >
                 Sample Presentation
               </a>
             </li>
+
+            {/* Use Cases Dropdown */}
+            <div className="relative flex justify-center" ref={dropdownRef}>
+      {/* Dropdown Button */}
+      <button
+        onMouseEnter={toggleDropdown}
+        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 flex items-center"
+      >
+        Use Cases {isDropdownOpen ? <ChevronUp className="ml-1 w-5 h-5" /> : <ChevronDown className="ml-1 w-5 h-5" />}
+      </button>
+
+      {/* Centered Dropdown Menu */}
+      {isDropdownOpen && (
+        <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-50 bg-white shadow-lg rounded-lg py-2 w-56 border">
+          {[
+            { name: "Sales", path: "/use-cases-sales" },
+            { name: "Product", path: "/use-cases-product" },
+            { name: "Pitch Decks", path: "/use-cases-pitch" },
+            { name: "Marketing", path: "/use-cases-marketing" },
+            { name: "Employee Engagement", path: "/use-cases-employee" },
+            { name: "Project Proposal", path: "/use-cases-project" },
+            { name: "Board Presentations", path: "/use-cases-board" },
+            { name: "Education", path: "/use-cases-education" },
+          ].map((item, index) => (
+            <NavLink
+              key={index}
+              to={item.path}
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200"
+              onClick={() => setIsDropdownOpen(false)} // Close menu on selection
+            >
+              {item.name}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
+
             <li>
               <a
-                 onClick={() => navigate('/pricing')}
-                 className={`${
-                  location.pathname === '/pricing'  ? 'text-blue-600' : 'text-[#5D5F61]'
+                onClick={() => navigate("/pricing")}
+                className={`${
+                  location.pathname === "/pricing" ? "text-blue-600" : "text-[#5D5F61]"
                 } hover:text-blue-600 transition-colors duration-200`}
               >
                 Pricing
@@ -261,9 +362,9 @@ const LandingPageNavbar: React.FC = () => {
             </li>
             <li>
               <a
-                onClick={() => navigate('/blog')}
+                onClick={() => navigate("/blog")}
                 className={`${
-                  location.pathname === '/blog'  ? 'text-blue-600' : 'text-[#5D5F61]'
+                  location.pathname === "/blog" ? "text-blue-600" : "text-[#5D5F61]"
                 } hover:text-blue-600 transition-colors duration-200`}
               >
                 Blog
@@ -272,8 +373,8 @@ const LandingPageNavbar: React.FC = () => {
             <li>
               <button
                 onClick={() => {
-                  navigate('/auth')
-                  setIsMenuOpen(false)
+                  navigate("/auth");
+                  setIsMenuOpen(false);
                 }}
                 className="text-gray-800 hover:text-blue-600 active:scale-95 active:bg-blue-800 transition-all transform duration-300 block"
               >

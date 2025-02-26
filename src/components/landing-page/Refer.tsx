@@ -256,7 +256,7 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
           </div>
         </div>
         {/* Rewards */}
-        <div className="bg-white   shadow-lg rounded-2xl p-6 w-full md:w-96 relative">
+        <div className="bg-white   shadow-lg rounded-2xl p-6 w-full md:w-96 relative ">
           
           <img src={image1} alt="Shadow Left" className="absolute left-4 top-6 w-20 " />
           <img src={image2} alt="Shadow Right" className="absolute right-4 top-6 w-20 " />
