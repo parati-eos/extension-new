@@ -28,6 +28,14 @@ import { SocketProvider } from './components/payment/SubscriptionSocket.tsx';
 
 // Import Google Analytics
 import ReactGA from 'react-ga';
+import UseCasesSalesPage from './pages/UseCasesSalesPage.tsx';
+import UseCasesProductPage from './pages/UseCasesProductPage.tsx';
+import UseCasesPitchPage from './pages/UseCasesPitchPage.tsx';
+import UseCasesMarketingPage from './pages/UseCasesMarketingPage.tsx';
+import UseCasesEmployeePage from './pages/UseCasesEmloyeePage.tsx';
+import UseCasesProjectPage from './pages/UseCasesProjectPage.tsx';
+import UseCasesBoardPage from './pages/UseCasesBoardPage.tsx';
+import UseCasesEducationPage from './pages/UseCasesEducationPage.tsx';
 declare global {
   interface Window {
     dataLayer: any[];
@@ -112,6 +120,14 @@ const App: React.FC = () => {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/use-cases-sales" element={<UseCasesSalesPage />} />
+          <Route path="/use-cases-product" element={<UseCasesProductPage />} />
+          <Route path="/use-cases-pitch" element={<UseCasesPitchPage />} />
+          <Route path="/use-cases-marketing" element={<UseCasesMarketingPage />} />
+          <Route path="/use-cases-employee" element={<UseCasesEmployeePage />} />
+          <Route path="/use-cases-project" element={<UseCasesProjectPage />} />
+          <Route path="/use-cases-board" element={<UseCasesBoardPage />} />
+          <Route path="/use-cases-education" element={<UseCasesEducationPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoutes />}>
