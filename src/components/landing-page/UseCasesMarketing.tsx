@@ -154,10 +154,10 @@ const UseCasesMarketing: React.FC = () => {
   <div className="hidden md:flex flex-col items-center "
     
     >
-      <div className="w-96 h-80  flex items-center justify-center space-x-4"
+      <div className="w-full h-80  flex items-center justify-center space-x-4 rounded-xl"
       
       >
-        <img src={image1} alt="Image 1" className="w-full h-full object-contain rounded-xl" />
+        <img src={image1} alt="Image 1" className="w-full h-full object-cover rounded-xl" />
         
       </div>
     </div>
@@ -295,7 +295,13 @@ const UseCasesMarketing: React.FC = () => {
       </h2>
       <button 
             onClick={() => navigate("/contact-us")}
-      className="mt-6 bg-[#3667B2] text-white px-12 py-3 rounded-lg font-semibold hover:bg-[#2c56a0] transition">
+      className="lg:hidden mt-6 bg-[#3667B2] text-white px-12 py-3 rounded-lg font-semibold hover:bg-[#2c56a0] transition">
+      Start Crafting Your<br/> Pitch Deck Now
+
+      </button>
+      <button 
+            onClick={() => navigate("/contact-us")}
+      className="hidden lg:block mt-6 bg-[#3667B2] text-white px-12 py-3 rounded-lg font-semibold hover:bg-[#2c56a0] transition">
       Start Crafting Your Pitch Deck Now
 
       </button>

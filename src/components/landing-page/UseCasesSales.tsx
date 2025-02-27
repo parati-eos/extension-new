@@ -142,14 +142,14 @@ const UseCasesSales: React.FC = () => {
   {/* Center Image (Highlighted) with Ellipse */}
   <div className="hidden md:flex flex-col items-center "
     
->
-  <div className="w-96 h-80  flex items-center justify-center space-x-4"
-  
-  >
-    <img src={image1} alt="Image 1" className="w-full h-full object-contain rounded-xl" />
-    
-  </div>
-</div>
+    >
+      <div className="w-full h-80  flex items-center justify-center space-x-4 rounded-xl"
+      
+      >
+        <img src={image1} alt="Image 1" className="w-full h-full object-cover rounded-xl" />
+        
+      </div>
+    </div>
 
 
   {/* Right Image with Ellipse */}
@@ -275,7 +275,12 @@ const UseCasesSales: React.FC = () => {
       </h2>
       <button 
         onClick={() => navigate("/contact-us")}
-      className="mt-6 bg-[#3667B2] text-white px-12 py-3 rounded-lg font-semibold hover:bg-[#2c56a0] transition">
+      className="lg:hidden mt-6 bg-[#3667B2] text-white px-6 lg:px-12 py-3 rounded-lg font-semibold hover:bg-[#2c56a0] transition">
+        Integrate Zynth <br/>With Your Workflows
+      </button>
+      <button 
+        onClick={() => navigate("/contact-us")}
+      className="hidden lg:block mt-6 bg-[#3667B2] text-white px-6 lg:px-12 py-3 rounded-lg font-semibold hover:bg-[#2c56a0] transition">
         Integrate Zynth With Your Workflows
       </button>
     </section>
