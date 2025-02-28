@@ -1,7 +1,4 @@
 import React, { useEffect } from 'react';
-
-// Extend the Window interface to include dataLayer
-
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,12 +33,15 @@ import UseCasesEmployeePage from './pages/UseCasesEmloyeePage.tsx';
 import UseCasesProjectPage from './pages/UseCasesProjectPage.tsx';
 import UseCasesBoardPage from './pages/UseCasesBoardPage.tsx';
 import UseCasesEducationPage from './pages/UseCasesEducationPage.tsx';
+
+// Extend the Window interface to include dataLayer
 declare global {
   interface Window {
     dataLayer: any[];
     gtag: (...args: any[]) => void;
   }
 }
+
 // Initialize Google Analytics
 ReactGA.initialize('G-YHL4Z27NY0');
 
@@ -79,21 +79,26 @@ const App: React.FC = () => {
     const currentUrl = window.location.href;
     const normalizedUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
 
+    console.log('Normalized URL:', normalizedUrl);
+
+    // Store ANY URL (with or without UTM parameters)
+    const storedUrl = localStorage.getItem('sign_up_link');
+
+    if (!storedUrl || storedUrl !== normalizedUrl) {
+      localStorage.setItem('sign_up_link', normalizedUrl);
+      console.log('Stored URL:', normalizedUrl);
+    }
+
     // Parse UTM parameters
     const urlParams = new URLSearchParams(window.location.search);
     const utmParams = urlParams.toString();
 
     console.log('Extracted UTM Parameters:', utmParams);
 
-    // Store UTM parameters in LocalStorage
+    // Store UTM parameters separately if present
     if (utmParams) {
-      const fullUrlWithUtm = `${normalizedUrl}?${utmParams}`;
-      const storedUrl = localStorage.getItem('sign_up_link');
-
-      if (!storedUrl || storedUrl !== fullUrlWithUtm) {
-        localStorage.setItem('sign_up_link', fullUrlWithUtm);
-        console.log('Stored URL with UTM:', fullUrlWithUtm);
-      }
+      localStorage.setItem('utm_params', utmParams);
+      console.log('Stored UTM Parameters:', utmParams);
     }
 
     // Store referral details in sessionStorage
