@@ -17,6 +17,7 @@ import {
   MobileNewSlideVersion,
   DesktopNewSlideVersion,
 } from './NewSlideVersion'
+import OfferModal from '../payment/offermodel';
 import Sidebar from './Sidebar'
 import CustomBuilderMenu from './custom-builder/CustomBuilderMenu'
 import Points from './custom-builder/Points'
@@ -96,6 +97,7 @@ export default function ViewPresentation() {
   const [isExportPaid, setIsExportPaid] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
   const [showCountdown, setShowCountdown] = useState(false)
+  const [exportStatus, setExportStatus] = useState(false);
   const featureDisabled = userPlan === 'free' ? true : false
   const [newVersionBackDisabled, setNewVersionBackDisabled] = useState(false)
   const [slidesArray, setSlidesArray] = useState<{ [key: string]: string[] }>(
@@ -171,9 +173,10 @@ export default function ViewPresentation() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const result = await response.json()
-        console.log('Payment status updated:', result)
-      }
+        const result = await response.json();
+        console.log('Payment status updated:', result);
+        //setExportStatus(true); // Set exportStatus to true after successful API call
+      };
 
       // Call payment status update
       await updatePaymentStatus()
@@ -187,6 +190,56 @@ export default function ViewPresentation() {
     const url = `/presentation-share?formId=${documentID}`
     window.open(url, '_blank') // Opens the URL in a new tab
   }
+  const formId = searchParams.get('documentID'); 
+////////////////////////////////
+const checkExportStatus = async () => {
+  if (!formId) return; // ✅ Prevent API call if formId is missing
+
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/statuscheck/${formId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    console.log("🔹 API Response:", response.data); // ✅ Log API response
+
+    if (response.data?.data?.exportstatus) {
+      console.log("✅ Setting exportStatus to TRUE"); // ✅ Log before updating state
+      setExportStatus(true); // ✅ This should trigger the modal
+    } else {
+      console.log("❌ exportstatus is FALSE");
+      setExportStatus(false); // Ensure exportStatus is false if not true
+    }
+  } catch (error) {
+    console.error('❌ Failed to fetch export status:', error);
+    setExportStatus(false); // Ensure exportStatus is false on error
+  }
+};
+
+
+
+/////////////////////////
+useEffect(() => {
+  checkExportStatus();
+}, [formId]);
+
+useEffect(() => {
+  console.log("🚀 Export Status Changed:", exportStatus);
+  if (exportStatus) {
+    setIsOfferModalOpen(true); // Open the OfferModal when exportStatus is true
+  }
+}, [exportStatus]);
+
+
+const handleFailure = () => {
+  checkExportStatus(); // Run the API check again on failure
+};
+
 
   // Handle Download Button Click
   const handleDownload = async () => {
@@ -1603,7 +1656,7 @@ export default function ViewPresentation() {
     // Get Pricing Data
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
-        'https://ipinfo.io/json?token=f0e9cf876d422e'
+        'https://zynth.ai/api/users/ip-info'
       )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
@@ -1650,6 +1703,21 @@ export default function ViewPresentation() {
     isDocumentIDLoading || !slidesArray[currentOutlineID]
   const buttonsDisabled = isDocumentIDLoading
 
+  const [isDiscounted, setIsDiscounted] = useState(false);
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(true);
+
+  const handleOfferModalClose = () => {
+    setIsOfferModalOpen(false);
+    setIsPricingModalOpen(true);
+    setIsDiscounted(true);
+  };
+  useEffect(() => {
+    if (exportStatus) {
+      setIsDiscounted(true); // Set discount eligibility
+    }
+    console.log("🚀 Export Status Changed:", exportStatus);
+  }, [exportStatus]);
+
   return (
     <div className="flex flex-col lg:flex-row bg-[#F5F7FA] h-full md:h-screen no-scrollbar no-scrollbar::-webkit-scrollbar">
       {/* Export Countdown */}
@@ -1660,12 +1728,20 @@ export default function ViewPresentation() {
           </div>
         </div>
       )}
+      {/* /////////////////////////////////////////// */}
 
+
+{/* 
+      //////////////////////////////////////// */}
       {/* Pricing Modal */}
+      {exportStatus && (
+        <OfferModal open={isOfferModalOpen} onClose={handleOfferModalClose} />
+      )}
       {isPricingModalOpen && userPlan === 'free' ? (
         <PricingModal
           closeModal={() => {
             setIsPricingModalOpen(false)
+            checkExportStatus();
           }}
           heading={pricingModalHeading}
           subscriptionId={subId}
@@ -1676,9 +1752,7 @@ export default function ViewPresentation() {
           monthlyPlanId={monthlyPlanId!}
           authToken={authToken!}
           orgId={orgId!}
-          exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${
-            currency === 'INR' ? '499' : '9'
-          }`}
+          exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${isDiscounted ? (currency === 'INR' ? 249 : 4.5) : (currency === 'INR' ? 499 : 9)}`}
           exportHandler={checkPaymentStatusAndProceed}
           isButtonDisabled={true}
         />
@@ -1688,8 +1762,12 @@ export default function ViewPresentation() {
       <PaymentGateway
         productinfo="Presentation Export"
         onSuccess={handleDownload}
+        onFailure={handleFailure}
         formId={documentID!}
         authToken={authToken!}
+        isDiscounted={isDiscounted}
+        discountedAmount={currency === 'INR' ? 249 : 4.5}
+
       />
       {/*LARGE SCREEN: HEADING*/}
       <DesktopHeading
