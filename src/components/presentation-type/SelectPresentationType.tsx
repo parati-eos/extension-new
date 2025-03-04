@@ -354,7 +354,7 @@ const SelectPresentationType: React.FC = () => {
   useEffect(() => {
     const getPricingData = async () => {
       const ipInfoResponse = await fetch(
-        'https://ipinfo.io/json?token=f0e9cf876d422e'
+        'https://zynth.ai/api/users/ip-info'
       )
       const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
