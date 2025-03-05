@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { signInWithPopup, OAuthProvider } from 'firebase/auth'
-import { auth } from '../../firebaseConfig'
-import { jwtDecode } from 'jwt-decode'
-import ContentImage from '../../assets/authContentImage.png'
-import MicrosoftIcon from '../../assets/ms-login.svg'
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
-import { DecodedToken, IpInfoResponse } from '../../types/authTypes'
-import { useDispatch } from 'react-redux'
-import { setUserPlan } from '../../redux/slices/userSlice'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signInWithPopup, OAuthProvider } from 'firebase/auth';
+import { auth } from '../../firebaseConfig';
+import { jwtDecode } from 'jwt-decode';
+import ContentImage from '../../assets/authContentImage.png';
+import MicrosoftIcon from '../../assets/ms-login.svg';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { IpInfoResponse } from '../../types/authTypes';
+import { useDispatch } from 'react-redux';
+import { setUserPlan } from '../../redux/slices/userSlice';
+export interface DecodedToken {
+  email: string;
+  name: string;
+  picture?: string;
+  exp?: number; // Add this line to include expiration time
+}
+
 
 function Login() {
   const navigate = useNavigate()
@@ -16,19 +23,47 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false)
 
   const defaultAvatarUrl =
-    'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true'
+    'https://github.com/parati-eos/EOS_DEPLOYMENT/blob/main/download__11_-removebg-preview%20(1).png?raw=true';
 
-  // Function to generate a unique organization ID
-  const generateOrgId = () => {
-    return 'Parati-' + Date.now()
-  }
-  const generatedOrgId = generateOrgId()
+  useEffect(() => {
+    const checkTokenExpiry = (token: string | null) => {
+      if (!token) return;
+
+      try {
+        const decoded: DecodedToken = jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (decoded.exp && decoded.exp > currentTime) {
+          const timeoutDuration = (decoded.exp - currentTime) * 1000;
+          setTimeout(() => {
+            handleLogout();
+          }, timeoutDuration);
+        } else {
+          handleLogout();
+        }
+      } catch (error) {
+        console.error('Invalid token:', error);
+        handleLogout();
+      }
+    };
+
+    const handleLogout = () => {
+      localStorage.removeItem('token');
+      window.location.reload();
+    };
+
+    const token = localStorage.getItem('token');
+    checkTokenExpiry(token);
+  }, []);
+
+  const generateOrgId = () => 'Parati-' + Date.now();
+  const generatedOrgId = generateOrgId();
 
   const handleGoogleSuccess = (credentialResponse: any) => {
-    const decoded: DecodedToken = jwtDecode(credentialResponse.credential)
-    sessionStorage.setItem('userEmail', decoded.email)
-    sessionStorage.setItem('userDP', decoded.picture)
-    sessionStorage.setItem('referrerName', decoded.name)
+    const decoded: DecodedToken = jwtDecode(credentialResponse.credential);
+    sessionStorage.setItem('userEmail', decoded.email);
+    sessionStorage.setItem('userDP', decoded.picture || defaultAvatarUrl);
+    sessionStorage.setItem('referrerName', decoded.name);
 
     const userData = {
       name: decoded.name,
@@ -91,25 +126,22 @@ function Login() {
           },
           body: JSON.stringify(userPayload),
         }
-      )
+      );
 
-      const responseData = await res.json()
-
-      if (responseData.orgid && (responseData.plan !== null || '')) {
-        if (responseData.plan.plan_name) {
-          dispatch(setUserPlan(responseData.plan.plan_name))
-        }
-        sessionStorage.setItem('orgId', responseData.orgid)
-        navigate('/new-presentation')
-      } else if (!responseData.orgId || responseData.plan === null || '') {
-        sessionStorage.setItem('orgId', generatedOrgId)
-        setIsLoading(false)
-        navigate('/onboarding')
+      const responseData = await res.json();
+      if (responseData.orgid && responseData.plan?.plan_name) {
+        dispatch(setUserPlan(responseData.plan.plan_name));
+        sessionStorage.setItem('orgId', responseData.orgid);
+        navigate('/new-presentation');
+      } else {
+        sessionStorage.setItem('orgId', generatedOrgId);
+        navigate('/onboarding');
       }
-      sessionStorage.setItem('authToken', responseData.token)
+      sessionStorage.setItem('authToken', responseData.token);
     } catch (error) {
-      setIsLoading(false)
-      console.error('Error storing user data:', error)
+      console.error('Error storing user data:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
