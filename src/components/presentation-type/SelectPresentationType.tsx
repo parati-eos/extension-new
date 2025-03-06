@@ -93,6 +93,7 @@ const SelectPresentationType: React.FC = () => {
     setBrandingColors((prev) => ({ ...prev, [key]: color }));
   };
   const [file, setFile] = useState<File | null>(null)
+  const userAgent = navigator.userAgent.toLowerCase();
   const [pdfLink, setPdfLink] = useState('')
   const [pdfUploading, setPDFUploading] = useState(false)
   const [selectedType, setSelectedType] = useState<number | null>(null)
@@ -452,6 +453,7 @@ const SelectPresentationType: React.FC = () => {
     const payload = {
       pptInput: generateInput || "",
       pdfLink: pdfLink || "",
+      deviceType: userAgent,
     };
 
     try {
@@ -475,6 +477,7 @@ const SelectPresentationType: React.FC = () => {
       }
     } finally {
       setLoading(false);
+      console.log("devicetype",userAgent)
     }
   };
   
