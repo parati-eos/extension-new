@@ -418,18 +418,25 @@ export const PricingModal: React.FC<PricingModalProps> = ({
 
   return (
     <div
-      className={`${
-        window.location.pathname !== '/presentation-view' &&
-        window.location.pathname !== '/new-presentation' &&
-        window.location.pathname !== '/organization-profile' &&
-        window.location.pathname !== '/history'&&
-              window.location.pathname !== '/edit-organization-profile'&&
-              window.location.pathname !== '/refer'
-          ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
-          : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
-      }`}
-    >
-      <div className="bg-white w-[87%] lg:w-[80%] max-h-[90%] overflow-y-auto scrollbar-none rounded-lg shadow-lg p-2 sm:p-6 relative">
+    className={`${
+      ![
+        '/presentation-view',
+        '/new-presentation',
+        '/organization-profile',
+        '/history',
+        '/edit-organization-profile',
+        '/refer'
+      ].includes(window.location.pathname) &&
+      !window.location.href.includes('/presentation-view?') &&
+      !window.location.href.includes('#/history')&&!window.location.href.includes('#/refer')
+      &&!window.location.href.includes('#/new-presentation') &&!window.location.href.includes('#/organization-profile') &&!window.location.href.includes('#/edit-organization-profile')
+        ? 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center'
+        : 'fixed top-0 left-0 w-screen h-screen z-50 bg-gray-800 bg-opacity-50 flex justify-center items-center'
+    }`}
+  >
+  
+  
+      <div className="bg-white w-[87%] lg:w-[80%] max-h-[90%] overflow-y-auto scrollbar-none rounded-lg shadow-lg p-2 sm:p-6 relative ">
         <button
           onClick={closeModal}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gray-500 hover:text-gray-900 hover:scale-110 active:scale-95 transform transition text-lg md:text-4xl"
