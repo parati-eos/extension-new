@@ -61,22 +61,31 @@ const isAnyTableDataFilled = () => {
   );
 };
 
-  useEffect(() => {
-    // Count fully completed rows
-    const completedRows = tableData.rows.filter((row) =>
-      row.every((cell) => cell.trim() !== '')
-    ).length
+useEffect(() => {
+  // Count fully completed rows
+  const completedRows = tableData.rows.filter((row) =>
+    row.every((cell) => cell.trim() !== '')
+  ).length;
 
-    // Count fully completed columns
-    const columnCount = tableData.rows[0]?.length || 0
-    const completedColumns = Array.from({ length: columnCount }).filter(
-      (_, colIndex) =>
-        tableData.rows.every((row) => row[colIndex]?.trim() !== '')
-    ).length
+  // Count fully completed columns
+  const columnCount = tableData.rows[0]?.length || 0;
+  const completedColumns = Array.from({ length: columnCount }).filter(
+    (_, colIndex) =>
+      tableData.rows.every((row) => row[colIndex]?.trim() !== '')
+  ).length;
 
-    // Enable generation only if at least 2 rows and 2 columns are fully completed
-    setCanGenerate(completedRows >= 2 && completedColumns >= 2)
-  }, [tableData])
+  // Enable generation only if at least 2 rows and 2 columns are fully completed
+  setCanGenerate(completedRows >= 2 && completedColumns >= 2);
+
+  // Determine tooltip message dynamically
+  if (completedRows >= 2 && completedColumns >= 2) {
+    setTooltipMessage('Please Fill the Column Names And Row Names');
+  } else {
+    setTooltipMessage(
+      'Minimum 2 rows and 2 columns required. <br /> Please fill all cells & headers.'
+    );
+  }
+}, [tableData]);
 
   const handleAddRow = () => {
     if (tableData.rows.length < 8) {
@@ -520,6 +529,9 @@ useEffect(() => {
   useEffect(() => {
     fetchSlideData()
   }, [documentID, outlineID, orgId])
+  const [tooltipMessage, setTooltipMessage] = useState(
+    'Minimum 2 rows and 2 columns required. <br /> Please fill all cells & headers.'
+  );
 
   return (
     <div className="flex flex-col w-full h-full lg:p-4 p-2">
@@ -786,13 +798,15 @@ useEffect(() => {
               }`}
             >
               Generate Slide
-              {/* Tooltip for table validation */}
-              {!canGenerate && showTooltip && (
-                <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                  Minimum 2 rows and 2 columns required.
-                  <br /> Please fill all cells & headers.
-                </span>
-              )}
+           {/* Tooltip for table validation */}
+           {!canGenerate && showTooltip && (
+  <span
+    className="absolute top-[-45px] left-1/2 -translate-x-[65%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10"
+  >
+    <span dangerouslySetInnerHTML={{ __html: tooltipMessage }} />
+  </span>
+)}
+
               {/* Tooltip for missing slide title */}
               {!canGenerate ||
                 (!slideTitle && showTooltip && (
