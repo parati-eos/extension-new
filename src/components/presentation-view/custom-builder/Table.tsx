@@ -840,14 +840,13 @@ useEffect(() => {
                 >
                   Generate Slide
                 </button>
-
-                {/* Tooltip for table validation */}
                 {!canGenerate && showTooltip && (
-                  <span className="absolute top-[-45px] left-1/2 -translate-x-[60%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-                    Minimum 2 rows and 2 columns required.
-                    <br /> Please fill all cells & headers.
-                  </span>
-                )}
+  <span
+    className="absolute top-[-45px] left-1/2 -translate-x-[70%] bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10"
+  >
+    <span dangerouslySetInnerHTML={{ __html: tooltipMessage }} />
+  </span>
+)}
 
                 {/* Tooltip for missing slide title */}
                 {!canGenerate ||
