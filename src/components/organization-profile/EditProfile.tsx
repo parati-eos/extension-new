@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { OrganizationData } from '../../types/orgProfileTypes'
 import { industrySectorMap } from '../../utils/industrySector'
 import { toast } from 'react-toastify'
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
 
 type SectorType = keyof typeof industrySectorMap
 type Color = {
@@ -1213,39 +1215,49 @@ if (data.color && typeof data.color === "object") {
           <div>
           {activeTab === "contact" && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
+                  <div>
                 <label className="block text-gray-700 text-sm font-medium mb-1">
                   Company Phone
                 </label>
-                <input
-                  type="tel"
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  name="contactPhone"
-                  value={formData.contactPhone}
-                  onChange={handlevalidationChange}
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault()
-                    }
-                  }}
-                  placeholder="Enter Company Phone"
-                  className={`w-full border ${
-                    validationErrors.contactPhone
-                      ? 'border-red-500'
-                      : 'border-gray-300'
-                  } rounded-lg px-3 py-3 lg:py-2 focus:outline-none focus:ring-2 ${
-                    validationErrors.contactPhone
-                      ? 'focus:ring-red-500'
-                      : 'focus:ring-blue-500'
-                  }`}
-                />
-                {validationErrors.contactPhone && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {validationErrors.contactPhone}
-                  </p>
-                )}
-              </div>
+            <PhoneInput
+        country={"in"}
+        value={formData.contactPhone}
+        onChange={(value) => {
+          handlevalidationChange({
+            target: {
+              name: "contactPhone",
+              value: `${value}`,
+            },
+          } as React.ChangeEvent<HTMLInputElement>);
+        }}
+        inputProps={{
+          name: "phone",
+          id: "phone",
+          required: true,
+        }}
+        containerStyle={{
+          width: "100%",
+        }}
+        inputStyle={{
+          width: "100%",
+          height: "42px",
+          fontSize: "16px",
+          borderRadius: "10px",
+          border: "1px solid #ddd",
+          paddingLeft: "58px", // Space for flag
+          outline: "none",
+          backgroundColor: "white",
+        }}
+        buttonStyle={{
+          border: "1px solid #ddd",
+          
+     
+          backgroundColor: "white",
+        }}
+        placeholder="Enter Company Phone" // ✅ Added placeholder here
+        
+      />
+           </div>
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-1">
                   Company LinkedIn

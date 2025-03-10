@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { FaPhone } from 'react-icons/fa'
-import { ContactDetailsFormProps } from '../../../types/onboardingTypes'
-import { BackButton, NextButton } from '../shared/Buttons'
+import React, { useEffect, useState } from 'react';
+import { FaPhone } from 'react-icons/fa';
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
+import { ContactDetailsFormProps } from '../../../types/onboardingTypes';
+import { BackButton, NextButton } from '../shared/Buttons';
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onContinue,
@@ -35,33 +37,8 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     setIsEmailValid(value === '' || emailRegex.test(value)) // Valid if empty or matches regex
   }
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-  
-    // Remove all non-numeric characters
-    value = value.replace(/\D/g, '');
-  
-    // Prevent leading zeros
-    if (value.startsWith('0')) {
-      value = value.substring(1);
-    }
-  
-    // Limit the input to 10 digits
-    if (value.length > 10) {
-      value = value.slice(0, 10);
-    }
-  
+  const handlePhoneChange = (value: string) => {
     setContactPhone(value);
-  
-    // Validate the phone number (exactly 10 digits)
-    const phoneRegex = /^[1-9]\d{9}$/;
-    setIsPhoneValid(phoneRegex.test(value));
-  };
-
-  const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (!linkedinLink) {
-      setLinkedinLink("https://"); // Pre-fill "https://" only if input is empty
-    }
   };
   
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,8 +69,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   const isFormValid =
     (contactEmail === '' && contactPhone === '' && linkedinLink === '') || // All empty
     ((contactEmail === '' || isEmailValid) &&
-      (contactPhone === '' || isPhoneValid) &&
-      (linkedinLink === '' || isLinkedinValid)) // At least one filled and valid
+      (linkedinLink === '' || isLinkedinValid));
 
   return (
     <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-between md:p-4">
@@ -120,17 +96,46 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             {!isEmailValid && <p className="text-red-500 text-sm">Invalid email address.</p>}
           </div>
 
-          {/* Phone Input */}
+          {/* Phone Input with Country Code */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-[#4A4B4D]">Phone</label>
-            <input
-              type="tel"
-              placeholder="Enter phone number"
-              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isPhoneValid && contactPhone ? 'border-red-500' : ''}`}
-              value={contactPhone}
-              onChange={handlePhoneChange}
-            />
-            {!isPhoneValid && contactPhone && <p className="text-red-500 text-sm">Invalid phone number.</p>}
+            <div className="flex gap-2">
+            <PhoneInput
+        country={"in"}
+        value={contactPhone}
+        onChange={(value) => handlePhoneChange(`${value}`)} // Ensure "+" is prefixed
+        inputProps={{
+          name: "phone",
+          id: "phone",
+          required: true,
+        }}
+        containerStyle={{
+          width: "100%",
+        }}
+        inputStyle={{
+          width: "100%",
+          height: "48px",
+          fontSize: "16px",
+          borderRadius: "10px",
+          border: "0.8px solid #ddd",
+          paddingLeft: "58px", // Space for flag
+          outline: "none",
+          backgroundColor: "white",
+        }}
+        buttonStyle={{
+          border: "0.8px solid #ddd",
+          
+     
+          backgroundColor: "white",
+        }}
+        placeholder="Enter Company Phone" // ✅ Added placeholder here
+        
+      />
+
+
+
+
+            </div>
           </div>
 
           {/* LinkedIn Input */}
