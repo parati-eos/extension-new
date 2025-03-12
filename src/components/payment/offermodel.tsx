@@ -22,7 +22,7 @@ export default function OfferModal({ open, onClose }: OfferModalProps) {
         console.log("IP Info Response:", response.data);
         if (response.data?.country !== "IN") {
           setCurrency("USD");
-          setPrice({ current: 9, original: 19 }); // Prices in USD
+          setPrice({ current: 19, original: 9 }); // Prices in USD
         }
       } catch (error) {
         console.error("Failed to fetch IP info:", error);

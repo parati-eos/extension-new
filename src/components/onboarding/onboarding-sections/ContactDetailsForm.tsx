@@ -37,8 +37,38 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     setIsEmailValid(value === '' || emailRegex.test(value)) // Valid if empty or matches regex
   }
 
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+  
+    // Remove all non-numeric characters
+    value = value.replace(/\D/g, '');
+  
+    // Prevent leading zeros
+    // if (value.startsWith('0')) {
+    //   value = value.substring(1);
+    // }
+  
+    // Limit the input to 10 digits
+    // if (value.length > 10) {
+    //   value = value.slice(0, 10);
+    // }
+  
+    setContactPhone(value);
+  
+    // Validate the phone number (exactly 10 digits)
+    // const phoneRegex = /^[1-9]\d{9}$/;
+    // setIsPhoneValid(phoneRegex.test(value));
+  };
+
+  const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!linkedinLink) {
+      setLinkedinLink("https://"); // Pre-fill "https://" only if input is empty
+    }
+
   const handlePhoneChange = (value: string) => {
     setContactPhone(value);
+
   };
   
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,6 +129,16 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
           {/* Phone Input with Country Code */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-[#4A4B4D]">Phone</label>
+
+            <input
+              type="tel"
+              placeholder="Enter phone number"
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${contactPhone ? 'border-red-500' : ''}`}
+              value={contactPhone}
+              onChange={handlePhoneChange}
+            />
+            {!isPhoneValid && contactPhone && <p className="text-red-500 text-sm">Invalid phone number.</p>}
+
             <div className="flex gap-2">
             <PhoneInput
         country={"in"}
@@ -136,6 +176,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
 
 
             </div>
+
           </div>
 
           {/* LinkedIn Input */}
