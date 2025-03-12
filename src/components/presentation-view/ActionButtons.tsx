@@ -30,7 +30,7 @@ export const DesktopButtonSection: React.FC<DesktopActionButtonsProps> = ({
   const [isDialogVisibledelete, setIsDialogVisibledelete] = useState(false)
   const [isDialogVisibleNew, setIsDialogVisibleNew] = useState(false)
 
-  if (isQuickGenerating) return null;
+
 
   return (
     <div className="flex gap-2">
@@ -101,7 +101,7 @@ export const MobileButtonSection: React.FC<MobileActionButtonsProps> = ({
   newVersionDisabled,
   isQuickGenerating,
 }) => {
-  if (isQuickGenerating) return null;
+
 
   return (
     <div className="flex gap-4">
