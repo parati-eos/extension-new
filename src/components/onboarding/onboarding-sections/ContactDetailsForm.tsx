@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { FaPhone } from 'react-icons/fa'
-import { ContactDetailsFormProps } from '../../../types/onboardingTypes'
-import { BackButton, NextButton } from '../shared/Buttons'
+import React, { useEffect, useState } from 'react';
+import { FaPhone } from 'react-icons/fa';
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
+import { ContactDetailsFormProps } from '../../../types/onboardingTypes';
+import { BackButton, NextButton } from '../shared/Buttons';
 
 const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   onContinue,
@@ -35,6 +37,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     setIsEmailValid(value === '' || emailRegex.test(value)) // Valid if empty or matches regex
   }
 
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
   
@@ -62,6 +65,10 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     if (!linkedinLink) {
       setLinkedinLink("https://"); // Pre-fill "https://" only if input is empty
     }
+
+  const handlePhoneChange = (value: string) => {
+    setContactPhone(value);
+
   };
   
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,8 +99,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   const isFormValid =
     (contactEmail === '' && contactPhone === '' && linkedinLink === '') || // All empty
     ((contactEmail === '' || isEmailValid) &&
-      (contactPhone === '' || isPhoneValid) &&
-      (linkedinLink === '' || isLinkedinValid)) // At least one filled and valid
+      (linkedinLink === '' || isLinkedinValid));
 
   return (
     <div className="lg:p-0 p-2 w-full mt-[4rem] xl:mt-[2rem] 2xl:mt-[3rem] md:h-[90%] md:w-[80%] md:bg-white md:shadow-lg md:rounded-3xl md:flex md:flex-col md:items-center md:justify-between md:p-4">
@@ -120,9 +126,10 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             {!isEmailValid && <p className="text-red-500 text-sm">Invalid email address.</p>}
           </div>
 
-          {/* Phone Input */}
+          {/* Phone Input with Country Code */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-[#4A4B4D]">Phone</label>
+
             <input
               type="tel"
               placeholder="Enter phone number"
@@ -131,6 +138,45 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
               onChange={handlePhoneChange}
             />
             {!isPhoneValid && contactPhone && <p className="text-red-500 text-sm">Invalid phone number.</p>}
+
+            <div className="flex gap-2">
+            <PhoneInput
+        country={"in"}
+        value={contactPhone}
+        onChange={(value) => handlePhoneChange(`${value}`)} // Ensure "+" is prefixed
+        inputProps={{
+          name: "phone",
+          id: "phone",
+          required: true,
+        }}
+        containerStyle={{
+          width: "100%",
+        }}
+        inputStyle={{
+          width: "100%",
+          height: "48px",
+          fontSize: "16px",
+          borderRadius: "10px",
+          border: "0.8px solid #ddd",
+          paddingLeft: "58px", // Space for flag
+          outline: "none",
+          backgroundColor: "white",
+        }}
+        buttonStyle={{
+          border: "0.8px solid #ddd",
+          
+     
+          backgroundColor: "white",
+        }}
+        placeholder="Enter Company Phone" // ✅ Added placeholder here
+        
+      />
+
+
+
+
+            </div>
+
           </div>
 
           {/* LinkedIn Input */}

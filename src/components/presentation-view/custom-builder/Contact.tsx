@@ -5,6 +5,8 @@ import { toast } from 'react-toastify'
 import axios from 'axios'
 import AttachImage from './shared/attachimage'
 import uploadFileToS3 from '../../../utils/uploadFileToS3'
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
 
 interface ContactProps {
   heading: string
@@ -45,6 +47,26 @@ export default function Contact({
   const [fileName, setFileName] = useState<string | null>(null) // Track file name
   const [uploadCompleted, setUploadCompleted] = useState(false) // Track if upload is completed
   const [showTooltip, setShowTooltip] = useState(false)
+  const inputStyles: React.CSSProperties = {
+    width: "100%", // Default width for mobile
+    height: "60px",
+    fontSize: "16px",
+    borderRadius: "10px",
+    border: "1px solid #ddd",
+    paddingLeft: "58px", // Space for flag
+    outline: "none",
+    backgroundColor: "white",
+  };
+    // Adjust width for larger screens
+    const desktopStyles: React.CSSProperties = {
+      ...inputStyles,
+      width: "100%", // Increase width for desktop
+    };
+  const buttonStyle: React.CSSProperties = {
+    border: "0.8px solid #ddd",
+    backgroundColor: "white",
+  };
+
 
   const [errors, setErrors] = useState({
     websiteLink: '',
@@ -64,28 +86,11 @@ export default function Contact({
       setWebsiteLink('https://') // Pre-fill "https://" if empty
     }
   }
-
-  const handlePhoneChange = (e: PhoneChangeEvent) => {
-    const value = e.target.value
-
-    // Allow only numeric input
-    if (/^[0-9]*$/.test(value)) {
-      setPhone(value)
-      validatePhone(value) // Validate the current input value
-    }
-  }
-
-  const validatePhone = (value: string) => {
-    const regex = /^[1-9]\d{9}$/
-    if (value && !regex.test(value)) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: 'Enter a valid phone number (10 digits)',
-      }))
-    } else {
-      setErrors((prev) => ({ ...prev, phone: '' }))
-    }
-  }
+ 
+  
+  
+  
+ 
 
   const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (!linkedin) {
@@ -168,7 +173,7 @@ export default function Contact({
     setIsSlideLoading()
     validateWebsiteLink(websiteLink)
     validateEmail()
-    validatePhone(phone)
+    setPhone(phone)
     validateLinkedin()
 
     if (isButtonDisabled) {
@@ -306,7 +311,7 @@ export default function Contact({
         // Run validations after fetching data
         validateWebsiteLink(contactData.websiteLink || '') // Validate fetched website link
         validateEmail(contactData.contactEmail || '') // Validate fetched email
-        validatePhone(contactData.contactPhone || '') // Validate fetched phone
+        setPhone(contactData.contactPhone || '') // Validate fetched phone
         validateLinkedin(contactData.linkedinLink || '') // Validate fetched LinkedIn URL
       }
     } catch (error) {
@@ -340,7 +345,7 @@ export default function Contact({
               onChange={handleInputChange}
               onBlur={() => validateWebsiteLink(websiteLink)} // Call with current value
               placeholder="Enter Website Link"
-              className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-4 border w-full font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.websiteLink && websiteLink.length !== 0 && (
               <p className="text-red-500 text-sm mt-1 lg:mt-0">
@@ -357,26 +362,30 @@ export default function Contact({
               onChange={handleEmailChange}
               onBlur={(e) => validateEmail(e.target.value)} // Call with current value
               placeholder="Enter Email"
-              className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-4 border w-full font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {errors.email && email.length !== 0 && (
-              <p className="text-red-500 text-sm">{errors.email}</p>
-            )}
+      
           </div>
 
           {/* Phone */}
           <div>
-            <input
-              type="tel"
-              value={phone}
-              onChange={handlePhoneChange}
-              onBlur={(e) => validatePhone(e.target.value)}
-              placeholder="Enter Phone"
-              className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.phone && phone.length !== 0 && (
-              <p className="text-red-500 text-sm">{errors.phone}</p>
-            )}
+          <PhoneInput
+  country={"in"}
+  value={phone}
+  onChange={setPhone}
+  inputProps={{
+    name: "phone",
+    id: "phone",
+    required: true,
+  }}
+  containerStyle={{
+    width: "100%",
+  }}
+  inputStyle={window.innerWidth >= 1024 ? desktopStyles : inputStyles} // Adjust for responsive width
+  buttonStyle={buttonStyle} // Apply button styles
+  placeholder="Enter Company Phone" // ✅ Added placeholder
+/>
+            
           </div>
 
           {/* LinkedIn */}
@@ -388,7 +397,7 @@ export default function Contact({
               onFocus={handleLinkedinFocus}
               onBlur={(e) => validateLinkedin(e.target.value)}
               placeholder="LinkedIn Profile Link"
-              className="p-4 border font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="p-4 border w-full font-medium border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.linkedin && linkedin.length !== 0 && (
               <p className="text-red-500 text-sm">{errors.linkedin}</p>
