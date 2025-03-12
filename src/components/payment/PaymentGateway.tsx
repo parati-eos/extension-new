@@ -148,47 +148,50 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 
       // Generate Razorpay order
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-magiccoupon`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
+        // `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-magiccoupon`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify({
-            amount: finalAmount, // in paise.
+            amount: finalAmount,
             currency: paymentData.currency,
-            receipt: `receipt#${Math.floor(Math.random() * 1000000)}`,
-            line_items_total: finalAmount, // in paise.
-            line_items: [
-              {
-                sku: "1g234",
-                variant_id: "12r34",
-                other_product_codes: {
-                  upc: "12r34",
-                  ean: "123r4",
-                  unspsc: "123s4"
-                },
-                price: finalAmount, // in paise.
-                offer_price: finalAmount, // in paise.
-                tax_amount: 0,
-                quantity: 1,
-                name: "TEST",
-                description: "TEST",
-                weight: 1700,
-                dimensions: {
-                  length: 1700,
-                  width: 1700,
-                  height: 1700
-                },
-                image_url: "url",
-                product_url: "url",
-                notes: {}
-              }
-            ]
+            // amount: finalAmount, // in paise.
+            // currency: paymentData.currency,
+            // receipt: 'receipt#1',
+            // line_items_total: finalAmount, // in paise.
+            // line_items: [
+            //   {
+            //     sku: '1g234',
+            //     variant_id: '12r34',
+            //     other_product_codes: {
+            //       upc: '12r34',
+            //       ean: '123r4',
+            //       unspsc: '123s4',
+            //     },
+            //     price: finalAmount, // in paise.
+            //     offer_price: finalAmount, // in paise.
+            //     tax_amount: 0,
+            //     quantity: 1,
+            //     name: 'TEST',
+            //     description: 'TEST',
+            //     weight: 1700,
+            //     dimensions: {
+            //       length: 1700,
+            //       width: 1700,
+            //       height: 1700,
+            //     },
+            //     image_url: 'url',
+            //     product_url: 'url',
+            //     notes: {},
+            //   },
+            // ],
           }),
         }
-      );
+      )
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

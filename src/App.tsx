@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Import Pages
@@ -58,9 +59,71 @@ const TrackPageView: React.FC = () => {
   return null; // No UI component, just tracking behavior
 };
 
+/**
+ * ✅ Auth Token Expiry Check (Inside Router)
+ * ✅ Excludes PresentationShare from auto logout
+ * ✅ Fixes infinite redirect issue
+ */
+const AuthCheckComponent = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Exclude auto-logout on /presentation-share page
+    if (location.pathname === '/presentation-share') {
+      return;
+    }
+
+    const checkTokenExpiry = () => {
+      const token = sessionStorage.getItem('authToken');
+      if (!token) {
+        handleLogout();
+        return;
+      }
+
+      try {
+        const decoded: { exp?: number } = jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (!decoded.exp || decoded.exp <= currentTime) {
+          handleLogout();
+          return;
+        }
+
+        // Set auto logout timeout
+        const timeoutDuration = (decoded.exp - currentTime) * 1000;
+        setTimeout(() => {
+          handleLogout();
+        }, timeoutDuration);
+      } catch (error) {
+        console.error('Invalid token:', error);
+        handleLogout();
+      }
+    };
+
+    const handleLogout = () => {
+      sessionStorage.removeItem('authToken');
+
+      // ✅ Properly exclude '/share' and '/presentation-share' from logout redirection
+      if (location.pathname !== '/share' && location.pathname !== '/presentation-share'&& location.pathname !== '/'&& location.pathname !== '/auth') {
+        window.location.href = 'https://zynth.ai/';
+      }
+    };
+
+    checkTokenExpiry();
+
+    // Run token check every 1 minute
+    const interval = setInterval(checkTokenExpiry, 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [location]);
+
+  return null;
+};
+
 const App: React.FC = () => {
   useEffect(() => {
-    // Google Tag Manager Script
+    // ✅ Google Tag Manager Script
     const gtagScript = document.createElement('script');
     gtagScript.async = true;
     gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=AW-667504395";
@@ -75,6 +138,7 @@ const App: React.FC = () => {
       window.gtag('config', 'AW-667504395');
     };
 
+    // ✅ Restore UTM & Referral Tracking Logic
     // Normalize the URL (remove trailing slash if present)
     const currentUrl = window.location.href;
     const normalizedUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
@@ -117,6 +181,7 @@ const App: React.FC = () => {
   return (
     <SocketProvider>
       <Router>
+        <AuthCheckComponent /> {/* ✅ Placed inside Router */}
         <TrackPageView />
         <Routes>
           {/* Public Routes */}
@@ -125,14 +190,10 @@ const App: React.FC = () => {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
-          <Route path="/use-cases-sales" element={<UseCasesSalesPage />} />
-          <Route path="/use-cases-product" element={<UseCasesProductPage />} />
-          <Route path="/use-cases-pitch" element={<UseCasesPitchPage />} />
-          <Route path="/use-cases-marketing" element={<UseCasesMarketingPage />} />
-          <Route path="/use-cases-employee" element={<UseCasesEmployeePage />} />
-          <Route path="/use-cases-project" element={<UseCasesProjectPage />} />
-          <Route path="/use-cases-board" element={<UseCasesBoardPage />} />
-          <Route path="/use-cases-education" element={<UseCasesEducationPage />} />
+
+          {/* Sharing Routes */}
+          <Route path="/presentation-share" element={<PresentationShare />} /> {/* ✅ No auto logout here */}
+          <Route path="/share" element={<PitchDeckShare />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoutes />}>
@@ -144,10 +205,6 @@ const App: React.FC = () => {
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/refer" element={<ReferPage />} />
           </Route>
-
-          {/* Sharing Routes */}
-          <Route path="/presentation-share" element={<PresentationShare />} />
-          <Route path="/share" element={<PitchDeckShare />} />
         </Routes>
       </Router>
       <ToastContainer />

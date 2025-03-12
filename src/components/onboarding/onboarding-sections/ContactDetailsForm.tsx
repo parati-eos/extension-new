@@ -42,20 +42,20 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
     value = value.replace(/\D/g, '');
   
     // Prevent leading zeros
-    if (value.startsWith('0')) {
-      value = value.substring(1);
-    }
+    // if (value.startsWith('0')) {
+    //   value = value.substring(1);
+    // }
   
     // Limit the input to 10 digits
-    if (value.length > 10) {
-      value = value.slice(0, 10);
-    }
+    // if (value.length > 10) {
+    //   value = value.slice(0, 10);
+    // }
   
     setContactPhone(value);
   
     // Validate the phone number (exactly 10 digits)
-    const phoneRegex = /^[1-9]\d{9}$/;
-    setIsPhoneValid(phoneRegex.test(value));
+    // const phoneRegex = /^[1-9]\d{9}$/;
+    // setIsPhoneValid(phoneRegex.test(value));
   };
 
   const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -126,7 +126,7 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             <input
               type="tel"
               placeholder="Enter phone number"
-              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isPhoneValid && contactPhone ? 'border-red-500' : ''}`}
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${contactPhone ? 'border-red-500' : ''}`}
               value={contactPhone}
               onChange={handlePhoneChange}
             />

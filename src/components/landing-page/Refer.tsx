@@ -146,19 +146,10 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
 
     fetchIpInfo();
   }, []);
-  const copyToClipboardFallback = (text: string) => {
-    const textField = document.createElement("input"); // Use input instead of textarea
-    textField.value = text;
-    document.body.appendChild(textField);
-    textField.select();
-    textField.setSelectionRange(0, textField.value.length); // Ensure selection works properly
-    document.execCommand("copy");
-    document.body.removeChild(textField);
-  };
   
   
   const handleReferralClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault(); // Prevents unintended form submission or reload
+    event.preventDefault();
   
     if (!orgId || !userId) {
       toast.error("Missing organization ID or user ID.");
@@ -169,25 +160,29 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       const response = await axios.patch(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/referral/generate-referral`,
         { orgId, userId },
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
+        { headers: { Authorization: `Bearer ${authToken}` } }
       );
   
       const link = response.data.referralLink;
   
       if (link) {
-        setReferralLink(link); // Update state first
+        setReferralLink(link);
   
-        // Clipboard API (modern browsers)
+        // First try Clipboard API
         if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(link);
+          try {
+            await navigator.clipboard.writeText(link);
+            toast.success("Referral link copied to clipboard!");
+          } catch (err) {
+            console.warn("Clipboard API failed, using fallback:", err);
+            copyToClipboardFallback(link);
+          }
         } else {
-          copyToClipboardFallback(link); // Fallback for mobile
+          // Fallback for Safari/iOS
+          copyToClipboardFallback(link);
         }
   
         setCopySuccess(true);
-        toast.success("Referral link copied to clipboard!");
         setTimeout(() => setCopySuccess(false), 2000);
       }
     } catch (error) {
@@ -195,6 +190,19 @@ export default function ReferralPage({ userPlan }: ReferralPageProps) {
       toast.error("Failed to generate referral link.");
     }
   };
+  
+  // **Fallback for iPhone/Safari**
+  const copyToClipboardFallback = (text: string) => {
+    const textField = document.createElement("textarea");
+    textField.value = text;
+    document.body.appendChild(textField);
+    textField.select();
+    textField.setSelectionRange(0, textField.value.length); // Ensure proper selection
+    document.execCommand("copy");
+    document.body.removeChild(textField);
+    toast.success("Referral link copied to clipboard! (fallback method)");
+  };
+  
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
       <h1 className="text-2xl font-bold text-center flex items-center gap-2">

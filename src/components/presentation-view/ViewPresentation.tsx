@@ -42,6 +42,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import GuidedTour from '../onboarding/shared/GuidedTour'
 import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 import { slideLoaderMessages, initialLoaderMessages } from '../../utils/data'
+import { set } from 'react-ga'
 
 interface SlideState {
   isLoading: boolean
@@ -208,11 +209,11 @@ const checkExportStatus = async () => {
 
     console.log("🔹 API Response:", response.data); // ✅ Log API response
 
-    if (response.data?.data?.exportstatus) {
+    if (response.data?.data?.exportstatus && response.data?.data?.paymentStatus === 0) {
       console.log("✅ Setting exportStatus to TRUE"); // ✅ Log before updating state
       setExportStatus(true); // ✅ This should trigger the modal
     } else {
-      console.log("❌ exportstatus is FALSE");
+      console.log("❌ exportstatus is FALSE or paymentStatus is not 0");
       setExportStatus(false); // Ensure exportStatus is false if not true
     }
   } catch (error) {
@@ -1547,7 +1548,61 @@ const handleFailure = () => {
     // Update the outlineType state with the type of the matched object
     setOutlineType(matchingOutline?.type || '')
   }, [outlines, currentOutlineID])
+  useEffect(() => {
+    const getPricingData = async () => {
+      try {
+        const ipInfoResponse = await fetch('https://zynth.ai/api/users/ip-info')
+        const ipInfoData: IpInfoResponse = await ipInfoResponse.json()
 
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/appscripts/razorpay/plans`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+
+        const country = ipInfoData?.country
+
+        if (country === 'IN' || country === 'India' || country === 'In') {
+          setMonthlyPlan(response.data.items[5]);
+          setYearlyPlan(response.data.items[3]);
+          setCurrency('INR'); // Set currency to INR for Indian users
+  
+        } else {
+          setMonthlyPlan(response.data.items[4]);
+          setYearlyPlan(response.data.items[2]);
+          setCurrency('USD'); // Set currency to USD (or other default) for non-Indian users
+        }
+      } catch (error) {
+        console.error('Error fetching pricing data:', error)
+      }
+    }
+
+    getPricingData()
+
+    const fetchUserPlan = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        const planName = response.data.plan.plan_name
+        const subscriptionId = response.data.plan.subscriptionId
+        dispatch(setUserPlan(planName))
+        setSubId(subscriptionId)
+      } catch (error) {
+        console.error('Error fetching user plan:', error)
+      }
+    }
+
+    fetchUserPlan()
+  }, []) // Add dependencies if needed
   // API CALL TO GET PRICING DATA, EXPORT PAYMENT STATUS AND USER PLAN
   useEffect(() => {
     const documentIDFromUrl = searchParams.get('documentID')
@@ -1628,12 +1683,6 @@ const handleFailure = () => {
           // Payment has already been made, run handleDownload
           setIsExportPaid(true)
         } else if (res && res.data.paymentStatus === 0) {
-          // const paymentButton = document.getElementById('payment-button')
-          // if (paymentButton) {
-          //   paymentButton.click()
-          // } else {
-          //   console.error('Payment button not found')
-          // }
           setIsExportPaid(false)
         } else {
           alert('Unable to determine payment status.')
@@ -1672,23 +1721,17 @@ const handleFailure = () => {
         .then((response) => {
           const country = ipInfoData!.country!
 
-          if (country !== 'IN' && country !== 'India' && country !== 'In') {
-            setMonthlyPlan(response.data.items[4])
-            setYearlyPlan(response.data.items[2])
-            // setMonthlyPlan(response.data.items[1])
-            // setYearlyPlan(response.data.items[0])
-            setCurrency('USD')
-          } else if (
-            country === 'IN' ||
-            country === 'India' ||
-            country === 'In'
-          ) {
-            setMonthlyPlan(response.data.items[5])
-            setYearlyPlan(response.data.items[3])
-            // setMonthlyPlan(response.data.items[1])
-            // setYearlyPlan(response.data.items[0])
-            setCurrency('INR')
-          }
+          // if (country === 'IN' || country === 'India' || country === 'In') {
+          //   setMonthlyPlan(response.data.items[5]);
+          //   setYearlyPlan(response.data.items[3]);
+          //   setCurrency('INR'); // Set currency to INR for Indian users
+    
+          // } else {
+          //   setMonthlyPlan(response.data.items[4]);
+          //   setYearlyPlan(response.data.items[2]);
+          //   setCurrency('USD'); // Set currency to USD (or other default) for non-Indian users
+          // }
+          
         })
     }
 
@@ -1754,7 +1797,7 @@ const handleFailure = () => {
           orgId={orgId!}
           exportButtonText={`Export For ${currency === 'INR' ? '₹' : '$'}${isDiscounted ? (currency === 'INR' ? 249 : 4.5) : (currency === 'INR' ? 499 : 9)}`}
           exportHandler={checkPaymentStatusAndProceed}
-          isButtonDisabled={true}
+         // isButtonDisabled={true}
         />
       ) : (
         <></>
