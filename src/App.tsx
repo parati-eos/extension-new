@@ -193,6 +193,14 @@ const App: React.FC = () => {
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/use-cases-sales" element={<UseCasesSalesPage />} />
+          <Route path="/use-cases-product" element={<UseCasesProductPage />} />
+          <Route path="/use-cases-pitch" element={<UseCasesPitchPage />} />
+          <Route path="/use-cases-marketing" element={<UseCasesMarketingPage />} />
+          <Route path="/use-cases-employee" element={<UseCasesEmployeePage />} />
+          <Route path="/use-cases-project" element={<UseCasesProjectPage />} />
+          <Route path="/use-cases-board" element={<UseCasesBoardPage />} />
+          <Route path="/use-cases-education" element={<UseCasesEducationPage />} />
 
           {/* Sharing Routes */}
           <Route path="/presentation-share" element={<PresentationShare />} /> {/* ✅ No auto logout here */}
