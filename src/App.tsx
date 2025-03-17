@@ -12,7 +12,6 @@ import PresentationViewPage from './pages/PresentationViewPage.tsx';
 import AuthPage from './pages/AuthPage.tsx';
 import HistoryPage from './pages/HistoryPage.tsx';
 import PresentationTypePage from './pages/PresentationType.tsx';
-import LandingPage from './pages/LandingPage.tsx';
 import PresentationShare from './pages/PresentationShare.tsx';
 import PitchDeckShare from './components/pitchZynthShare/Share.jsx';
 import PricingPage from './pages/PricingPage.tsx';
@@ -34,6 +33,9 @@ import UseCasesEmployeePage from './pages/UseCasesEmloyeePage.tsx';
 import UseCasesProjectPage from './pages/UseCasesProjectPage.tsx';
 import UseCasesBoardPage from './pages/UseCasesBoardPage.tsx';
 import UseCasesEducationPage from './pages/UseCasesEducationPage.tsx';
+import NewNavbar from './components/landing-page-1/NewNavbar.tsx';
+import NewLandingPage from './pages/NewLandingPage.tsx';
+import LandingPage from './pages/LandingPage.tsx';
 
 // Extend the Window interface to include dataLayer
 declare global {
@@ -105,12 +107,12 @@ const AuthCheckComponent = () => {
       sessionStorage.removeItem('authToken');
 
       // ✅ Properly exclude '/share' and '/presentation-share' from logout redirection
-      if (location.pathname !== '/share' && location.pathname !== '/presentation-share'&& location.pathname !== '/'&& location.pathname !== '/auth') {
+      if (location.pathname !== '/share' && location.pathname !== '/presentation-share'&& location.pathname !== '/pricing' && location.pathname !== '/'&& location.pathname !== '/auth' &&location.pathname !== '/white-label'&&location.pathname !== '/#how-it-works' ) {
         window.location.href = 'https://zynth.ai/';
       }
     };
 
-    checkTokenExpiry();
+    checkTokenExpiry(); 
 
     // Run token check every 1 minute
     const interval = setInterval(checkTokenExpiry, 60 * 1000);
@@ -186,6 +188,7 @@ const App: React.FC = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/white-label" element={<NewLandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/blog" element={<BlogPage />} />

@@ -3,7 +3,8 @@ import zynthtext from '../../assets/zynth-text.png';
 import { useNavigate, useLocation ,NavLink} from 'react-router-dom';
 import { ChevronDown,X,ChevronUp } from "lucide-react";
 
-const LandingPageNavbar: React.FC = () => {
+
+const NewNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -56,8 +57,10 @@ const LandingPageNavbar: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
+      setIsNavbarVisible(true); // Ensure navbar becomes visible on scroll
       resetInactivityTimer();
     };
+    
 
     const handleMouseMove = () => {
       resetInactivityTimer();
@@ -169,10 +172,11 @@ const LandingPageNavbar: React.FC = () => {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
-      } ${isNavbarVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-    >
+    className={`fixed w-full z-50 transition-all duration-300 bg-white ${
+      isScrolled ? 'shadow-md' : ''
+    } ${isNavbarVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+  >
+  
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo */}
         <div className="text-xl font-bold text-gray-800">
@@ -210,26 +214,28 @@ const LandingPageNavbar: React.FC = () => {
 
         {/* Desktop Center Links */}
         <div className="hidden lg:flex space-x-10 items-center">
-      <a
-        href="#how-it-works"
-        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
-      >
-        How Zynth Works
-      </a>
+        <a
+  onClick={(e) => handleNavigation(e, "how-it-works")}
+  href="/#how-it-works"
+  className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+>
+  How Zynth Works
+</a>
+
       <a
         href="#sample-presentation"
-        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+        className="text-[#5D5F61] font-semibold hover:text-blue-600 transition-colors duration-200"
       >
         Sample Presentation
       </a>
       
        {/* Use Cases Dropdown with 3-second delay */}
        <div className="relative" onMouseEnter={openDropdown} onMouseLeave={closeDropdown}>
-       <button className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 flex items-center">
+       <button className="text-[#5D5F61] font-semibold hover:text-blue-600 transition-colors duration-200 flex items-center">
   Use Cases <ChevronDown className="ml-1 w-5 h-5" />
 </button>
         {isDropdownOpen && (
-          <div className="absolute top-8 left-0 bg-white shadow-lg rounded-lg py-2 w-56 border">
+          <div className="absolute top-8 left-0 bg-white shadow-lg rounded-lg py-2 w-56 border z-50">
             {[
               { name: "Sales", path: "/use-cases-sales" },
               { name: "Product", path: "/use-cases-product" },
@@ -255,7 +261,7 @@ const LandingPageNavbar: React.FC = () => {
 
       <a
         href="#pricing"
-        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+        className="text-[#5D5F61] font-semibold hover:text-blue-600 transition-colors duration-200"
         onClick={(e) => {
           e.preventDefault();
           window.open("/pricing", "_blank");
@@ -265,7 +271,7 @@ const LandingPageNavbar: React.FC = () => {
       </a>
       <a
         href="#blog"
-        className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200"
+        className="text-[#5D5F61] font-semibold hover:text-blue-600 transition-colors duration-200"
         onClick={(e) => {
           e.preventDefault();
           window.open("/blog", "_blank");
@@ -279,13 +285,13 @@ const LandingPageNavbar: React.FC = () => {
         <div className="hidden lg:flex space-x-10">
           <button
             onClick={() => navigate('/auth')}
-            className="text-gray-800 hover:text-blue-600 active:scale-95 transition-all transform duration-300"
+            className="text-gray-800 font-semibold hover:text-blue-600 active:scale-95 transition-all transform duration-300"
           >
             Login
           </button>
           <button
             onClick={() => navigate('/auth')}
-            className="border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white transition-all active:scale-95 active:bg-blue-800 transform duration-300 px-6 py-1.5 rounded"
+            className="border border-gray-800 font-medium text-gray-800 hover:bg-gray-800 hover:text-white transition-all active:scale-95 active:bg-blue-800 transform duration-300 px-6 py-1.5 rounded"
           >
             Try Now
           </button>
@@ -297,13 +303,14 @@ const LandingPageNavbar: React.FC = () => {
         <div className="lg:hidden bg-white shadow-md">
           <ul className="flex flex-col items-center space-y-2 p-4">
             <li>
-              <a
-                onClick={(e) => handleNavigation(e, "how-it-works")}
-                href="#how-it-works"
-                className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
-              >
-                How Zynth Works
-              </a>
+            <a
+  onClick={(e) => handleNavigation(e, "how-it-works")}
+  href="/#how-it-works"
+  className="text-[#5D5F61] hover:text-blue-600 transition-colors duration-200 block"
+>
+  How Zynth Works
+</a>
+
             </li>
             <li>
               <a
@@ -387,7 +394,10 @@ const LandingPageNavbar: React.FC = () => {
         </div>
       )}
     </nav>
+
+    
   )
+  
 }
 
-export default LandingPageNavbar
+export default NewNavbar
