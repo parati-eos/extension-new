@@ -11,94 +11,60 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
   initialData,
   isNextLoading,
 }) => {
-  const [contactEmail, setContactEmail] = useState(
-    initialData.contactEmail || ''
-  )
-  const [contactPhone, setContactPhone] = useState(
-    initialData.contactPhone || ''
-  )
-  const [linkedinLink, setLinkedinLink] = useState(
-    initialData.linkedinLink || ''
-  )
-  const [isLinkedinValid, setIsLinkedinValid] = useState(true)
-  const [isEmailValid, setIsEmailValid] = useState(true)
-  const [isPhoneValid, setIsPhoneValid] = useState(true)
+  const [contactEmail, setContactEmail] = useState(initialData.contactEmail || '');
+  const [contactPhone, setContactPhone] = useState(initialData.contactPhone || '');
+  const [linkedinLink, setLinkedinLink] = useState(initialData.linkedinLink || '');
+  const [isLinkedinValid, setIsLinkedinValid] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isPhoneValid, setIsPhoneValid] = useState(true);
 
   useEffect(() => {
-    setContactEmail(initialData.contactEmail || '')
-    setContactPhone(initialData.contactPhone || '')
-    setLinkedinLink(initialData.linkedinLink || '')
-  }, [initialData])
+    setContactEmail(initialData.contactEmail || '');
+    setContactPhone(initialData.contactPhone || '');
+    setLinkedinLink(initialData.linkedinLink || '');
+  }, [initialData]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setContactEmail(value)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    setIsEmailValid(value === '' || emailRegex.test(value)) // Valid if empty or matches regex
-  }
-
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-  
-    // Remove all non-numeric characters
-    value = value.replace(/\D/g, '');
-  
-    // Prevent leading zeros
-    // if (value.startsWith('0')) {
-    //   value = value.substring(1);
-    // }
-  
-    // Limit the input to 10 digits
-    // if (value.length > 10) {
-    //   value = value.slice(0, 10);
-    // }
-  
-    setContactPhone(value);
-  
-    // Validate the phone number (exactly 10 digits)
-    // const phoneRegex = /^[1-9]\d{9}$/;
-    // setIsPhoneValid(phoneRegex.test(value));
+    const value = e.target.value;
+    setContactEmail(value);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    setIsEmailValid(value === '' || emailRegex.test(value)); // Valid if empty or matches regex
   };
-
-  const handleLinkedinFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (!linkedinLink) {
-      setLinkedinLink("https://"); // Pre-fill "https://" only if input is empty
-    }
 
   const handlePhoneChange = (value: string) => {
     setContactPhone(value);
-
+    setIsPhoneValid(value.length >= 10); // Ensure valid phone length
   };
-  
+
   const handleLinkedinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-  
-    // Allow backspace to clear the input
-    if (value === "") {
-      setLinkedinLink(""); // Allow user to completely clear input
+
+    if (value === '') {
+      setLinkedinLink('');
+      setIsLinkedinValid(true);
       return;
     }
-  
-    
-  
-    const linkedinRegex =
-      /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]{3,}\/?$/;
-  
-    setIsLinkedinValid(linkedinRegex.test(value)); // Validate LinkedIn URL
-    setLinkedinLink(value); // Update state
+
+    const linkedinRegex = /^https:\/\/(www\.)?linkedin\.com\/(in|company|pub)\/[a-zA-Z0-9_-]+\/?$/;
+    setIsLinkedinValid(linkedinRegex.test(value));
+    setLinkedinLink(value);
   };
-  
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onContinue({ contactEmail, contactPhone, linkedinLink })
-  }
+  const handleLinkedinFocus = () => {
+    if (!linkedinLink) {
+      setLinkedinLink('https://');
+    }
+  };
 
-  // Form is valid if all filled fields are valid or all fields are empty
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    onContinue({ contactEmail, contactPhone, linkedinLink });
+  };
+
   const isFormValid =
-    (contactEmail === '' && contactPhone === '' && linkedinLink === '') || // All empty
+    (contactEmail === '' && contactPhone === '' && linkedinLink === '') || // Allow empty form
     ((contactEmail === '' || isEmailValid) &&
+      (contactPhone === '' || isPhoneValid) &&
       (linkedinLink === '' || isLinkedinValid));
 
   return (
@@ -117,66 +83,51 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-[#4A4B4D]">Email</label>
             <input
-              type="text"
+              type="email"
               placeholder="Enter email"
-              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isEmailValid ? 'border-red-500' : ''}`}
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${
+                !isEmailValid ? 'border-red-500' : ''
+              }`}
               value={contactEmail}
               onChange={handleEmailChange}
             />
             {!isEmailValid && <p className="text-red-500 text-sm">Invalid email address.</p>}
           </div>
 
-          {/* Phone Input with Country Code */}
+          {/* Phone Input */}
           <div className="flex flex-col gap-2">
             <label className="font-semibold text-[#4A4B4D]">Phone</label>
-
-            <input
-              type="tel"
-              placeholder="Enter phone number"
-              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${contactPhone ? 'border-red-500' : ''}`}
+            <PhoneInput
+              country={'in'}
               value={contactPhone}
               onChange={handlePhoneChange}
+              inputProps={{
+                name: 'phone',
+                id: 'phone',
+                required: true,
+              }}
+              containerStyle={{
+                width: '100%',
+              }}
+              inputStyle={{
+                width: '100%',
+                height: '48px',
+                fontSize: '16px',
+                borderRadius: '10px',
+                border: '0.8px solid #ddd',
+                paddingLeft: '58px',
+                outline: 'none',
+                backgroundColor: 'white',
+              }}
+              buttonStyle={{
+                border: '0.8px solid #ddd',
+                backgroundColor: 'white',
+              }}
+              placeholder="Enter Company Phone"
             />
-            {!isPhoneValid && contactPhone && <p className="text-red-500 text-sm">Invalid phone number.</p>}
-
-            <div className="flex gap-2">
-            <PhoneInput
-        country={"in"}
-        value={contactPhone}
-        onChange={(value) => handlePhoneChange(`${value}`)} // Ensure "+" is prefixed
-        inputProps={{
-          name: "phone",
-          id: "phone",
-          required: true,
-        }}
-        containerStyle={{
-          width: "100%",
-        }}
-        inputStyle={{
-          width: "100%",
-          height: "48px",
-          fontSize: "16px",
-          borderRadius: "10px",
-          border: "0.8px solid #ddd",
-          paddingLeft: "58px", // Space for flag
-          outline: "none",
-          backgroundColor: "white",
-        }}
-        buttonStyle={{
-          border: "0.8px solid #ddd",
-          
-     
-          backgroundColor: "white",
-        }}
-        placeholder="Enter Company Phone" // ✅ Added placeholder here
-        
-      />
-
-
-
-
-            </div>
-
+            {!isPhoneValid && contactPhone && (
+              <p className="text-red-500 text-sm">Invalid phone number.</p>
+            )}
           </div>
 
           {/* LinkedIn Input */}
@@ -185,30 +136,35 @@ const ContactDetailsForm: React.FC<ContactDetailsFormProps> = ({
             <input
               type="text"
               placeholder="Enter LinkedIn URL"
-              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${!isLinkedinValid && linkedinLink ? 'border-red-500' : ''}`}
+              className={`p-3 border w-full rounded-xl outline-[#3667B2] ${
+                !isLinkedinValid && linkedinLink ? 'border-red-500' : ''
+              }`}
               value={linkedinLink}
+              onFocus={handleLinkedinFocus}
               onChange={handleLinkedinChange}
             />
-            {!isLinkedinValid && linkedinLink && <p className="text-red-500 text-sm">Invalid LinkedIn URL.</p>}
+            {!isLinkedinValid && linkedinLink && (
+              <p className="text-red-500 text-sm">Invalid LinkedIn URL.</p>
+            )}
           </div>
         </div>
       </form>
 
       {/* Button Section */}
-     {/* Button Section */}
-<div className="lg:w-[40%] flex flex-col items-center lg:p-2 py-4 px-2 mt-auto lg:pb-20 gap-2">
-  {isNextLoading ? (
-    <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-  ) : contactEmail.length > 0 || contactPhone.length > 0 || linkedinLink.length > 0 ? (
-    // Show "Finish" button if any field is filled
-    <NextButton text="Finish" disabled={!isFormValid}  onClick={handleSubmit} />
-  ) : (
-    // Show "Skip" button if all fields are empty
-    <NextButton text="Finish" onClick={() => onContinue({ contactEmail: '', contactPhone: '', linkedinLink: '' })} />
-  )}
-  <BackButton onClick={onBack} />
-</div>
-
+      <div className="lg:w-[40%] flex flex-col items-center lg:p-2 py-4 px-2 mt-auto lg:pb-20 gap-2">
+        {isNextLoading ? (
+          <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+        ) : (
+          <>
+            <NextButton
+              text={contactEmail || contactPhone || linkedinLink ? 'Finish' : 'Skip'}
+              disabled={!isFormValid}
+              onClick={handleSubmit}
+            />
+            <BackButton onClick={onBack} />
+          </>
+        )}
+      </div>
     </div>
   );
 };
