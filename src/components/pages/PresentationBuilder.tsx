@@ -103,6 +103,7 @@ const SelectPresentationType: React.FC = () => {
   const navigate = useNavigate()
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
+  const storedPresentationId = localStorage.getItem("presentationId");
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const pricingModalHeading = 'Refine PPT'
   const userPlan = useSelector((state: any) => state.user.userPlan)
@@ -454,6 +455,7 @@ const SelectPresentationType: React.FC = () => {
       pptInput: generateInput || "",
       pdfLink: pdfLink || "",
       deviceType: userAgent,
+      presentationIDs:storedPresentationId
     };
   
     try {
