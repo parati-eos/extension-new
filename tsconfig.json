@@ -29,6 +29,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/utils/industrySector.js"
-  ],
+, "src/reportWebVitals.js"  ],
   "exclude": ["node_modules"]
 }
