@@ -36,7 +36,7 @@ const CompanyNameForm: React.FC<CompanyNameFormProps> = ({
           <h1 className="text-2xl text-[#091220] font-bold">Organization Name</h1>
           <p className="text-[#5D5F61]">Provide your organization name</p>
         </div>
-
+{/* adarsha */}
         {/* Input */}
         <form onSubmit={handleSubmit} className="w-full max-w-sm mx-auto flex-grow flex flex-col justify-center">
           <div className="w-full py-4">
