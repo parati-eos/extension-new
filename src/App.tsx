@@ -10,7 +10,7 @@ const App = () => {
     const extractPresentationId = () => {
       const match = window.location.href.match(/presentation\/d\/([a-zA-Z0-9-_]+)/);
       if (match) {
-        localStorage.setItem("presentationId", match[1]); // Store it in localStorage
+        sessionStorage.setItem("presentationId", match[1]); // Store it in localStorage
         console.log("Captured Presentation ID:", match[1]); // Debugging
       }
     };

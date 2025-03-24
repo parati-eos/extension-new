@@ -12,9 +12,9 @@ const Home = () => {
 
     if (presId) {
       setPresentationId(presId);
-      localStorage.setItem("presentationId", presId); // Store in localStorage
+      sessionStorage.setItem("presentationId", presId); // Store in localStorage
     } else {
-      const storedId = localStorage.getItem("presentationId");
+      const storedId = sessionStorage.getItem("presentationId");
       if (storedId) {
         setPresentationId(storedId); // Retrieve stored ID if available
       }
