@@ -22,7 +22,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   ]
 
   const onBack = () => {
-    setDisplayMode('newContent')
+    setDisplayMode('slides')
   }
 
   return (

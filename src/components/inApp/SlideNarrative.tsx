@@ -101,36 +101,24 @@ export default function SlideNarrative({
   }
 
   const handleGenerateSlide = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
+    toast.info(`Request sent to generate a new version for ${heading}`, {
       position: 'top-right',
       autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
-
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-    if (!narrative.trim()) return
+    });
+  
+    setIsSlideLoading();
+  
+    if (!narrative.trim()) return;
+  
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}`,
         {
           type: selectedOption?.value,
           title: heading,
-          documentID: documentID,
+          documentID,
           input: narrative,
-          outlineID: outlineID,
+          outlineID,
           data: {
             image: selectedImage || '',
           },
@@ -140,27 +128,28 @@ export default function SlideNarrative({
             Authorization: `Bearer ${authToken}`,
           },
         }
-      )
+      );
+  
       if (response.data === 'ok') {
-        setNarrative('')
-        setDisplayMode('slides')
+        setNarrative('');
+        setDisplayMode('slides');
       }
-      if (response) {
-        toast.info(`Slide Generation Started for ${heading}`, {
-          position: 'top-right',
-          autoClose: 3000,
-        })
-      }
+  
+      toast.info(`Slide Generation Started for ${heading}`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+  
     } catch (error) {
       toast.error(`Failed to send narrative for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
-      })
-      setFailed()
-      setDisplayMode('slides')
-    } finally {
+      });
+      setFailed();
+      setDisplayMode('slides');
     }
-  }
+  };
+  
 
   const isGenerateDisabled = !narrative.trim() || !selectedOption
   const [showTooltip, setShowTooltip] = useState(false)
@@ -175,7 +164,7 @@ export default function SlideNarrative({
   }
 
   const onBack = () => {
-    setDisplayMode('newContent')
+    setDisplayMode('slides')
   }
 
   const handleSelectChange = (
@@ -365,42 +354,42 @@ export default function SlideNarrative({
       </div>
 
       {/* Attach Image and Generate Slide Buttons for Mobile */}
-      <div className="flex lg:hidden p-2 gap-2  w-full ">
-        <div className="flex-1  items-center justify-center gap-2">
-          {/* Attach Image Section */}
-          <AttachImage
-            onFileSelected={handleFileSelect}
-            isLoading={isLoading}
-            fileName={fileName}
-            uploadCompleted={uploadCompleted}
-            selectedImage={selectedImage}
-          />
-        </div>
-        {/* Generate Slide Button with Tooltip */}
-        <div
-          className="relative flex-1"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {/* Tooltip */}
-          {showTooltip && !selectedOption && (
-            <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-              Select Slide Type.
-            </div>
-          )}
-          <button
-            onClick={handleGenerateSlide}
-            disabled={isGenerateDisabled || isLoading}
-            className={`w-full py-2 rounded-md ${
-              isGenerateDisabled || isLoading
-                ? 'bg-gray-200 text-black cursor-not-allowed'
-                : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-            }`}
-          >
-            Generate Slide
-          </button>
-        </div>
+ {/* Attach Image and Generate Slide Buttons for Mobile */}
+<div className="flex flex-col gap-4 w-full mt-4">
+  {/* Attach Image Section */}
+  <AttachImage
+    onFileSelected={handleFileSelect}
+    isLoading={isLoading}
+    fileName={fileName}
+    uploadCompleted={uploadCompleted}
+    selectedImage={selectedImage}
+  />
+
+  {/* Generate Slide Button */}
+  <div
+    className="relative"
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}
+  >
+    {showTooltip && !selectedOption && (
+      <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+        Select Slide Type.
       </div>
+    )}
+    <button
+      onClick={handleGenerateSlide}
+      disabled={isGenerateDisabled || isLoading}
+      className={`w-full py-2 rounded-md ${
+        isGenerateDisabled || isLoading
+          ? 'bg-gray-200 text-black cursor-not-allowed'
+          : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+      }`}
+    >
+      Generate Slide
+    </button>
+  </div>
+</div>
+
     </div>
   )
 }
