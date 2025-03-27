@@ -451,7 +451,7 @@ export default function People({
   }
 
   return (
-    <div className="flex flex-col w-full h-full p-2 lg:p-4">
+    <div className="flex flex-col w-full h-full p-2 lg:p-4 ">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -479,7 +479,7 @@ export default function People({
                   overflow: 'hidden', // Hide overflowing text
                 }}
                 placeholder="Add Slide Title"
-                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                className="border text-sm w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
               {refineLoadingSlideTitle ? (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
@@ -527,7 +527,7 @@ export default function People({
                       onBlur={() => setFocusedInput(null)} // Remove focus
                       onChange={(e) => handleNameChange(e.target.value, index)}
                       placeholder={`Enter Name ${index + 1}`}
-                      className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="p-2 text-sm border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <span
                       className={`text-xs mt-1 ml-1 ${
@@ -551,7 +551,7 @@ export default function People({
                         handleInputChange(e.target.value, index, 'designation')
                       }
                       placeholder={`Enter Designation ${index + 1}`}
-                      className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="p-2 text-sm border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <span
                       className={`text-xs mt-1 ml-1 ${
@@ -575,7 +575,7 @@ export default function People({
                         handleInputChange(e.target.value, index, 'company')
                       }
                       placeholder={`Enter Company ${index + 1}`}
-                      className="p-2 border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="p-2 text-sm border border-gray-300 rounded-md lg:rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <span
                       className={`text-xs mt-1 ml-1 ${
@@ -610,7 +610,7 @@ export default function People({
                         whiteSpace: 'nowrap', // Prevent text wrapping
                         overflow: 'hidden', // Hide overflowing text
                       }}
-                      className="w-full p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                      className="w-full text-sm p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
                     />
                     {refineLoadingStates[index] ? (
                       <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
@@ -676,7 +676,7 @@ export default function People({
                     <label className="flex items-center gap-6 md:gap-2 border border-gray-300 px-4 py-2 rounded-md w-[100%] lg:w-[32%] cursor-pointer text-blue-500">
                       <FaImage />
                       <span className="hidden md:block">Select Image</span>
-                      <span className="md:hidden">Upload Image</span>
+                      <span className="md:hidden text-xs">Upload Image</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -691,13 +691,15 @@ export default function People({
                   {person.loading && (
                     <span className="text-gray-500">Uploading...</span>
                   )}
-                </div>
-
+                </div >
                 {index === people.length - 1 && (
+                  <div className="relative">
+                 <div className='flex w-full justify-center absolute mt-4 ml-4 '>
                   <button
                     onClick={addNewPerson}
                     disabled={isAddMoreDisabled}
-                    className={`flex w-1/2  lg:w-[180px] items-center justify-center gap-x-2 py-2 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+                    className={`flex items-center gap-x-2 justify-center px-4 py-2 md:border 
+                md:border-gray-300 md:rounded-lg text-xs text-[#5D5F61]  ${
                       isAddMoreDisabled
                         ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
@@ -706,6 +708,8 @@ export default function People({
                     <FaPlus />
                     Add More People
                   </button>
+                  </div>
+                  </div>
                 )}
               </div>
                    <button
@@ -720,13 +724,14 @@ export default function People({
                    <FaMinus />
                  </button>
                  </div>
+                 
               
             ))}
      
 
           </div>
 
-          <div className="flex w-full justify-end relative">
+          <div className="flex w-full justify-center relative">
             <button
               onClick={(e) => {
                 if (!isGenerateDisabled && !isImageUploading) {
@@ -740,7 +745,7 @@ export default function People({
                   setShowTooltip(true) // Show tooltip for relevant condition
               }}
               onMouseLeave={() => setShowTooltip(false)} // Hide tooltip on mouse leave
-              className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
+              className={`lg:w-[180px] py-2 text-sm px-5 mt-2 justify-end rounded-md active:scale-95 transition transform duration-300 ${
                 isGenerateDisabled || isImageUploading || !slideTitle
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                   : 'bg-[#3667B2] text-white hover:bg-[#28518a]'

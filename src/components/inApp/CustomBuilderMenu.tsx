@@ -19,6 +19,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
     { name: 'People', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg" },
     { name: 'Statistics', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435650523_statistics.svg" },
     { name: 'Graphs', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435703873_graphs.svg" },
+    { name: 'TextandImage',icon:"https://d2zu6flr7wd65l.cloudfront.net/uploads/1742886487822_Presentation.svg"}
   ]
 
   const onBack = () => {
@@ -26,18 +27,18 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full lg:p-4 p-2">
+    <div className="flex flex-col h-full w-full lg:p-4 p-2">
       {/* Top Section: Headings and Back Button */}
-      <div className="flex items-center justify-between w-full  ">
+      <div className="flex items-center justify-center w-full  ">
         <div>
-        <h3 className='text-semibold'>
+        <h3 className='text-semibold text-sm text-center'>
         Custom Builder
                       </h3>
          
           <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">Select the slide type you want to create.</h2>
          
         </div>
-        <BackButton onClick={onBack} />
+        {/* <BackButton onClick={onBack} /> */}
       </div>
 
       {/* Slide Type Grid */}
@@ -74,12 +75,13 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       <img
         src={type.icon}
         alt={type.name}
-        className="w-12 h-12 mb-2" // Icon size for mobile
+        className="w-10 h-10 mb-2" // Icon size for mobile
       />
       <span className="text-xs font-medium text-center">{type.name}</span>
     </div>
   ))}
 </div>
+<BackButton onClick={onBack} />
     </div>
   )
 }

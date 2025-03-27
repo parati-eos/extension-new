@@ -149,7 +149,7 @@ const SelectPresentationType: React.FC = () => {
     return 'Document-' + Date.now()
   }
   const generatedDocumentID = generateDocumentID()
-  sessionStorage.setItem('documentID', generatedDocumentID)
+
   const MAX_FILE_SIZE_MB = 20 // Limit file size to 20MB
 
   const handleFileChange = async (

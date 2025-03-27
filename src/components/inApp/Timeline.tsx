@@ -3,7 +3,7 @@ import { FaMinus, FaPlus } from 'react-icons/fa'
 import axios from 'axios'
 import AttachImage from './attachimage' // Import AttachImage component
 import { BackButton } from './BackButton'
-import { DisplayMode } from './presentationView'
+import { DisplayMode } from '../../@types/presentationView'
 import { toast } from 'react-toastify'
 import uploadFileToS3 from './uploadfiletoS3'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -316,16 +316,16 @@ export default function Timeline({
   }, [documentID, outlineID, orgId]); // Run when dependencies change
   
   return (
-    <div className="flex flex-col lg:p-4 p-2 h-full">
+    <div className="flex flex-col lg:p-4 p-2 h-full w-full">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center">
-          <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4  rounded-full animate-spin"></div>
         </div>
       ) : (
         <>
           {/* Top Section: Headings */}
           <div className="flex items-center justify-between w-full">
-            <h3 className="text-semibold">Timeline</h3>
+            <h3 className="text-semibold text-sm">Timeline</h3>
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
@@ -346,11 +346,11 @@ export default function Timeline({
                 }}
                 maxLength={50}
                 placeholder="Add Slide Title"
-                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                className="border w-full mt-2 text-[#091220]  text-sm md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
               {refineLoadingSlideTitle ? (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
-                  <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-4  border-gray-300 rounded-full animate-spin"></div>
                 </div>
               ) : (
                 slideTitle.length>0 && (
@@ -379,12 +379,12 @@ export default function Timeline({
             {timeline.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-row gap-2 lg:gap-4 lg:px-0 py-2 lg:py-0 p-1  lg:mb-0 items-center ${
+                className={`flex flex-col gap-2 lg:gap-4 lg:px-0 py-2 lg:py-0 p-1  lg:mb-0 items-center w-full ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
     
-                <div className="flex flex-col lg:w-[25%] ">
+                <div className="flex flex-col w-full ">
                   <input
                     type="text"
                     value={timeline[index]}
@@ -392,7 +392,7 @@ export default function Timeline({
                     onFocus={() => setFocusedInput(index)} // Set focus
                     onBlur={() => setFocusedInput(null)} // Remove focus
                     placeholder={`Enter Timeline ${index + 1}`}
-                    className="flex-1  lg:ml-1 w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 text-sm w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <span
                     className={`block text-xs mt-1 ml-1 ${
@@ -427,7 +427,7 @@ export default function Timeline({
                         overflow: 'hidden', // Hide overflowing text
                       }}
                       placeholder={`Enter Description ${index + 1}`}
-                      className="w-full lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                      className="w-full text-sm lg:py-5 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
                     />
                     {refineLoadingStates[index] ? (
                       <div className="absolute top-[35%] right-2 transform -translate-y-1/2">
@@ -472,7 +472,7 @@ export default function Timeline({
     timeline.length <= 1
       ? 'text-gray-400 cursor-not-allowed' // Disabled state
       : 'text-[#3667B2] hover:bg-red-100' // Active state
-  } bg-white  flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition mb-6`}
+  } bg-white  flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition mb-3`}
 >
   <FaMinus />
 </button>
@@ -484,11 +484,12 @@ export default function Timeline({
 
             {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
             {timeline.length < 6 && (
+              <div className="flex justify-center w-full mt-4">
               <button
                 onClick={addNewPoint}
                 type="button"
                 disabled={isAddDisabled}
-                className={`flex items-center p-2 gap-2 w-48 py-2 lg:rounded-md mt-4  ml-1  md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
+                className={`flex text-sm items-center justify-center p-2 gap-2 w-4/5 py-2 lg:rounded-md mt-0.5 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
                   timeline.length >= 6 || isAddDisabled
                     ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
                     : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
@@ -497,6 +498,7 @@ export default function Timeline({
                 <FaPlus />
                 Add New Timeline
               </button>
+              </div>
             )}
           </div>
 
@@ -546,8 +548,8 @@ export default function Timeline({
             </button>
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden mt-2 gap-2  w-full">
-            <div className="flex-1  items-center justify-center gap-2">
+          <div className="flex flex-col lg:hidden mt-2 gap-2  w-full">
+            <div className="flex-1  items-center justify-center gap-2 text-sm">
               {/* Attach Image Section */}
               <AttachImage
                 onFileSelected={handleFileSelect}
@@ -567,7 +569,7 @@ export default function Timeline({
               }}
               onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
-              className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 ${
+              className={`relative flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md duration-200 transform active:scale-95 text-sm ${
                 isGenerateDisabled || loading || isLoading
                   ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                   : 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg' // Enabled styles

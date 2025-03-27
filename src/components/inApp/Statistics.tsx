@@ -331,7 +331,7 @@ export default function Statistics({
                   overflow: 'hidden', // Hide overflowing text
                 }}
                 placeholder="Add Slide Title"
-                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                className="border w-full text-sm mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
               {refineLoadingSlideTitle ? (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
@@ -377,7 +377,7 @@ export default function Statistics({
                     onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputTitle(e.target.value, index)}
                     placeholder={`Enter Data Label ${index + 1}`}
-                    className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="lg:ml-1 w-full text-xs lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     maxLength={50}
                   />
                   <span
@@ -402,7 +402,7 @@ export default function Statistics({
                       handleInputDescription(e.target.value, index)
                     }
                     placeholder={`Enter Value ${index + 1}`}
-                    className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="lg:ml-2 text-xs flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     maxLength={50}
                   />
                   <span
@@ -436,6 +436,7 @@ export default function Statistics({
  
 
             {title.length < 6 && (
+              <div className="flex justify-center w-full ">
               <button
                 onClick={addNewPoint}
                 type="button"
@@ -446,9 +447,10 @@ export default function Statistics({
                     : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'
                 } `}
               >
-                <FaPlus className="h-4 w-4 mr-2" />
-                <span>Add Data</span>
+                <FaPlus className="h-3 w-3 mr-2" />
+                <span className='text-sm'>Add Data</span>
               </button>
+              </div>
             )}
           </div>
 
@@ -504,7 +506,7 @@ export default function Statistics({
             </div>
           </div>
           {/* {Mobile View} */}
-          <div className="flex lg:hidden mt-4 gap-2  w-full ">
+          <div className="flex flex-col lg:hidden mt-4 gap-2  w-full ">
             <div className="flex-1  items-center justify-center gap-2">
               {/* Attach Image Section */}
               <AttachImage
@@ -527,7 +529,7 @@ export default function Statistics({
                 }}
                 onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
-                className={`flex-1 py-2 rounded-md w-full ${
+                className={`flex-1 py-2 rounded-md w-full text-sm ${
                   isGenerateDisabled || isImageLoading
                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     : 'bg-[#3667B2] text-white'

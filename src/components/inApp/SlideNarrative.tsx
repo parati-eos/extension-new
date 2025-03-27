@@ -64,6 +64,7 @@ export default function SlideNarrative({
     { value: 'People', label: 'People',icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg"},
     { value: 'Statistics', label: 'Statistics', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435650523_statistics.svg" },
     { value: 'Graphs', label: 'Graphs', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435703873_graphs.svg" },
+    { value:"TextandImage",label:'TextandImage',icon:"https://d2zu6flr7wd65l.cloudfront.net/uploads/1742886487822_Presentation.svg"}
   ]
 
   const handleFileSelect = async (file: File | null) => {
@@ -150,6 +151,9 @@ export default function SlideNarrative({
     }
   };
   
+
+
+
 
   const isGenerateDisabled = !narrative.trim() || !selectedOption
   const [showTooltip, setShowTooltip] = useState(false)
@@ -250,7 +254,7 @@ export default function SlideNarrative({
   
 
   return (
-    <div className="flex flex-col p-2 lg:p-4 h-full">
+    <div className="flex flex-col p-1 lg:p-2 h-full w-full">
       {/* Top Section: Headings */}
       <div className="hidden lg:flex  items-center justify-between  ">
         <h2 className="font-semibold text-[#091220]">Slide Narrative</h2>
@@ -258,7 +262,7 @@ export default function SlideNarrative({
       </div>
 
       {/* Slide Type Dropdown */}
-      <div className="py-2">
+      <div className="py-2 w-9/10 m-2">
       <Select
   options={options}
   getOptionLabel={(e) => e.label}
@@ -273,12 +277,12 @@ export default function SlideNarrative({
         src={data.icon}
         alt={data.label}
         style={{
-          width: '24px',
-          height: '24px',
+          width: '22px',
+          height: '22px',
           marginRight: '8px',
         }}
       />
-      <span>{data.label}</span>
+      <span className='text-xs'>{data.label}</span>
     </div>
   )}
   styles={{
@@ -295,24 +299,24 @@ export default function SlideNarrative({
 
       {/* Input Section for Desktop */}
       <div className="hidden h-full w-full md:block flex-1 p-2 ">
-        <div className="flex flex-col items-center justify-center h-full w-full ">
+        <div className="flex flex-col items-center justify-center h-full w-full text-xm">
           <textarea
             value={narrative}
             onChange={(e) => setNarrative(e.target.value)}
             placeholder="Please provide some context and narrative to generate this slide."
-            className="w-full resize-none h-full p-2 border overflow-y-auto scrollbar-none rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full resize-none h-full p-2 border overflow-y-auto scrollbar-none rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
           ></textarea>
         </div>
       </div>
 
       {/* Input Section for Mobile */}
-      <div className="flex w-full h-full lg:hidden md:hidden flex-1  ">
+      <div className="flex w-full h-[30vh] lg:hidden md:hidden flex-1  ">
         <div className="p-2 flex flex-col h-full w-full items-center justify-center  ">
           <textarea
             value={narrative}
             onChange={(e) => setNarrative(e.target.value)}
             placeholder="Please provide some context and narrative to generate this slide."
-            className="p-2  w-full h-full border border-gray-300 overflow-y-auto scrollbar-none rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2  w-full h-full border border-gray-300 overflow-y-auto scrollbar-none text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
         </div>
       </div>
@@ -354,42 +358,44 @@ export default function SlideNarrative({
       </div>
 
       {/* Attach Image and Generate Slide Buttons for Mobile */}
- {/* Attach Image and Generate Slide Buttons for Mobile */}
-<div className="flex flex-col gap-4 w-full mt-4">
-  {/* Attach Image Section */}
-  <AttachImage
-    onFileSelected={handleFileSelect}
-    isLoading={isLoading}
-    fileName={fileName}
-    uploadCompleted={uploadCompleted}
-    selectedImage={selectedImage}
-  />
-
-  {/* Generate Slide Button */}
-  <div
-    className="relative"
-    onMouseEnter={handleMouseEnter}
-    onMouseLeave={handleMouseLeave}
-  >
-    {showTooltip && !selectedOption && (
-      <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
-        Select Slide Type.
+      <div className="flex flex-col  lg:hidden p-2 gap-2  w-full ">
+        <div className="flex-1  items-center justify-center gap-2">
+          {/* Attach Image Section */}
+          <AttachImage
+            onFileSelected={handleFileSelect}
+            isLoading={isLoading}
+            fileName={fileName}
+            uploadCompleted={uploadCompleted}
+            selectedImage={selectedImage}
+          />
+        </div>
+        {/* Generate Slide Button with Tooltip */}
+        <div
+          className="relative flex-1"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Tooltip */}
+          {showTooltip && !selectedOption && (
+            <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-10">
+              Select Slide Type.
+            </div>
+          )}
+          <button
+            onClick={handleGenerateSlide}
+            disabled={isGenerateDisabled || isLoading}
+            className={`w-full py-2 rounded-md text-sm ${
+              isGenerateDisabled || isLoading
+                ? 'bg-gray-200 text-black cursor-not-allowed'
+                : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+            }`}
+          >
+            Generate Slide
+          </button>
+         
+        </div>
+        <BackButton onClick={onBack} />
       </div>
-    )}
-    <button
-      onClick={handleGenerateSlide}
-      disabled={isGenerateDisabled || isLoading}
-      className={`w-full py-2 rounded-md ${
-        isGenerateDisabled || isLoading
-          ? 'bg-gray-200 text-black cursor-not-allowed'
-          : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-      }`}
-    >
-      Generate Slide
-    </button>
-  </div>
-</div>
-
     </div>
   )
 }

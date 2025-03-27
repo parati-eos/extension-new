@@ -73,7 +73,7 @@ useEffect(() => {
           <img src={imagePreview} alt="Uploaded" className="w-10 h-10 object-cover rounded-md" />
           <button
             onClick={removeImage}
-            className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-sm hover:bg-gray-200"
+            className="absolute -top-2 -right-2 bg-white border border-gray-300 rounded-full p-1 text-sm hover:bg-gray-200 "
           >
             <IoClose className="text-gray-600" />
           </button>
@@ -84,14 +84,14 @@ useEffect(() => {
         type="button"
         onClick={triggerFileInput}
         disabled={isLoading} // Use parent-controlled loading state
-        className={`hidden lg:flex items-center justify-center py-2 border border-gray-300 rounded-md w-full sm:w-full md:w-full lg:w-[180px] cursor-pointer ${
+        className={`hidden lg:flex items-center justify-center py-2 text-sm border  border-gray-300 rounded-md w-full sm:w-full md:w-full lg:w-[180px] cursor-pointer ${
           isLoading
             ? 'bg-white text-gray-700 cursor-not-allowed'
             : 'bg-white text-gray-700 hover:bg-gray-100'
         }`}
       >
         <FaPaperclip />
-        <span className="ml-2">
+        <span className="ml-2 text-sm">
           {isLoading ? 'Loading...' : fileName ? 'Upload Again' : buttonText}
         </span>
       </button>
@@ -128,7 +128,7 @@ useEffect(() => {
   ) : (
     <>
       <FaPaperclip />
-      <span className="ml-2">{isLoading ? 'Loading...' : buttonText}</span>
+      <span className="ml-2 text-sm">{isLoading ? 'Loading...' : buttonText}</span>
     </>
   )}
 </button>

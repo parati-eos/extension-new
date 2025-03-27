@@ -5,6 +5,7 @@ import Login from "./components/auth/login";
 import OnboardingContainer from "./components/pages/OnboardingContainer";
 import PresentationBuilder from "./components/pages/PresentationBuilder";
 import Refineppt from "./components/pages/refineppt";
+import Refinepresentations from "./components/pages/newpresentation";
 const App = () => {
   useEffect(() => {
     const extractPresentationId = () => {
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/onboarding" element={<OnboardingContainer />} />
         <Route path="/new-presentation" element={<PresentationBuilder />} />
         <Route path="/refine-ppt" element={<Refineppt />} />
+        <Route path="/refine-presentation" element={<Refinepresentations/>}/>
       </Routes>
     </Router>
   );

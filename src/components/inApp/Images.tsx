@@ -3,7 +3,7 @@ import axios from 'axios'
 import { FaImage } from 'react-icons/fa'
 import uploadFileToS3 from './uploadfiletoS3'
 import { BackButton } from './BackButton'
-import { DisplayMode } from './presentationView'
+import { DisplayMode } from '../../@types/presentationView'
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
@@ -246,8 +246,8 @@ export default function Images({
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-          <div className="w-full p-1">
-            <div className="relative">
+          <div className="flex justify-between w-full p-1">
+            <div className="relative flex justify-center w-full">
               <input
                 type="text"
                 value={slideTitle}
@@ -263,7 +263,7 @@ export default function Images({
                 }}
                 maxLength={50}
                 placeholder="Add Slide Title"
-                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                className="border text-sm w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
               {refineLoadingSlideTitle ? (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2  w-full h-full flex items-center justify-end">
@@ -294,7 +294,7 @@ export default function Images({
             <div className="flex items-center border justify-between border-gray-300 rounded-lg mt-2 lg:mt-0 p-4">
               <div className="flex items-center gap-4">
                 <FaImage className="text-4xl text-gray-500" />
-                <p className="text-gray-500 text-sm text-center">
+                <p className="text-gray-500 text-xs text-center ">
                   {isUploading && replacingIndex === null
                     ? 'Uploading... Please wait'
                     : 'Upload Image(s)'}
@@ -302,7 +302,7 @@ export default function Images({
               </div>
               <button
                 onClick={triggerFileInput}
-                className="text-[#3667B2] px-4 py-2 rounded-md "
+                className="text-[#3667B2] px-4 py-2 rounded-md text-sm"
               >
                 Upload
               </button>
@@ -317,7 +317,7 @@ export default function Images({
             </div>
 
             {/* Display Uploaded Images for Mobile */}
-            <div className="grid grid-cols-3 gap-2 mt-4">
+            <div className="grid grid-cols-2 gap-2 mt-4">
               {images.map((image, index) => (
                 <div key={index} className="relative w-full h-24">
                   {replacingIndex === index && (
@@ -446,7 +446,7 @@ export default function Images({
           </div>
 
           {/* Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden gap-2 justify-end">
+          <div className="flex lg:hidden gap-2 justify-center mt-2">
             <div
               className="relative"
               onMouseEnter={handleMouseEnter}
@@ -455,7 +455,7 @@ export default function Images({
               <button
                 onClick={handleSubmit}
                 disabled={images.length === 0 || !slideTitle}
-                className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
+                className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 text-sm ${
                   images.length > 0 && slideTitle
                     ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
                     : 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles

@@ -295,7 +295,7 @@ export default function Points({
   }, [documentID, outlineID, orgId, authToken]) // Dependency array ensures re-fetch when dependencies change
 
   return (
-    <div className="flex flex-col lg:p-4 p-2 h-full">
+    <div className="flex flex-col lg:p-4 w-full p-2 h-full">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -303,12 +303,12 @@ export default function Points({
       ) : (
         <>
           {/* Top Section: Headings */}
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between  w-full">
             <h3 className="text-semibold">Points</h3>
             <BackButton onClick={onBack} />
           </div>
           {/* Editable Slide Title */}
-<div className="w-full p-1">
+<div className="w-full ">
   <div className="relative">
     <input
       type="text"
@@ -316,7 +316,7 @@ export default function Points({
       onChange={(e) => setSlideTitle(e.target.value)}
       placeholder="Add Slide Title"
       maxLength={50}
-      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
     />
     
     {refineLoadingSlideTitle ? (
@@ -360,7 +360,7 @@ export default function Points({
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
-                <div className="flex flex-row gap-2 w-full items-center">
+                <div className="flex flex-row gap-2 ml-0 w-full justify-between align-center">
                   <div className="relative hidden lg:block w-full">
                     <input
                       type="text"
@@ -379,7 +379,7 @@ export default function Points({
                       }}
                       placeholder={`Enter Point ${index + 1}`}
                       className="flex-1 w-full lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
-                text-ellipsis overflow-hidden whitespace-nowrap pr-10" // Ensure padding for the icon
+                text-ellipsis overflow-hidden whitespace-nowrap pr-10 text-xs ml=0" // Ensure padding for the icon
                     />
                     {refineLoadingStates[index] ? (
                       <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
@@ -438,7 +438,7 @@ export default function Points({
     onBlur={() => setFocusedInput(null)} // Remove focus
     onChange={(e) => handleInputChange(e.target.value, index)}
     placeholder={`Enter Point ${index + 1}`}
-    className="w-full text-[#5D5F61] p-3 pr-7 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    className="w-full text-[#5D5F61] p-3 pr-7 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
   />
   
   {refineLoadingStates[index] ? (
@@ -482,18 +482,20 @@ export default function Points({
                 </span>
                 {/* Add New Point Button */}
                 {index === points.length - 1 && points.length < 6 && (
+                 <div className="flex justify-center w-full">
                   <button
                     onClick={addNewPoint}
                     className={`text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2 items-center md:justify-center h-10 lg:mt-4 ${
                       point.trim() === ''
-                        ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' // Disabled state
-                        : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' // Active state
+                        ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed' 
+                        : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white' 
                     }`}
-                    disabled={point.trim() === ''} // Prevent adding a new point if the current input is empty
+                    disabled={point.trim() === ''} 
                   >
                     <FaPlus />
-                    <span>Add new point</span>
+                    <span className="text-xs">Add new point</span>
                   </button>
+                  </div>
                 )}
               </div>
             ))}
@@ -544,11 +546,11 @@ export default function Points({
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div
-            className="flex lg:hidden mt-2 gap-2  w-full relative "
+            className="flex flex-col lg:hidden mt-2 gap-2  w-full relative "
             onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
             onMouseLeave={() => setShowTooltip(false)}
           >
-            <div className="flex-1  items-center justify-center gap-2">
+            <div className="flex-1 items-center justify-center  gap-1">
               <AttachImage
                 onFileSelected={handleFileSelect}
                 isLoading={isImageLoading}
