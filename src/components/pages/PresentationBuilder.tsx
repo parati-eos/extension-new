@@ -132,6 +132,8 @@ const SelectPresentationType: React.FC = () => {
   const [brandingColorsSave, setBrandingColorsSave] = useState<string[]>([]); // Initialize branding colors
   const [isLoading, setIsLoading] = useState<boolean>(false); // Add a loading state
   const [isValidLink, setIsValidLink] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const [organizationColors, setOrganizationColors] = useState<Colors | null>(null);
   const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
   const handleCloseModal = () => {
@@ -487,18 +489,16 @@ const SelectPresentationType: React.FC = () => {
   };
   
   
-  const generateDocument = async () => {
+  const generateDocument = async (): Promise<boolean> => {
     setLoading(true);
-    navigate(
-      `/presentation-view?documentID=${generatedDocumentIDoutline}`
-    )
+  
     if (!generatedDocumentIDoutline) {
       console.error("Error: Document ID is missing. Generate outline first.");
       setLoading(false);
-      return;
+      return false;
     }
+  
     const colorsToUse = brandingColorsSave.length ? brandingColorsSave : Object.values(organizationColors || {});
-
     const colorKeys = [
       "P100", "P75_S25", "P50_S50", "P25_S75", "S100",
       "F_P100", "F_P75_S25", "F_P50_S50", "F_P25_S75", "F_S100",
@@ -508,42 +508,50 @@ const SelectPresentationType: React.FC = () => {
     const payload = {
       websiteUrl: websiteUrl || "",
       colors: colorKeys.reduce((acc: { [key: string]: string }, key, index) => {
-        acc[key] = colorsToUse[index] || "#000000"; // Default to black if missing
+        acc[key] = colorsToUse[index] || "#000000";
         return acc;
-      }, {} as { [key: string]: string })
+      }, {}),
     };
-  
   
     try {
       const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${generatedDocumentIDoutline}`;
-  
-      console.log("Document Request URL:", requestUrl);
-      console.log("Payload:", payload);
-  
       const response = await axios.post(requestUrl, payload, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
   
-      if (response.status !== 200) throw new Error("Failed to generate document");
-  
-      const data = response.data;
-      setOutline(data.outline);
+      if (response.status === 200) {
+        setOutline(response.data.outline);
+        return true;
+      } else {
+        throw new Error("Failed to generate document");
+      }
     } catch (error) {
-      
+      console.error("Document generation error:", error);
+      return false;
     } finally {
       setLoading(false);
     }
   };
   
-  const handleButtonClick = async () => {
-    try {
-      const documentID = await generateDocument(); // Wait for completion
-    } catch (error) {
-      console.error("Error generating document:", error);
-    }
-  };
+  
+const handleButtonClick = async () => {
+  setLoading(true); // show loader immediately
+
+  const success = await generateDocument();
+
+  if (success) {
+    // Delay slightly to allow loader UI to render before navigating
+    setTimeout(() => {
+      navigate("/presentation-success");
+    }, 400); // 300–500ms works well
+  } else {
+    setLoading(false); // stop loader on error
+  }
+};
+
+
   useEffect(() => {
     const fetchOrganizationData = async () => {
       if (!orgId) {
