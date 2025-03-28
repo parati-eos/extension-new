@@ -133,7 +133,7 @@ const SelectPresentationType: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false); // Add a loading state
   const [isValidLink, setIsValidLink] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false);
-
+   const[isgenerated,setgenerated]=useState(false);
   const [organizationColors, setOrganizationColors] = useState<Colors | null>(null);
   const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/
   const handleCloseModal = () => {
@@ -538,9 +538,8 @@ const SelectPresentationType: React.FC = () => {
   
 const handleButtonClick = async () => {
   setLoading(true); // show loader immediately
-
-  const success = await generateDocument();
-
+  setgenerated(true);
+  const success= await generateDocument();
   if (success) {
     // Delay slightly to allow loader UI to render before navigating
     setTimeout(() => {
@@ -548,6 +547,7 @@ const handleButtonClick = async () => {
     }, 400); // 300–500ms works well
   } else {
     setLoading(false); // stop loader on error
+    setgenerated(false);
   }
 };
 
@@ -930,12 +930,12 @@ const handleButtonClick = async () => {
   {/* Generate Presentation Button */}
   <div className="flex w-full justify-center">
   <button 
-  disabled={isLoading || websiteUrl.length > 0 && !isValidLink  }
+  disabled={isgenerated || isLoading || websiteUrl.length > 0 && !isValidLink  }
   className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
-    ${isLoading||websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
+    ${isgenerated || isLoading||websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
   onClick={handleButtonClick}
 >
-    Generate Presentation
+{isgenerated ? "Generating..." : "Generate Presentation"}
   </button>
 </div>
 
