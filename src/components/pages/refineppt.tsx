@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { DisplayMode } from '../../@types/presentationView';
-import zynthtext from '../../assets/zynth-text.png';
+import React, { useState, useRef, useEffect } from "react";
+import { DisplayMode } from "../../@types/presentationView";
+import zynthtext from "../../assets/zynth-text.png";
 import {
   MobileNewSlideVersion,
   DesktopNewSlideVersion,
+<<<<<<< Updated upstream
 } from '../inApp/NewSlideVersion';
 import SlideNarrative from '../inApp/SlideNarrative';
 import CustomBuilderMenu from '../inApp/CustomBuilderMenu';
@@ -15,24 +16,37 @@ import Table from '../inApp/Table';
 import Graphs from '../inApp/Graphs';
 import Statistics from '../inApp/Statistics';
 import TextPlusImage from '../inApp/TextPlusImage';
-
+=======
+} from "../inApp/NewSlideVersion";
+import SlideNarrative from "../inApp/SlideNarrative";
+import CustomBuilderMenu from "../inApp/CustomBuilderMenu";
+import Points from "../inApp/Points";
+import People from "../inApp/People";
+import Phases from "../inApp/Timeline";
+import Images from "../inApp/Images";
+import Table from "../inApp/Table";
+import Graphs from "../inApp/Graphs";
+import Statistics from "../inApp/Statistics";
+import TextPlusImage from "../inApp/TextPlusImage";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+>>>>>>> Stashed changes
 
 const RefinePPT: React.FC = () => {
-  const outlineid = 'abc123';
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('slides');
+  const outlineid = "abc123";
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("slides");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const slidesArrayRef = useRef<Record<string, any>>({});
-  const [outlineId, setOutlineId] = useState<string>('');
-  const [slideDataId, setSlideDataId] = useState<string>('');
-  const [sectionName, setSectionName] = useState<string>('');
-  const [formID, setFormID] = useState<string | null>(null); 
+  const [outlineId, setOutlineId] = useState<string>("");
+  const [slideDataId, setSlideDataId] = useState<string>("");
+  const [sectionName, setSectionName] = useState<string>("");
+  const [formID, setFormID] = useState<string | null>(null);
   const [slideId, setSlideId] = useState<string | null>(null);
-  const documentID = sessionStorage.getItem('documentID') || '';
-  const orgID = sessionStorage.getItem('orgId') || '';
-  const authToken = sessionStorage.getItem('authToken') || '';
+  const documentID = sessionStorage.getItem("documentID") || "";
+  const orgID = sessionStorage.getItem("orgId") || "";
+  const authToken = sessionStorage.getItem("authToken") || "";
 
-
-  console.log("Token",authToken)
+  console.log("Token", authToken);
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "slideId") {
@@ -41,14 +55,17 @@ const RefinePPT: React.FC = () => {
         setSlideId(receivedSlideId);
 
         // Fetch additional data from backend
-        fetch("https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/slidedisplay/get-slide-info", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${authToken}`, // ✅ Add your token here
-          },
-          body: JSON.stringify({ GenSlideID: receivedSlideId }),
-        })
+        fetch(
+          "https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/slidedisplay/get-slide-info",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`, // ✅ Add your token here
+            },
+            body: JSON.stringify({ GenSlideID: receivedSlideId }),
+          }
+        )
           .then((response) => response.json())
           .then((data) => {
             setFormID(data.FormID);
@@ -66,124 +83,307 @@ const RefinePPT: React.FC = () => {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+<<<<<<< Updated upstream
+=======
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkTokenExpiry = () => {
+      const token = sessionStorage.getItem("authToken");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const decoded: { exp?: number } = jwtDecode(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (!decoded.exp || decoded.exp <= currentTime) {
+          sessionStorage.clear();
+          navigate("/login");
+          return;
+        }
+
+        // Auto logout after token expiry
+        const timeoutDuration = (decoded.exp - currentTime) * 1000;
+        setTimeout(() => {
+          sessionStorage.clear();
+          navigate("/login");
+        }, timeoutDuration);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        sessionStorage.clear();
+        navigate("/login");
+      }
+    };
+
+    checkTokenExpiry();
+  }, [navigate]);
+
+>>>>>>> Stashed changes
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
   const renderContent = () => {
     switch (displayMode) {
-      case'slides':
-        return  <div className="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 w-full max-w-xl text-sm">
-        <div className=" flex flex-col items-center justify-center">
-           <h2 className="text-base font-bold text-gray-900 text-center">Create a new slide</h2>
-          
-       <p className="text-gray-600 mt-2 text-center">How would you like to create a new slide?</p>
+      case "slides":
+        return (
+          <div className="flex flex-col  justify-center bg-white shadow-lg rounded-lg p-6 w-full h-[80vh] max-w-xl">
+            <div className=" flex flex-col items-center justify-center h-full">
+              <h2 className="text-xl font-bold text-gray-900 text-center">
+                Create a new slide
+              </h2>
+              <p className="text-gray-600 mt-2 text-center">
+                How would you like to create a new slide?
+              </p>
 
-        <div className="mt-6 flex flex-col justify-center gap-3">
-          {[
-            { name: 'quick', icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg' },
-            { name: 'SlideNarrative', icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg' },
-            { name: 'customBuilder', icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg' },
-          ].map((type) => (
-            <button
-              key={type.name}
-              onClick={() => setDisplayMode(type.name as DisplayMode)}
-              className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-25 transition hover:shadow-lg border border-gray-200 text-sm"
-            >
-              <img src={type.icon} alt={type.name} className="w-8 h-8 mb-3" />
-              <span className="text-gray-900 font-medium text-center text-sm">{type.name}</span>
-            </button> 
-          ))}
-       </div>
-        </div>
-        </div>
-      case 'Points':
-        return <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg pt-1 w-full max-w-xl text-sm">
-        <Points heading="Points Slide" setDisplayMode={setDisplayMode} slideType={""} documentID={documentID} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
-        </div>
-      case 'People':
-        return <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg pt-6 w-full max-w-xl">
-        <People heading="People Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
-        </div> 
-      case 'Timeline':
-        return <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-           <Phases heading="Timeline Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
+              <div className="mt-6 flex flex-row justify-center gap-3">
+                {[
+                  {
+                    name: "Quick",
+                    icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg",
+                  },
+                  {
+                    name: "SlideNarrative",
+                    icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg",
+                  },
+                  {
+                    name: "CustomBuilder",
+                    icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg",
+                  },
+                ].map((type) => (
+                  <button
+                    key={type.name}
+                    onClick={() => setDisplayMode(type.name as DisplayMode)}
+                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-40 transition hover:shadow-lg border border-gray-200 "
+                  >
+                    <img
+                      src={type.icon}
+                      alt={type.name}
+                      className="w-12 h-12 mb-3"
+                    />
+                    <span className="text-gray-900 font-medium text-center">
+                      {type.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>  
+        );
+      case "Quick":
+        return (
+          <div className="flex flex-col justify-center bg-white shadow-lg rounded-lg p-6 w-full h-[80vh] max-w-xl">
+            <div className=" flex flex-col items-center justify-center h-full">
+              <h2 className="text-xl font-bold text-gray-900 text-center">
+                Create a new slide
+              </h2>
+              <p className="text-gray-600 mt-2 text-center">
+                How would you like to create a new slide?
+              </p>
+
+              <div className="mt-6 flex flex-row justify-center gap-3">
+                {[
+                  {
+                    name: "Quick",
+                    icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg",
+                  },
+                  {
+                    name: "SlideNarrative",
+                    icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg",
+                  },
+                  {
+                    name: "CustomBuilder",
+                    icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg",
+                  },
+                ].map((type) => (
+                  <button
+                    key={type.name}
+                    onClick={() => setDisplayMode(type.name as DisplayMode)}
+                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-40 transition hover:shadow-lg border border-gray-200 "
+                  >
+                    <img
+                      src={type.icon}
+                      alt={type.name}
+                      className="w-12 h-12 mb-3"
+                    />
+                    <span className="text-gray-900 font-medium text-center">
+                      {type.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-      case 'Images':
-        return  <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-         <Images heading="Images Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
-         </div>
-      case 'Table':
-        return  <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-         <Table heading="Table Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
-         </div>
-      case 'Graphs':
-        return  <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-         <Graphs heading="Graphs Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
+        );
+      case "Points":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg pt-1 w-full max-w-xl text-sm">
+            <Points
+              heading="Points Slide"
+              setDisplayMode={setDisplayMode}
+              slideType={""}
+              documentID={documentID}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
           </div>
-      case 'TextandImage':
-        return  <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-        <TextPlusImage heading="Graphs Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
-         </div>
+        );
+      case "People":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg pt-6 h-[70%] w-full max-w-xl">
+            <People
+              heading="People Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
+      case "Timeline":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 h-[70%] w-full max-w-xl">
+            <Phases
+              heading="Timeline Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
+      case "Images":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
+            <Images
+              heading="Images Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
+      case "Table":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
+            <Table
+              heading="Table Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
+      case "Graphs":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
+            <Graphs
+              heading="Graphs Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
+      case "TextandImage":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
+            <TextPlusImage
+              heading="Graphs Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
 
-      case 'Statistics':
-        return  <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-          <Statistics heading="Statistics Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} />
-        </div>
-       case 'quick':
-        return  <div className="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 w-full max-w-xl">
-        <div className=" flex flex-col items-center justify-center">
-        <h2 className="text-2xl font-bold text-gray-900 text-center">Create a new slide</h2>
-    <p className="text-gray-600 mt-2 text-center">How would you like to create a new slide?</p>
+      case "Statistics":
+        return (
+          <div className="flex flex-col items-center  bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
+            <Statistics
+              heading="Statistics Slide"
+              setDisplayMode={setDisplayMode}
+              slideType=""
+              documentID={slideDataId}
+              orgId={orgID}
+              authToken={authToken}
+              outlineID={outlineId}
+              setIsSlideLoading={() => {}}
+              setFailed={() => {}}
+            />
+          </div>
+        );
 
-     <div className="mt-6 flex flex-col justify-center gap-3">
-       {[
-         { name: 'quick', icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg' },
-         { name: 'SlideNarrative', icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg' },
-         { name: 'customBuilder', icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg' },
-       ].map((type) => (
-         <button
-           key={type.name}
-           onClick={() => setDisplayMode(type.name as DisplayMode)}
-           className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-48 transition hover:shadow-lg border border-gray-200 "
-         >
-           <img src={type.icon} alt={type.name} className="w-12 h-12 mb-3" />
-           <span className="text-gray-900 font-medium text-center">{type.name}</span>
-         </button>
-       ))}
-    </div>
-     </div>
-     </div>
-      case 'SlideNarrative':
-        return  <div className="flex items-center bg-white shadow-lg rounded-lg pt-1 pb-1 pr-0 pl-0 w-full h-[60vh] max-w-xl mr-0 ml=0">
-          <SlideNarrative
-        heading={sectionName || 'Slide Title Here'}
-                slideType="Points"
-                documentID={documentID || 'doc_123'}
-                orgId={orgID}
-                authToken={authToken}
-                setDisplayMode={setDisplayMode}
-                setIsSlideLoading={() => {}}
-                outlineID={outlineId || 'abc123'}
-                setFailed={() => {}}
-      />
-      </div>
-  
+      case "SlideNarrative":
+        return (
+          <div className="flex items-center bg-white shadow-lg rounded-lg pt-1 pb-1 pr-0 pl-0 w-full h-[60vh] max-w-xl mr-0 ml=0">
+            <SlideNarrative
+              heading={sectionName || "Slide Title Here"}
+              slideType="Points"
+              documentID={documentID || "doc_123"}
+              orgId={orgID}
+              authToken={authToken}
+              setDisplayMode={setDisplayMode}
+              setIsSlideLoading={() => {}}
+              outlineID={outlineId || "abc123"}
+              setFailed={() => {}}
+            />
+          </div>
+        );
+
       // case 'customBuilder':
       //   return <CustomBuilderMenu onTypeClick={setDisplayMode} setDisplayMode={setDisplayMode} />;
-      
+
       default:
-        return  <div className="flex items-center bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
-         <CustomBuilderMenu onTypeClick={setDisplayMode} setDisplayMode={setDisplayMode} />
-         </div>
-      
+        return (
+          <div className="flex items-center bg-white shadow-lg rounded-lg p-2 w-full max-w-xl">
+            <CustomBuilderMenu
+              onTypeClick={setDisplayMode}
+              setDisplayMode={setDisplayMode}
+            />
+          </div>
+        );
     }
   };
 
   return (
-        <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 p-2.5 pl-0.5 pr-0.5">
-      <div className="w-full flex flex-col items-center text-center mb-6">
+    <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-100 p-2.5 pl-0.5 pr-0.5">
+      {/* <div className="w-full flex flex-col items-center text-center mb-6">
         <img src={zynthtext} alt="Zynth Logo" className="h-5 mb-2" />
         <h3 className="text-sm text-gray-700">AI Slides and Presentation</h3>
       </div >
@@ -200,12 +400,15 @@ const RefinePPT: React.FC = () => {
   🔄 Refresh Slide ID
 </button>
 
+<<<<<<< Updated upstream
       <div className="w-full py-2 border-b mb-6 text-gray-500 text-sm">Title</div>
+=======
+      <div className="w-full py-2 border-b mb-6 text-gray-500 text-sm">{sectionName}</div> */}
+>>>>>>> Stashed changes
 
       {/* //<div className="flex flex-col items-center justify-center bg-white shadow-lg rounded-lg p-6 w-full max-w-xl"> */}
-        {renderContent()}
+      {renderContent()}
       {/* //</div> */}
-      
     </div>
   );
 };

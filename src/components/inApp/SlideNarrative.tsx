@@ -322,7 +322,7 @@ export default function SlideNarrative({
       </div>
 
       {/* Attach Image and Generate Slide Buttons for Desktop */}
-      <div className="hidden  lg:flex w-full  lg:justify-end lg:w-auto lg:gap-4">
+      <div className="hidden  lg:flex w-full justify-between lg:justify-end lg:w-auto lg:gap-4">
         {/* Attach Image Section */}
         <AttachImage
           onFileSelected={handleFileSelect}

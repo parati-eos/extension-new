@@ -83,9 +83,18 @@ const Login = () => {
 
       if (responseData.orgid) {
         sessionStorage.setItem("orgId", responseData.orgid);
+                // ✅ Reload the sidebar (parent) after login
+                setTimeout(() => {
+                  window.parent.postMessage({ type: "reloadIframe" }, "*");
+                }, 1000);
         navigate("/new-presentation");
+        
       } else {
         sessionStorage.setItem("orgId", generatedOrgId);
+                // ✅ Reload the sidebar (parent) after login
+                setTimeout(() => {
+                  window.parent.postMessage({ type: "reloadIframe" }, "*");
+                }, 1000);
         navigate("/onboarding");
       }
     } catch (error) {
@@ -110,6 +119,9 @@ const Login = () => {
 
       // Call API to save user details
       saveUserData(decoded);
+      setTimeout(()=>{
+        navigate("/new-presentation");
+      },3000)
     }
   };
 
@@ -144,4 +156,8 @@ const Login = () => {
   );
 };
 
+<<<<<<< Updated upstream
 export default Login;
+=======
+export default Login; 
+>>>>>>> Stashed changes

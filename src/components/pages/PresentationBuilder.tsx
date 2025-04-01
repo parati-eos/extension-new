@@ -537,6 +537,7 @@ const SelectPresentationType: React.FC = () => {
     }
   };
   
+<<<<<<< Updated upstream
   const handleButtonClick = async () => {
     try {
       const documentID = await generateDocument(); // Wait for completion
@@ -544,6 +545,29 @@ const SelectPresentationType: React.FC = () => {
       console.error("Error generating document:", error);
     }
   };
+=======
+  
+const handleButtonClick = async () => {
+  setLoading(true); // show loader immediately
+
+  //const success = await generateDocument();
+  const success= true
+  setTimeout(() => {
+    console.log("done");
+    // navigate("/presentation-success");
+  }, 400);
+  if (success) {
+    // Delay slightly to allow loader UI to render before navigating
+    setTimeout(() => {
+      navigate("/presentation-success");
+    }, 400); // 300–500ms works well
+  } else {
+    setLoading(false); // stop loader on error
+  }
+};
+
+
+>>>>>>> Stashed changes
   useEffect(() => {
     const fetchOrganizationData = async () => {
       if (!orgId) {
@@ -922,12 +946,12 @@ const SelectPresentationType: React.FC = () => {
   {/* Generate Presentation Button */}
   <div className="flex w-full justify-center">
   <button 
-  disabled={isLoading || websiteUrl.length > 0 && !isValidLink  }
+  disabled={loading ||isLoading || websiteUrl.length > 0 && !isValidLink  }
   className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
     ${isLoading||websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
   onClick={handleButtonClick}
 >
-    Generate Presentation
+{loading ? "Generating..." : "Generate Presentation"}
   </button>
 </div>
 

@@ -3,7 +3,7 @@ export type DisplayMode =
   | 'newContent'
   | 'slideNarrative'
   | 'customBuilder'
-  | 'quick'
+  | 'Quick'
   | 'narrative'
   | 'Points'
   | 'Timeline'

@@ -85,7 +85,7 @@ export default function Statistics({
   }, [isRowAdded]) // Dependency only on isRowAdded
 
   const addNewPoint = () => {
-    if (title.length < 6) {
+    if (title.length < 4) {
       
       setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setTitle([...title, ''])
@@ -94,12 +94,12 @@ export default function Statistics({
     }
   }
   const isAddDisabled =
-    title.length >= 6 || // Limit to 6 points
+    title.length >= 4 || // Limit to 6 points
     title[title.length - 1].trim() === '' ||
     description[description.length - 1].trim() === ''
 
   const isGenerateDisabled =
-    title.length < 3 ||
+    title.length < 2 ||
     title.some(
       (point, index) => point.trim() === '' || description[index].trim() === ''
     ) ||
@@ -360,7 +360,7 @@ export default function Statistics({
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto scrollbar-none lg:w-[80%] w-full lg:p-4"
+            className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 lg:w-[80%] w-full lg:p-4"
           >
             {title.map((point, index) => (
               <div

@@ -27,7 +27,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full w-full lg:p-4 p-2">
+    <div className="flex flex-col h-full w-full lg:p-4 p-2 ">
       {/* Top Section: Headings and Back Button */}
       <div className="flex items-center justify-center w-full  ">
         <div>
@@ -81,7 +81,10 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
     </div>
   ))}
 </div>
+<div className='mt-10 flex flex-col w-full items-center justify-center'>
 <BackButton onClick={onBack} />
+</div>
+
     </div>
   )
 }

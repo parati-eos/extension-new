@@ -588,9 +588,9 @@ useEffect(() => {
 
           <div
             ref={containerRef}
-            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-1 p-1 "
+            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200  md:p-1 p-1 "
           >
-            <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
+            <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
               <table className="table-auto w-full  ">
                 <thead>
                   <tr>
