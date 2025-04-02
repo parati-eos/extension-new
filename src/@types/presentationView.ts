@@ -11,6 +11,7 @@ export type DisplayMode =
   | 'Table'
   | 'People'
   | 'Graphs'
+  | 'TextandImage'
   | 'Statistics'
   | 'SlideNarrative'
   | 'Cover'

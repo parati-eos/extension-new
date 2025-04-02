@@ -103,7 +103,7 @@ const SelectPresentationType: React.FC = () => {
   const navigate = useNavigate()
   const authToken = sessionStorage.getItem('authToken')
   const orgId = sessionStorage.getItem('orgId')
-  const storedPresentationId = localStorage.getItem("presentationId");
+  const storedPresentationId = sessionStorage.getItem("presentationId");
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const pricingModalHeading = 'Refine PPT'
   const userPlan = useSelector((state: any) => state.user.userPlan)
