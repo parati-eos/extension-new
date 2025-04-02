@@ -47,7 +47,7 @@ export default function Points({
   const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
   const isScrollRequired = points.length >= (window.innerWidth >= 768 ? 3 : 1)
   const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
-  const isGenerateDisabled =
+  const   isGenerateDisabled =
     points.every((point) => point.trim() === '') || !slideTitle.trim()
   const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
 
@@ -60,7 +60,7 @@ export default function Points({
   }
 
   const addNewPoint = () => {
-    if (points.length < 6) {
+    if (points.length < 4) {
       setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
 
       setPoints([...points, ''])
@@ -347,7 +347,7 @@ export default function Points({
           <div
             ref={containerRef}
             className={`flex-1 overflow-y-auto ${
-              isScrollRequired ? 'scrollbar-none' : ''
+              isScrollRequired ? 'scrollbar-none' : 'scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200'
             }`}
             style={{
               maxHeight: window.innerWidth >= 768 ? '70vh' : '40vh',
@@ -405,9 +405,9 @@ export default function Points({
                   </div>
                   <button
                     onClick={() => removePoint(index)}
-                    disabled={points.length <= 1} // Prevents removing if only 1 point remains
+                    disabled={points.length < 2} // Prevents removing if only 1 point remains
                     className={`${
-                      points.length <= 1
+                      points.length < 2
                         ? 'text-gray-400 cursor-not-allowed' // Disabled state
                         : 'text-[#3667B2] hover:bg-red-100' // Active state
                     } bg-white hidden lg:flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
@@ -458,9 +458,9 @@ export default function Points({
 
                   <button
                     onClick={() => removePoint(index)}
-                    disabled={points.length <= 1} // Prevents removing if only 1 point remains
+                    disabled={points.length < 2} // Prevents removing if only 2 point remains
                     className={`${
-                      points.length <= 1
+                      points.length < 2
                         ? 'text-gray-400 cursor-not-allowed' // Disabled state
                         : 'text-[#3667B2] hover:bg-red-100' // Active state
                     } bg-white lg:hidden flex items-center justify-center border border-[#E1E3E5] rounded-full w-6 h-6 p-2 transition`}
@@ -481,8 +481,8 @@ export default function Points({
                   {point.length}/150 characters
                 </span>
                 {/* Add New Point Button */}
-                {index === points.length - 1 && points.length < 6 && (
-                 <div className="flex justify-center w-full">
+                {index === points.length - 1 && points.length < 4 && (
+                 <div className="flex justify-center items-center w-full mb-5">
                   <button
                     onClick={addNewPoint}
                     className={`text-[#5D5F61] md:border md:border-gray-300 md:rounded-lg self-start flex p-2 gap-2 items-center md:justify-center h-10 lg:mt-4 ${
@@ -493,7 +493,7 @@ export default function Points({
                     disabled={point.trim() === ''} 
                   >
                     <FaPlus />
-                    <span className="text-xs">Add new point</span>
+                    <span className="text-xs ">Add new point</span>
                   </button>
                   </div>
                 )}
@@ -502,15 +502,15 @@ export default function Points({
           </div>
 
           {/* Button container */}
-          <div className="hidden mt-auto lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
+          <div className="hidden mt-auto lg:flex w-full  justify-center items-center  lg:w-auto lg:gap-4 gap-2">
             {/* Use AttachImage component */}
-            <AttachImage
+            {/* <AttachImage
   onFileSelected={handleFileSelect}
   isLoading={isImageLoading}
   fileName={fileName}
   uploadCompleted={uploadCompleted}
   selectedImage={selectedImage}  // Pass selectedImage
-/>
+/> */}
 
 
             {/* Generate Slide Button */}
@@ -523,7 +523,7 @@ export default function Points({
                 onClick={handleGenerateSlide}
                 disabled={isGenerateDisabled || isLoading || isImageLoading}
                 className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
-                  isGenerateDisabled || isLoading || isImageLoading
+                points.length<2||  isGenerateDisabled || isLoading || isImageLoading
                     ? 'bg-gray-200 text-gray-500'
                     : 'bg-[#3667B2] text-white'
                 }`}
@@ -538,7 +538,7 @@ export default function Points({
                   style={{ whiteSpace: 'nowrap' }} // Prevent text wrapping
                 >
                   {points.every((point) => point.trim() === '')
-                    ? 'Minimum 1 point required.'
+                    ? 'Minimum 2 point required.'
                     : 'Slide title is required.'}
                 </span>
               )}
@@ -550,7 +550,7 @@ export default function Points({
             onMouseEnter={() => setShowTooltip(isGenerateDisabled)}
             onMouseLeave={() => setShowTooltip(false)}
           >
-            <div className="flex-1 items-center justify-center  gap-1">
+            {/* <div className="flex-1 items-center justify-center  gap-1">
               <AttachImage
                 onFileSelected={handleFileSelect}
                 isLoading={isImageLoading}
@@ -558,13 +558,13 @@ export default function Points({
                 uploadCompleted={uploadCompleted}
                 selectedImage={selectedImage}
               />
-            </div>
+            </div> */}
 
             <button
               onClick={handleGenerateSlide}
               disabled={isGenerateDisabled || isLoading || isImageLoading}
               className={`flex-1 py-2 rounded-md ${
-                isGenerateDisabled || isLoading || isImageLoading
+                points.length<2 || isGenerateDisabled || isLoading || isImageLoading
                   ? 'bg-gray-200 text-gray-500'
                   : 'bg-[#3667B2] text-white'
               }`}
@@ -576,7 +576,7 @@ export default function Points({
             {showTooltip && (
               <div className="absolute -top-12 left-[75%] w-max transform -translate-x-1/2 bg-gray-700 text-white text-xs p-2 rounded-md shadow-md">
                 {points.every((point) => point.trim() === '')
-                  ? 'Minimum 1 point required.'
+                  ? 'Minimum 2 point required.'
                   : 'Slide title is required.'}
               </div>
             )}

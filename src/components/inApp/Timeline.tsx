@@ -74,7 +74,7 @@ export default function Timeline({
   }
 
   const addNewPoint = () => {
-    if (timeline.length < 6) {
+    if (timeline.length < 4) {
       setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points
       setTimeline([...timeline, ''])
       setDescription([...description, ''])
@@ -374,12 +374,12 @@ export default function Timeline({
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto scrollbar-none"
+            className="flex-1 overflow-y-auto "
           >
             {timeline.map((point, index) => (
               <div
                 key={index}
-                className={`flex flex-col gap-2 lg:gap-4 lg:px-0 py-2 lg:py-0 p-1  lg:mb-0 items-center w-full ${
+                className={`flex flex-col gap-1 lg:gap-1 lg:px-2 py-2 lg:py-0 p-1 lg:mb-0 items-center w-full scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 ${
                   index === 0 ? 'lg:mt-2' : 'lg:mt-2'
                 }`}
               >
@@ -407,7 +407,7 @@ export default function Timeline({
                   </span>
                 </div>
                 {/* Description Input with Icons */}
-                <div className="relative lg:ml-2 lg:mr-1 w-full flex flex-col lg:w-[75%]">
+                <div className="relative  w-full flex flex-col ">
                   <>
                     <input
                       type="text"
@@ -483,7 +483,7 @@ export default function Timeline({
             ))}
 
             {/* Conditionally render the "Add New Timeline" button only if less than 6 points */}
-            {timeline.length < 6 && (
+            {timeline.length < 4 && (
               <div className="flex justify-center w-full mt-4">
               <button
                 onClick={addNewPoint}
@@ -503,15 +503,15 @@ export default function Timeline({
           </div>
 
           {/* Attach Image and Generate Slide Large Screen Buttons */}
-          <div className="hidden mt-auto gap-2 lg:flex w-full  justify-between lg:justify-end lg:w-auto lg:gap-4">
+          <div className="hidden  gap-2 lg:flex w-full mt-4 justify-center items-center  lg:w-auto lg:gap-4">
             {/* Attach Image Section */}
-            <AttachImage
+            {/* <AttachImage
               onFileSelected={handleFileSelect}
               isLoading={isLoading}
               fileName={fileName}
               uploadCompleted={uploadCompleted}
               selectedImage={selectedImage}  // Pass selectedImage
-            />
+            /> */}
             <button
               onClick={(e) => {
                 if (!isGenerateDisabled && !isLoading) {
@@ -549,15 +549,16 @@ export default function Timeline({
           </div>
           {/* Attach Image and Generate Slide Buttons for Mobile */}
           <div className="flex flex-col lg:hidden mt-2 gap-2  w-full">
-            <div className="flex-1  items-center justify-center gap-2 text-sm">
+            
+            {/* <div className="flex-1  items-center justify-center gap-2 text-sm">
               {/* Attach Image Section */}
-              <AttachImage
+              {/* <AttachImage
                 onFileSelected={handleFileSelect}
                 isLoading={isLoading}
                 fileName={fileName}
                 uploadCompleted={uploadCompleted}
-              />
-            </div>
+              /> */}
+            {/* </div> */} 
 
             <button
               onClick={(e) => {

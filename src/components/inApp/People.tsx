@@ -506,7 +506,7 @@ export default function People({
 
           <div
             ref={containerRef}
-            className={`flex-1  overflow-y-auto scrollbar-none md:mt-1 ${
+            className={`flex-1  overflow-y-auto  md:mt-1 ${
               people.length > 3 ? 'max-h-[calc(100vh-200px)]' : ''
             }`}
           >

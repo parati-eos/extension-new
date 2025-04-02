@@ -536,9 +536,9 @@ useEffect(() => {
                         <th className="py-2">
                           <button
                             onClick={addSeries}
-                            className="flex items-center px-4 lg:px-4 lg:py-2 bg-[#F5F7FA] text-black font-medium transition rounded-md"
+                            className="flex items-center px-4 lg:px-1 lg:py-2 bg-[#F5F7FA] text-black font-medium transition rounded-md text-sm"
                           >
-                            <FaPlus className="mr-2 w-3 h-3" />
+                            <FaPlus className="mr-1 w-3 h-3" />
                             <span className="hidden sm:inline">
                               Add New Series
                             </span>
@@ -613,7 +613,7 @@ useEffect(() => {
                   <button
                     onClick={addRow}
                     disabled={isAddRowDisabled}
-                    className={`flex items-center text-sm  align-center justify-between w-[50%]  lg:w-[18%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61]  transition ${
+                    className={`flex text-sm   justify-between w-[50%]  lg:w-[30%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61]  transition ${
                       isAddRowDisabled
                         ? 'cursor-not-allowed'
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'
@@ -628,7 +628,7 @@ useEffect(() => {
   <button
     onClick={removeLastRow}
     disabled={rows.length <= 3} // Prevents removal if only 1 row remains
-    className={`flex items-center justify-between text-sm  w-[50%] lg:w-[18%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61] transition ${
+    className={`flex  justify-between text-sm  w-[50%] lg:w-[30%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61] transition ${
       rows.length <= 3
         ? 'cursor-not-allowed'
         : 'bg-white text-[#5D5F61] hover:bg-red-500 hover:text-white'
