@@ -624,8 +624,8 @@ const handleButtonClick = async () => {
   
 
   return (
-    <div className="flex p-4 flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]"> 
-<div className="relative  w-full    text-center flex flex-col items-center mt-[-20vh]">
+    <div className="flex flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]"> 
+<div className="relative  w-full  text-center flex flex-col items-center mt-[-5vh]">
   <div className="absolute inset-0z-[-1] rounded-2xl"></div>
   <h2 className="text-2xl font-semibold text-gray-700 mb-8">
     Tell us what you want to build

@@ -125,14 +125,14 @@ const RefinePPT: React.FC = () => {
     switch (displayMode) {
       case 'slides':
         return (
-          <div className="flex flex-col justify-center bg-white shadow-lg rounded-lg p-6 w-full h-[80vh] max-w-xl">
-            <div className="flex flex-col items-center justify-center h-full">
+          <div className="flex flex-col justify-center bg-white shadow-lg rounded-lg  w-full h-[80vh] ">
+            <div className="flex flex-col items-center justify-center w-full h-full">
               <h2 className="text-xl font-bold text-gray-900 text-center">Create a new slide</h2>
-              <p className="text-gray-600 mt-2 text-center">How would you like to create a new slide?</p>
-              <div className="mt-6 flex flex-col justify-center gap-3">
+              <p className="text-gray-600 mt-2 text-center text-xl">How would you like to create a new slide?</p>
+              <div className="mt-6 flex flex-row justify-between gap-3 w-[80%] h-[30%]">
                 {[
                   {
-                    name: 'quick',
+                    name: 'Quick Generate ',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg',
                     onClick: async () => {
                       try {
@@ -148,7 +148,7 @@ const RefinePPT: React.FC = () => {
                           {
                             headers: { Authorization: `Bearer ${authToken}` },
                           }
-                        );
+                        );    
                         toast.success(`Slide Generation Started for ${title}`, {
                           position: 'top-right',
                           autoClose: 3000,
@@ -163,23 +163,23 @@ const RefinePPT: React.FC = () => {
                     },
                   },
                   {
-                    name: 'SlideNarrative',
+                    name: 'Slide Narrative',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg',
-                    onClick: () => setDisplayMode('SlideNarrative'),
+                    onClick: () => setDisplayMode('Slide Narrative'),
                   },
                   {
-                    name: 'customBuilder',
+                    name: 'Custom Builder',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg',
-                    onClick: () => setDisplayMode('customBuilder'),
+                    onClick: () => setDisplayMode('Custom Builder'),
                   },
                 ].map((type) => (
                   <button
                     key={type.name}
                     onClick={type.onClick}
-                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-40 transition hover:shadow-lg border border-gray-200"
+                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-[30%] h-[100%] transition hover:shadow-lg border border-gray-200"
                   >
-                    <img src={type.icon} alt={type.name} className="w-8 h-8 mb-3" />
-                    <span className="text-gray-900 font-medium text-center">{type.name}</span>
+                    <img src={type.icon} alt={type.name} className="w-16 h-16 mb-3" />
+                    <span className="text-gray-900 font-medium text-center text-xl">{type.name}</span>
                   </button>
                 ))}
               </div>
@@ -202,7 +202,7 @@ const RefinePPT: React.FC = () => {
         return <TextPlusImage heading="Text + Image Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
       case 'Statistics':
         return <Statistics heading="Statistics Slide" setDisplayMode={setDisplayMode} slideType="" documentID={slideDataId} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
-      case 'SlideNarrative':
+      case 'Slide Narrative':
         return <SlideNarrative heading={sectionName || 'Slide Title Here'} slideType="Points" documentID={documentID || 'doc_123'} orgId={orgID} authToken={authToken} setDisplayMode={setDisplayMode} setIsSlideLoading={() => { }} outlineID={outlineId || 'abc123'} setFailed={() => { }} />;
       default:
         return <CustomBuilderMenu onTypeClick={setDisplayMode} setDisplayMode={setDisplayMode} />;
@@ -210,12 +210,12 @@ const RefinePPT: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 p-2.5">
-      <div className="w-full flex flex-col items-center text-center mb-6">
+    <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 ">
+      {/* <div className="w-full flex flex-col items-center text-center mb-6">
         <img src={zynthtext} alt="Zynth Logo" className="h-5 mb-2" />
         <h3 className="text-sm text-gray-700">AI Slides and Presentation</h3>
-      </div>
-      <div className="w-full py-2 border-b mb-6 text-gray-500 text-sm">{sectionName}</div>
+      </div> */}
+      <div className="w-full py-2 border-b mb-6 text-gray-500 text-sm">{sectionName} </div>
       {renderContent()}
     </div>
   );
