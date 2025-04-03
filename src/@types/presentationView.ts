@@ -13,7 +13,8 @@ export type DisplayMode =
   | 'Graphs'
   | 'TextandImage'
   | 'Statistics'
-  | 'SlideNarrative'
+  | 'Slide Narrative'
+  | 'Custom Builder'
   | 'Cover'
   | 'Contact';
 

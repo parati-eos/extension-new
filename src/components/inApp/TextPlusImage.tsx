@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -167,7 +168,7 @@ export default function TextPlusImage({
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full  sm:px-6 md:px-8 lg:px-12 xl:px-16 gap-y-4 overflow-hidden">
+    <div className="flex flex-col w-full h-full px-4 py-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 gap-y-4 overflow-hidden">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -175,7 +176,7 @@ export default function TextPlusImage({
       ) : (
         <>
           <div className="flex items-center justify-between w-full">
-            <h3 className="font-semibold ">Text + Image</h3>
+            <h3 className="font-semibold text-lg">Text + Image</h3>
             <BackButton onClick={() => setDisplayMode('customBuilder')} />
           </div>
 
@@ -187,7 +188,7 @@ export default function TextPlusImage({
                 onChange={(e) => setSlideTitle(e.target.value)}
                 placeholder="Add Slide Title"
                 maxLength={50}
-                className="border w-full text-sm text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis whitespace-nowrap overflow-hidden"
+                className="border w-full text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis whitespace-nowrap overflow-hidden"
               />
               {refineLoadingSlideTitle ? (
                 <div className="absolute top-1/2 right-2 transform -translate-y-1/2">
@@ -195,7 +196,7 @@ export default function TextPlusImage({
                 </div>
               ) : (
                 slideTitle && (
-                  <div className="absolute top-1/2 right-2 transform -translate-y-1/2 group">
+                  <div className="absolute top-1/2 right-2 transform -translate-y-1/2 group ">
                     <FontAwesomeIcon
                       icon={faWandMagicSparkles}
                       onClick={() => refineText('slideTitle', slideTitle)}
@@ -213,7 +214,7 @@ export default function TextPlusImage({
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="w-full lg:w-1/2 flex flex-col gap-1 relative">
               <textarea
-                className="w-full h-28 lg:h-64 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none pr-10 text-sm"
+                className="w-full h-28 lg:h-64 border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none pr-10"
                 placeholder="Type something..."
                 maxLength={300}
                 value={text}
@@ -221,23 +222,25 @@ export default function TextPlusImage({
               />
               <span className="text-xs text-right text-gray-500">{text.length}/300</span>
               {text && (
-                <div className="absolute top-2 right-3">
-                  {refineLoadingText ? (
-                    <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
-                  ) : (
-                    <div className="absolute top-1/2 right-2 transform -translate-y-1/2 group">
-                      <FontAwesomeIcon
-                        icon={faWandMagicSparkles}
-                        onClick={() => refineText('overview', text)}
-                        className="hover:scale-105 cursor-pointer active:scale-95 text-[#3667B2]"
-                      />
-                      <span className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                        Click to refine text.
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
+  <div className="absolute top-2 right-2 p-2"> {/* Adjusted for proper placement */}
+    {refineLoadingText ? (
+      <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
+    ) : (
+      <div className="relative group">
+        <FontAwesomeIcon
+          icon={faWandMagicSparkles}
+          onClick={() => refineText('overview', text)}
+          className="hover:scale-105 cursor-pointer active:scale-95 text-[#3667B2] p-1"
+        />
+        {/* Tooltip */}
+        <span className="absolute top-full right-0 mt-1 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+          Click to refine text.
+        </span>
+      </div>
+    )}
+  </div>
+)}
+
             </div>
 
             <div className="hidden lg:flex w-full lg:w-1/2 border border-dashed border-gray-300 p-3 rounded-lg bg-white shadow-sm items-center justify-center relative h-64">
@@ -276,7 +279,7 @@ export default function TextPlusImage({
             </div>
           )}
 
-          <div className="flex flex-col align-center items-center justify-center lg:hidden gap-2 w-full mt-2">
+          <div className="flex lg:hidden gap-2 w-full mt-2">
             <button
               onClick={() => fileInputRef.current?.click()}
               className="w-1/2 border border-dashed border-gray-300 py-3 text-gray-700 font-medium rounded-md shadow-sm flex items-center justify-center gap-2"

@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 // import '../viewpresentation.css'
 
+
+
 interface TableData {
   rows: string[][]
   columnHeaders: string[]
@@ -534,7 +536,7 @@ useEffect(() => {
   );
 
   return (
-    <div className="flex flex-col w-full h-full ">
+    <div className="flex flex-col w-full h-full lg:p-4 p-2">
       {isLoading ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
@@ -562,7 +564,7 @@ useEffect(() => {
                 }}
                 maxLength={50}
                 placeholder="Add Slide Title"
-                className="border w-full mt-2 text-[#091220] text-sm rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
               <div className="absolute top-[55%] right-2 transform -translate-y-1/2 flex items-center justify-end">
                 {refineLoadingSlideTitle ? (
@@ -588,9 +590,9 @@ useEffect(() => {
 
           <div
             ref={containerRef}
-            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200  md:p-1 p-1 "
+            className="flex-1 lg:overflow-x-auto overflow-auto scrollbar-none md:p-1 p-1 "
           >
-            <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+            <div className="lg:overflow-y-auto max-h-[calc(100vh-150px)] w-full overflow-x-auto scrollbar-none">
               <table className="table-auto w-full  ">
                 <thead>
                   <tr>
@@ -627,7 +629,7 @@ useEffect(() => {
                           onChange={(e) =>
                             handleHeaderChange(index, e.target.value, true)
                           }
-                          className="lg:hidden w-full text-xs font-semibold text-center border-none bg-transparent focus:outline-none"
+                          className="lg:hidden w-full font-semibold text-center border-none bg-transparent focus:outline-none"
                         />
                       </th>
                     ))}
@@ -700,7 +702,7 @@ useEffect(() => {
                           onChange={(e) =>
                             handleHeaderChange(rowIndex, e.target.value, false)
                           }
-                          className="lg:hidden w-full font-medium text-center border-none text-xs bg-transparent focus:outline-none"
+                          className="lg:hidden w-full font-medium text-center border-none bg-transparent focus:outline-none"
                         />
                       </td>
                       {row.map((cell, colIndex) => (
@@ -817,7 +819,7 @@ useEffect(() => {
             </button>
           </div>
           {/* Generate Slide Buttons for Mobile */}
-          <div className="flex lg:hidden gap-2 justify-center">
+          <div className="flex lg:hidden gap-2 justify-end">
             <div className="justify-end">
               <div className="relative inline-block">
                 <button
@@ -832,9 +834,9 @@ useEffect(() => {
                     if (!slideTitle || !canGenerate) setShowTooltip(true)
                   }}
                   onMouseLeave={() => setShowTooltip(false)}
-                  className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 text-sm ${
+                  className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
                     canGenerate && slideTitle
-                      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95 ' // Enabled styles
+                      ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
                       : 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
                   }`}
                 >

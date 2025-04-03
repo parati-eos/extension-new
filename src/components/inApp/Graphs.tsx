@@ -457,7 +457,7 @@ useEffect(() => {
                     whiteSpace: 'nowrap', // Prevent text wrapping
                     overflow: 'hidden', // Hide overflowing text
                   }}
-                  className="border w-full mt-2 text-sm  text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                  className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
                 />
                 {refineLoadingSlideTitle ? (
                   <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
@@ -489,11 +489,11 @@ useEffect(() => {
                 {['Line', 'Bar', 'Pie'].map((chart) => (
                   <div
                     key={chart}
-                    className="flex flex-col text-sm items-center justify-center border border-gray-300  w-full h-full px-4 py-2 lg:py-4 rounded-md cursor-pointer"
+                    className="flex flex-col items-center justify-center border border-gray-300  w-full h-full px-4 py-2 lg:py-4 rounded-md cursor-pointer"
                     onClick={() => handleChartClick(chart)}
                   >
                     {chart === 'Line' && (
-                      <FaChartLine className="h-12 w-12 sm:h-16 sm:w-16 text-[#3667B2] text-sm" />
+                      <FaChartLine className="h-12 w-12 sm:h-16 sm:w-16 text-[#3667B2]" />
                     )}
                     {chart === 'Bar' && (
                       <FaChartBar className="h-12 w-12 sm:h-16 sm:w-16 text-green-700" />
@@ -528,7 +528,7 @@ useEffect(() => {
                             onChange={(e) =>
                               handleHeaderChange(index, e.target.value)
                             }
-                            className=" lg:px-2 lg:py-1 text-xs font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
+                            className=" lg:px-2 lg:py-1 font-medium rounded w-[90%] outline-none placeholder-[#5D5F61] placeholder:font-medium bg-transparent"
                           />
                         </th>
                       ))}
@@ -536,13 +536,13 @@ useEffect(() => {
                         <th className="py-2">
                           <button
                             onClick={addSeries}
-                            className="flex items-center px-4 lg:px-1 lg:py-2 bg-[#F5F7FA] text-black font-medium transition rounded-md text-sm"
+                            className="flex items-center px-4 lg:px-4 lg:py-2 bg-[#F5F7FA] text-black font-medium transition rounded-md"
                           >
-                            <FaPlus className="mr-1 w-3 h-3" />
+                            <FaPlus className="mr-2" />
                             <span className="hidden sm:inline">
                               Add New Series
                             </span>
-                            <span className="sm:hidden text-sm">Add</span>
+                            <span className="sm:hidden">Add</span>
                           </button>
                         </th>
                       )}
@@ -563,7 +563,7 @@ useEffect(() => {
                                 e.target.value
                               )
                             }
-                            className=" lg:px-2 lg:py-1 text-xs rounded w-[90%] outline-none"
+                            className=" lg:px-2 lg:py-1 rounded w-[90%] outline-none"
                           />
                         </td>
                         <td className="px-2 py-2 lg:px-4 ">
@@ -578,7 +578,7 @@ useEffect(() => {
                                 e.target.value
                               )
                             }
-                            className=" lg:px-2 lg:py-1rounded w-[90%] outline-none text-xs"
+                            className=" lg:px-2 lg:py-1rounded w-[90%] outline-none"
                           />
                         </td>
                         {Array.from({ length: series - 1 }).map((_, index) => (
@@ -608,39 +608,35 @@ useEffect(() => {
               </div>
               {rows.length < 10 && (
                 <>
-              
-                <div className="flex  align-center w-full justify-center mt-2  ">
+                <div className="flex justify-between lg:mt-4 mt-2  ">
                   <button
                     onClick={addRow}
                     disabled={isAddRowDisabled}
-                    className={`flex text-sm   justify-between w-[50%]  lg:w-[30%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61]  transition ${
+                    className={`flex items-center w-[40%] lg:w-[18%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61]  transition ${
                       isAddRowDisabled
                         ? 'cursor-not-allowed'
                         : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'
                     }`}
                   >
-                    <FaPlus className="mr-2" /> 
-                    Add Data
+                    <FaPlus className="mr-2" /> Add Data
                   </button>
                 </div>
-            
-                <div className="flex justify-center w-full mt-2">
+                <div className="flex justify-between lg:mt-4 mt-2">
   <button
     onClick={removeLastRow}
     disabled={rows.length <= 3} // Prevents removal if only 1 row remains
-    className={`flex  justify-between text-sm  w-[50%] lg:w-[30%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61] transition ${
+    className={`flex items-center w-[40%] lg:w-[18%] md:border md:border-gray-300 md:rounded-lg gap-1 md:ml-2 px-2 lg:px-4 py-2 bg-[#E1E3E5] text-[#5D5F61] transition ${
       rows.length <= 3
         ? 'cursor-not-allowed'
         : 'bg-white text-[#5D5F61] hover:bg-red-500 hover:text-white'
     }`}
   >
-    <FaMinus className="mr-2" /> 
-    Remove Data
+    <FaMinus className="mr-2" /> Remove Data
   </button>
 </div>
 </>
               )}
-              <div className="hidden w-full align-center justify-center lg:w-auto lg:gap-4 gap-2 ">
+              <div className="hidden mt-auto lg:flex w-full justify-between lg:justify-end lg:w-auto lg:gap-4 gap-2">
                 <button
                   onClick={(e) => {
                     if (!isButtonDisabled) {
@@ -651,7 +647,7 @@ useEffect(() => {
                   }}
                   onMouseEnter={() => setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
-                  className={`flex-1 lg:flex-none lg:w-[180px] py-2 text-sm rounded-md transition-all duration-200 transform ${
+                  className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
                     isButtonDisabled
                       ? 'bg-gray-200 text-gray-500'
                       : 'bg-[#3667B2] text-white'
@@ -670,8 +666,8 @@ useEffect(() => {
           )}
           {/* Generate Slide Buttons for Mobile */}
           {currentScreen === 'inputScreen' && (
-            <div className="flex lg:hidden  gap-2 justify-center w-full mt-2 ">
-              <div className="justify-center">
+            <div className="flex lg:hidden   gap-2  justify-end ">
+              <div className="justify-end">
                 <div className="relative inline-block">
                   <button
                     onClick={(e) => {
@@ -685,7 +681,7 @@ useEffect(() => {
                       isButtonDisabled && setShowTooltip(true)
                     }
                     onMouseLeave={() => setShowTooltip(false)}
-                    className={`flex-1 py-2 px-5 rounded-md text-sm ${
+                    className={`flex-1 py-2 px-5 rounded-md ${
                       isButtonDisabled
                         ? 'bg-gray-200 text-gray-500'
                         : 'bg-[#3667B2] text-white'
