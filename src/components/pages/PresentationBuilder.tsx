@@ -107,6 +107,7 @@ const SelectPresentationType: React.FC = () => {
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
   const pricingModalHeading = 'Refine PPT'
   const userPlan = useSelector((state: any) => state.user.userPlan)
+  const [progress, setProgress] = useState(0);
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
@@ -536,20 +537,44 @@ const SelectPresentationType: React.FC = () => {
   };
   
   
-const handleButtonClick = async () => {
-  setLoading(true); // show loader immediately
-  setgenerated(true);
-  const success= await generateDocument();
-  if (success) {
-    // Delay slightly to allow loader UI to render before navigating
-    setTimeout(() => {
-      navigate("/presentation-success");
-    }, 400); // 300–500ms works well
-  } else {
-    setLoading(false); // stop loader on error
-    setgenerated(false);
-  }
-};
+  const handleButtonClick = async () => {
+    setLoading(true);
+    setgenerated(true);
+    setProgress(0);
+  
+    let localProgress = 0;
+    const interval = setInterval(() => {
+      localProgress += 30;
+      if (localProgress >= 90) {
+        localProgress = 90;
+        clearInterval(interval); // Stop increasing after 90%
+      }
+      setProgress(localProgress);
+    }, 10000); // Every 10s
+  
+    const success = await generateDocument();
+  
+    clearInterval(interval); // Clear just in case it's still running
+  
+    if (success) {
+      if (localProgress < 90) {
+        // If successful before 90%, jump to 100%
+        setProgress(100);
+      } else {
+        // After waiting till 90%, smoothly go to 100%
+        setTimeout(() => setProgress(100), 500);
+      }
+  
+      setTimeout(() => {
+        navigate("/presentation-success");
+      }, 1000); // Slight delay for final 100% effect
+    } else {
+      setLoading(false);
+      setgenerated(false);
+      setProgress(0);
+    }
+  };
+  
 
 
   useEffect(() => {
@@ -937,6 +962,19 @@ const handleButtonClick = async () => {
 >
 {isgenerated ? "Generating..." : "Generate Presentation"}
   </button>
+
+  {isLoading && (
+  <div className="w-full mt-2 px-8">
+    <div className="w-full bg-gray-200 rounded-full h-4">
+      <div
+        className="bg-[#3667B2] h-4 rounded-full transition-all duration-500 ease-in-out"
+        style={{ width: `${progress}%` }}
+      ></div>
+    </div>
+    <p className="text-center mt-1 text-sm text-gray-600">{progress}%</p>
+  </div>
+)}
+
 </div>
 
      </div>

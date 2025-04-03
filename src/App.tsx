@@ -7,6 +7,9 @@ import PresentationBuilder from "./components/pages/PresentationBuilder";
 import Refineppt from "./components/pages/refineppt";
 import Refinepresentations from "./components/pages/newpresentation";
 import PresentationSuccess from "./components/pages/PresentationSuccess";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 const App = () => {
   useEffect(() => {
     const extractPresentationId = () => {
@@ -22,6 +25,7 @@ const App = () => {
 
   return (
     <Router>
+    <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -32,6 +36,7 @@ const App = () => {
         <Route path="/presentation-success" element={<PresentationSuccess />} />
 
       </Routes>
+   
     </Router>
   );
 };

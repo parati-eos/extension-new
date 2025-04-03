@@ -1,25 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from '../../assets/zynth-icon.png'; // Import your logo
+import logo from '../../assets/zynth-icon.png';
+
 const Home = () => {
   const navigate = useNavigate();
   const [presentationId, setPresentationId] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState<boolean>(true); // Loader on by default
   useEffect(() => {
-    // Extract presentationId from the URL if running inside Google Slides
     const queryParams = new URLSearchParams(window.location.search);
     const presId = queryParams.get("presentationId");
 
     if (presId) {
       setPresentationId(presId);
-      sessionStorage.setItem("presentationId", presId); // Store in localStorage
+      sessionStorage.setItem("presentationId", presId);
+      setLoading(false);
     } else {
       const storedId = sessionStorage.getItem("presentationId");
       if (storedId) {
-        setPresentationId(storedId); // Retrieve stored ID if available
+        setPresentationId(storedId);
       }
+      setLoading(false);
     }
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500 mb-4"></div>
+        <p className="text-gray-600 text-sm">Checking presentation ID...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -29,15 +40,17 @@ const Home = () => {
       >
         Welcome to Google Slides Extension
       </h1>
+
       <p className="text-lg mb-4 text-gray-700">
         Create your presentations within 2 mins
       </p>
-            {/* Logo */}
-            <img
-        src={logo} // Replace with the actual path to your logo
+
+      <img
+        src={logo}
         alt="Logo"
-        className="mb-4 w-24 h-24" // Adjust size and spacing as needed
+        className="mb-4 w-24 h-24"
       />
+
       {presentationId ? (
         <p className="text-lg mb-4 font-semibold text-green-700">
           ✅ Presentation ID: {presentationId}

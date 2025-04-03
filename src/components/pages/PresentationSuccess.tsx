@@ -11,7 +11,10 @@ const PresentationSuccess = () => {
         🎉 Presentation Generated!
       </h1>
       <p className="text-gray-700 mb-6 text-center">
-        Your pitch deck has been successfully generated. Slides are on the way!
+        Slides are on the way! It will take a few seconds to generate your slides.
+      </p>
+      <p className="text-gray-700 mb-6 text-center">
+        Please close the modal to start viewing your slides.
       </p>
       {/* <button
         className="px-6 py-2 bg-[#3667B2] text-white rounded-lg hover:bg-[#274b8a] transition-all"
