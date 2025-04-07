@@ -114,12 +114,12 @@ export default function RefinePresentation() {
           >
             ➕ Add New Slide
           </button>
-
+          <p>Create a new version for the current slide.</p>
           <button
             onClick={handleCreatePresentation}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition mt-2"
           >
-            Create Presentation
+         Create New Version
           </button>
         </>
       )}

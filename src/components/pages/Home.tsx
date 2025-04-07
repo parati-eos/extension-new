@@ -38,11 +38,11 @@ const Home = () => {
         className="text-3xl font-bold mb-6 cursor-pointer transition-transform duration-300 hover:scale-105"
         onClick={() => alert("Welcome to Google Slides Extension!")}
       >
-        Welcome to Google Slides Extension
+        Welcome to Zynth's Google Slides Extension
       </h1>
 
       <p className="text-lg mb-4 text-gray-700">
-        Create your presentations within 2 mins
+        Create your presentations within 2 minutes
       </p>
 
       <img

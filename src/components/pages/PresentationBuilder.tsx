@@ -540,34 +540,32 @@ const SelectPresentationType: React.FC = () => {
   const handleButtonClick = async () => {
     setLoading(true);
     setgenerated(true);
-    setProgress(0);
+    setProgress(5); // Start bar visibly from 5%
   
-    let localProgress = 0;
+    let localProgress = 5;
     const interval = setInterval(() => {
       localProgress += 30;
       if (localProgress >= 90) {
         localProgress = 90;
-        clearInterval(interval); // Stop increasing after 90%
+        clearInterval(interval);
       }
       setProgress(localProgress);
-    }, 10000); // Every 10s
+    }, 8000);
   
     const success = await generateDocument();
   
-    clearInterval(interval); // Clear just in case it's still running
+    clearInterval(interval);
   
     if (success) {
       if (localProgress < 90) {
-        // If successful before 90%, jump to 100%
         setProgress(100);
       } else {
-        // After waiting till 90%, smoothly go to 100%
         setTimeout(() => setProgress(100), 500);
       }
   
       setTimeout(() => {
         navigate("/presentation-success");
-      }, 1000); // Slight delay for final 100% effect
+      }, 1000);
     } else {
       setLoading(false);
       setgenerated(false);
@@ -934,7 +932,9 @@ const SelectPresentationType: React.FC = () => {
     )}
   </div>
 
+
   {/* Change Colors Button */}
+
   <button
     className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
     hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-base lg:font-medium px-4 py-2 
@@ -953,29 +953,37 @@ const SelectPresentationType: React.FC = () => {
   </div>
 
   {/* Generate Presentation Button */}
-  <div className="flex w-full justify-center">
+ {/* Generate Presentation Button + Progress */}
+<div className="flex w-full flex-col items-center justify-center">
   <button 
-  disabled={isgenerated || isLoading || websiteUrl.length > 0 && !isValidLink  }
-  className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
-    ${isgenerated || isLoading||websiteUrl.length > 0 && !isValidLink ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
-  onClick={handleButtonClick}
->
-{isgenerated ? "Generating..." : "Generate Presentation"}
+    disabled={isgenerated || isLoading || (websiteUrl.length > 0 && !isValidLink)}
+    className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
+      ${isgenerated || isLoading || (websiteUrl.length > 0 && !isValidLink)
+        ? 'bg-gray-200 cursor-not-allowed'
+        : 'bg-[#3667B2] hover:bg-[#0A8568] text-white'}`}
+    onClick={handleButtonClick}
+  >
+    {isgenerated ? "Generating..." : "Generate Presentation"}
   </button>
 
   {isLoading && (
-  <div className="w-full mt-2 px-8">
-    <div className="w-full bg-gray-200 rounded-full h-4">
-      <div
-        className="bg-[#3667B2] h-4 rounded-full transition-all duration-500 ease-in-out"
-        style={{ width: `${progress}%` }}
-      ></div>
-    </div>
-    <p className="text-center mt-1 text-sm text-gray-600">{progress}%</p>
-  </div>
-)}
+    <div className="w-full mt-4 px-8 flex flex-col items-center">
+      {/* Optional spinner */}
+      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
 
+      {/* Progress bar */}
+      <div className="w-full max-w-xl bg-gray-300 rounded-full h-4 overflow-hidden transition-all duration-300">
+        <div
+          className="bg-[#3667B2] h-4 transition-all duration-500 ease-in-out"
+          style={{ width: `${progress}%`, minWidth: progress > 0 ? '5%' : '0%' }}
+        ></div>
+      </div>
+
+      <p className="text-sm text-gray-600 mt-1">{progress}%</p>
+    </div>
+  )}
 </div>
+
 
      </div>
      </div>

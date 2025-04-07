@@ -58,7 +58,7 @@ const RefinePPT: React.FC = () => {
           setSlideDataId(slideInfoData.slideData_id);
           setSectionName(slideInfoData.SectionName);
 
-          const slideTypeResponse = await fetch("http://localhost:5001/api/v1/data/slidedisplay/slide-type", {
+          const slideTypeResponse = await fetch("https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/slidedisplay/slide-type", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
