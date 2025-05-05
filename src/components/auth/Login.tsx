@@ -13,7 +13,7 @@ export interface DecodedToken {
   exp?: number;
 }
 
-const CLIENT_ID = "1053104378274-jchabnb9vv91n94l76g97aeuuqmrokt9.apps.googleusercontent.com";
+const CLIENT_ID = "704273243272-83o6oldgf72r8p31jmvcldbh3anuuf7m.apps.googleusercontent.com";
 
 const Login = () => {
   const navigate = useNavigate();

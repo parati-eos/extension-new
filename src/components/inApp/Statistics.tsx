@@ -34,8 +34,8 @@ export default function Statistics({
 }: StatisticProps) {
 
   const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
-  const [title, setTitle] = useState(['', '', '']) // Initialize with 3 empty strings
-  const [description, setDescription] = useState(['', '', '']) // Initialize with 3 empty strings
+  const [title, setTitle] = useState(['', '',]) // Initialize with 3 empty strings
+  const [description, setDescription] = useState(['', '',]) // Initialize with 3 empty strings
   const [showTooltip, setShowTooltip] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -94,7 +94,7 @@ export default function Statistics({
     }
   }
   const isAddDisabled =
-    title.length >= 4 || // Limit to 6 points
+    title.length >= 4 || // Limit to 4 points
     title[title.length - 1].trim() === '' ||
     description[description.length - 1].trim() === ''
 
@@ -331,7 +331,7 @@ export default function Statistics({
                   overflow: 'hidden', // Hide overflowing text
                 }}
                 placeholder="Add Slide Title"
-                className="border w-full text-sm mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
+                className="border w-full mt-2 text-[#091220] md:text-lg rounded-md font-semibold bg-transparent p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-ellipsis overflow-hidden whitespace-nowrap pr-10"
               />
               {refineLoadingSlideTitle ? (
                 <div className="absolute top-[55%] right-2 transform -translate-y-1/2 w-full h-full flex items-center justify-end">
@@ -360,7 +360,7 @@ export default function Statistics({
           {/* Content container with flex-grow */}
           <div
             ref={containerRef}
-            className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 lg:w-[80%] w-full lg:p-4"
+            className="flex-1 overflow-y-auto scrollbar-none lg:w-[80%] w-full lg:p-4"
           >
             {title.map((point, index) => (
               <div
@@ -377,7 +377,7 @@ export default function Statistics({
                     onBlur={() => setFocusedInput(null)} // Remove focus
                     onChange={(e) => handleInputTitle(e.target.value, index)}
                     placeholder={`Enter Data Label ${index + 1}`}
-                    className="lg:ml-1 w-full text-xs lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="lg:ml-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     maxLength={50}
                   />
                   <span
@@ -402,7 +402,7 @@ export default function Statistics({
                       handleInputDescription(e.target.value, index)
                     }
                     placeholder={`Enter Value ${index + 1}`}
-                    className="lg:ml-2 text-xs flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="lg:ml-2 flex-1 w-full lg:px-6 lg:py-4 p-2 border border-gray-300 rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     maxLength={50}
                   />
                   <span
@@ -435,33 +435,22 @@ export default function Statistics({
             ))}
  
 
-            {title.length < 6 && (
-              <div className="flex justify-center w-full ">
-              <button
-                onClick={addNewPoint}
-                type="button"
-                disabled={isAddDisabled}
-                className={`flex items-center justify-center py-2 px-3  mt-4  ml-1 md:border md:border-gray-300 md:rounded-lg  text-[#5D5F61] ${
-                  title.length >= 6 || isAddDisabled
-                    ? 'bg-[#E1E3E5] text-[#5D5F61] cursor-not-allowed'
-                    : 'bg-white text-[#5D5F61] hover:bg-[#3667B2] hover:text-white'
-                } `}
-              >
-                <FaPlus className="h-3 w-3 mr-2" />
-                <span className='text-sm'>Add Data</span>
-              </button>
-              </div>
-            )}
+ {title.length < 6 && !isAddDisabled && ( // Hide button when isAddDisabled is true
+  <button
+    onClick={addNewPoint}
+    type="button"
+    className="flex items-center justify-center py-2 px-3 mt-4 ml-1 md:border md:border-gray-300 md:rounded-lg text-[#5D5F61] 
+      bg-white hover:bg-[#3667B2] hover:text-white"
+  >
+    <FaPlus className="h-4 w-4 mr-2" />
+    <span>Add Data</span>
+  </button>
+)}
+
           </div>
 
           <div className="hidden  lg:flex w-full   lg:justify-end lg:w-auto lg:gap-4">
-            <AttachImage
-              onFileSelected={handleFileSelect}
-              isLoading={isImageLoading}
-              fileName={fileName}
-              uploadCompleted={uploadCompleted}
-              selectedImage={selectedImage} 
-            />
+           
             <div className="hidden lg:flex w-full lg:justify-end lg:w-auto lg:gap-4">
               <div className="flex-1 relative">
                 <button
@@ -491,13 +480,13 @@ export default function Statistics({
                     className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
                     dangerouslySetInnerHTML={{
                       __html:
-                        title.length < 3 ||
+                        title.length < 2 ||
                         title.some(
                           (point, index) =>
                             point.trim() === '' ||
                             description[index].trim() === ''
                         )
-                          ? 'Minimum 3 data points required.<br>Please fill all cells.'
+                          ? 'Minimum 2 data points required.<br>Please fill all cells.'
                           : 'Slide title is required.',
                     }}
                   />
@@ -505,58 +494,47 @@ export default function Statistics({
               </div>
             </div>
           </div>
-          {/* {Mobile View} */}
-          <div className="flex flex-col lg:hidden mt-4 gap-2  w-full ">
-            <div className="flex-1  items-center justify-center gap-2">
-              {/* Attach Image Section */}
-              <AttachImage
-                onFileSelected={handleFileSelect}
-                isLoading={isImageLoading}
-                fileName={fileName}
-                uploadCompleted={uploadCompleted}
-                selectedImage={selectedImage} 
-              />
-            </div>
+         {/* {Mobile View} */}
+<div className="flex lg:hidden mt-4 w-full justify-end">
+  <div className="relative w-1/2">
+    <button
+      onClick={(e) => {
+        if (!isGenerateDisabled && !isImageLoading) {
+          handleGenerateSlide()
+        } else {
+          e.preventDefault() // Prevent action when disabled
+        }
+      }}
+      onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+      className={`py-2 rounded-md w-full ml-auto ${
+        isGenerateDisabled || isImageLoading
+          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          : 'bg-[#3667B2] text-white'
+      }`}
+    >
+      Generate Slide
+    </button>
 
-            <div className="flex-1 relative">
-              <button
-                onClick={(e) => {
-                  if (!isGenerateDisabled && !isImageLoading) {
-                    handleGenerateSlide()
-                  } else {
-                    e.preventDefault() // Prevent action when disabled
-                  }
-                }}
-                onMouseEnter={() => isGenerateDisabled && setShowTooltip(true)}
-                onMouseLeave={() => setShowTooltip(false)}
-                className={`flex-1 py-2 rounded-md w-full text-sm ${
-                  isGenerateDisabled || isImageLoading
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-[#3667B2] text-white'
-                }`}
-              >
-                Generate Slide
-              </button>
+    {/* Tooltip */}
+    {isGenerateDisabled && showTooltip && (
+      <span
+        className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
+        dangerouslySetInnerHTML={{
+          __html:
+            title.length < 2 ||
+            title.some(
+              (point, index) =>
+                point.trim() === '' || description[index].trim() === ''
+            )
+              ? 'Minimum 2 data points required.<br>Please fill all cells.'
+              : 'Slide title is required.',
+        }}
+      />
+    )}
+  </div>
+</div>
 
-              {/* Tooltip */}
-              {isGenerateDisabled && showTooltip && (
-                <span
-                  className="absolute top-[-45px] left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-20"
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      title.length < 3 ||
-                      title.some(
-                        (point, index) =>
-                          point.trim() === '' ||
-                          description[index].trim() === ''
-                      )
-                        ? 'Minimum 3 data points required.<br>Please fill all cells.'
-                        : 'Slide title is required.',
-                  }}
-                />
-              )}
-            </div>
-          </div>
         </>
       )}
     </div>

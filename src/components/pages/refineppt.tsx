@@ -58,7 +58,7 @@ const RefinePPT: React.FC = () => {
           setSlideDataId(slideInfoData.slideData_id);
           setSectionName(slideInfoData.SectionName);
 
-          const slideTypeResponse = await fetch("http://localhost:5001/api/v1/data/slidedisplay/slide-type", {
+          const slideTypeResponse = await fetch("https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/slidedisplay/slide-type", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -134,14 +134,14 @@ const RefinePPT: React.FC = () => {
     switch (displayMode) {
       case 'slides':
         return (
-          <div className="flex flex-col justify-center bg-white shadow-lg rounded-lg p-6 w-full h-[80vh] max-w-xl">
-            <div className="flex flex-col items-center justify-center h-full">
-              <h2 className="text-xl font-bold text-gray-900 text-center">Create a new slide</h2>
-              <p className="text-gray-600 mt-2 text-center">How would you like to create a new slide?</p>
-              <div className="mt-6 flex flex-col justify-center gap-3">
+          <div className="flex flex-col justify-center bg-white shadow-lg rounded-lg  w-full h-[80vh] ">
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <h2 className="text-xl font-bold text-gray-900 text-center">Create a new slide</h2>
+            <p className="text-gray-600 mt-2 text-center text-xl">How would you like to create a new slide?</p>
+            <div className="mt-6 flex flex-row justify-between gap-3 w-[80%] h-[30%]">
                 {[
                   {
-                    name: 'quick',
+                    name: 'Quick Generate',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg',
                     onClick: async () => {
                       try {
@@ -176,12 +176,12 @@ const RefinePPT: React.FC = () => {
                     },
                   },
                   {
-                    name: 'SlideNarrative',
+                    name: 'Slide Narrative',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg',
                     onClick: () => setDisplayMode('SlideNarrative'),
                   },
                   {
-                    name: 'customBuilder',
+                    name: 'Custom Builder',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg',
                     onClick: () => setDisplayMode('customBuilder'),
                   },
@@ -190,10 +190,10 @@ const RefinePPT: React.FC = () => {
                     key={type.name}
                     onClick={type.onClick}
                     disabled={quickLoading && type.name === 'quick'}
-                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-40 transition hover:shadow-lg border border-gray-200"
+                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-[30%] h-[100%] transition hover:shadow-lg border border-gray-200"
                   >
-                    <img src={type.icon} alt={type.name} className="w-8 h-8 mb-3" />
-                    <span className="text-gray-900 font-medium text-center">
+                    <img src={type.icon} alt={type.name} className="w-16 h-16 mb-3" />
+                    <span className="text-gray-900 font-medium text-center text-xl">
                       {quickLoading && type.name === 'quick' ? (
                         <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500" />
                       ) : (

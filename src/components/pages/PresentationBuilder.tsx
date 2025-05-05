@@ -97,6 +97,8 @@ const SelectPresentationType: React.FC = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   //const { setIsOutlineGenerated } = useOutlineContext(); // ✅ Use Context API
   const [pdfLink, setPdfLink] = useState('')
+  const [theme, setTheme] = useState("Light");
+  const [creativity, setCreativity] = useState(5);
   const [pdfUploading, setPDFUploading] = useState(false)
   const [selectedType, setSelectedType] = useState<number | null>(null)
   const [customTypeInput, setCustomTypeInput] = useState<string>('')
@@ -105,14 +107,16 @@ const SelectPresentationType: React.FC = () => {
   const orgId = sessionStorage.getItem('orgId')
   const storedPresentationId = sessionStorage.getItem("presentationId");
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false)
+  const [progress, setProgress] = useState(0);
   const pricingModalHeading = 'Refine PPT'
   const userPlan = useSelector((state: any) => state.user.userPlan)
-  const [progress, setProgress] = useState(0);
   const [monthlyPlan, setMonthlyPlan] = useState<Plan>()
   const [yearlyPlan, setYearlyPlan] = useState<Plan>()
   const [currency, setCurrency] = useState('')
   const [subId, setSubId] = useState('')
   const dispatch = useDispatch()
+  const [showThemeTooltip, setShowThemeTooltip] = useState(false);
+  const [hoveredTheme, setHoveredTheme] = useState<string | null>(null); // Track which theme is hovered
   const [eligibleForGeneration, setEligibleForGeneration] = useState(false)
   const [pptCount, setPptCount] = useState(0)
   const [pptCountMonthly, setPptCountMonthly] = useState(0)
@@ -123,7 +127,8 @@ const SelectPresentationType: React.FC = () => {
   const [showTooltip4, setShowTooltip4] = useState(false);
   const [websiteUrl, setWebsiteUrl] = useState<string>('');
   const [isHovered, setIsHovered] = useState(false);
-  const [primaryColor, setPrimaryColor] = useState('#000000'); // Define the primary color
+  const [primaryColor, setPrimaryColor] = useState('#000000');
+  const [textColor, setTextColor] = useState('#000000');  // Define the primary color
   const [secondaryColor, setSecondaryColor] = useState('#FFFFFF'); // Define the secondary color
   const [generateInput, setGenerateInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -490,16 +495,18 @@ const SelectPresentationType: React.FC = () => {
   };
   
   
-  const generateDocument = async (): Promise<boolean> => {
+  const generateDocument = async () => {
     setLoading(true);
-  
+    // navigate(
+    //   `/presentation-view?documentID=${generatedDocumentIDoutline}`
+    // )
     if (!generatedDocumentIDoutline) {
       console.error("Error: Document ID is missing. Generate outline first.");
       setLoading(false);
-      return false;
+      return;
     }
-  
     const colorsToUse = brandingColorsSave.length ? brandingColorsSave : Object.values(organizationColors || {});
+
     const colorKeys = [
       "P100", "P75_S25", "P50_S50", "P25_S75", "S100",
       "F_P100", "F_P75_S25", "F_P50_S50", "F_P25_S75", "F_S100",
@@ -509,27 +516,33 @@ const SelectPresentationType: React.FC = () => {
     const payload = {
       websiteUrl: websiteUrl || "",
       colors: colorKeys.reduce((acc: { [key: string]: string }, key, index) => {
-        acc[key] = colorsToUse[index] || "#000000";
+        acc[key] = colorsToUse[index] || "#000000"; // Default to black if missing
         return acc;
-      }, {}),
+      }, {} as { [key: string]: string }),
+      creativity: creativity, // Number
+      theme: theme, // String
     };
+  
   
     try {
       const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/generate-document/${orgId}/${generatedDocumentIDoutline}`;
+  
+      console.log("Document Request URL:", requestUrl);
+      console.log("Payload:", payload);
+  
       const response = await axios.post(requestUrl, payload, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
   
-      if (response.status === 200) {
-        setOutline(response.data.outline);
-        return true;
-      } else {
-        throw new Error("Failed to generate document");
-      }
+      if (response.status !== 200) throw new Error("Failed to generate document");
+  
+      const data = response.data;
+      setOutline(data.outline);
+      return true
     } catch (error) {
-      console.error("Document generation error:", error);
+      console.error("Document generation failed:", error);
       return false;
     } finally {
       setLoading(false);
@@ -538,6 +551,10 @@ const SelectPresentationType: React.FC = () => {
   
   
   const handleButtonClick = async () => {
+    // Immediately navigate
+    navigate("/presentation-success");
+  
+    // Optional: Start background tasks
     setLoading(true);
     setgenerated(true);
     setProgress(0);
@@ -547,31 +564,24 @@ const SelectPresentationType: React.FC = () => {
       localProgress += 30;
       if (localProgress >= 90) {
         localProgress = 90;
-        clearInterval(interval); // Stop increasing after 90%
+        clearInterval(interval);
       }
       setProgress(localProgress);
-    }, 10000); // Every 10s
+    }, 10000);
   
+    // Run async in background
     const success = await generateDocument();
-  
-    clearInterval(interval); // Clear just in case it's still running
   
     if (success) {
       if (localProgress < 90) {
-        // If successful before 90%, jump to 100%
         setProgress(100);
       } else {
-        // After waiting till 90%, smoothly go to 100%
         setTimeout(() => setProgress(100), 500);
       }
-  
-      setTimeout(() => {
-        navigate("/presentation-success");
-      }, 1000); // Slight delay for final 100% effect
     } else {
       setLoading(false);
       setgenerated(false);
-      setProgress(0);
+      // You may want to log error or track fail silently
     }
   };
   
@@ -647,12 +657,12 @@ const SelectPresentationType: React.FC = () => {
     fetchOrganizationData();
   }, [orgId, authToken]); // Dependencies
   
-
+  const [showCreativityTooltip, setShowCreativityTooltip] = useState(false);
   return (
-    <div className="flex p-4 flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]"> 
-<div className="relative  w-full    text-center flex flex-col items-center mt-[-20vh]">
+    <div className="flex flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]"> 
+<div className="relative  w-full  text-center flex flex-col items-center mt-[-5vh]">
   <div className="absolute inset-0z-[-1] rounded-2xl"></div>
-  <h2 className="text-2xl font-semibold text-gray-700 mb-8">
+  <h2 className="text-2xl font-semibold text-gray-700 mb-8 mt -8">
     Tell us what you want to build
   </h2>
         <p className="text-gray-500  flex items-center gap-1 relative text-lg">
@@ -822,22 +832,20 @@ const SelectPresentationType: React.FC = () => {
       {/* Refine Modal */}
       {isRefineModalOpen && (
        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-30">
-     {/* Modal Container */}
-<div className="bg-white lg:p-6 p-3 rounded-2xl shadow-lg w-[90%] h-[27rem] max-w-3xl flex flex-col justify-between relative translate-y-5">
-  
-  {/* Close Button */}
-  <button
+       <div className="bg-white lg:p-6 p-3 rounded-2xl shadow-lg w-[90%] max-h-[95vh] overflow-y-auto max-w-3xl flex flex-col justify-between relative translate-y-2">
+      
+      {/* Close Button */}
+      <button
+        onClick={handleCloseModal}
+        className="absolute top-4 right-4 p-2 bg-gray-200 rounded-full"
+      >
+        <FaTimes className="text-gray-600" />
+      </button>
 
-    onClick={handleCloseModal}
-    className="absolute top-4 right-4 p-2 bg-gray-200 rounded-full"
-  >
-    <FaTimes className="text-gray-600" />
-  </button>
-
-  {/* Title */}
-  <h2 className="text-xl font-bold text-[#091220] text-center">
-    Presentation Options
-  </h2>
+      {/* Title */}
+      <h2 className="text-xl font-bold text-[#091220] text-center">
+        Presentation Options
+      </h2>
 
   {/* Content Wrapper - Space Out Sections Evenly */}
   <div className="flex flex-col space-y-10">
@@ -897,11 +905,11 @@ const SelectPresentationType: React.FC = () => {
 </div>
 
 
-    {/* Branding Colors */}
-    <div>
-      <div className="flex items-center relative">
-        <label className="font-semibold text-gray-700">Branding Colors</label>
-        <div
+        {/* Branding Colors */}
+        <div>
+        <div className="flex items-center relative">
+          <label className="font-semibold text-gray-700">Branding Colors</label>
+          <div
           className="relative flex items-center ml-2"
           onMouseEnter={() => setShowTooltip4(true)}
           onMouseLeave={() => setShowTooltip4(false)}
@@ -915,44 +923,186 @@ const SelectPresentationType: React.FC = () => {
           )}
         </div>
       </div>
+          <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
 
-   {/* Branding Colors Display */}
-<div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
-  
-  {/* Rectangular Color Strip */}
-  <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
-    {isLoading ? (
-      <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
-    ) : (
-      brandingColors?.map((color, index) => (
-        <div
-          key={index}
-          className="h-full flex-1 transition-transform transform hover:scale-105"
-          style={{ backgroundColor: color }}
-        />
-      ))
-    )}
+            <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
+              {isLoading ? (
+                <p className="text-gray-500 flex items-center justify-center w-full">Loading colors...</p>
+              ) : (
+                brandingColors?.map((color, index) => (
+                  <div key={index} className="h-full flex-1" style={{ backgroundColor: color }} />
+                ))
+              )}
+            </div>
+            <button
+              className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
+                hover:bg-[#3667B2] hover:text-white text-xs font-medium px-4 py-2 
+                rounded-md active:scale-95 transition transform duration-300 ${
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              disabled={isLoading}
+              onClick={() => !isLoading && setIsModalOpen(true)}
+            >
+              Change branding colors
+            </button>
+          </div>
+        </div>
+{/* Theme Selection */}
+<div className="flex flex-col space-y-3 p-4 rounded-lg bg-gray-100 shadow-sm">
+  {/* Label with Relaxed Hover Tooltip */}
+  <div className="relative w-max">
+    <label className="font-semibold text-gray-700 flex items-center gap-2">
+      Choose a Theme
+      <span
+        className="text-[#3667B2] cursor-pointer relative"
+        onMouseEnter={() => setShowThemeTooltip(true)}
+        onMouseLeave={() => setShowThemeTooltip(false)}
+      >
+        <FaInfoCircle className="text-base" />
+        {showThemeTooltip && (
+          <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
+            <p className="font-semibold">How do themes work?</p>
+            <p>Choose how your slides will appear. All themes incorporate your brand colors for text and accents.</p>
+          </div>
+        )}
+      </span>
+    </label>
   </div>
 
-  {/* Change Colors Button */}
-  <button
-    className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
-    hover:bg-[#3667B2] hover:text-white text-xs  font-normal lg:text-base lg:font-medium px-4 py-2 
-    rounded-md active:scale-95 transition transform duration-300 ${
-      isLoading ? "opacity-50 cursor-not-allowed" : ""
-    }`}
-    onClick={() => !isLoading && setIsModalOpen(true)}
-    disabled={isLoading}
-  >
-    Change branding colors
-  </button>
+  <div className="flex justify-between mt-2 gap-3">
+  {[
+    { 
+      name: "Light", 
+      defaultBg: "bg-white", 
+      defaultText: "text-black", 
+      border: "border-gray-300", 
+      tooltip: "White background with brand colors for text & accents." 
+    },
+    { 
+      name: "Dark", 
+      defaultBg: "bg-black", 
+      defaultText: "text-white", 
+      border: "border-gray-600", 
+      tooltip: "Black background with brand colors for text & accents." 
+    },
+    { 
+      name: "Branded", 
+      defaultBg: primaryColor, 
+      defaultText: textColor,
+      border: primaryColor, 
+      tooltip: "Background in your brand’s main color." 
+    }
+  ].map(({ name, defaultBg, defaultText, border, tooltip }) => (
+    <div 
+      key={name} 
+      className="relative w-1/3"
+      onMouseEnter={() => setHoveredTheme(name)}
+      onMouseLeave={() => setHoveredTheme(null)}
+    >
+      <button
+        className={`w-full py-2 rounded-lg border-2 font-semibold text-center transition-all 
+          ${theme === name 
+            ? `scale-105 shadow-md ${defaultBg} ${defaultText} border-[#3667B2]` // Selected state with blue border
+            : `${defaultBg} ${defaultText} ${border}`} 
+          hover:scale-105 hover:shadow-lg`}
+        onClick={() => setTheme(name)}
+        style={name === "Branded" ? { backgroundColor: primaryColor, borderColor: theme === name ? "#3667B2" : primaryColor } : {}}
+      >
+        {name}
+      </button>
+      
+      {/* Tooltip for Individual Themes */}
+      {hoveredTheme === name && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 shadow-lg opacity-100 transition-opacity duration-200">
+          {tooltip}
+        </div>
+      )}
+    </div>
+  ))}
+</div>
 </div>
 
 
+
+
+
+
+
+{/* Creativity Slider */}
+<div className="flex flex-col space-y-3 p-4 rounded-lg bg-gray-100 shadow-sm">
+  {/* Label, Info Icon, and Value Display */}
+  <div className="flex justify-between items-center">
+    <div className="flex items-center gap-2 relative">
+      <label className="font-semibold text-gray-700">Adjust Creativity</label>
+
+      {/* Info Icon with Tooltip */}
+      <span
+        className="text-[#3667B2] cursor-pointer relative"
+        onMouseEnter={() => setShowCreativityTooltip(true)}
+        onMouseLeave={() => setShowCreativityTooltip(false)}
+      >
+        <FaInfoCircle className="text-base" />
+        {showCreativityTooltip && (
+          <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
+            <p className="font-semibold">How does Creativity affect text?</p>
+            <p>Adjust how creative or structured the generated text should be. A higher value results in more varied and expressive wording, while a lower value keeps it concise and predictable.</p>
+          </div>
+        )}
+      </span>
     </div>
+
+    <span className="text-gray-700 font-medium">Creativity: {creativity.toFixed(1)}</span>
   </div>
 
-  {/* Generate Presentation Button */}
+
+  {/* Styled Slider */}
+  <input
+    type="range"
+    min="0"
+    max="10"
+    step="0.1"
+    value={creativity}
+    onChange={(e) => {
+      let newValue = Number(e.target.value);
+      newValue = Math.max(0, Math.min(10, newValue)); // Keep within range
+      setCreativity(newValue);
+    }}
+    className="w-full h-2 rounded-lg bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 accent-[#3667B2] transition-all"
+  />
+
+  {/* Indicator Bar with Tooltips */}
+  <div className="flex justify-between text-xs font-medium text-gray-500 mt-2">
+    <div className="relative group">
+      <span className={creativity === 0 ? "text-[#3667B2] font-bold" : ""}>Most Structured</span>
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        Highly precise and factual text with minimal variation.
+      </div>
+    </div>
+
+    <div className="relative group">
+      <span className={creativity >= 4.5 && creativity <= 5.5 ? "text-[#3667B2] font-bold" : ""}>Balanced</span>
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        A mix of structured content with slight variations for engagement.
+      </div>
+    </div>
+
+    <div className="relative group">
+      <span className={creativity === 10 ? "text-[#3667B2] font-bold" : ""}>Most Creative</span>
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        Free-flowing, expressive text with maximum variation.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+      </div>
+
+       {/* Generate Presentation Button */}
   <div className="flex w-full justify-center">
   <button 
   disabled={isgenerated || isLoading || websiteUrl.length > 0 && !isValidLink  }
@@ -974,10 +1124,8 @@ const SelectPresentationType: React.FC = () => {
     <p className="text-center mt-1 text-sm text-gray-600">{progress}%</p>
   </div>
 )}
-
 </div>
-
-     </div>
+    </div>
      </div>
       )}
        {/* Color Selection Modal */}
@@ -1078,4 +1226,3 @@ const onOutlineSuccess = (success: boolean) => {
 function setIsOutlineGenerated(arg0: boolean) {
   throw new Error('Function not implemented.')
 }
-

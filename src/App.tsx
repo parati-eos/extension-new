@@ -9,6 +9,9 @@ import Refinepresentations from "./components/pages/newpresentation";
 import PresentationSuccess from "./components/pages/PresentationSuccess";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { PricingModal } from './components/pages/Pricing'
+
+//import { Pricing } from "aws-sdk";
 
 const App = () => {
   useEffect(() => {
@@ -32,8 +35,10 @@ const App = () => {
         <Route path="/onboarding" element={<OnboardingContainer />} />
         <Route path="/new-presentation" element={<PresentationBuilder />} />
         <Route path="/refine-ppt" element={<Refineppt />} />
+        {/* <Route path='/sidebar' element={<Refinepresentations/>} /> */}
         <Route path="/refine-presentation" element={<Refinepresentations/>}/>
         <Route path="/presentation-success" element={<PresentationSuccess />} />
+        <Route path="/pricing" element={<PricingModal/>} />
 
       </Routes>
    

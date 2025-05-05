@@ -27,18 +27,18 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full w-full lg:p-4 p-2">
+<div className="flex flex-col h-full lg:p-4 p-2 w-full ">
       {/* Top Section: Headings and Back Button */}
-      <div className="flex items-center justify-center w-full  ">
+      <div className="flex items-center justify-between w-full  ">
         <div>
-        <h3 className='text-semibold text-sm text-center'>
+        <h3 className='text-semibold'>
         Custom Builder
                       </h3>
          
           <h2 className="hidden lg:block md:text-lg font-semibold text-[#091220]">Select the slide type you want to create.</h2>
          
         </div>
-        {/* <BackButton onClick={onBack} /> */}
+        <BackButton onClick={onBack} />
       </div>
 
       {/* Slide Type Grid */}
@@ -62,8 +62,7 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
           </div>
         ))}
       </div>
-
-
+        
      {/* Mobile View */}
 <div className="lg:hidden h-full grid grid-cols-3 gap-4  px-2 py-4 ">
   {slideTypes.map((type) => (
@@ -75,14 +74,13 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       <img
         src={type.icon}
         alt={type.name}
-        className="w-10 h-10 mb-2" // Icon size for mobile
+        className="w-12 h-12 mb-2" // Icon size for mobile
       />
       <span className="text-xs font-medium text-center">{type.name}</span>
     </div>
   ))}
 </div>
-<BackButton onClick={onBack} />
-    </div>
+</div>
   )
 }
 
