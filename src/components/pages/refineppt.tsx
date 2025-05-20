@@ -40,7 +40,7 @@ const RefinePPT: React.FC = () => {
       if (event.data?.type === "slideId") {
         const receivedSlideId = event.data.slideId;
         setSlideId(receivedSlideId);
-
+  
         try {
           const slideInfoResponse = await fetch("https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/slidedisplay/get-slide-info", {
             method: "POST",
@@ -50,14 +50,23 @@ const RefinePPT: React.FC = () => {
             },
             body: JSON.stringify({ GenSlideID: receivedSlideId }),
           });
-
+  
+          if (!slideInfoResponse.ok) {
+            throw new Error("Invalid or missing slide info.");
+          }
+  
           const slideInfoData = await slideInfoResponse.json();
-
+  
+          if (!slideInfoData?.FormID || !slideInfoData?.slideData_id) {
+            toast.error("This is not a Zynth generated presentation. Please use 'New Presentation' to add slides.");
+            return;
+          }
+  
           setFormID(slideInfoData.FormID);
           setOutlineId(slideInfoData.outline_id);
           setSlideDataId(slideInfoData.slideData_id);
           setSectionName(slideInfoData.SectionName);
-
+  
           const slideTypeResponse = await fetch("https://d2bwumaosaqsqc.cloudfront.net/api/v1/data/slidedisplay/slide-type", {
             method: "POST",
             headers: {
@@ -66,34 +75,45 @@ const RefinePPT: React.FC = () => {
             },
             body: JSON.stringify({ slideData_id: slideInfoData.slideData_id }),
           });
-
+  
+          if (!slideTypeResponse.ok) {
+            throw new Error("Failed to fetch slide type.");
+          }
+  
           const slideTypeData = await slideTypeResponse.json();
+  
           if (slideTypeData?.slide_type) {
             setSlideType(slideTypeData.slide_type);
           }
-
+  
           if (slideTypeData?.slide_type === "cover" || slideTypeData?.slide_type === "contact") {
             setDisplayMode("customBuilder");
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error in chained slide fetch:", error);
+          toast.error(
+            error.message.includes("slide info")
+              ? "This is not a Zynth generated presentation. Please use 'New Presentation' to add slides."
+              : "Something went wrong while loading the slide."
+          );
         } finally {
           setLoading(false);
         }
       }
     };
-
+  
     window.addEventListener("message", handleMessage);
-
+  
     const fallbackTimeout = setTimeout(() => {
       setLoading(false);
     }, 10000);
-
+  
     return () => {
       window.removeEventListener("message", handleMessage);
       clearTimeout(fallbackTimeout);
     };
   }, []);
+  
 
   useEffect(() => {
     const checkTokenExpiry = () => {
@@ -194,7 +214,7 @@ const RefinePPT: React.FC = () => {
                   >
                     <img src={type.icon} alt={type.name} className="w-16 h-16 mb-3" />
                     <span className="text-gray-900 font-medium text-center text-xl">
-                      {quickLoading && type.name === 'quick' ? (
+                      {quickLoading && type.name === 'Quick Generate' ? (
                         <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500" />
                       ) : (
                         type.name

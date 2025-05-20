@@ -107,7 +107,7 @@ export default function RefinePresentation() {
   const handleSubmit = async () => {
     const outlineID = generateOutlineID();
     const payload = { documentId: formID, title, position, outlineID };
-
+  
     try {
       await axios.post(
         "https://d2bwumaosaqsqc.cloudfront.net/api/v1/outline/blocklist/insert",
@@ -116,12 +116,22 @@ export default function RefinePresentation() {
       );
       toast.success("Outline created successfully!");
       setShowModal(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error inserting outline:", error);
-      toast.error("Failed to create outline.");
+  
+      const errorMessage = error?.response?.data?.message || "";
+  
+      if (
+        errorMessage.includes("invalid document") || 
+        errorMessage.includes("Document not found")
+      ) {
+        toast.error("This is not a Zynth generated presentation. Please use 'New Presentation' option to add slides.");
+      } else {
+        toast.error("Failed to create outline.");
+      }
     }
   };
-
+  
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen">
       {showProfile && (
@@ -166,12 +176,11 @@ export default function RefinePresentation() {
       </div>
 
       {/* Refine text on slide */}
-      <div className="w-full flex items-center px-1 mb-8 relative">
+      {/* <div className="w-full flex items-center px-1 mb-8 relative">
         <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4">
         <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Refine text on slide</h3>
 
-      {/* Show upgrade if plan is free AND ppt count is >= 1 */}
       {planName === "free" && pptCountMonthly >= 1 && (
         <button
           onClick={handleUpgrade}
@@ -198,10 +207,10 @@ export default function RefinePresentation() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* AI Image Tools */}
-      <div className="w-full flex items-center px-1 mb-2 relative">
+      {/* <div className="w-full flex items-center px-1 mb-2 relative">
         <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4">
         <div className="flex justify-between items-center">
   <h3 className="text-start font-semibold mb-2">AI Image Tools</h3>
@@ -224,7 +233,7 @@ export default function RefinePresentation() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Modal */}
       {showModal && (

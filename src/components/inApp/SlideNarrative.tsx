@@ -343,17 +343,18 @@ export default function SlideNarrative({
               Select Slide Type.
             </span>
           )}
-          <button
-            onClick={handleGenerateSlide}
-            disabled={isGenerateDisabled || isLoading}
-            className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
-              isGenerateDisabled || isLoading
-                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-            }`}
-          >
-            Generate Slide
-          </button>
+<button
+  onClick={handleGenerateSlide}
+  disabled={isGenerateDisabled || isLoading} // <--- This line is already correct
+  className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
+    isGenerateDisabled || isLoading
+      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+      : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+  }`}
+>
+  {isLoading ? 'Generating...' : 'Generate Slide'}
+</button>
+
         </div>
       </div>
 
@@ -381,17 +382,18 @@ export default function SlideNarrative({
               Select Slide Type.
             </div>
           )}
-          <button
-            onClick={handleGenerateSlide}
-            disabled={isGenerateDisabled || isLoading}
-            className={`w-full py-2 rounded-md text-sm ${
-              isGenerateDisabled || isLoading
-                ? 'bg-gray-200 text-black cursor-not-allowed'
-                : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
-            }`}
-          >
-            Generate Slide
-          </button>
+<button
+  onClick={handleGenerateSlide}
+  disabled={isGenerateDisabled || isLoading}
+  className={`w-full py-2 rounded-md text-sm ${
+    isGenerateDisabled || isLoading
+      ? 'bg-gray-200 text-black cursor-not-allowed'
+      : 'bg-[#3667B2] text-white hover:bg-[#28518a]'
+  }`}
+>
+  {isLoading ? 'Generating...' : 'Generate Slide'}
+</button>
+
          
         </div>
         <BackButton onClick={onBack} />
