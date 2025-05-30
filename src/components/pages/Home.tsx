@@ -6,22 +6,22 @@ const Home = () => {
   const navigate = useNavigate();
   const [presentationId, setPresentationId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true); // Loader on by default
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const presId = queryParams.get("presentationId");
+  // useEffect(() => {
+  //   const queryParams = new URLSearchParams(window.location.search);
+  //   const presId = queryParams.get("presentationId");
 
-    if (presId) {
-      setPresentationId(presId);
-      sessionStorage.setItem("presentationId", presId);
-      setLoading(false);
-    } else {
-      const storedId = sessionStorage.getItem("presentationId");
-      if (storedId) {
-        setPresentationId(storedId);
-      }
-      setLoading(false);
-    }
-  }, []);
+  //   if (presId) {
+  //     setPresentationId(presId);
+  //     sessionStorage.setItem("presentationId", presId);
+  //     setLoading(false);
+  //   } else {
+  //     const storedId = sessionStorage.getItem("presentationId");
+  //     if (storedId) {
+  //       setPresentationId(storedId);
+  //     }
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   if (loading) {
     return (

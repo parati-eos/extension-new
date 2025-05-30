@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./components/pages/Home";
 import Login from "./components/auth/login";
@@ -14,6 +14,24 @@ import { PricingModal } from './components/pages/Pricing'
 //import { Pricing } from "aws-sdk";
 
 const App = () => {
+  const [presentationId, setPresentationId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Loader on by default
+    useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const presId = queryParams.get("presentationId");
+
+    if (presId) {
+      setPresentationId(presId);
+      sessionStorage.setItem("presentationId", presId);
+      setLoading(false);
+    } else {
+      const storedId = sessionStorage.getItem("presentationId");
+      if (storedId) {
+        setPresentationId(storedId);
+      }
+      setLoading(false);
+    }
+  }, []);
   useEffect(() => {
     const extractPresentationId = () => {
       const match = window.location.href.match(/presentation\/d\/([a-zA-Z0-9-_]+)/);
@@ -30,8 +48,8 @@ const App = () => {
     <Router>
     <ToastContainer />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+      {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<Login />} />
         <Route path="/onboarding" element={<OnboardingContainer />} />
         <Route path="/new-presentation" element={<PresentationBuilder />} />
         <Route path="/refine-ppt" element={<Refineppt />} />

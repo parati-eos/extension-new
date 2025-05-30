@@ -27,6 +27,12 @@ export default function RefinePresentation() {
   const navigate = useNavigate();
   const orgId = sessionStorage.getItem("orgId");
 
+useEffect(() => {
+  if (!authToken) {
+    navigate("/");
+  }
+}, [authToken, navigate]);
+
   const fetchOrganizationData = async () => {
     if (!orgId) {
       console.error("Error: Organization ID is missing.");
