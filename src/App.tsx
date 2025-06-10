@@ -10,6 +10,7 @@ import PresentationSuccess from "./components/pages/PresentationSuccess";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { PricingModal } from './components/pages/Pricing'
+import { initGA, logPageView } from "./analytics"; // 👈 Import analytics
 
 //import { Pricing } from "aws-sdk";
 
@@ -31,6 +32,10 @@ const App = () => {
       }
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    initGA(); // :point_left: Initialize Google Analytics
   }, []);
   useEffect(() => {
     const extractPresentationId = () => {

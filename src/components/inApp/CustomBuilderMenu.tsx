@@ -5,6 +5,7 @@ import { BackButton } from './BackButton'
 interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void
   setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
+  
 }
 
 const CustomBuilderMenu: React.FC<ClickProps> = ({

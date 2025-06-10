@@ -458,7 +458,7 @@ const SelectPresentationType: React.FC = () => {
   
     let docID = generatedDocumentIDoutline || generateDocumentID();
     setGeneratedDocumentIDoutline(docID);
-  
+  sessionStorage.setItem("form_id", docID);
     const payload = {
       pptInput: generateInput || "",
       pdfLink: pdfLink || "",

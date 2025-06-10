@@ -26,6 +26,7 @@ export default function RefinePresentation() {
   const [pptCountMonthly, setPptCountMonthly] = useState<number>(0);
   const navigate = useNavigate();
   const orgId = sessionStorage.getItem("orgId");
+const [isGenSlideValid, setIsGenSlideValid] = useState(false);
 
 useEffect(() => {
   if (!authToken) {
@@ -95,14 +96,24 @@ useEffect(() => {
           },
           body: JSON.stringify({ GenSlideID: receivedSlideId }),
         })
-          .then((response) => response.json())
-          .then((data) => {
+        .then((response) => response.json())
+        .then((data) => {
+          if (data?.FormID && data?.outline_id) {
             setFormID(data.FormID);
             setOutlineId(data.outline_id);
             setSlideDataId(data.slideData_id);
             setSectionName(data.SectionName);
-          })
-          .catch((error) => console.error("Error fetching slide info:", error));
+            setIsGenSlideValid(true);  // ✅ valid GenSlideID
+          } else {
+            setIsGenSlideValid(false); // ❌ invalid GenSlideID
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching slide info:", error);
+          setIsGenSlideValid(false);
+        });
+
+          
       }
     };
 
@@ -112,16 +123,25 @@ useEffect(() => {
 
   const handleSubmit = async () => {
     const outlineID = generateOutlineID();
-    const payload = { documentId: formID, title, position, outlineID };
+    const payload = { documentId: formID, title, outlineID };
   
     try {
       await axios.post(
-        "https://d2bwumaosaqsqc.cloudfront.net/api/v1/outline/blocklist/insert",
+        "https://d2bwumaosaqsqc.cloudfront.net/api/v1/outline/blocklist/insertbottom",
         payload,
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
       toast.success("Outline created successfully!");
       setShowModal(false);
+      // Pass data to RefinePPT via postMessage
+sessionStorage.setItem("outlineId", outlineID);
+sessionStorage.setItem("sectionName", title);
+window.parent.postMessage({
+  type: "openPptModal",
+  outlineId: outlineID,
+  sectionName: title,
+}, "*");
+
     } catch (error: any) {
       console.error("Error inserting outline:", error);
   
@@ -131,7 +151,7 @@ useEffect(() => {
         errorMessage.includes("invalid document") || 
         errorMessage.includes("Document not found")
       ) {
-        toast.error("This is not a Zynth generated presentation. Please use 'New Presentation' option to add slides.");
+        toast.error("This is not a Zynth generated slide. Please use Add new slide");
       } else {
         toast.error("Failed to create outline.");
       }
@@ -168,16 +188,22 @@ useEffect(() => {
             </button>
           </div>
 
-          <div className="flex items-center justify-between text-base w-full">
-            <h3 className="font-semibold">Create new version</h3>
-            <button
-              title="create"
-              onClick={handleCreatePresentation}
-              className="group flex items-center justify-center border border-blue-500 hover:border-blue-500 hover:border-2 hover:bg-blue-500 p-2 rounded transition-colors"
-            >
-              <FaSyncAlt className="text-gray-700 group-hover:text-white" />
-            </button>
-          </div>
+ <div className="flex items-center justify-between text-base w-full">
+  <h3 className="font-semibold">Create new version</h3>
+  <button
+    title="create"
+    onClick={handleCreatePresentation}
+    className={`group flex items-center justify-center border ${
+      isGenSlideValid ? "border-blue-500 hover:border-blue-500 hover:border-2 hover:bg-blue-500" : "border-gray-300 bg-gray-200 cursor-not-allowed"
+    } p-2 rounded transition-colors`}
+    disabled={!isGenSlideValid}
+  >
+    <FaSyncAlt className={`${
+      isGenSlideValid ? "text-gray-700 group-hover:text-white" : "text-gray-400"
+    }`} />
+  </button>
+</div>
+
         </div>
       </div>
 
@@ -253,13 +279,13 @@ useEffect(() => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            <input
+            {/* <input
               type="number"
               placeholder="Enter Position"
               className="w-full border px-3 py-2 rounded-md"
               value={position}
               onChange={(e) => setPosition(Number(e.target.value))}
-            />
+            /> */}
             <div className="flex justify-end gap-2 pt-4">
               <button
                 onClick={() => setShowModal(false)}

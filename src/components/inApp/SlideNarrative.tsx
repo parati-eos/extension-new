@@ -24,6 +24,8 @@ interface SlideNarrativeProps {
   setIsSlideLoading: () => void
   outlineID: string
   setFailed: () => void
+    onSlideGenerated: () => void; // ✅ add this line
+
 }
 
 export default function SlideNarrative({
@@ -36,6 +38,7 @@ export default function SlideNarrative({
   setIsSlideLoading,
   outlineID,
   setFailed,
+  onSlideGenerated, // ✅ add this prop
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -135,7 +138,7 @@ export default function SlideNarrative({
         setNarrative('');
         setDisplayMode('slides');
       }
-  
+  onSlideGenerated(); // ✅ call it after success
       toast.info(`Slide Generation Started for ${heading}`, {
         position: 'top-right',
         autoClose: 3000,
