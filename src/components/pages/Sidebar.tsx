@@ -31,12 +31,12 @@ const sections: Section[] = [
     subheading: 'Provide your website link',
     icon: <FaGlobe />,
   },
-  {
-    id: 4,
-    title: 'Industry',
-    subheading: 'Provide industry Details',
-    icon: <FaCity />,
-  },
+  // {
+  //   id: 4,
+  //   title: 'Industry',
+  //   subheading: 'Provide industry Details',
+  //   icon: <FaCity />,
+  // },
   {
     id: 5,
     title: 'Contact Details',
