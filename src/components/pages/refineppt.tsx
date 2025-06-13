@@ -81,7 +81,7 @@ const progressRef = useRef<number>(0);
           const slideInfoData = await slideInfoResponse.json();
 
           if (!slideInfoData?.FormID || !slideInfoData?.slideData_id) {
-            toast.error("This is not a Zynth generated presentation. Please use 'New Presentation' to add slides.");
+            toast.error("This is not a Zynth generated slide. Please use Add new slide");
             return;
           }
 
@@ -115,7 +115,7 @@ const progressRef = useRef<number>(0);
 
           if (slideTypeData?.slide_type) {
             setSlideType(slideTypeData.slide_type);
-            if (["cover", "contact"].includes(slideTypeData.slide_type)) {
+            if (["Cover", "Contact"].includes(slideTypeData.slide_type)) {
               setDisplayMode("customBuilder");
             }
           }

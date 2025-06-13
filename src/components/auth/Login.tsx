@@ -300,7 +300,7 @@ const Login = () => {
         </div>
       ) : (
         <GoogleOAuthProvider clientId={CLIENT_ID}>
-          <h2 className="text-2xl font-bold mb-4">Login to Continues</h2>
+          <h2 className="text-2xl font-bold mb-4">Login to Continue</h2>
           <GoogleLogin onSuccess={handleGoogleSuccess} />
         </GoogleOAuthProvider>
       )}
