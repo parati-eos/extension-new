@@ -129,7 +129,7 @@ const OnboardingContainer: React.FC = () => {
     }
 
     const nextSection = currentSection + 1
-    if (nextSection <= 5) {
+    if (nextSection <= 4) {
       if (!isNextLoading) {
         setCurrentSection(nextSection)
         if (!visitedSections.includes(nextSection)) {
@@ -170,10 +170,11 @@ const OnboardingContainer: React.FC = () => {
         return <LogoForm onContinue={handleContinue} onBack={handleBack} initialData={formData.logo} isNextLoading={isNextLoading} />
       case 3:
         return <WebsiteLinkForm onContinue={handleContinue} onBack={handleBack} initialData={formData.websiteLink} isNextLoading={isNextLoading} />
-      case 4:
-        return <IndustryForm onContinue={handleContinue} onBack={handleBack} isNextLoading={isNextLoading} initialData={{ sector: formData.sector, industry: formData.industry }} />
-      case 5:
+      // case 4:
+      //   return <IndustryForm onContinue={handleContinue} onBack={handleBack} isNextLoading={isNextLoading} initialData={{ sector: formData.sector, industry: formData.industry }} />
+       case 4:
         return <ContactDetailsForm onContinue={handleContinue} onBack={handleBack} isNextLoading={isNextLoading} initialData={{ contactEmail: formData.contactEmail, contactPhone: formData.contactPhone, linkedinLink: formData.linkedin }} />
+      
       default:
         return null
     }
@@ -183,7 +184,7 @@ const OnboardingContainer: React.FC = () => {
       {/* Progress Bar for Small and Medium Screens */}
       {!isMediumOrLargerScreen && (
         <div className="flex  justify-between p-4">
-          {[1, 2, 3, 4, 5].map((section) => (
+          {[1, 2, 3, 4].map((section) => (
             <div
               key={section}
               className={`h-1 flex-1 mx-1 ${
