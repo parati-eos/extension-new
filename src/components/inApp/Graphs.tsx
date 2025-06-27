@@ -17,6 +17,7 @@ interface GraphProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
 }
 
 interface Row {
@@ -35,6 +36,7 @@ export default function Graphs({
   outlineID,
   setIsSlideLoading,
   setFailed,
+    onSlideGenerated, // ✅ Destructure here
 }: GraphProps) {
   const [currentScreen, setCurrentScreen] = useState<
     'chartSelection' | 'inputScreen'
@@ -132,80 +134,82 @@ export default function Graphs({
     setHeaders(updatedHeaders)
   }
 
-  const handleSubmit = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
-      position: 'top-right',
-      autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
+const handleSubmit = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
 
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-    setIsLoading(true)
-    try {
-      const seriesData: { key: string; value: string[] }[] = []
-
-      // Transform rows into series data
-      headers.forEach((header, index) => {
-        const key = header
-        const values = rows.map(
-          (row) => row[Object.keys(row)[index] as keyof typeof row]
-        )
-        if (values.some((value) => value !== '')) {
-          seriesData.push({ key, value: values })
-        }
-      })
-
-      await axios
-        .post(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
-          {
-            type: 'Graphs',
-            title: slideTitle,
-            documentID: documentID,
-            outlineID: outlineID,
-            data: {
-              chartType: selectedChart!.toLowerCase(),
-              slideName: heading,
-              chart: {
-                series: seriesData,
-              },
-            },
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        )
-        .then((response) => {
-          toast.info(`Data submitted successfully for ${heading}`, {
-            position: 'top-right',
-            autoClose: 3000,
-          })
-          setIsLoading(false)
-          setDisplayMode('slides')
-        })
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
+  const storedOutlineIDs = sessionStorage.getItem('outlineIDs');
+  if (storedOutlineIDs) {
+    const outlineIDs = JSON.parse(storedOutlineIDs);
+    if (outlineIDs.includes(outlineID)) {
+      const updatedOutlineIDs = outlineIDs.filter((id: string) => id !== outlineID);
+      sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs));
     }
   }
+
+  setIsSlideLoading();
+  setIsLoading(true);
+
+  try {
+    const seriesData: { key: string; value: string[] }[] = [];
+
+    headers.forEach((header, index) => {
+      const key = header;
+      const values = rows.map(row => row[Object.keys(row)[index] as keyof typeof row]);
+      if (values.some(value => value !== '')) {
+        seriesData.push({ key, value: values });
+      }
+    });
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/graphs`,
+      {
+        type: 'Graphs',
+        title: slideTitle,
+        documentID,
+        outlineID,
+        data: {
+          chartType: selectedChart!.toLowerCase(),
+          slideName: heading,
+          chart: {
+            series: seriesData,
+          },
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId); // ✅ Trigger progress modal with slideData_id
+    } else {
+      toast.error('Missing slideData_id in response.');
+      return;
+    }
+
+    toast.info(`Data submitted successfully for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+
+    setDisplayMode('slides');
+  } catch (error) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const refineText = async (type: string, text: string) => {
     setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle

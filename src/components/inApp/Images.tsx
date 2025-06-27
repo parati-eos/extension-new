@@ -18,6 +18,8 @@ interface ImagesProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+
 }
 
 export default function Images({
@@ -30,6 +32,7 @@ export default function Images({
   outlineID,
   setIsSlideLoading,
   setFailed,
+    onSlideGenerated, // ✅ Destructure here
 }: ImagesProps) {
   const [images, setImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
@@ -126,68 +129,73 @@ export default function Images({
     }
   }
 
-  const handleSubmit = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
-      position: 'top-right',
-      autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
+const handleSubmit = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
 
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-    setIsLoading(true)
-    try {
-      // Create the transformed payload
-      const transformedHeaders = transformData(images) // Assuming images are the URLs
-      const payload = {
-        type: 'Images',
-        documentID: documentID,
-        data: {
-          slideName: heading,
-          ...transformedHeaders, // Spread the dynamic headers here
-          title: slideTitle,
-          imageurl: images, // Pass the original image URLs
-        },
-        outlineID: outlineID,
-      }
-
-      // Send the request
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-      toast.info(`Data submitted successfully for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setDisplayMode('slides')
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
-    } finally {
-      setIsLoading(false)
+  // Cleanup outlineID from session if present
+  const storedOutlineIDs = sessionStorage.getItem('outlineIDs');
+  if (storedOutlineIDs) {
+    const outlineIDs: string[] = JSON.parse(storedOutlineIDs);
+    if (outlineIDs.includes(outlineID)) {
+      const updated = outlineIDs.filter(id => id !== outlineID);
+      sessionStorage.setItem('outlineIDs', JSON.stringify(updated));
     }
   }
+
+  setIsSlideLoading();
+  setIsLoading(true);
+
+  try {
+    const transformedHeaders = transformData(images);
+    const payload = {
+      type: 'Images',
+      documentID,
+      data: {
+        slideName: heading,
+        ...transformedHeaders,
+        title: slideTitle,
+        imageurl: images,
+      },
+      outlineID,
+    };
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
+      payload,
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId); // ↪️ trigger progress modal/poller
+    } else {
+      toast.error('Missing slideData_id in response.');
+      return;
+    }
+
+    toast.success(`Data submitted successfully for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+
+    setDisplayMode('slides');
+  } catch (error) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   const refineText = async (type: string, text: string) => {
     setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle

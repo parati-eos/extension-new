@@ -24,7 +24,7 @@ interface SlideNarrativeProps {
   setIsSlideLoading: () => void
   outlineID: string
   setFailed: () => void
-    onSlideGenerated: () => void; // ✅ add this line
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
 
 }
 
@@ -104,55 +104,65 @@ export default function SlideNarrative({
     }
   }
 
-  const handleGenerateSlide = async () => {
-    toast.info(`Request sent to generate a new version for ${heading}`, {
+const handleGenerateSlide = async () => {
+  if (!narrative.trim()) return;
+
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
+
+  setIsSlideLoading(); // trigger parent loading (progress modal will appear shortly)
+  setIsLoading(true);  // show local loader in this component
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}`,
+      {
+        type: selectedOption?.value,
+        title: heading,
+        documentID,
+        input: narrative,
+        outlineID,
+        data: {
+          image: selectedImage || '',
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+
+    if (slideDataId) {
+      onSlideGenerated(slideDataId); // ✅ Call progress start here
+    } else {
+      toast.error("Missing slideData_id in response.");
+      return;
+    }
+
+    toast.success(`Slide Generation Started for ${heading}`, {
       position: 'top-right',
       autoClose: 3000,
     });
-  
-    setIsSlideLoading();
-  
-    if (!narrative.trim()) return;
-  
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidenarrative/generate-document/${orgId}`,
-        {
-          type: selectedOption?.value,
-          title: heading,
-          documentID,
-          input: narrative,
-          outlineID,
-          data: {
-            image: selectedImage || '',
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-  
-      if (response.data === 'ok') {
-        setNarrative('');
-        setDisplayMode('slides');
-      }
-  onSlideGenerated(); // ✅ call it after success
-      toast.info(`Slide Generation Started for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-  
-    } catch (error) {
-      toast.error(`Failed to send narrative for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      });
-      setFailed();
-      setDisplayMode('slides');
-    }
-  };
+
+    setNarrative('');
+    setDisplayMode('slides');
+  } catch (error) {
+    toast.error(`Failed to send narrative for ${heading}`, {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+    setDisplayMode('slides');
+  } finally {
+    setIsLoading(false); // ✅ Stop internal loader
+  }
+};
+
   
 
 
@@ -304,10 +314,10 @@ export default function SlideNarrative({
       <div className="hidden h-full w-full md:block flex-1 p-2 ">
         <div className="flex flex-col items-center justify-center h-full w-full text-xm">
           <textarea
-            value={narrative}
-            onChange={(e) => setNarrative(e.target.value)}
-            placeholder="Please provide some context and narrative to generate this slide."
-            className="w-full resize-none h-full p-2 border overflow-y-auto scrollbar-none rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
+        value={narrative}
+        onChange={(e) => setNarrative(e.target.value)}
+        placeholder="Please provide some context and narrative to generate this slide."
+        className="w-full resize-none h-[300px] min-h-[300px] max-h-[500px] p-2 border overflow-y-auto scrollbar-none rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
           ></textarea>
         </div>
       </div>
@@ -401,6 +411,12 @@ export default function SlideNarrative({
         </div>
         <BackButton onClick={onBack} />
       </div>
+      {isLoading && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-b-4" />
+  </div>
+)}
+
     </div>
   )
 }

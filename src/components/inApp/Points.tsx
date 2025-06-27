@@ -19,6 +19,7 @@ interface PointsProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
 }
 
 export default function Points({
@@ -31,6 +32,7 @@ export default function Points({
   outlineID,
   setIsSlideLoading,
   setFailed,
+  onSlideGenerated, // ✅ Add this line
 }: PointsProps) {
   const [points, setPoints] = useState(['',''])
   const [isLoading, setIsLoading] = useState(false)
@@ -107,66 +109,62 @@ export default function Points({
     }
   }
 
-  const handleGenerateSlide = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
-      position: 'top-right',
-      autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
+const handleGenerateSlide = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
 
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-    setIsLoading(true)
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/points`,
-        {
-          type: 'Points',
-          title: slideTitle,
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            ...(selectedImage && { image: selectedImage }),
-            pointers: points.filter((point) => point.trim() !== ''),
-          },
-          outlineID: outlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-      if (response.status === 200) {
-        toast.info(`Data submitted successfully for ${heading}`, {
-          position: 'top-right',
-          autoClose: 3000,
-        })
-      }
-
-      setDisplayMode('slides')
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
-    } finally {
-      setIsLoading(false)
+  // Clean up outdated outlineId values
+  const stored = sessionStorage.getItem('outlineIDs');
+  if (stored) {
+    const arr: string[] = JSON.parse(stored);
+    if (arr.includes(outlineID)) {
+      sessionStorage.setItem('outlineIDs', JSON.stringify(arr.filter((id) => id !== outlineID)));
     }
   }
+
+  setIsSlideLoading();           // Show loader on slide
+  setIsLoading(true);           // Show in-component loader
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/points`,
+      {
+        type: 'Points',
+        title: slideTitle,
+        documentID,
+        data: {
+          slideName: heading,
+          ...(selectedImage && { image: selectedImage }),
+          pointers: points.filter((pt) => pt.trim() !== ''),
+        },
+        outlineID,
+      },
+      { headers: { Authorization: `Bearer ${authToken}` } }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId);  // ✅ Starts progress polling and keeps loader visible
+      toast.success(`Slide generation started!`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setDisplayMode('slides');
+    } else {
+      toast.error('Missing slideData_id in response.');
+      setFailed();
+    }
+  } catch (err) {
+    toast.error('Error submitting data!', { position: 'top-right', autoClose: 3000 });
+    setFailed();
+  } finally {
+    setIsLoading(false);  // Stops in-component loader, but progress modal remains
+  }
+};
+
+
   const removePoint = (index: number) => {
     if (points.length > 1) {
       setIsInitialDataLoad(false) // Ensure we scroll to bottom for new points

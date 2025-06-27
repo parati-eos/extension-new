@@ -19,6 +19,7 @@ interface TimelineProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
 }
 
 export default function Timeline({
@@ -31,6 +32,8 @@ export default function Timeline({
   outlineID,
   setIsSlideLoading,
   setFailed,
+      onSlideGenerated, // ✅ Destructure here
+
 }: TimelineProps) {
   const [timeline, setTimeline] = useState(['','',''])
   const [description, setDescription] = useState(['','',''])
@@ -91,70 +94,74 @@ export default function Timeline({
       (point, index) => point.trim() !== '' && description[index].trim() !== ''
     ).length < 3 || !slideTitle.trim()
 
-  const handleGenerateSlide = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
-      position: 'top-right',
-      autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
+const handleGenerateSlide = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
 
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-    setLoading(true)
-    try {
-      const phases = timeline.map((point, index) => ({
-        timeline: point,
-        description: description[index],
-      }))
-
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/phases`,
-        {
-          type: 'Phases',
-          title: slideTitle,
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            ...(selectedImage && { image: selectedImage }),
-            phases: phases,
-          },
-          outlineID: outlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-
-      console.log('PATCH Response:', response.data)
-      toast.info(`Data submitted successfully for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setDisplayMode('slides')
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
-    } finally {
-      setLoading(false)
+  // Cleanup outlineIDs
+  const stored = sessionStorage.getItem('outlineIDs');
+  if (stored) {
+    const arr = JSON.parse(stored);
+    if (arr.includes(outlineID)) {
+      sessionStorage.setItem(
+        'outlineIDs',
+        JSON.stringify(arr.filter((id: string) => id !== outlineID))
+      );
     }
   }
+
+  setIsSlideLoading();  // parent-level loading/modal
+  setLoading(true);     // component-level spinner
+
+  try {
+    const phases = timeline.map((t, i) => ({
+      timeline: t,
+      description: description[i],
+    }));
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/phases`,
+      {
+        type: 'Phases',
+        title: slideTitle,
+        documentID,
+        data: {
+          slideName: heading,
+          ...(selectedImage && { image: selectedImage }),
+          phases,
+        },
+        outlineID,
+      },
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId);  // ✅ Only here, once
+      toast.success(`Slide generation started for ${heading}`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setDisplayMode('slides');
+    } else {
+      toast.error('Missing slideData_id in response.');
+      setFailed();
+    }
+  } catch (err) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+  } finally {
+    setLoading(false);  // hide in-component spinner
+  }
+};
+
 
   // Modified useEffect for scroll behavior
   useEffect(() => {

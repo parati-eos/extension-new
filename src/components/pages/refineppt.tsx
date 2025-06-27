@@ -3,6 +3,8 @@ import { DisplayMode } from '../../@types/presentationView';
 import zynthtext from '../../assets/zynth-text.png';
 import SlideNarrative from '../inApp/SlideNarrative';
 import CustomBuilderMenu from '../inApp/CustomBuilderMenu';
+import Cover from '../inApp/Cover';
+import Contact from '../inApp/Contact';
 import Points from '../inApp/Points';
 import People from '../inApp/People';
 import Phases from '../inApp/Timeline';
@@ -29,6 +31,7 @@ const RefinePPT: React.FC = () => {
   const [formID, setFormID] = useState<string | null>(null);
   const [slideId, setSlideId] = useState<string | null>(null);
   const [slideType, setSlideType] = useState<string>('Points');
+const [isZynthSlide, setIsZynthSlide] = useState(true);
 
 
 const [progress, setProgress] = useState(0);
@@ -81,10 +84,11 @@ const progressRef = useRef<number>(0);
           const slideInfoData = await slideInfoResponse.json();
 
           if (!slideInfoData?.FormID || !slideInfoData?.slideData_id) {
-            toast.error("This is not a Zynth generated slide. Please use Add new slide");
+            setIsZynthSlide(false);
+          toast.error('This is not a Zynth generated slide. Please use "Add new slide".');
             return;
           }
-
+          setIsZynthSlide(true);
           setFormID(slideInfoData.FormID);
           setSlideDataId(slideInfoData.slideData_id);
 
@@ -113,12 +117,16 @@ const progressRef = useRef<number>(0);
 
           const slideTypeData = await slideTypeResponse.json();
 
-          if (slideTypeData?.slide_type) {
-            setSlideType(slideTypeData.slide_type);
-            if (["Cover", "Contact"].includes(slideTypeData.slide_type)) {
-              setDisplayMode("customBuilder");
-            }
-          }
+ if (slideTypeData?.slide_type) {
+  setSlideType(slideTypeData.slide_type);
+
+  if (slideTypeData.slide_type === "Cover") {
+    setDisplayMode("Cover");
+  } else if (slideTypeData.slide_type === "Contact") {
+    setDisplayMode("Contact");
+  }
+}
+
         } catch (error) {
           console.error("❌ slideId handler error:", error);
           toast.error("Failed to load slide data.");
@@ -181,7 +189,7 @@ const progressRef = useRef<number>(0);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-const startProgressPolling = () => {
+const startProgressPolling = (slideDataId: string) => {
   setShowProgress(true);
   setProgress(0);
   progressRef.current = 0;
@@ -189,10 +197,9 @@ const startProgressPolling = () => {
   const interval = setInterval(async () => {
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/check-slide-progress-by-outline`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/check-slide-progress-by-slideData`,
         {
-          formId: formID,
-          outline_id: outlineId,
+          slideData_id: slideDataId, // ✅ use passed value
         },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -201,7 +208,6 @@ const startProgressPolling = () => {
 
       const apiProgress = data.progress || 0;
 
-      // 👇 Hybrid logic: Increment or override based on stage
       if (progressRef.current < 50) {
         progressRef.current = Math.max(progressRef.current + 10, apiProgress);
       } else {
@@ -210,13 +216,12 @@ const startProgressPolling = () => {
 
       setProgress(progressRef.current);
 
-      // ✅ Completion Logic
       if (progressRef.current >= 100) {
         clearInterval(interval);
         setStatusMsg("🎉 Slides are ready! Please close this screen to view them.");
         setShowConfetti(true);
 
-        const latestId = data.latestGenSlideId || data.genSlideIds?.slice(-1)[0];
+        const latestId = data.latestGenSlideId || data.genSlideId || data.genSlideIds?.slice(-1)[0];
 
         if (latestId) {
           sessionStorage.setItem("genSlideIdToSelect", latestId);
@@ -240,6 +245,7 @@ const startProgressPolling = () => {
 
 
 
+
   const renderContent = () => {
     switch (displayMode) {
       case 'slides':
@@ -254,8 +260,10 @@ const startProgressPolling = () => {
                     name: 'Quick Generate',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg',
                     onClick: async () => {
+                            if (!isZynthSlide) return;
+
                       try {
-                        startProgressPolling();
+                        startProgressPolling(slideDataId); // ✅ Pass correct ID
                         // setQuickLoading(true);
                         const title = sectionName || 'Slide Title Here';
                         await axios.post(
@@ -285,65 +293,102 @@ const startProgressPolling = () => {
                         setQuickLoading(false);
                       }
                     },
+                      disabled: !isZynthSlide,
+
                   },
                   {
                     name: 'Slide Narrative',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg',
                     onClick: () => {
+                            if (!isZynthSlide) return;
+
                       setDisplayMode('SlideNarrative');
                         // startProgressPolling(); // ✅ add this
 
                       // clearSessionAndCloseModal();
                     },
+                        disabled: !isZynthSlide,
+
                   },
                   {
                     name: 'Custom Builder',
                     icon: 'https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg',
                     onClick: () => {
+                            if (!isZynthSlide) return;
+
                       setDisplayMode('customBuilder');
                         // startProgressPolling(); // ✅ add this
                       // clearSessionAndCloseModal();
                     },
+                        disabled: !isZynthSlide,
+
                   },
                 ].map((type) => (
+                  // <button
+                  //   key={type.name}
+                  //   onClick={type.onClick}
+                  //   disabled={quickLoading && type.name === 'quick'}
+                  //   className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-[30%] h-[100%] transition hover:shadow-lg border border-gray-200"
+                  // >
+                  //   <img src={type.icon} alt={type.name} className="w-16 h-16 mb-3" />
+                  //   <span className="text-gray-900 font-medium text-center text-xl">
+                  //     {quickLoading && type.name === 'Quick Generate' ? (
+                  //       <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500" />
+                  //     ) : (
+                  //       type.name
+                  //     )}
+                  //   </span>
+                  // </button>
                   <button
-                    key={type.name}
-                    onClick={type.onClick}
-                    disabled={quickLoading && type.name === 'quick'}
-                    className="flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-[30%] h-[100%] transition hover:shadow-lg border border-gray-200"
-                  >
-                    <img src={type.icon} alt={type.name} className="w-16 h-16 mb-3" />
-                    <span className="text-gray-900 font-medium text-center text-xl">
-                      {quickLoading && type.name === 'Quick Generate' ? (
-                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500" />
-                      ) : (
-                        type.name
-                      )}
-                    </span>
-                  </button>
+  key={type.name}
+  onClick={isZynthSlide ? type.onClick : undefined}
+  disabled={!isZynthSlide || (quickLoading && type.name === 'Quick Generate')}
+  className={`flex flex-col items-center bg-white shadow-md rounded-lg px-8 py-6 w-[30%] h-[100%] transition hover:shadow-lg border border-gray-200 ${
+    !isZynthSlide ? 'opacity-50 cursor-not-allowed' : ''
+  }`}
+>
+  <img src={type.icon} alt={type.name} className="w-16 h-16 mb-3" />
+  <span className="text-gray-900 font-medium text-center text-xl">
+    {quickLoading && type.name === 'Quick Generate' ? (
+      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500" />
+    ) : (
+      type.name
+    )}
+  </span>
+</button>
+
                 ))}
               </div>
             </div>
           </div>
         );
+  case 'Cover':
+  return <Cover heading="Cover Slide" setDisplayMode={setDisplayMode} slideType="Cover" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} handleBack={() => setDisplayMode('slides')}  onSlideGenerated={startProgressPolling} />;
+
+case 'Contact':
+  return <Contact heading="Contact Slide" setDisplayMode={setDisplayMode} slideType="Contact" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => {}} setFailed={() => {}} handleBack={() => setDisplayMode('slides')}   onSlideGenerated={startProgressPolling}/>;
+
       case 'Points':
-        return <Points heading="Points Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <Points heading="Points Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'People':
-        return <People heading="People Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <People heading="People Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'Timeline':
-        return <Phases heading="Timeline Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <Phases heading="Timeline Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'Images':
-        return <Images heading="Images Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <Images heading="Images Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'Table':
-        return <Table heading="Table Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <Table heading="Table Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}    onSlideGenerated={startProgressPolling}/>;
       case 'Graphs':
-        return <Graphs heading="Graphs Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <Graphs heading="Graphs Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'TextandImage':
-        return <TextPlusImage heading="Text + Image Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <TextPlusImage heading="Text + Image Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling}/>;
       case 'Statistics':
-        return <Statistics heading="Statistics Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} />;
+        return <Statistics heading="Statistics Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} onSlideGenerated={startProgressPolling}/>;
       case 'SlideNarrative':
         return <SlideNarrative heading={sectionName || 'Slide Title Here'} slideType="Points" documentID={formID || 'doc_123'} orgId={orgID} authToken={authToken} setDisplayMode={setDisplayMode} setIsSlideLoading={() => { }} outlineID={outlineId || 'abc123'} setFailed={() => { }} onSlideGenerated={startProgressPolling} />;
+        case 'customBuilder':
+  return <CustomBuilderMenu onTypeClick={setDisplayMode} setDisplayMode={setDisplayMode} />;
+
       default:
         return <CustomBuilderMenu onTypeClick={setDisplayMode} setDisplayMode={setDisplayMode}  />;
     }

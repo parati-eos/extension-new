@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./components/pages/Home";
-import Login from "./components/auth/Login";
+import Login from "./components/auth/login";
 import OnboardingContainer from "./components/pages/OnboardingContainer";
 import PresentationBuilder from "./components/pages/PresentationBuilder";
 import Refineppt from "./components/pages/refineppt";
@@ -11,6 +11,8 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { PricingModal } from './components/pages/Pricing'
 import { initGA, logPageView } from "./analytics"; // 👈 Import analytics
+import RewriteRefinePanel from "./components/pages/RewriteRefinePanel";
+import ToneAudiencePanel from "./components/pages/ToneAudiencePanel";
 
 //import { Pricing } from "aws-sdk";
 
@@ -62,6 +64,8 @@ const App = () => {
         <Route path="/refine-presentation" element={<Refinepresentations/>}/>
         <Route path="/presentation-success" element={<PresentationSuccess />} />
         <Route path="/pricing" element={<PricingModal/>} />
+        {/* <Route path="/rewrite-refine" element={<RewriteRefinePanel onBack={() => navigate(-1)} />} />
+        <Route path="/tone-audience" element={<ToneAudiencePanel onBack={() => navigate(-1)} />} /> */}
 
       </Routes>
    

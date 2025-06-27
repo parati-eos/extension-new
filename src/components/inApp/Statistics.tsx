@@ -19,6 +19,8 @@ interface StatisticProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+
 }
 
 export default function Statistics({
@@ -31,6 +33,7 @@ export default function Statistics({
   outlineID,
   setIsSlideLoading,
   setFailed,
+  onSlideGenerated, // ✅ Add this prop
 }: StatisticProps) {
 
   const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
@@ -112,67 +115,73 @@ export default function Statistics({
       }
     };
     
-  const handleGenerateSlide = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
-      position: 'top-right',
-      autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
+const handleGenerateSlide = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
 
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-
-    setLoading(true)
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/statistics`,
-        {
-          type: 'Statistics',
-          title: slideTitle,
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            ...(selectedImage && { image: selectedImage }),
-            stats: title.map((label, index) => ({
-              label,
-              value: description[index] || 0, // Adjusted to include all rows
-            })),
-          },
-          outlineID: outlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-      toast.info(`Data submitted successfully for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setDisplayMode('slides')
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
-    } finally {
-      setLoading(false)
+  // Cleanup stale outlineIDs
+  const storedOutlineIDs = sessionStorage.getItem('outlineIDs');
+  if (storedOutlineIDs) {
+    const outlineIDs: string[] = JSON.parse(storedOutlineIDs);
+    if (outlineIDs.includes(outlineID)) {
+      sessionStorage.setItem(
+        'outlineIDs',
+        JSON.stringify(outlineIDs.filter((id) => id !== outlineID))
+      );
     }
   }
+
+  setIsSlideLoading(); // Show slide-level loader
+  setLoading(true);    // Show in-component loader
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/statistics`,
+      {
+        type: 'Statistics',
+        title: slideTitle,
+        documentID,
+        data: {
+          slideName: heading,
+          ...(selectedImage && { image: selectedImage }),
+          stats: title.map((label, idx) => ({
+            label,
+            value: description[idx] ?? 0,
+          })),
+        },
+        outlineID,
+      },
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId); // ✅ Pass slideDataId to start polling once
+      toast.success(`Slide generation started for ${heading}`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setDisplayMode('slides');
+    } else {
+      toast.error('Missing slideData_id in response.');
+      setFailed();
+    }
+  } catch (error) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+  } finally {
+    setLoading(false); // Hide in-component loader; modal remains
+  }
+};
+
+
   const fetchSlideData = async () => {
     const payload = {
       type: 'Statistics',

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import zynthtext from "../../assets/zynth-text.png";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import {
   FaUser,
@@ -9,6 +9,10 @@ import {
 } from "react-icons/fa";
 import UserProfileModal from "./userProfile";
 import { useNavigate } from "react-router-dom";
+import RewriteRefinePanel from "./RewriteRefinePanel";
+import ToneAudiencePanel from "./ToneAudiencePanel";
+import ImageGeneratorPanel from "./Imagegeneratorpanel";
+import ImageSearchPanel from "./imagesearchpanel";
 
 export default function RefinePresentation() {
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +34,7 @@ const [isGenSlideValid, setIsGenSlideValid] = useState(false);
 const [presentationExists, setPresentationExists] = useState<boolean | null>(null);
 const [fallbackFormID, setFallbackFormID] = useState<string | null>(null);
 const [submitLoading, setSubmitLoading] = useState(false);
+const [activeRefineMode, setActiveRefineMode] = useState<"rewrite" | "tone" | "image-generate" | "image-search" | null>(null);
 
 useEffect(() => {
   if (!authToken) {
@@ -75,7 +80,20 @@ useEffect(() => {
 
   const generateOutlineID = () => `outlineID-${window.crypto.randomUUID()}`;
 
-  const handleUpgrade = () => navigate("/pricing", { state: { planName } });
+const handleUpgrade = () => {
+  const authToken = sessionStorage.getItem("authToken");
+  const userEmail = sessionStorage.getItem("userEmail");
+  const orgId = sessionStorage.getItem("orgId");
+
+  const query = new URLSearchParams({
+    authToken: authToken || "",
+    userEmail: userEmail || "",
+    orgId: orgId || "",
+  });
+
+  window.open(`/pricing?${query.toString()}`, "_blank", "noopener,noreferrer");
+};
+
 
   const handleCreatePresentation = () => {
     window.parent.postMessage({ type: "openPptModal" }, "*");
@@ -237,16 +255,32 @@ window.parent.postMessage({
   }
   };
   
+  const [selectedText, setSelectedText] = useState<string>("");
+
+useEffect(() => {
+  const handleSelectedText = (event: MessageEvent) => {
+    if (event.data?.type === "selectedText") {
+      setSelectedText(event.data.text || "");
+      console.log("✅ Received selected text:", event.data.text);
+    }
+  };
+
+  window.addEventListener("message", handleSelectedText);
+  return () => window.removeEventListener("message", handleSelectedText);
+}, []);
+
 
   useEffect(() => {
-    const presentationId = sessionStorage.getItem("presentationId");
-    if (!presentationId) {
-      console.error("No presentationId found in session.");
-      setPresentationExists(false);
-      return;
-    }
+   
+    // if (!presentationId) {
+    //   console.error("No presentationId found in session.");
+    //   setPresentationExists(false);
+    //   return;
+    // }
 
     const checkPresentation = async () => {
+    const presentationId = sessionStorage.getItem("presentationId");
+    console.log("Checking Presentation ID:", presentationId);
       try {
         const response = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidedisplay/checkPresentationIdExists`,
@@ -263,11 +297,35 @@ window.parent.postMessage({
 
     const timer = setTimeout(() => {
       checkPresentation();
-    }, 4000);
+    }, 5000); // Changed to 3 seconds
 
     return () => clearTimeout(timer);
   }, [authToken]);
+if (activeRefineMode === "rewrite") {
+  return (
+    <RewriteRefinePanel
+      selectedText={selectedText}
+      onBack={() => setActiveRefineMode(null)}
+    />
+  );
+}
 
+if (activeRefineMode === "tone") {
+  return (
+    <ToneAudiencePanel
+      selectedText={selectedText}
+      onBack={() => setActiveRefineMode(null)}
+    />
+  );
+}
+
+if (activeRefineMode === "image-generate") {
+  return <ImageGeneratorPanel onBack={() => setActiveRefineMode(null)} />;
+}
+
+if (activeRefineMode === "image-search") {
+  return <ImageSearchPanel onBack={() => setActiveRefineMode(null)} />;
+}
 return (
   <div className="relative flex flex-col items-center justify-start min-h-screen">
 
@@ -342,64 +400,101 @@ return (
         </div>
 
         {/* Refine text on slide */}
-        {/* <div className="w-full flex items-center px-1 mb-8 relative">
-          <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-start font-semibold">Refine text on slide</h3>
+<div className="w-full flex items-center px-1 mb-8 relative">
+  <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
+    <div className="flex justify-between items-center">
+      <h3 className="text-start font-semibold">Edit Text on Slide</h3>
 
-              {planName === "free" && pptCountMonthly >= 1 && (
-                <button
-                  onClick={handleUpgrade}
-                  className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
-                >
-                  Upgrade to Unlock
-                </button>
-              )}
-            </div>
-            <div className="flex items-center justify-between text-base w-full">
-              <button disabled={planName === "free"} className="flex items-center justify-center border border-blue-500 bg-gray-200 text-gray-500 rounded px-3 py-1 w-[45%]">
-                <span>Shorten</span>
-              </button>
-              <button disabled={planName === "free"} className="flex items-center justify-center border border-blue-500 bg-gray-200 text-gray-500 rounded px-3 py-1 w-[45%]">
-                <span>Lengthen</span>
-              </button>
-            </div>
-            <div className="flex items-center justify-between text-base w-full">
-              <button disabled={planName === "free"} className="flex items-center justify-center border border-blue-500 bg-gray-200 text-gray-500 rounded px-1 py-1 w-[45%]">
-                <span>More Structured</span>
-              </button>
-              <button disabled={planName === "free"} className="flex items-center justify-center border border-blue-500 bg-gray-200 text-gray-500 rounded px-3 py-1 w-[45%]">
-                <span>More Creative</span>
-              </button>
-            </div>
-          </div>
-        </div> */}
+      {planName === "free" && (
+        <button
+          onClick={handleUpgrade}
+          className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
+        >
+          Upgrade to Unlock
+        </button>
+      )}
+    </div>
+
+    <div className="flex justify-between items-center gap-4">
+      <button
+        disabled={planName === "free"}
+          //  && pptCountMonthly >= 3
+        onClick={() => setActiveRefineMode("rewrite")}
+        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
+          planName === "free"
+            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+            : "bg-white text-gray-700 hover:bg-blue-50"
+        }`}
+      >
+        <span className="text-base font-medium">Rewrite &</span>
+        <span className="text-base font-medium">Refine</span>
+      </button>
+
+      <button
+        disabled={planName === "free"}
+        onClick={() => setActiveRefineMode("tone")}
+        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
+          planName === "free"
+            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+            : "bg-white text-gray-700 hover:bg-blue-50"
+        }`}
+      >
+        <span className="text-base font-medium">Tone &</span>
+        <span className="text-base font-medium">Audience</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
 
         {/* AI Image Tools */}
-        {/* <div className="w-full flex items-center px-1 mb-2 relative">
-          <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-start font-semibold mb-2">AI Image Tools</h3>
-              {planName === "free" && pptCountMonthly >= 1 && (
-                <button
-                  onClick={handleUpgrade}
-                  className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
-                >
-                  Upgrade to Unlock
-                </button>
-              )}
-            </div>
+<div className="w-full flex items-center px-1 mb-2 relative">
+  <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
+    <div className="flex justify-between items-center">
+      <h3 className="text-start font-semibold">Image Tools</h3>
 
-            <div className="flex items-center justify-between text-base w-full gap-2">
-              <button disabled={planName === "free"} className="flex items-center justify-center border border-blue-500 bg-gray-200 text-gray-500 rounded px-1 py-3 w-[45%]">
-                <span>Generate Images</span>
-              </button>
-              <button disabled={planName === "free"} className="flex items-center justify-center border border-blue-500 bg-gray-200 text-gray-500 rounded px-3 py-3 w-[45%]">
-                <span>Search Images</span>
-              </button>
-            </div>
-          </div>
-        </div> */}
+      {planName === "free" && (
+        <button
+          onClick={handleUpgrade}
+          className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
+        >
+          Upgrade to Unlock
+        </button>
+      )}
+    </div>
+
+    <div className="flex justify-between items-center gap-4">
+      <button
+        disabled={planName === "free"}
+        onClick={() => setActiveRefineMode("image-generate")}
+        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
+          planName === "free"
+            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+            : "bg-white text-gray-700 hover:bg-blue-50"
+        }`}
+      >
+        <span className="text-base font-medium">Generate</span>
+        <span className="text-base font-medium">Images</span>
+      </button>
+
+      <button
+        disabled={planName === "free"}
+        onClick={() => setActiveRefineMode("image-search")}
+        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
+          planName === "free"
+            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+            : "bg-white text-gray-700 hover:bg-blue-50"
+        }`}
+      >
+        <span className="text-base font-medium">Search</span>
+        <span className="text-base font-medium">Images</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
 
         {/* Modal */}
         {showModal && (

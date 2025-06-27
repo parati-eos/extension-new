@@ -17,6 +17,9 @@ interface TextPlusImageProps {
   outlineID: string;
   setIsSlideLoading: () => void;
   setFailed: () => void;
+
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+
 }
 
 export default function TextPlusImage({
@@ -28,6 +31,7 @@ export default function TextPlusImage({
   outlineID,
   setIsSlideLoading,
   setFailed,
+    onSlideGenerated, // ✅ Destructure here
 }: TextPlusImageProps) {
   const [image, setImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -76,40 +80,48 @@ export default function TextPlusImage({
 
   const handleReuploadClick = () => fileInputRef.current?.click();
 
-  const handleSubmit = async () => {
-    toast.info(`Request sent to generate new version for ${heading}`, { position: 'top-right', autoClose: 3000 });
-    setIsSlideLoading();
-    setIsLoading(true);
+const handleSubmit = async () => {
+  toast.info(`Request sent to generate new version for ${heading}`, { position: 'top-right', autoClose: 3000 });
+  
+  setIsSlideLoading();     // show slide-level loader/modal
+  setIsLoading(true);      // show component-level spinner
 
-    try {
-      const transformedHeaders = transformData(image);
-      const payload = {
-        type: 'TextandImage',
-        documentID,
-        data: {
-          slideName: heading,
-          ...transformedHeaders,
-          overview: text,
-          title: slideTitle,
-        },
-        outlineID,
-      };
+  try {
+    const transformedHeaders = transformData(image);
+    const payload = {
+      type: 'TextandImage',
+      documentID,
+      outlineID,
+      data: {
+        slideName: heading,
+        ...transformedHeaders,
+        overview: text,
+        title: slideTitle,
+      },
+    };
 
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/textandimage`,
-        payload,
-        { headers: { Authorization: `Bearer ${authToken}` } }
-      );
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/textandimage`,
+      payload,
+      { headers: { Authorization: `Bearer ${authToken}` } }
+    );
 
-      toast.info(`Data submitted successfully for ${heading}`, { position: 'top-right', autoClose: 3000 });
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId);  // ✅ Call once with correct ID
+      toast.success(`Slide generation started for ${heading}`, { position: 'top-right', autoClose: 3000 });
       setDisplayMode('slides');
-    } catch (error) {
-      toast.error('Error submitting data!', { position: 'top-right', autoClose: 3000 });
+    } else {
+      toast.error('Missing slideData_id in response.');
       setFailed();
-    } finally {
-      setIsLoading(false);
     }
-  };
+  } catch (error) {
+    toast.error('Error submitting data!', { position: 'top-right', autoClose: 3000 });
+    setFailed();
+  } finally {
+    setIsLoading(false);  // hide component-level loader
+  }
+};
 
   const refineText = async (type: string, textToRefine: string) => {
     if (type === 'slideTitle') setRefineLoadingSlideTitle(true);
@@ -225,13 +237,13 @@ export default function TextPlusImage({
                   {refineLoadingText ? (
                     <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                   ) : (
-                    <div className="absolute top-1/2 right-2 transform -translate-y-1/2 group">
+                    <div className="group flex items-center gap-1">
                       <FontAwesomeIcon
                         icon={faWandMagicSparkles}
                         onClick={() => refineText('overview', text)}
                         className="hover:scale-105 cursor-pointer active:scale-95 text-[#3667B2]"
                       />
-                      <span className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="absolute top-[-35px] right-0 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
                         Click to refine text.
                       </span>
                     </div>

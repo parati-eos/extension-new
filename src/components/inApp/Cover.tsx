@@ -18,6 +18,8 @@ interface CoverProps {
   setIsSlideLoading: () => void
   setFailed: () => void
   handleBack: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+
 }
 
 export default function Cover({
@@ -31,6 +33,8 @@ export default function Cover({
   outlineID,
   setIsSlideLoading,
   setFailed,
+  onSlideGenerated, // ✅ Destructure here
+
 }: CoverProps) {
   const [logo, setLogo] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -116,49 +120,61 @@ export default function Cover({
     }
   }
 
-  const handleGenerateSlide = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
+const handleGenerateSlide = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  })
+
+  setIsSlideLoading()
+  setIsLoading(true)
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/Cover`,
+      {
+        type: 'Cover',
+        title: heading,
+        documentID,
+        data: {
+          slideName: heading,
+          logo,
+          tagline,
+          companyName,
+          image: selectedImage ? [selectedImage] : [],
+        },
+        outlineID,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    )
+
+    const slideDataId = response?.data?.data?.slideData_id
+    if (slideDataId) {
+      onSlideGenerated(slideDataId) // ✅ Pass slideDataId to trigger progress polling
+    } else {
+      toast.error("Missing slideData_id in response.")
+      return
+    }
+
+    toast.success(`Data submitted successfully for ${heading}`, {
       position: 'top-right',
       autoClose: 3000,
     })
-    setIsSlideLoading()
-    setIsLoading(true)
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/Cover`,
-        {
-          type: 'Cover',
-          title: heading,
-          documentID,
-          data: {
-            slideName: heading,
-            logo,
-            tagline: tagline,
-            companyName: companyName,
-            image: selectedImage ? [selectedImage] : [],
-          },
-          outlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-      toast.info(`Data submitted successfully for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
-    } finally {
-      setIsLoading(false)
-    }
+  } catch (error) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    })
+    setFailed()
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   useEffect(() => {
     axios

@@ -19,6 +19,8 @@ interface ContactProps {
   setIsSlideLoading: () => void
   setFailed: () => void
   handleBack: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+
 }
 
 interface PhoneChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
@@ -36,6 +38,7 @@ export default function Contact({
   setIsSlideLoading,
   setFailed,
   handleBack,
+    onSlideGenerated, // ✅ Destructure here
 }: ContactProps) {
   const [websiteLink, setWebsiteLink] = useState('')
   const [email, setEmail] = useState('')
@@ -164,68 +167,79 @@ export default function Contact({
     !email || // Ensure email is mandatory
     Object.values(errors).some((error) => error !== '') // Check for validation errors
 
-  const handleSubmit = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
+const handleSubmit = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
+
+  setIsSlideLoading(); // Show parent-level loading (e.g. modal)
+  validateWebsiteLink(websiteLink);
+  validateEmail();
+  setPhone(phone);
+  validateLinkedin();
+
+  if (isButtonDisabled) return;
+
+  setIsLoading(true);
+
+  const payload = {
+    type: 'Contact',
+    title: heading,
+    documentID: documentID,
+    data: {
+      slideName: heading,
+      websiteLink,
+      contactEmail: email,
+      contactPhone: phone,
+      linkedinLink: linkedin,
+      image: selectedImage ? [selectedImage] : [],
+    },
+    outlineID: outlineID,
+  };
+
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/Contact`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to submit contact details');
+    }
+
+    const result = await response.json();
+    const slideDataId = result?.data?.slideData_id;
+
+    if (slideDataId) {
+      onSlideGenerated(slideDataId); // ✅ Pass correct ID
+    } else {
+      toast.error("Missing slideData_id in response.");
+      return;
+    }
+
+    toast.success(`Data submitted successfully for ${heading}`, {
       position: 'top-right',
       autoClose: 3000,
-    })
-
-    setIsSlideLoading()
-    validateWebsiteLink(websiteLink)
-    validateEmail()
-    setPhone(phone)
-    validateLinkedin()
-
-    if (isButtonDisabled) {
-      return
-    }
-    setIsLoading(true)
-    const payload = {
-      type: 'Contact',
-      title: heading,
-      documentID: documentID,
-      data: {
-        slideName: heading,
-        websiteLink,
-        contactEmail: email,
-        contactPhone: phone,
-        linkedinLink: linkedin,
-        image: selectedImage ? [selectedImage] : [],
-      },
-      outlineID: outlineID,
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/Contact`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      )
-
-      if (!response.ok) {
-        throw new Error('Failed to submit contact details')
-      }
-
-      toast.success(`Data submitted successfully for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
-    } finally {
-      setIsLoading(false)
-    }
+    });
+  } catch (error) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+  } finally {
+    setIsLoading(false);
   }
+};
+
 
   const handleFileSelect = async (file: File | null) => {
     if (!file) {

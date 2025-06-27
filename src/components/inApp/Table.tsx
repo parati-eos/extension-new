@@ -26,6 +26,7 @@ interface TableProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
 }
 
 export default function Table({
@@ -38,6 +39,7 @@ export default function Table({
   outlineID,
   setIsSlideLoading,
   setFailed,
+    onSlideGenerated, // ✅ Destructure here
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
@@ -285,15 +287,21 @@ useEffect(() => {
               Authorization: `Bearer ${authToken}`,
             },
           }
-        )
-        .then((res) => {
-          toast.info(`Data submitted successfully for ${heading}`, {
-            position: 'top-right',
-            autoClose: 3000,
-          })
-          setIsLoading(false)
-          setDisplayMode('slides')
-        })
+        );
+         const slideDataId = response.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId);  // ✅ Only here, once
+      toast.success(`Slide generation started for ${heading}`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      toast.info(`Data submitted successfully for ${heading}`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setIsLoading(false);
+      setDisplayMode('slides');
+    }
     } catch (error) {
       toast.error('Error submitting data!', {
         position: 'top-right',

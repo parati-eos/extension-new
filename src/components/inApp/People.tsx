@@ -18,6 +18,8 @@ interface PeopleProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
+  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+
 }
 
 export default function People({
@@ -29,6 +31,7 @@ export default function People({
   outlineID,
   setIsSlideLoading,
   setFailed,
+  onSlideGenerated, // ✅ Add this line
 }: PeopleProps) {
   const [people, setPeople] = useState([
     {
@@ -203,65 +206,69 @@ export default function People({
     )
   })()
 
-  const handleGenerateSlide = async () => {
-    toast.info(`Request sent to a generate new version for ${heading}`, {
-      position: 'top-right',
-      autoClose: 3000,
-    })
-    const storedOutlineIDs = sessionStorage.getItem('outlineIDs')
-    if (storedOutlineIDs) {
-      const outlineIDs = JSON.parse(storedOutlineIDs)
+const handleGenerateSlide = async () => {
+  toast.info(`Request sent to generate a new version for ${heading}`, {
+    position: 'top-right',
+    autoClose: 3000,
+  });
 
-      // Check if currentOutlineID exists in the array
-      if (outlineIDs.includes(outlineID)) {
-        // Remove currentOutlineID from the array
-        const updatedOutlineIDs = outlineIDs.filter(
-          (id: string) => id !== outlineID
-        )
-
-        // Update the sessionStorage with the modified array
-        sessionStorage.setItem('outlineIDs', JSON.stringify(updatedOutlineIDs))
-      }
-    }
-    setIsSlideLoading()
-    setIsLoading(true)
-
-    // Filter out the loading property from each person
-    const payloadPeople = people.map(({ loading, ...rest }) => rest)
-
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
-        {
-          type: 'People',
-          documentID: documentID,
-          data: {
-            slideName: heading,
-            title: slideTitle,
-            people: payloadPeople,
-          },
-          outlineID: outlineID,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-      toast.info(`Data submitted successfully for ${heading}`, {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setIsLoading(false)
-      setDisplayMode('slides')
-    } catch (error) {
-      toast.error('Error submitting data!', {
-        position: 'top-right',
-        autoClose: 3000,
-      })
-      setFailed()
+  // Remove this outlineID from any stored list
+  const storedOutlineIDs = sessionStorage.getItem('outlineIDs');
+  if (storedOutlineIDs) {
+    const outlineIDs: string[] = JSON.parse(storedOutlineIDs);
+    if (outlineIDs.includes(outlineID)) {
+      const updated = outlineIDs.filter((id) => id !== outlineID);
+      sessionStorage.setItem('outlineIDs', JSON.stringify(updated));
     }
   }
+
+  setIsSlideLoading();
+  setIsLoading(true);
+
+  // Clean up each "person" before submission
+  const payloadPeople = people.map(({ loading, ...rest }) => rest);
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/people`,
+      {
+        type: 'People',
+        documentID,
+        data: {
+          slideName: heading,
+          title: slideTitle,
+          people: payloadPeople,
+        },
+        outlineID,
+      },
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    const slideDataId = response?.data?.data?.slideData_id;
+    if (slideDataId) {
+      onSlideGenerated(slideDataId); // ⬅️ passes ID to initiate progress polling
+      toast.success(`Data submitted successfully for ${heading}`, {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      setDisplayMode('slides');
+    } else {
+      toast.error('Missing slideData_id in response.');
+    }
+
+  } catch (error) {
+    toast.error('Error submitting data!', {
+      position: 'top-right',
+      autoClose: 3000,
+    });
+    setFailed();
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   // Modified useEffect for scroll behavior
   useEffect(() => {
