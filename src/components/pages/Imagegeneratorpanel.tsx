@@ -9,70 +9,97 @@ interface Props {
 
 export default function ImageGeneratorPanel({ onBack }: Props) {
   const [description, setDescription] = useState("");
-  const [style, setStyle] = useState("photo");
+  const [style, setStyle] = useState("vector"); // default is vector, shown as "auto"
   const [effect, setEffect] = useState("auto");
   const [size, setSize] = useState("Square (1x1)");
   const [count, setCount] = useState(1);
   const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-const handleGenerate = async () => {
-  if (!description.trim()) {
-    toast.error("Please provide an image description.");
-    return;
-  }
-
-  const userID = sessionStorage.getItem("userEmail") || "";
-  const orgID = sessionStorage.getItem("orgId") || "";
-  const documentID = sessionStorage.getItem("presentationId") || "";
-  const authToken = sessionStorage.getItem("authToken");
-
-  if (!userID || !orgID || !documentID || !authToken) {
-    toast.error("Missing session or authentication data.");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/imagegenerator`,
-      {
-        userID,
-        orgID,
-        documentID,
-        type: "generate",
-        description,
-        style,
-        effect,
-        size,
-        count,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
-
-    if (response.data?.images?.length) {
-      setImages(response.data.images);
-      toast.success("Images generated successfully!");
-    } else {
-      toast.error("No images returned.");
+  const handleGenerate = async () => {
+    if (!description.trim()) {
+      toast.error("Please provide an image description.");
+      return;
     }
-  } catch (err) {
-    toast.error("Failed to generate images.");
-    console.error("Image generation error:", err);
-  } finally {
-    setLoading(false);
-  }
-};
 
+    const userID = sessionStorage.getItem("userEmail") || "";
+    const orgID = sessionStorage.getItem("orgId") || "";
+    const documentID = sessionStorage.getItem("presentationId") || "";
+    const authToken = sessionStorage.getItem("authToken");
+
+    if (!userID || !orgID || !documentID || !authToken) {
+      toast.error("Missing session or authentication data.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/documentgenerate/imagegenerator`,
+        {
+          userID,
+          orgID,
+          documentID,
+          type: "generate",
+          description,
+          style,
+          effect,
+          size,
+          count,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      if (response.data?.images?.length) {
+        setImages(response.data.images);
+        toast.success("Images generated successfully!");
+      } else {
+        toast.error("No images returned.");
+      }
+    } catch (err) {
+      toast.error("Failed to generate images.");
+      console.error("Image generation error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddImageToSlide = (url: string) => {
     window.parent.postMessage({ type: "insertImage", imageUrl: url }, "*");
     toast.success("Image added to slide!");
   };
+
+  const styleOptions = [
+    { label: "auto", value: "auto" },
+    { label: "photo", value: "photo" },
+    { label: "digital-art", value: "digital-art" },
+    { label: "3d", value: "3d" },
+    { label: "painting", value: "painting" },
+    { label: "low-poly", value: "low-poly" },
+    { label: "pixel-art", value: "pixel-art" },
+    { label: "anime", value: "anime" },
+    { label: "cyberpunk", value: "cyberpunk" },
+    { label: "comic", value: "comic" },
+    { label: "vintage", value: "vintage" },
+    { label: "cartoon", value: "cartoon" },
+    { label: "vector", value: "vector" },
+    { label: "studio-shot", value: "studio-shot" },
+    { label: "dark", value: "dark" },
+    { label: "sketch", value: "sketch" },
+    { label: "mockup", value: "mockup" },
+    { label: "2000s-pone", value: "2000s-pone" },
+    { label: "70s-vibe", value: "70s-vibe" },
+    { label: "watercolor", value: "watercolor" },
+    { label: "art-nouveau", value: "art-nouveau" },
+    { label: "origami", value: "origami" },
+    { label: "surreal", value: "surreal" },
+    { label: "fantasy", value: "fantasy" },
+    { label: "traditional-japan", value: "traditional-japan" }
+  ];
 
   return (
     <div className="p-4 w-full max-w-md mx-auto">
@@ -100,17 +127,20 @@ const handleGenerate = async () => {
           <label className="w-1/2">Image Style</label>
           <select
             className="w-1/2 border rounded px-2 py-1"
-            value={style}
-            onChange={(e) => setStyle(e.target.value)}
+            value={style === "vector" ? "auto" : style}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStyle(val === "auto" ? "vector" : val);
+            }}
           >
-            {[
-              "photo", "digital-art", "3d", "painting", "low-poly", "pixel-art",
-              "anime", "cyberpunk", "comic", "vintage", "cartoon", "vector",
-              "studio-shot", "dark", "sketch", "mockup", "2000s-pone", "70s-vibe",
-              "watercolor", "art-nouveau", "origami", "surreal", "fantasy", "traditional-japan"
-            ].map(opt => <option key={opt}>{opt}</option>)}
+            {styleOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
+
         <div className="flex justify-between items-center">
           <label className="w-1/2">Styling Effects</label>
           <select
@@ -119,9 +149,9 @@ const handleGenerate = async () => {
             onChange={(e) => {
               const val = e.target.value;
               if (val === "auto") {
-          setEffect("vibrant");
+                setEffect("vibrant");
               } else {
-          setEffect(val);
+                setEffect(val);
               }
             }}
           >
