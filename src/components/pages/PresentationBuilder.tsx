@@ -675,7 +675,7 @@ const SelectPresentationType: React.FC = () => {
           >
             <FaInfoCircle className="text-[#3667B2] cursor-pointer relative" />
             {showTooltip && (
-              <div className="absolute hidden lg:block left-full ml-2  transform -translate-y-1/2 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transition-opacity duration-300 text-left">
+              <div className="absolute hidden lg:block left-full ml-2  transform -translate-y-1/2 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transition-opacity duration-300 text-left z-10">
                 <p className="font-semibold">
                   Provide clear details about your presentation requirements.
                   The more specific you are, the more relevant the output will
