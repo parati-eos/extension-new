@@ -165,6 +165,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { sourceMapsEnabled } from "process";
 
 export interface DecodedToken {
   email: string;
@@ -242,6 +243,7 @@ const Login = () => {
         pptCount: 0,
         userIPCountry: ipInfoData.country!,
         signupLink: "googleslideextension",
+        source:"extension"
       };
 
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/data/userprofile/user`, {
