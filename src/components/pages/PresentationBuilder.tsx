@@ -45,6 +45,8 @@ interface Colors {
   SCD: string;
 }
 
+const supportedLanguages = ["English", "Mandarin Chinese", "Spanish", "Hindi", "Arabic", "Portuguese", "Bengali", "Russian", "Japanese", "Punjabi", "German", "Javanese", "Wu (Shanghainese)", "Malay/Indonesian", "Telugu", "Vietnamese", "Korean", "French", "Marathi", "Tamil", "Urdu", "Turkish", "Italian", "Yue (Cantonese)", "Thai", "Gujarati", "Polish", "Ukrainian", "Pashto", "Romanian", "Dutch", "Hungarian", "Persian (Farsi)", "Czech", "Greek", "Swedish", "Hausa", "Hebrew", "Burmese", "Serbo-Croatian", "Amharic", "Malayalam", "Odia (Oriya)", "Finnish", "Bulgarian", "Norwegian", "Slovak", "Sinhala", "Khmer", "Zulu"]
+
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [
     { id: 1, label: "Product", icon: <FaBox className="text-[#3667B2]" /> },
@@ -146,6 +148,7 @@ const SelectPresentationType: React.FC = () => {
     null
   );
   const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
+  const [language,setLanguage]=useState<string>("English");
   const handleCloseModal = () => {
     setGeneratedDocumentIDoutline(null); // Reset ID when closing
     setIsRefineModalOpen(false);
@@ -521,6 +524,7 @@ const SelectPresentationType: React.FC = () => {
       }, {} as { [key: string]: string }),
       creativity: creativity, // Number
       theme: theme, // String
+      language:language|| "English"
     };
 
     try {
@@ -1209,6 +1213,35 @@ const SelectPresentationType: React.FC = () => {
                   </div>
                 </div>
               </div>
+               <div className="relative space-y-2">
+      <label className="font-semibold flex items-center gap-2">
+        Language (optional)
+        <span className="cursor-pointer text-primary"><FaInfoCircle /></span>
+      </label>
+
+      <select
+  title="Language"
+  value={language}
+  onChange={(e) =>{ 
+    setLanguage(e.target.value)
+  }}
+  className="w-full p-2 border rounded-lg shadow-sm focus:ring-2 focus:outline-none border-gray-300 focus:ring-[#3667B2]"
+>
+  <option value="">Select a language</option>
+  {supportedLanguages.map((lang) => (
+    <option key={lang} value={lang}>
+      {lang}
+    </option>
+  ))}
+</select>
+
+      
+      {language && !supportedLanguages.includes(language) && (
+        <p className="text-red-500 text-sm mt-2">
+          Unsupported language selected.
+        </p>
+      )}
+    </div>
             </div>
 
             {/* Generate Presentation Button */}
