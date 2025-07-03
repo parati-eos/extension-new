@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import axios from "axios";
+import axios from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface Props {
@@ -16,6 +17,7 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
   const [creativity, setCreativity] = useState("Same as Text");
   const [loading, setLoading] = useState(false);
   const [originalText, setOriginalText] = useState("");
+  const navigate = useNavigate();
 
   const authToken = sessionStorage.getItem("authToken");
   const orgID = sessionStorage.getItem("orgId") || "";
@@ -27,6 +29,12 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
     setOriginalText(selectedText || fallbackText);
   }, [selectedText]);
 
+
+  useEffect(() => {
+    if (!authToken) {
+      navigate("/");
+    }
+  }, [authToken, navigate]);
   const handleRefine = async () => {
     if (!originalText?.trim()) {
       toast.error("No text found for refinement.");

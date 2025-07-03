@@ -111,13 +111,19 @@ const handleGenerate = async () => {
             ].map(opt => <option key={opt}>{opt}</option>)}
           </select>
         </div>
-
         <div className="flex justify-between items-center">
           <label className="w-1/2">Styling Effects</label>
           <select
             className="w-1/2 border rounded px-2 py-1"
             value={effect}
-            onChange={(e) => setEffect(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "auto") {
+          setEffect("vibrant");
+              } else {
+          setEffect(val);
+              }
+            }}
           >
             {[
               "auto", "b&w", "pastel", "sepia", "dramatic", "vibrant",

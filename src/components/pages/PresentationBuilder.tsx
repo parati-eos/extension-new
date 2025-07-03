@@ -855,7 +855,35 @@ const SelectPresentationType: React.FC = () => {
           >
             Submit
           </button>
-          {!eligibleForGeneration && isHovered && (
+{isHovered && (
+  <>
+    {!file && generateInput.length < 100 ? (
+      <div className="absolute top-[80%] left-[50%] mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center opacity-100 transition-opacity duration-300">
+        <p className="text-sm text-center text-gray-800">
+          Please provide minimum 100 characters in presentation context or Upload a document.
+        </p>
+      </div>
+    ) : !eligibleForGeneration ? (
+      <div className="absolute top-full mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center opacity-100 transition-opacity duration-300">
+        <p className="text-sm text-center text-gray-800">
+          Please{" "}
+          <span
+            onClick={() => setIsPricingModalOpen(true)}
+            className="text-blue-600 font-semibold hover:underline cursor-pointer"
+          >
+            upgrade
+          </span>{" "}
+          to generate more presentations.
+        </p>
+      </div>
+    ) : null}
+  </>
+)}
+
+
+
+
+          {/* {!eligibleForGeneration && isHovered && (
             <div className="absolute top-full  mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center opacity-100 transition-opacity duration-300">
               <p className="text-sm text-center text-gray-800">
                 Please{" "}
@@ -868,7 +896,7 @@ const SelectPresentationType: React.FC = () => {
                 to generate more presentations.
               </p>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

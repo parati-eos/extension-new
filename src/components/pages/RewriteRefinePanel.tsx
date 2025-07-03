@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import axios from "axios";
 import { toast } from "react-toastify";
+import axios from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   selectedText: string;
@@ -22,12 +23,17 @@ export default function RewriteRefinePanel({ selectedText, onBack }: Props) {
   const orgID = sessionStorage.getItem("orgId") || "";
   const userID = sessionStorage.getItem("userEmail") || "";
   const documentID = sessionStorage.getItem("presentationId") || "";
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fallbackText = sessionStorage.getItem("selectedSlideText") || "";
     setOriginalText(selectedText || fallbackText);
   }, [selectedText]);
-
+useEffect(() => {
+  if (!authToken) {
+    navigate("/");
+  }
+}, [authToken, navigate]);
   const handleRefine = async () => {
     if (!originalText?.trim()) {
       toast.error("No text found for refinement.");
@@ -124,47 +130,91 @@ export default function RewriteRefinePanel({ selectedText, onBack }: Props) {
           </select>
         </div>
 
-        <div className="flex gap-4">
-          <div className="flex flex-col w-1/2">
-            <label className="mb-1">Change Length</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={length}
-              onChange={(e) => setLength(e.target.value)}
-            >
-              <option>Auto</option>
-              <option>Shorten</option>
-              <option>Lengthen</option>
-            </select>
-          </div>
-          <div className="flex flex-col w-1/2">
-            <label className="mb-1">Word Count</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={wordCount}
-              onChange={(e) => setWordCount(e.target.value)}
-            >
-              <option>Auto</option>
-              <option>100 words</option>
-              <option>150 words</option>
-              <option>200 words</option>
-            </select>
-          </div>
-        </div>
+<div className="flex gap-4 items-start">
+  {/* Change Length */}
+  <div className="flex flex-col w-1/2">
+    <label className="mb-1 leading-tight break-words">Change Length</label>
+    <select
+      className="border rounded px-2 py-1"
+      value={length}
+      onChange={(e) => setLength(e.target.value)}
+    >
+      <option>Auto</option>
+      <option>Shorten</option>
+      <option>Lengthen</option>
+    </select>
+  </div>
+
+  {/* Word Count */}
+  <div className="flex flex-col w-1/2">
+    <label className="mb-1 leading-tight break-words flex flex-wrap justify-between items-start">
+      <span className="block">Word Count</span>
+      {wordCount !== "Auto" && (
+        <button
+          type="button"
+          className="text-xs text-blue-600 ml-auto"
+          onClick={() => setWordCount("Auto")}
+        >
+          Reset
+        </button>
+      )}
+    </label>
+    <input
+      type="number"
+      min={1}
+      className="border rounded px-2 py-1"
+      placeholder="Auto"
+      value={wordCount === "Auto" ? "" : wordCount}
+      onChange={(e) => {
+        const value = e.target.value;
+        if (!value || isNaN(Number(value))) {
+          setWordCount("Auto");
+        } else {
+          setWordCount(String(Number(value)));
+        }
+      }}
+    />
+  </div>
+</div>
+
+
 
         <div className="flex justify-between items-center">
           <label className="w-1/2">Target Language</label>
-          <select
-            className="w-1/2 border rounded px-2 py-1"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option>Same as text</option>
-            <option>English</option>
-            <option>Hindi</option>
-            <option>Spanish</option>
-            <option>French</option>
-          </select>
+    <select
+  className="w-1/2 border rounded px-2 py-1"
+  value={language}
+  onChange={(e) => setLanguage(e.target.value)}
+>
+  <option>Same as text</option>
+  <option>English</option>
+  <option>Hindi</option>
+  <option>Spanish</option>
+  <option>French</option>
+  <option>German</option>
+  <option>Italian</option>
+  <option>Portuguese</option>
+  <option>Russian</option>
+  <option>Chinese (Simplified)</option>
+  <option>Chinese (Traditional)</option>
+  <option>Japanese</option>
+  <option>Korean</option>
+  <option>Arabic</option>
+  <option>Bengali</option>
+  <option>Urdu</option>
+  <option>Turkish</option>
+  <option>Dutch</option>
+  <option>Polish</option>
+  <option>Vietnamese</option>
+  <option>Indonesian</option>
+  <option>Thai</option>
+  <option>Swedish</option>
+  <option>Norwegian</option>
+  <option>Finnish</option>
+  <option>Danish</option>
+  <option>Hebrew</option>
+</select>
+
         </div>
 
         {/* Refine Button */}
