@@ -45,7 +45,7 @@ interface Colors {
   SCD: string;
 }
 
-const supportedLanguages = ["English", "Mandarin Chinese", "Spanish", "Hindi", "Arabic", "Portuguese", "Bengali", "Russian", "Japanese", "Punjabi", "German", "Javanese", "Wu (Shanghainese)", "Malay/Indonesian", "Telugu", "Vietnamese", "Korean", "French", "Marathi", "Tamil", "Urdu", "Turkish", "Italian", "Yue (Cantonese)", "Thai", "Gujarati", "Polish", "Ukrainian", "Pashto", "Romanian", "Dutch", "Hungarian", "Persian (Farsi)", "Czech", "Greek", "Swedish", "Hausa", "Hebrew", "Burmese", "Serbo-Croatian", "Amharic", "Malayalam", "Odia (Oriya)", "Finnish", "Bulgarian", "Norwegian", "Slovak", "Sinhala", "Khmer", "Zulu"]
+const supportedLanguages = ["English", "Chinese (Simplified)", "Chinese (Traditional)", "Spanish", "French", "German", "Portuguese (Brazilian)", "Portuguese (European)", "Italian", "Russian", "Japanese", "Korean", "Dutch", "Arabic (Modern Standard)", "Polish", "Turkish", "Vietnamese"]
 
 const SelectPresentationType: React.FC = () => {
   const presentationTypes = [

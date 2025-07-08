@@ -243,7 +243,8 @@ const Login = () => {
         pptCount: 0,
         userIPCountry: ipInfoData.country!,
         signupLink: "googleslideextension",
-        source:"extension"
+        source:"extension",
+        currentSource:"extension"
       };
 
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/data/userprofile/user`, {
