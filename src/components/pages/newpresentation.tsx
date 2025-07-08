@@ -345,7 +345,7 @@ return (
         Create Presentation
       </button>
     </div>
-<div className="w-full flex items-center px-1 mb-8 relative">
+<div className="w-full flex items-center px-1 mb-8 mt-12 relative">
   <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
     <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Edit Text on Slide</h3>
@@ -493,7 +493,7 @@ return (
         </div>
 
         {/* Refine text on slide */}
-<div className="w-full flex items-center px-1 mt-6 mb-8 relative">
+<div className="w-full flex items-center px-1 mt-12 mb-8 relative">
 
   <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
     <div className="flex justify-between items-center">
