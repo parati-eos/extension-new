@@ -28,6 +28,8 @@ export default function RefinePresentation() {
   const [planName, setPlanName] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [pptCountMonthly, setPptCountMonthly] = useState<number>(0);
+  const [credits, setCredits] = useState<number>(0);
+
   const navigate = useNavigate();
   const orgId = sessionStorage.getItem("orgId");
 const [isGenSlideValid, setIsGenSlideValid] = useState(false);
@@ -64,6 +66,10 @@ useEffect(() => {
       if (data?.plan?.plan_name) {
         setPlanName(data.plan.plan_name);
       }
+      if (data?.credits !== undefined) {
+  setCredits(data.credits);
+}
+
       if (data?.pptcount_monthly !== undefined) {
         setPptCountMonthly(data.pptcount_monthly);
       }
@@ -350,19 +356,20 @@ return (
     <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Edit Text on Slide</h3>
 
-      {planName === "free" && (
-        <button
-          onClick={handleUpgrade}
-          className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
-        >
-          Upgrade
-        </button>
-      )}
+{/* {(planName === "free" || credits < 2) && (
+  <button
+    onClick={handleUpgrade}
+    className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
+  >
+    Upgrade
+  </button>
+)} */}
+
     </div>
 
     <div className="flex justify-between items-center gap-4">
       <button
-        disabled={planName === "free"}
+        // disabled={planName === "free"}
           //  && pptCountMonthly >= 3
         onClick={() => setActiveRefineMode("rewrite")}
         className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
@@ -376,7 +383,7 @@ return (
       </button>
 
       <button
-        disabled={planName === "free"}
+        // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("tone")}
         className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
           planName === "free"
@@ -396,19 +403,20 @@ return (
       <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
         <div className="flex justify-between items-center">
           <h3 className="text-start font-semibold">Image Tools</h3>
-          {planName === "free" && (
-            <button
-              onClick={handleUpgrade}
-              className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
-            >
-              Upgrade
-            </button>
-          )}
+ {/* {(planName === "free" || credits < 2) && (
+  <button
+    onClick={handleUpgrade}
+    className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
+  >
+    Upgrade
+  </button>
+)} */}
+
         </div>
 
         <div className="flex justify-between items-center gap-4">
           <button
-            disabled={planName === "free"}
+            // disabled={planName === "free"}
             onClick={() => setActiveRefineMode("image-generate")}
             className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
               planName === "free"
@@ -421,7 +429,7 @@ return (
           </button>
 
           <button
-            disabled={planName === "free"}
+            // disabled={planName === "free"}
             onClick={() => setActiveRefineMode("image-search")}
             className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
               planName === "free"
@@ -499,19 +507,20 @@ return (
     <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Edit Text on Slide</h3>
 
-      {planName === "free" && (
-        <button
-          onClick={handleUpgrade}
-          className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
-        >
-          Upgrade
-        </button>
-      )}
+{/* {(planName === "free" || credits < 5) && (
+  <button
+    onClick={handleUpgrade}
+    className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
+  >
+    Upgrade
+  </button>
+)} */}
+
     </div>
 
     <div className="flex justify-between items-center gap-4">
       <button
-        disabled={planName === "free"}
+        // disabled={planName === "free"}
           //  && pptCountMonthly >= 3
         onClick={() => setActiveRefineMode("rewrite")}
         className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
@@ -525,7 +534,7 @@ return (
       </button>
 
       <button
-        disabled={planName === "free"}
+        // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("tone")}
         className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
           planName === "free"
@@ -547,20 +556,20 @@ return (
   <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
     <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Image Tools</h3>
+{/* {(planName === "free" || credits < 5) && (
+  <button
+    onClick={handleUpgrade}
+    className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
+  >
+    Upgrade
+  </button>
+)} */}
 
-      {planName === "free" && (
-        <button
-          onClick={handleUpgrade}
-          className="bg-blue-600 text-white text-sm px-3 py-1 rounded"
-        >
-          Upgrade
-        </button>
-      )}
     </div>
 
     <div className="flex justify-between items-center gap-4">
       <button
-        disabled={planName === "free"}
+        // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("image-generate")}
         className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
           planName === "free"
@@ -573,7 +582,7 @@ return (
       </button>
 
       <button
-        disabled={planName === "free"}
+        // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("image-search")}
         className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
           planName === "free"

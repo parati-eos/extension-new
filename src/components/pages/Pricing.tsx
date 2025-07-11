@@ -1,9 +1,11 @@
-import React from "react";
+
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import React, { useRef } from "react";
+import PaymentGateway, { PaymentGatewayRef } from "./PaymentGateway"; // Adjust the path as needed
 
 import {
   connectWebSocket,
@@ -81,11 +83,18 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     queryParams.get("authToken") || sessionStorage.getItem("authToken");
   const userEmail =
     queryParams.get("userEmail") || sessionStorage.getItem("userEmail");
-  const orgId = queryParams.get("orgId") || sessionStorage.getItem("orgId");
+  let orgId = queryParams.get("orgId") || sessionStorage.getItem("orgId");
+
+  // If orgId is present in query params, update sessionStorage
+  if (queryParams.get("orgId")) {
+    sessionStorage.setItem("orgId", queryParams.get("orgId")!);
+  }
+
   const [planName, setPlanName] = useState<string>("free");
   const [monthlyPlan, setMonthlyPlan] = useState<any>(null);
   const [yearlyPlan, setYearlyPlan] = useState<any>(null);
   const [currency, setCurrency] = useState<"INR" | "USD">("USD");
+const paymentGatewayRef = useRef<PaymentGatewayRef>(null);
 
   const displayCurrency = currency === "INR" ? "INR" : "USD";
   const pricing = getStaticPricing(displayCurrency);
@@ -96,10 +105,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
   const plans = [
     {
       name: "FREE",
-      buttonText:
-        planName === "free" && exportButtonText
-          ? `${exportButtonText}`
-          : "Get Started for Free",
+  buttonText:
+  planName === "free"
+    ? "Buy Credits"
+    : "Get Started for Free",
+
       description: (
         <div className="mb-[5.5rem]">
           <span style={{ fontSize: "0.875rem", whiteSpace: "nowrap" }}>
@@ -540,48 +550,40 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                     </div>
                   ) : (
                     <button
-                      onClick={() => {
-                        console.log("▶️ Clicked Upgrade/Cancel Button");
-                        console.log({
-                          planName,
-                          selectedPlan: plan.name.toLowerCase(),
-                        });
+onClick={() => {
+  console.log("▶️ Clicked Upgrade/Cancel Button");
+  console.log({
+    planName,
+    selectedPlan: plan.name.toLowerCase(),
+  });
 
-                        if (plan.name === "PRO") {
-                          if (planName === "free") {
-                            console.log("🔁 Attempting upgrade...");
-                            handleUpgrade();
-                          } else {
-                            console.log("🔁 Attempting cancel...");
-                            handleCancel();
-                          }
-                        } else if (plan.name === "FREE") {
-                          if (exportHandler) {
-                            exportHandler();
-                          } else {
-                            console.warn("⛔ Export handler missing");
-                          }
-                        }
-                      }}
-                      disabled={
-                        (plan.name === "FREE" && !exportButtonText) ||
-                        !monthlyPlan ||
-                        !yearlyPlan ||
-                        isloading
-                      }
-                      className={`w-full font-medium py-2 px-6 rounded-lg transition transform ${
-                        (plan.name === "FREE" && !exportButtonText) ||
-                        !monthlyPlan ||
-                        !yearlyPlan ||
-                        isloading
-                          ? "cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500"
-                          : "bg-[#3667B2] text-white hover:scale-105 active:scale-95"
-                      }`}
-                    >
-                      {isloading && plan.name === "PRO"
-                        ? "Processing..."
-                        : plan.buttonText}
-                    </button>
+  if (plan.name === "PRO") {
+    if (planName === "free") {
+      console.log("🔁 Attempting upgrade...");
+      handleUpgrade();
+    } else {
+      console.log("🔁 Attempting cancel...");
+      handleCancel();
+    }
+  } else if (plan.name === "FREE") {
+    if (planName === "free") {
+      paymentGatewayRef.current?.triggerPayment(); // ✅ Updated line
+    } else if (exportHandler) {
+      exportHandler();
+    }
+  }
+}}
+
+  className={`w-full font-medium py-2 px-6 rounded-lg transition transform ${
+    (!monthlyPlan || !yearlyPlan || isloading)
+      ? "cursor-not-allowed bg-gray-200 border-gray-200 text-gray-500"
+      : "bg-[#3667B2] text-white hover:scale-105 active:scale-95"
+  }`}
+  disabled={!monthlyPlan || !yearlyPlan || isloading}
+>
+  {isloading && plan.name === "PRO" ? "Processing..." : plan.buttonText}
+</button>
+
                   )}{" "}
                 </div>
 
@@ -615,44 +617,42 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                       <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => {
-                        console.log("🟦 Plan Action Clicked", {
-                          plan: plan.name,
-                          planName,
-                        });
+<button
+  onClick={() => {
+    console.log("▶️ Clicked Upgrade/Cancel Button");
+    console.log({
+      planName,
+      selectedPlan: plan.name.toLowerCase(),
+    });
 
-                        if (plan.name === "PRO" && planName === "free") {
-                          handleUpgrade();
-                        } else if (plan.name === "PRO" && planName !== "free") {
-                          handleCancel();
-                        } else if (plan.name === "FREE" && exportHandler) {
-                          exportHandler();
-                        } else {
-                          console.warn(
-                            "⚠️ No matching action for current plan."
-                          );
-                        }
-                      }}
-                      disabled={
-                        (plan.name === "FREE" && !exportButtonText) ||
-                        !monthlyPlan ||
-                        !yearlyPlan ||
-                        isloading
-                      }
-                      className={`w-full font-medium py-2 px-6 rounded-lg transition transform ${
-                        (plan.name === "FREE" && !exportButtonText) ||
-                        !monthlyPlan ||
-                        !yearlyPlan ||
-                        isloading
-                          ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                          : "bg-[#3667B2] text-white hover:scale-105 active:scale-95"
-                      }`}
-                    >
-                      {isloading && plan.name === "PRO"
-                        ? "Processing..."
-                        : plan.buttonText}
-                    </button>
+    if (plan.name === "PRO") {
+      if (planName === "free") {
+        console.log("🔁 Attempting upgrade...");
+        handleUpgrade();
+      } else {
+        console.log("🔁 Attempting cancel...");
+        handleCancel();
+      }
+    } else if (plan.name === "FREE") {
+      if (planName === "free") {
+        // 🔥 Open Razorpay modal via PaymentGateway ref
+        paymentGatewayRef.current?.triggerPayment();
+      } else if (exportHandler) {
+        exportHandler();
+      } else {
+        console.warn("⚠️ No exportHandler available for FREE plan.");
+      }
+    } else {
+      console.warn("⚠️ No matching action for current plan.");
+    }
+  }}
+  className="w-full font-medium py-2 px-6 rounded-lg transition transform bg-white text-[#3667B2] border border-[#3667B2] hover:bg-[#f1f5ff]"
+>
+  {isloading && plan.name === "PRO"
+    ? "Processing..."
+    : plan.buttonText}
+</button>
+
                   )}
                 </div>
               </div>
@@ -670,19 +670,21 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             <p className="text-sm font-medium  text-gray-600 mb-4">
               Perfect for exploring Zynth.
             </p>
-            <button
-              onClick={exportHandler}
-              className={`py-2 px-4 w-full mt-4 font-semibold rounded-lg border ${
-                planName === "free" && !exportButtonText
-                  ? "bg-gray-200 border-gray-200 text-gray-500 cursor-not-allowed"
-                  : "bg-white text-[#3667B2] border-[#3667B2]"
-              }`}
-              disabled={!exportButtonText}
-            >
-              {exportButtonText
-                ? `${exportButtonText}`
-                : "Get Started for Free"}
-            </button>
+<button
+  onClick={() => {
+    if (planName === "free") {
+      // 🔥 Open Razorpay modal via ref
+      paymentGatewayRef.current?.triggerPayment();
+    } else if (exportHandler) {
+      exportHandler();
+    }
+  }}
+  className="py-2 px-4 w-full mt-4 font-semibold rounded-lg border bg-white text-[#3667B2] border-[#3667B2] hover:bg-[#f1f5ff]"
+>
+  {planName === "free" ? "Buy Credits" : exportButtonText || "Get Started for Free"}
+</button>
+
+
           </div>
 
           <div className="mt-4  ">
@@ -888,6 +890,25 @@ export const PricingModal: React.FC<PricingModalProps> = ({
           </div>
         </div>
       </div>
+      {/* Hidden button for triggering PaymentGateway */}
+<PaymentGateway
+  ref={paymentGatewayRef}
+  productinfo="Slide Export"
+  //formId={formId ||"" }// Ensure formId is defined
+  authToken={authToken || ""} // Ensure authToken is always a string
+  isDiscounted={false}
+  discountedAmount={0}
+  onSuccess={(result) => {
+    console.log("✅ Payment success", result);
+    // Optional: trigger a toast or reload credits
+  }}
+  onFailure={() => {
+    console.warn("❌ Payment failed or cancelled");
+  }}
+/>
+
+
     </div>
+    
   );
 };

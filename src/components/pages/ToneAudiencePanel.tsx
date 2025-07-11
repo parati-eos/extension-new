@@ -17,24 +17,58 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
   const [creativity, setCreativity] = useState("Same as Text");
   const [loading, setLoading] = useState(false);
   const [originalText, setOriginalText] = useState("");
-  const navigate = useNavigate();
+  const [credits, setCredits] = useState<number>(0);
+  const [planName, setPlanName] = useState("free");
 
+  const navigate = useNavigate();
   const authToken = sessionStorage.getItem("authToken");
   const orgID = sessionStorage.getItem("orgId") || "";
   const userID = sessionStorage.getItem("userEmail") || "";
   const documentID = sessionStorage.getItem("presentationId") || "";
+
+  const isAllowedToRefine = planName !== "free" || credits >= 2;
 
   useEffect(() => {
     const fallbackText = sessionStorage.getItem("selectedSlideText") || "";
     setOriginalText(selectedText || fallbackText);
   }, [selectedText]);
 
+  useEffect(() => {
+    if (!authToken) navigate("/");
+  }, [authToken, navigate]);
 
   useEffect(() => {
-    if (!authToken) {
-      navigate("/");
-    }
-  }, [authToken, navigate]);
+    const fetchCredits = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        setCredits(res.data?.credits || 0);
+        setPlanName(res.data?.plan?.plan_name || "free");
+      } catch (err) {
+        console.error("Failed to fetch credits:", err);
+        setCredits(0);
+        setPlanName("free");
+      }
+    };
+
+    if (authToken && orgID) fetchCredits();
+  }, [authToken, orgID]);
+
+  const handleUpgrade = () => {
+    const query = new URLSearchParams({
+      authToken: authToken || "",
+      userEmail: userID || "",
+      orgId: orgID || "",
+    });
+    window.open(`/pricing?${query.toString()}`, "_blank", "noopener,noreferrer");
+  };
+
   const handleRefine = async () => {
     if (!originalText?.trim()) {
       toast.error("No text found for refinement.");
@@ -68,6 +102,7 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
       if (res.data?.refinedText) {
         setRefinedText(res.data.refinedText);
         toast.success("Text refined successfully!");
+        if (planName === "free") setCredits((prev) => prev - 2);
       } else {
         toast.error("Refinement failed. No output.");
       }
@@ -106,7 +141,6 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={onBack}
@@ -118,7 +152,6 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
         <button className="text-gray-500 font-semibold">✕</button>
       </div>
 
-      {/* Controls */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <label className="w-1/2">Change Tone</label>
@@ -178,18 +211,38 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
           </select>
         </div>
 
-        {/* Refine Button */}
-        <button
-          onClick={handleRefine}
-          disabled={loading}
-          className={`bg-blue-600 text-white py-2 px-4 rounded w-full mt-2 ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {loading ? "Refining..." : "Refine Text"}
-        </button>
+        <div className="relative w-full mt-2">
+          <button
+            onClick={handleRefine}
+            disabled={loading || !isAllowedToRefine}
+            className={`relative bg-blue-600 text-white font-semibold py-3 px-4 w-full rounded-lg text-center transition-all ${
+              loading || !isAllowedToRefine ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+            }`}
+          >
+            Refine Text
+            <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                alt="coin"
+                className="w-3 h-3"
+              />
+              2 Credits
+            </div>
+          </button>
 
-        {/* Refined Output */}
+          <div className="flex justify-between items-center mt-2 text-sm text-gray-700">
+            <span>
+              Credits Available: {credits}
+            </span>
+            <button
+              className="text-blue-600 font-medium flex items-center gap-1"
+              onClick={handleUpgrade}
+            >
+              Get More Credits <span>→</span>
+            </button>
+          </div>
+        </div>
+
         <div className="mt-4">
           <div className="flex justify-between items-center mb-1">
             <span className="font-semibold">Refined Text</span>
