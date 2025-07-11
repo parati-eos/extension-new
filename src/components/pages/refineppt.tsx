@@ -18,6 +18,8 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { toast } from 'react-toastify';     
 import Confetti from 'react-confetti';
+import { useCredit } from '../../hooks/usecredit';
+
 const RefinePPT: React.FC = () => {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('slides');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -46,12 +48,54 @@ const progressRef = useRef<number>(0);
   const orgID = sessionStorage.getItem('orgId') || '';
   const authToken = sessionStorage.getItem('authToken') || '';
   const navigate = useNavigate();
+  
 
+  const [planName, setPlanName] = useState("free");
   const clearSessionAndCloseModal = () => {
     sessionStorage.removeItem("outlineId");
     sessionStorage.removeItem("sectionName");
     window.parent.postMessage({ type: "closeRefineModal" }, "*");
   };
+  const { credits, updateCredit, increaseCredit,decreaseCredit } = useCredit()
+
+  const handleAddCredit = () => {
+    increaseCredit(5)
+  }
+
+  const handleDecreaseCredit = () => {
+    decreaseCredit(5)
+  }
+
+  const handleUpgradeCredit=(val:number)=>{
+      updateCredit(val)
+  }
+
+  
+  useEffect(()=>{
+     const fetchCredits = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+       
+        handleUpgradeCredit(res.data?.credits || 0);
+        setPlanName(res.data?.plan?.plan_name || "free");
+      } catch (err) {
+        console.error("Failed to fetch credits:", err);
+        handleUpgradeCredit(0);
+        setPlanName("free");
+      }
+    };
+
+    if (orgID && authToken) {
+      fetchCredits();
+    }
+  },[])
 
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
@@ -371,21 +415,21 @@ case 'Contact':
       case 'Points':
         return <Points heading="Points Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'People':
-        return <People heading="People Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
+        return <People heading="People Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} userPlan={planName} />;
       case 'Timeline':
         return <Phases heading="Timeline Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
       case 'Images':
-        return <Images heading="Images Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
+        return <Images heading="Images Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} userPlan={planName}/>;
       case 'Table':
-        return <Table heading="Table Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}    onSlideGenerated={startProgressPolling}/>;
+        return <Table heading="Table Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}    onSlideGenerated={startProgressPolling} userPlan={planName}/>;
       case 'Graphs':
-        return <Graphs heading="Graphs Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} />;
+        return <Graphs heading="Graphs Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling} userPlan={planName} />;
       case 'TextandImage':
         return <TextPlusImage heading="Text + Image Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }}   onSlideGenerated={startProgressPolling}/>;
       case 'Statistics':
         return <Statistics heading="Statistics Slide" setDisplayMode={setDisplayMode} slideType="" documentID={formID || ''} orgId={orgID} authToken={authToken} outlineID={outlineId} setIsSlideLoading={() => { }} setFailed={() => { }} onSlideGenerated={startProgressPolling}/>;
       case 'SlideNarrative':
-        return <SlideNarrative heading={sectionName || 'Slide Title Here'} slideType="Points" documentID={formID || 'doc_123'} orgId={orgID} authToken={authToken} setDisplayMode={setDisplayMode} setIsSlideLoading={() => { }} outlineID={outlineId || 'abc123'} setFailed={() => { }} onSlideGenerated={startProgressPolling} />;
+        return <SlideNarrative heading={sectionName || 'Slide Title Here'} slideType="Points" documentID={formID || 'doc_123'} orgId={orgID} authToken={authToken} setDisplayMode={setDisplayMode} setIsSlideLoading={() => { }} outlineID={outlineId || 'abc123'} setFailed={() => { }} onSlideGenerated={startProgressPolling} userPlan={planName} />;
         case 'customBuilder':
   return <CustomBuilderMenu onTypeClick={setDisplayMode} setDisplayMode={setDisplayMode} />;
 
@@ -398,27 +442,34 @@ case 'Contact':
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 p-2.5">
 
     {showProgress && (
-  <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-70">
-    {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
-    <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md text-center">
-      <h2 className="text-xl font-semibold mb-4">Generating Slides...</h2>
-      <div className="w-full bg-gray-200 rounded-full h-4">
-        <div
-          className="bg-green-500 h-4 rounded-full transition-all duration-500"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-      <p className="mt-4 text-gray-700">{statusMsg}</p>
-      {progress >= 10 && (
-        <button
-          onClick={clearSessionAndCloseModal}
-          className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          View Presentation
-        </button>
-      )}
+<div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-70">
+  {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
+  <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md text-center relative">
+    <button
+      onClick={()=>setShowProgress(false)}
+      className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+    >
+      ×
+    </button>
+    <h2 className="text-xl font-semibold mb-4">Generating Slides...</h2>
+    <div className="w-full bg-gray-200 rounded-full h-4">
+      <div
+        className="bg-green-500 h-4 rounded-full transition-all duration-500"
+        style={{ width: `${progress}%` }}
+      />
     </div>
+    <p className="mt-4 text-gray-700">{statusMsg}</p>
+    {progress >= 10 && (
+      <button
+        onClick={clearSessionAndCloseModal}
+        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        View Presentation
+      </button>
+    )}
   </div>
+</div>
+
 )}
 
       {/* <div className="w-full flex flex-col items-center text-center mb-6">

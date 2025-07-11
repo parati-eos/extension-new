@@ -6,7 +6,7 @@ import { DisplayMode } from '../../@types/presentationView'
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
-
+import { useCredit } from '../../hooks/usecredit'
 interface GraphProps {
   heading: string
   slideType: string
@@ -17,7 +17,8 @@ interface GraphProps {
   outlineID: string
   setIsSlideLoading: () => void
   setFailed: () => void
-  onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+  onSlideGenerated: (slideDataId: string) => void;
+  userPlan:string 
 }
 
 interface Row {
@@ -37,6 +38,7 @@ export default function Graphs({
   setIsSlideLoading,
   setFailed,
     onSlideGenerated, // ✅ Destructure here
+    userPlan
 }: GraphProps) {
   const [currentScreen, setCurrentScreen] = useState<
     'chartSelection' | 'inputScreen'
@@ -51,7 +53,16 @@ export default function Graphs({
   const tableRef = useRef<HTMLDivElement | null>(null)
   const [headers, setHeaders] = useState<string[]>(['', ''])
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
-
+  const orgID = sessionStorage.getItem("orgId") || "";
+  const { credits, updateCredit, increaseCredit,decreaseCredit } = useCredit()
+      
+        const handleAddCredit = () => {
+          increaseCredit(5)
+        }
+      
+        const handleDecreaseCredit = () => {
+          decreaseCredit(5)
+        }
   useEffect(() => {
     const initRows = window.innerWidth < 768 ? 1 : 3
     setRows(
@@ -197,6 +208,23 @@ const handleSubmit = async () => {
       position: 'top-right',
       autoClose: 3000,
     });
+      if(userPlan=="free"){
+                        try{
+                        const respose = await axios.patch( `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+                          {credits:credits-5},
+                          {
+                            headers: {
+                              Authorization: `Bearer ${authToken}`,
+                            },
+                          }
+                        )
+                        console.log("Credits Updated in OrgProfile")
+                      }
+                      catch(error){
+                         console.error("Failed to upgrade credits:", error);
+                      }
+                        decreaseCredit(5)
+                      }
 
     setDisplayMode('slides');
   } catch (error) {

@@ -1,25 +1,27 @@
-import React, { useState, useRef } from 'react'
-import axios from 'axios'
-import { FaImage } from 'react-icons/fa'
-import uploadFileToS3 from './uploadfiletoS3'
-import { BackButton } from './BackButton'
-import { DisplayMode } from '../../@types/presentationView'
-import { toast } from 'react-toastify'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import React, { useState, useRef } from "react";
+import axios from "axios";
+import { FaImage } from "react-icons/fa";
+import uploadFileToS3 from "./uploadfiletoS3";
+import { BackButton } from "./BackButton";
+import { DisplayMode } from "../../@types/presentationView";
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
+import { useCredit } from "../../hooks/usecredit";
 
 interface ImagesProps {
-  heading: string
-  slideType: string
-  documentID: string
-  orgId: string
-  authToken: string
-  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>
-  outlineID: string
-  setIsSlideLoading: () => void
-  setFailed: () => void
+  heading: string;
+  slideType: string;
+  documentID: string;
+  orgId: string;
+  authToken: string;
+  setDisplayMode: React.Dispatch<React.SetStateAction<DisplayMode>>;
+  outlineID: string;
+  setIsSlideLoading: () => void;
+  setFailed: () => void;
   onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
-
+  userPlan:string;
+  
 }
 
 export default function Images({
@@ -32,66 +34,78 @@ export default function Images({
   outlineID,
   setIsSlideLoading,
   setFailed,
-    onSlideGenerated, // ✅ Destructure here
+  onSlideGenerated, // ✅ Destructure here
+  userPlan,
+  
 }: ImagesProps) {
-  const [images, setImages] = useState<string[]>([])
-  const [isUploading, setIsUploading] = useState(false)
-  const [replacingIndex, setReplacingIndex] = useState<number | null>(null)
-  const [showTooltip, setShowTooltip] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
+  const [images, setImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [replacingIndex, setReplacingIndex] = useState<number | null>(null);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false); // State for slideTitle loader
   // Refs for file inputs
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const replaceInputRefs = useRef<HTMLInputElement[]>([])
-  const [slideTitle, setSlideTitle] = useState('') // Local state for slide title
-
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const replaceInputRefs = useRef<HTMLInputElement[]>([]);
+  const [slideTitle, setSlideTitle] = useState(""); // Local state for slide title
+  const { credits, updateCredit, increaseCredit,decreaseCredit } = useCredit()
+  
+    const handleAddCredit = () => {
+      increaseCredit(5)
+    }
+  
+    const handleDecreaseCredit = () => {
+      decreaseCredit(5)
+    }
+  
   const transformData = (imageUrls: string[]) => {
-    const headers: Record<string, string> = {} // Initialize an empty object for dynamic headers
+    const headers: Record<string, string> = {}; // Initialize an empty object for dynamic headers
 
     // Loop through the image URLs and extract filenames to use as headers
     imageUrls.forEach((url, index) => {
-      const parts = url.split('/') // Split the URL by '/'
-      const filenameWithExtension = parts[parts.length - 1] // Get the last part (filename.extension)
+      const parts = url.split("/"); // Split the URL by '/'
+      const filenameWithExtension = parts[parts.length - 1]; // Get the last part (filename.extension)
 
       // Remove the number prefix (if present) and get the filename without extension
       const filenameWithoutNumber = filenameWithExtension
-        .replace(/^\d+_/, '')
-        .split('.')[0] // Remove leading number followed by underscore
+        .replace(/^\d+_/, "")
+        .split(".")[0]; // Remove leading number followed by underscore
 
-      headers[`header${index + 1}`] = filenameWithoutNumber // Dynamically create header keys (header1, header2, etc.)
-    })
+      headers[`header${index + 1}`] = filenameWithoutNumber; // Dynamically create header keys (header1, header2, etc.)
+    });
 
     // Return the headers along with the original image URLs
     return {
       ...headers, // Spread the dynamically created headers
       imageurl: imageUrls, // Keep the original URLs in 'imageurl'
-    }
-  }
+    };
+  };
 
   const handleMouseEnter = () => {
-    if (images.length === 0 || slideTitle.trim() === '') {
-      setShowTooltip(true)
+    if (images.length === 0 || slideTitle.trim() === "") {
+      setShowTooltip(true);
     }
-  }
+  };
 
   const handleMouseLeave = () => {
-    setShowTooltip(false)
-  }
+    setShowTooltip(false);
+  };
+  const orgID = sessionStorage.getItem("orgId") || "";
 
   const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     replaceIndex?: number
   ) => {
-    if (!e.target.files) return
-    const files = Array.from(e.target.files)
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
 
     if (replaceIndex === undefined && images.length + files.length > 4) {
-      alert('You can upload a maximum of 4 images.')
-      return
+      alert("You can upload a maximum of 4 images.");
+      return;
     }
 
-    if (replaceIndex !== undefined) setReplacingIndex(replaceIndex)
-    else setIsUploading(true)
+    if (replaceIndex !== undefined) setReplacingIndex(replaceIndex);
+    else setIsUploading(true);
 
     try {
       const uploadedImages = await Promise.all(
@@ -100,105 +114,119 @@ export default function Images({
             name: file.name,
             type: file.type,
             body: file,
-          }
+          };
 
-          return uploadFileToS3(uploadedFile)
+          return uploadFileToS3(uploadedFile);
         })
-      )
+      );
 
       if (replaceIndex !== undefined) {
         setImages((prevImages) => {
-          const updatedImages = [...prevImages]
-          updatedImages[replaceIndex] = uploadedImages[0]
-          return updatedImages
-        })
+          const updatedImages = [...prevImages];
+          updatedImages[replaceIndex] = uploadedImages[0];
+          return updatedImages;
+        });
       } else {
-        setImages((prevImages) => [...prevImages, ...uploadedImages])
+        setImages((prevImages) => [...prevImages, ...uploadedImages]);
       }
     } catch (error) {
-      toast.error('Upload failed', {
-        position: 'top-right',
+      toast.error("Upload failed", {
+        position: "top-right",
         autoClose: 3000,
-      })
+      });
     } finally {
-      setIsUploading(false)
-      setReplacingIndex(null)
+      setIsUploading(false);
+      setReplacingIndex(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = ''
+        fileInputRef.current.value = "";
       }
     }
-  }
+  };
 
-const handleSubmit = async () => {
-  toast.info(`Request sent to generate a new version for ${heading}`, {
-    position: 'top-right',
-    autoClose: 3000,
-  });
-
-  // Cleanup outlineID from session if present
-  const storedOutlineIDs = sessionStorage.getItem('outlineIDs');
-  if (storedOutlineIDs) {
-    const outlineIDs: string[] = JSON.parse(storedOutlineIDs);
-    if (outlineIDs.includes(outlineID)) {
-      const updated = outlineIDs.filter(id => id !== outlineID);
-      sessionStorage.setItem('outlineIDs', JSON.stringify(updated));
-    }
-  }
-
-  setIsSlideLoading();
-  setIsLoading(true);
-
-  try {
-    const transformedHeaders = transformData(images);
-    const payload = {
-      type: 'Images',
-      documentID,
-      data: {
-        slideName: heading,
-        ...transformedHeaders,
-        title: slideTitle,
-        imageurl: images,
-      },
-      outlineID,
-    };
-
-    const response = await axios.post(
-      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
-      payload,
-      {
-        headers: { Authorization: `Bearer ${authToken}` },
-      }
-    );
-
-    const slideDataId = response?.data?.data?.slideData_id;
-    if (slideDataId) {
-      onSlideGenerated(slideDataId); // ↪️ trigger progress modal/poller
-    } else {
-      toast.error('Missing slideData_id in response.');
-      return;
-    }
-
-    toast.success(`Data submitted successfully for ${heading}`, {
-      position: 'top-right',
+  const handleSubmit = async () => {
+    toast.info(`Request sent to generate a new version for ${heading}`, {
+      position: "top-right",
       autoClose: 3000,
     });
 
-    setDisplayMode('slides');
-  } catch (error) {
-    toast.error('Error submitting data!', {
-      position: 'top-right',
-      autoClose: 3000,
-    });
-    setFailed();
-  } finally {
-    setIsLoading(false);
-  }
-};
+    // Cleanup outlineID from session if present
+    const storedOutlineIDs = sessionStorage.getItem("outlineIDs");
+    if (storedOutlineIDs) {
+      const outlineIDs: string[] = JSON.parse(storedOutlineIDs);
+      if (outlineIDs.includes(outlineID)) {
+        const updated = outlineIDs.filter((id) => id !== outlineID);
+        sessionStorage.setItem("outlineIDs", JSON.stringify(updated));
+      }
+    }
 
+    setIsSlideLoading();
+    setIsLoading(true);
 
+    try {
+      const transformedHeaders = transformData(images);
+      const payload = {
+        type: "Images",
+        documentID,
+        data: {
+          slideName: heading,
+          ...transformedHeaders,
+          title: slideTitle,
+          imageurl: images,
+        },
+        outlineID,
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/slidecustom/generate-document/${orgId}/images`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      const slideDataId = response?.data?.data?.slideData_id;
+      if (slideDataId) {
+        onSlideGenerated(slideDataId); // ↪️ trigger progress modal/poller
+      } else {
+        toast.error("Missing slideData_id in response.");
+        return;
+      }
+
+      toast.success(`Data submitted successfully for ${heading}`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      if(userPlan=="free"){
+        try{
+        const respose = await axios.patch( `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+          {credits:credits-5},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        )
+        console.log("Credits Updated in OrgProfile")
+      }
+      catch(error){
+         console.error("Failed to upgrade credits:", error);
+      }
+        decreaseCredit(5)
+      }
+      setDisplayMode("slides");
+    } catch (error) {
+      toast.error("Error submitting data!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setFailed();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const refineText = async (type: string, text: string) => {
-    setRefineLoadingSlideTitle(true) // Set loader state to true when refining slideTitle
+    setRefineLoadingSlideTitle(true); // Set loader state to true when refining slideTitle
 
     try {
       const response = await axios.post(
@@ -212,33 +240,33 @@ const handleSubmit = async () => {
             Authorization: `Bearer ${authToken}`,
           },
         }
-      )
+      );
       if (response.status === 200) {
-        const refinedText = response.data.refinedText
+        const refinedText = response.data.refinedText;
 
-        setSlideTitle(refinedText)
+        setSlideTitle(refinedText);
       }
-      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+      setRefineLoadingSlideTitle(false); // Set slideTitle loading state back to false
     } catch (error) {
-      toast.error('Error refining text!', {
-        position: 'top-right',
+      toast.error("Error refining text!", {
+        position: "top-right",
         autoClose: 3000,
-      })
-      setRefineLoadingSlideTitle(false) // Set slideTitle loading state back to false
+      });
+      setRefineLoadingSlideTitle(false); // Set slideTitle loading state back to false
     }
-  }
+  };
 
   const onBack = () => {
-    setDisplayMode('customBuilder')
-  }
+    setDisplayMode("customBuilder");
+  };
 
   const triggerFileInput = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const triggerReplaceInput = (index: number) => {
-    replaceInputRefs.current[index]?.click()
-  }
+    replaceInputRefs.current[index]?.click();
+  };
 
   return (
     <div className="flex flex-col h-full w-full p-2 lg:p-4">
@@ -261,13 +289,13 @@ const handleSubmit = async () => {
                 value={slideTitle}
                 onChange={(e) => setSlideTitle(e.target.value)}
                 onFocus={(e) => {
-                  const input = e.target as HTMLInputElement // Explicitly cast EventTarget to HTMLInputElement
-                  input.scrollLeft = input.scrollWidth // Scroll to the end on focus
+                  const input = e.target as HTMLInputElement; // Explicitly cast EventTarget to HTMLInputElement
+                  input.scrollLeft = input.scrollWidth; // Scroll to the end on focus
                 }}
                 style={{
-                  textOverflow: 'ellipsis', // Truncate text with dots
-                  whiteSpace: 'nowrap', // Prevent text wrapping
-                  overflow: 'hidden', // Hide overflowing text
+                  textOverflow: "ellipsis", // Truncate text with dots
+                  whiteSpace: "nowrap", // Prevent text wrapping
+                  overflow: "hidden", // Hide overflowing text
                 }}
                 maxLength={50}
                 placeholder="Add Slide Title"
@@ -278,20 +306,20 @@ const handleSubmit = async () => {
                   <div className="w-4 h-4 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin"></div>
                 </div>
               ) : (
-                slideTitle.length>0 && (
-                <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
-                  <div className="relative group">
-                    <FontAwesomeIcon
-                      icon={faWandMagicSparkles}
-                      onClick={() => refineText('slideTitle', slideTitle)}
-                      className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
-                    />
-                    {/* Tooltip */}
-                    <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
-                      Click to refine text.
-                    </span>
+                slideTitle.length > 0 && (
+                  <div className="absolute top-[55%] right-2 transform -translate-y-1/2">
+                    <div className="relative group">
+                      <FontAwesomeIcon
+                        icon={faWandMagicSparkles}
+                        onClick={() => refineText("slideTitle", slideTitle)}
+                        className="hover:scale-105 hover:cursor-pointer active:scale-95 text-[#3667B2]"
+                      />
+                      {/* Tooltip */}
+                      <span className="absolute top-[-35px] right-0 bg-black w-max text-white text-xs rounded px-2 py-1 opacity-0 pointer-events-none transition-opacity duration-200 group-hover:opacity-100">
+                        Click to refine text.
+                      </span>
+                    </div>
                   </div>
-                </div>
                 )
               )}
             </div>
@@ -304,8 +332,8 @@ const handleSubmit = async () => {
                 <FaImage className="text-4xl text-gray-500" />
                 <p className="text-gray-500 text-sm text-center">
                   {isUploading && replacingIndex === null
-                    ? 'Uploading... Please wait'
-                    : 'Upload Image(s)'}
+                    ? "Uploading... Please wait"
+                    : "Upload Image(s)"}
                 </p>
               </div>
               <button
@@ -432,22 +460,25 @@ const handleSubmit = async () => {
               <button
                 onClick={handleSubmit}
                 disabled={images.length === 0 || !slideTitle}
-                className={`flex-1 lg:flex-none lg:w-[180px] py-2 rounded-md transition-all duration-200 transform ${
+                className={`relative flex-1 lg:flex-none lg:min-w-[260px] py-2 rounded-md transition-all duration-200 transform ${
                   images.length > 0 && slideTitle
-                    ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95'
-                    : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    ? "bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95"
+                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
                 }`}
               >
                 Generate Slide
+                {/* <div className="absolute top-0 right-0  bg-[#091220] text-white text-[10px] px-2 py-0.5 rounded-tr-md rounded-bl-md shadow-sm">
+                  🪙 2 Credits
+                </div> */}
               </button>
               {/* Tooltip */}
               {showTooltip && (
                 <div className="absolute top-[-35px] left-1/2 transform -translate-x-1/2 w-max bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
                   {images.length === 0
-                    ? 'Please upload an image.'
-                    : slideTitle.trim() === ''
-                    ? 'Slide title is required.'
-                    : ''}
+                    ? "Please upload an image."
+                    : slideTitle.trim() === ""
+                    ? "Slide title is required."
+                    : ""}
                 </div>
               )}
             </div>
@@ -456,27 +487,31 @@ const handleSubmit = async () => {
           {/* Generate Slide Buttons for Mobile */}
           <div className="flex lg:hidden gap-2 justify-end">
             <div
-              className="relative"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <button
                 onClick={handleSubmit}
                 disabled={images.length === 0 || !slideTitle}
-                className={`flex-1 py-2 px-4 rounded-md transition-all duration-200 ${
+                className={`relative min-w-[260px] py-2 px-4 rounded-md transition-all duration-200 ${
                   images.length > 0 && slideTitle
-                    ? 'bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95' // Enabled styles
-                    : 'bg-gray-200 text-gray-500 cursor-not-allowed' // Disabled styles
+                    ? "bg-[#3667B2] text-white hover:bg-[#2c56a0] hover:shadow-lg active:scale-95"
+                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
                 }`}
               >
                 Generate Slide
+              
+                <div className="absolute top-0 right-0  bg-[#091220] text-white text-[10px] px-2 py-0.5 rounded-tr-md rounded-bl-md shadow-sm">
+                  🪙 2 Credits
+                </div>
               </button>
-              {/* Tooltip */}
+
+           
               {showTooltip && (
-                <div className="absolute top-[-35px] w-max left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
+                <div className="absolute -top-9 w-max left-1/2 transform -translate-x-1/2 bg-gray-700 text-white text-xs px-2 py-1 rounded-md shadow-md">
                   {images.length === 0
-                    ? 'Please upload an image.'
-                    : 'Slide title is required.'}
+                    ? "Please upload an image."
+                    : "Slide title is required."}
                 </div>
               )}
             </div>
@@ -484,5 +519,5 @@ const handleSubmit = async () => {
         </>
       )}
     </div>
-  )
+  );
 }
