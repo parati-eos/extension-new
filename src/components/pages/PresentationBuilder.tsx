@@ -122,6 +122,8 @@ const SelectPresentationType: React.FC = () => {
   const [eligibleForGeneration, setEligibleForGeneration] = useState(false);
   const [pptCount, setPptCount] = useState(0);
   const [pptCountMonthly, setPptCountMonthly] = useState(0);
+  const [credits, setCredits] = useState<number>(0);
+
   const [showTooltip, setShowTooltip] = useState(false);
   const [showTooltip1, setShowTooltip1] = useState(false);
   const [showTooltip2, setShowTooltip2] = useState(false);
@@ -594,6 +596,7 @@ const SelectPresentationType: React.FC = () => {
         console.error("Error: Organization ID is missing.");
         return;
       }
+      
 
       setLoading(true);
       const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`;
@@ -613,6 +616,9 @@ const SelectPresentationType: React.FC = () => {
         console.log("Fetched Organization Data:", data);
 
         setWebsiteUrl(data.websiteLink || "");
+if (data?.credits !== undefined) {
+  setCredits(data.credits);
+}
 
         // Ensure colors exist before processing
         if (data.color && typeof data.color === "object") {

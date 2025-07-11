@@ -18,6 +18,8 @@ export default function RewriteRefinePanel({ selectedText, onBack }: Props) {
   const [language, setLanguage] = useState("Same as text");
   const [loading, setLoading] = useState(false);
   const [originalText, setOriginalText] = useState("");
+  const [credits, setCredits] = useState<number>(0);
+  const [planName, setPlanName] = useState("free");
 
   const authToken = sessionStorage.getItem("authToken");
   const orgID = sessionStorage.getItem("orgId") || "";
@@ -29,11 +31,45 @@ export default function RewriteRefinePanel({ selectedText, onBack }: Props) {
     const fallbackText = sessionStorage.getItem("selectedSlideText") || "";
     setOriginalText(selectedText || fallbackText);
   }, [selectedText]);
-useEffect(() => {
-  if (!authToken) {
-    navigate("/");
-  }
-}, [authToken, navigate]);
+
+  useEffect(() => {
+    if (!authToken) navigate("/");
+  }, [authToken, navigate]);
+
+  useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        setCredits(res.data?.credits || 0);
+        setPlanName(res.data?.plan?.plan_name || "free");
+      } catch (error) {
+        console.error("Failed to fetch credits", error);
+        setCredits(0);
+        setPlanName("free");
+      }
+    };
+
+    if (authToken && orgID) fetchCredits();
+  }, [authToken, orgID]);
+
+  const isAllowedToRefine = planName !== "free" || credits >= 2;
+
+  const handleUpgrade = () => {
+    const query = new URLSearchParams({
+      authToken: authToken || "",
+      userEmail: userID || "",
+      orgId: orgID || "",
+    });
+    window.open(`/pricing?${query.toString()}`, "_blank", "noopener,noreferrer");
+  };
+
   const handleRefine = async () => {
     if (!originalText?.trim()) {
       toast.error("No text found for refinement.");
@@ -68,6 +104,7 @@ useEffect(() => {
       if (res.data?.refinedText) {
         setRefinedText(res.data.refinedText);
         toast.success("Text refined successfully!");
+        if (planName === "free") setCredits((prev) => prev - 2);
       } else {
         toast.error("Refinement failed. No output.");
       }
@@ -79,16 +116,8 @@ useEffect(() => {
     }
   };
 
-  const handleCopy = () => {
-    if (refinedText) {
-      navigator.clipboard.writeText(refinedText);
-      toast.success("Copied to clipboard!");
-    }
-  };
-
   return (
     <div className="p-4 w-full max-w-md mx-auto">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={onBack}
@@ -100,8 +129,8 @@ useEffect(() => {
         <button className="text-gray-500 font-semibold">✕</button>
       </div>
 
-      {/* Controls */}
       <div className="space-y-4">
+        {/* Capitalization */}
         <div className="flex justify-between items-center">
           <label className="w-1/2">Capitalization</label>
           <select
@@ -117,6 +146,7 @@ useEffect(() => {
           </select>
         </div>
 
+        {/* Structure */}
         <div className="flex justify-between items-center">
           <label className="w-1/2">Structure</label>
           <select
@@ -130,146 +160,154 @@ useEffect(() => {
           </select>
         </div>
 
-<div className="flex gap-4 items-start">
-  {/* Change Length */}
-  <div className="flex flex-col w-1/2">
-    <label className="mb-1 leading-tight break-words">Change Length</label>
-    <select
-      className="border rounded px-2 py-1"
-      value={length}
-      onChange={(e) => setLength(e.target.value)}
-    >
-      <option>Auto</option>
-      <option>Shorten</option>
-      <option>Lengthen</option>
-    </select>
-  </div>
+        {/* Length & Word Count */}
+        <div className="flex gap-4 items-start">
+          <div className="flex flex-col w-1/2">
+            <label className="mb-1">Change Length</label>
+            <select
+              className="border rounded px-2 py-1"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
+            >
+              <option>Auto</option>
+              <option>Shorten</option>
+              <option>Lengthen</option>
+            </select>
+          </div>
 
-  {/* Word Count */}
-  <div className="flex flex-col w-1/2">
-    <label className="mb-1 leading-tight break-words flex flex-wrap justify-between items-start">
-      <span className="block">Word Count</span>
-      {wordCount !== "Auto" && (
-        <button
-          type="button"
-          className="text-xs text-blue-600 ml-auto"
-          onClick={() => setWordCount("Auto")}
-        >
-          Reset
-        </button>
-      )}
-    </label>
-    <input
-      type="number"
-      min={1}
-      className="border rounded px-2 py-1"
-      placeholder="Auto"
-      value={wordCount === "Auto" ? "" : wordCount}
-      onChange={(e) => {
-        const value = e.target.value;
-        if (!value || isNaN(Number(value))) {
-          setWordCount("Auto");
-        } else {
-          setWordCount(String(Number(value)));
-        }
-      }}
-    />
-  </div>
-</div>
+          <div className="flex flex-col w-1/2">
+            <label className="mb-1 flex justify-between items-start">
+              <span>Word Count</span>
+              {wordCount !== "Auto" && (
+                <button
+                  type="button"
+                  className="text-xs text-blue-600 ml-auto"
+                  onClick={() => setWordCount("Auto")}
+                >
+                  Reset
+                </button>
+              )}
+            </label>
+            <input
+              type="number"
+              min={1}
+              className="border rounded px-2 py-1"
+              placeholder="Auto"
+              value={wordCount === "Auto" ? "" : wordCount}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!value || isNaN(Number(value))) {
+                  setWordCount("Auto");
+                } else {
+                  setWordCount(String(Number(value)));
+                }
+              }}
+            />
+          </div>
+        </div>
 
-
-
+        {/* Language */}
         <div className="flex justify-between items-center">
           <label className="w-1/2">Target Language</label>
-    <select
-  className="w-1/2 border rounded px-2 py-1"
-  value={language}
-  onChange={(e) => setLanguage(e.target.value)}
->
-  <option>Same as text</option>
-  <option>English</option>
-  <option>Hindi</option>
-  <option>Spanish</option>
-  <option>French</option>
-  <option>German</option>
-  <option>Italian</option>
-  <option>Portuguese</option>
-  <option>Russian</option>
-  <option>Chinese (Simplified)</option>
-  <option>Chinese (Traditional)</option>
-  <option>Japanese</option>
-  <option>Korean</option>
-  <option>Arabic</option>
-  <option>Bengali</option>
-  <option>Urdu</option>
-  <option>Turkish</option>
-  <option>Dutch</option>
-  <option>Polish</option>
-  <option>Vietnamese</option>
-  <option>Indonesian</option>
-  <option>Thai</option>
-  <option>Swedish</option>
-  <option>Norwegian</option>
-  <option>Finnish</option>
-  <option>Danish</option>
-  <option>Hebrew</option>
-</select>
-
+          <select
+            className="w-1/2 border rounded px-2 py-1"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
+            <option>Same as text</option>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Spanish</option>
+            <option>French</option>
+            <option>German</option>
+            <option>Italian</option>
+            <option>Portuguese</option>
+            <option>Russian</option>
+            <option>Chinese (Simplified)</option>
+            <option>Chinese (Traditional)</option>
+            <option>Japanese</option>
+            <option>Korean</option>
+            <option>Arabic</option>
+            <option>Bengali</option>
+            <option>Urdu</option>
+            <option>Turkish</option>
+            <option>Dutch</option>
+            <option>Polish</option>
+            <option>Vietnamese</option>
+            <option>Indonesian</option>
+            <option>Thai</option>
+            <option>Swedish</option>
+            <option>Norwegian</option>
+            <option>Finnish</option>
+            <option>Danish</option>
+            <option>Hebrew</option>
+          </select>
         </div>
 
         {/* Refine Button */}
-        <button
-          onClick={handleRefine}
-          disabled={loading}
-          className={`bg-blue-600 text-white py-2 px-4 rounded w-full mt-2 ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {loading ? "Refining..." : "Refine Text"}
-        </button>
+        <div className="relative w-full mt-2">
+          <button
+            onClick={handleRefine}
+            disabled={loading || !isAllowedToRefine}
+            className={`relative bg-blue-600 text-white font-semibold py-3 px-4 w-full rounded-lg text-center transition-all ${
+              loading || !isAllowedToRefine
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700"
+            }`}
+          >
+            Refine Text
+            <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+              🪙 2 Credits
+            </div>
+          </button>
+
+          <div className="flex justify-between items-center mt-2 text-sm text-gray-700">
+            <span>🪙 Credits Available: {credits}</span>
+            <button
+              className="text-blue-600 font-medium flex items-center gap-1"
+              onClick={handleUpgrade}
+            >
+              Get More Credits <span>→</span>
+            </button>
+          </div>
+        </div>
 
         {/* Refined Output */}
-{/* Refined Output */}
-<div className="mt-4">
-  <div className="flex justify-between items-center mb-1">
-    <span className="font-semibold">Refined Text</span>
-    <button
-      onClick={() => {
-        if (refinedText?.trim()) {
-          const textarea = document.createElement("textarea");
-          textarea.value = refinedText;
-          textarea.style.position = "fixed"; // Prevent scrolling to bottom
-          textarea.style.opacity = "0";
-          document.body.appendChild(textarea);
-          textarea.focus();
-          textarea.select();
-
-          try {
-            const success = document.execCommand("copy");
-            if (success) {
-              toast.success("Copied to clipboard!");
-            } else {
-              toast.error("Copy command failed.");
-            }
-          } catch (err) {
-            toast.error("Clipboard copy not supported.");
-          }
-
-          document.body.removeChild(textarea);
-        } else {
-          toast.error("Nothing to copy.");
-        }
-      }}
-      className="text-sm text-blue-600"
-    >
-      Copy
-    </button>
-  </div>
-  <div className="border p-3 rounded bg-gray-50 h-40 overflow-auto whitespace-pre-wrap text-sm">
-    {refinedText || "<output will appear here>"}
-  </div>
-</div>
-
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-semibold">Refined Text</span>
+            <button
+              onClick={() => {
+                if (refinedText?.trim()) {
+                  const textarea = document.createElement("textarea");
+                  textarea.value = refinedText;
+                  textarea.style.position = "fixed";
+                  textarea.style.opacity = "0";
+                  document.body.appendChild(textarea);
+                  textarea.focus();
+                  textarea.select();
+                  try {
+                    const success = document.execCommand("copy");
+                    success
+                      ? toast.success("Copied to clipboard!")
+                      : toast.error("Copy failed.");
+                  } catch {
+                    toast.error("Clipboard copy not supported.");
+                  }
+                  document.body.removeChild(textarea);
+                } else {
+                  toast.error("Nothing to copy.");
+                }
+              }}
+              className="text-sm text-blue-600"
+            >
+              Copy
+            </button>
+          </div>
+          <div className="border p-3 rounded bg-gray-50 h-40 overflow-auto whitespace-pre-wrap text-sm">
+            {refinedText || "<output will appear here>"}
+          </div>
+        </div>
       </div>
     </div>
   );
