@@ -13,6 +13,9 @@ import TableIcon from '../../assets/table.svg'
 import PeopleIcon from '../../assets/people.svg'
 import StatisticsIcon from '../../assets/statistics.svg'
 import GraphIcon from '../../assets/graphs.svg'
+import { spawn } from 'child_process'
+import { useCredit } from '../../hooks/usecredit'
+import { Theme } from "../../lib/theme";
 
 interface SlideNarrativeProps {
   heading: string
@@ -25,6 +28,7 @@ interface SlideNarrativeProps {
   outlineID: string
   setFailed: () => void
   onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+  userPlan:string
 
 }
 
@@ -39,6 +43,7 @@ export default function SlideNarrative({
   outlineID,
   setFailed,
   onSlideGenerated, // ✅ add this prop
+  userPlan
 }: SlideNarrativeProps) {
   const [narrative, setNarrative] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -54,21 +59,27 @@ export default function SlideNarrative({
     label: "Points",
     icon: PointsIcon, // Replace with the appropriate icon
   })
+   const { credits, updateCredit, increaseCredit,decreaseCredit} = useCredit()
+   const orgID = sessionStorage.getItem("orgId") || "";
+   
+
   
 
-
-  
-
-  const options = [
+  let options = [
     { value: 'Points', label: 'Points', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435466780_points.svg" },
     { value: 'Phases', label: 'Timeline', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435399743_Presentation.svg"  },
+    { value: 'Statistics', label: 'Statistics', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435650523_statistics.svg" },
+    { value:"TextandImage",label:'TextandImage',icon:"https://d2zu6flr7wd65l.cloudfront.net/uploads/1742886487822_Presentation.svg"},
     { value: 'Images', label: 'Images', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg"},
     { value: 'Tables', label: 'Table', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435575006_table.svg"},
     { value: 'People', label: 'People',icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435517252_images.svg"},
-    { value: 'Statistics', label: 'Statistics', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435650523_statistics.svg" },
     { value: 'Graphs', label: 'Graphs', icon: "https://d2zu6flr7wd65l.cloudfront.net/uploads/1739435703873_graphs.svg" },
-    { value:"TextandImage",label:'TextandImage',icon:"https://d2zu6flr7wd65l.cloudfront.net/uploads/1742886487822_Presentation.svg"}
   ]
+   const lockedOptions = ["Graphs", "Images", "People", "Tables"];
+  options = options.map((opt) => ({
+  ...opt,
+  isDisabled: userPlan=="free" && credits<=0 && lockedOptions.includes(opt.value),
+}));
 
   const handleFileSelect = async (file: File | null) => {
       if (!file) {
@@ -150,6 +161,23 @@ const handleGenerateSlide = async () => {
     });
 
     setNarrative('');
+     if(userPlan=="free"){
+            try{
+            const respose = await axios.patch( `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+              {credits:credits-5},
+              {
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                },
+              }
+            )
+            console.log("Credits Updated in OrgProfile")
+          }
+          catch(error){
+             console.error("Failed to upgrade credits:", error);
+          }
+            decreaseCredit(5)
+          }
     setDisplayMode('slides');
   } catch (error) {
     toast.error(`Failed to send narrative for ${heading}`, {
@@ -261,7 +289,14 @@ const handleGenerateSlide = async () => {
   }, [selectedOption, outlineID, documentID, orgId, authToken, heading, slideType]); // Removed selectedImage from dependencies
   
   
-  
+  const handleUpgrade = () => {
+    const query = new URLSearchParams({
+      authToken: authToken || "",
+      userEmail: sessionStorage.getItem("userEmail") || "",
+      orgId: orgID,
+    });
+    window.open(`/pricing?${query.toString()}`, "_blank", "noopener,noreferrer");
+  };
   
   
   
@@ -275,29 +310,38 @@ const handleGenerateSlide = async () => {
       </div>
 
       {/* Slide Type Dropdown */}
-      <div className="py-2 w-9/10 m-2">
+      <div className='flex w-full items-center justify-between'>
+      <div className="py-2 w-[30%]  m-2">
       <Select
   options={options}
   getOptionLabel={(e) => e.label}
   placeholder="Select Slide Type"
   value={selectedOption}
   onChange={handleSelectChange}
-  className="w-full lg:w-[25%] items-center"
+  className="w-full lg:w-[100%] items-center"
   isSearchable={false} // Disable search
-  formatOptionLabel={(data) => (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <img
-        src={data.icon}
-        alt={data.label}
-        style={{
-          width: '22px',
-          height: '22px',
-          marginRight: '8px',
-        }}
-      />
-      <span className='text-xs'>{data.label}</span>
-    </div>
-  )}
+  formatOptionLabel={(data) => {
+    const locked = userPlan=="free" &&  ["Graphs", "Images", "People", "Tables"].includes(data.value);
+    const isDisabled = userPlan=="free" && credits<=0
+    return(
+      <div className='flex w-full items-center justify-between'>
+   <div style={{ display: 'flex', alignItems: 'center' }}>
+    <img
+      src={data.icon}
+      alt={data.label}
+      style={{
+        width: '22px',
+        height: '22px',
+        marginRight: '8px',
+      }}
+    />
+    <span className='text-xs'>{data.label}</span>
+  </div>
+  {locked && <span className='text-xs'>5 Credits 🪙</span>}
+</div>
+
+    );
+  }}
   styles={{
     control: (provided) => ({
       ...provided,
@@ -305,9 +349,48 @@ const handleGenerateSlide = async () => {
       alignItems: 'center',
       cursor: 'pointer',
     }),
+     option: (provided, state) => {
+    const { data, isFocused, isSelected,isDisabled } = state;
+    
+    let backgroundColor = isDisabled
+      ? Theme.colors.stroke.weak
+      : isSelected
+      ? Theme.colors.primary
+      : isFocused
+      ? Theme.colors.gradient.primary1
+      : "#fff";
+
+    return {
+      ...provided,
+      backgroundColor,
+      color: isDisabled ? "#999" : "#000",
+      cursor: isDisabled ? "not-allowed" : "pointer",
+      padding: 10,
+    };
+  }
   }}
 />
 
+      </div>
+
+
+      {userPlan=="free" && <div className='flex w-[60%] lg:w-[50%] xl:w-[40%] items-center justify-between'>
+         <button title='refresh' className='flex min-w-[100px] items-center justify-center rounded-lg bg-gray-200 hover:bg-blue-600 hover:text-white text-md '>
+             Refresh
+          </button>
+          <div className="text-gray-800 font-medium">
+          Credits Available: <span className="text-blue-600">{credits} 🪙</span>
+        </div>
+        <div>
+            <button
+              className="text-blue-600 font-medium flex items-center gap-1"
+              onClick={handleUpgrade}
+            >
+              Get More Credits <span>→</span>
+            </button>
+          </div>
+      </div>
+      }
       </div>
 
       {/* Input Section for Desktop */}
@@ -358,7 +441,7 @@ const handleGenerateSlide = async () => {
           )}
 <button
   onClick={handleGenerateSlide}
-  disabled={isGenerateDisabled || isLoading} // <--- This line is already correct
+  disabled={isGenerateDisabled || isLoading ||(userPlan=="free"&& credits<=0 && ["Graphs", "Images", "People", "Tables"].includes(selectedOption.value))} // <--- This line is already correct
   className={`lg:w-[180px] py-2 px-5 justify-end rounded-md active:scale-95 transition transform duration-300 ${
     isGenerateDisabled || isLoading
       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'

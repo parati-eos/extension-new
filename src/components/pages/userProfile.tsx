@@ -91,6 +91,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [credits,setCredits] = useState("")
   useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,
@@ -155,6 +156,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
           setColorData(data.color);
           setPrimaryColor(colorMap.P100);
           setSecondaryColor(colorMap.S100);
+          setCredits(data.credits)
         }
 
         console.log("Fetched Data:", data);
@@ -538,6 +540,19 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
       setIsLoading(false); // Hide loading state
     }
   };
+  const handleUpgrade = () => {
+  const authToken = sessionStorage.getItem("authToken");
+  const userEmail = sessionStorage.getItem("userEmail");
+  const orgId = sessionStorage.getItem("orgId");
+
+  const query = new URLSearchParams({
+    authToken: authToken || "",
+    userEmail: userEmail || "",
+    orgId: orgId || "",
+  });
+
+  window.open(`/pricing?${query.toString()}`, "_blank", "noopener,noreferrer");
+};  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
@@ -795,16 +810,50 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
             />
           </div>
 
-          <div>
+         <div>
             <label className="block text-sm font-medium text-start">Plan</label>
+          <div className="flex gap-2 mt-2">
             <input
-              title="plan"
-              type="text"
-              className="w-full p-2 border mt-2 focus:border-blue-500 rounded bg-gray-100 cursor-not-allowed"
-              value={plan}
-              readOnly
+            title="plan"
+            type="text"
+            className="flex-1 p-2 border focus:border-blue-500 rounded bg-gray-100 cursor-not-allowed"
+            value={plan}
+            readOnly
             />
-          </div>
+            <button
+            className={`px-4 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+             plan === "free"
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-red-600 text-white hover:bg-red-700"
+              }`}
+             onClick={handleUpgrade}
+              >
+            {plan === "free" ? "Upgrade" : "Cancel"}
+          </button>
+        </div>
+        </div>
+         <div>
+            <label className="block text-sm font-medium text-start">Credits</label>
+          <div className="flex gap-2 mt-2">
+            <input
+            title="credits"
+            type="text"
+            className="flex-1 p-2 border focus:border-blue-500 rounded bg-gray-100 cursor-not-allowed"
+            value={credits}
+            readOnly
+            />
+            <button
+            className={`px-4 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+             plan === "free"
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-red-600 text-white hover:bg-red-700"
+              }`}
+             onClick={handleUpgrade}
+              >
+            Get more 
+          </button>
+        </div>
+        </div>
 
           <div>
             <label className="block text-sm font-medium text-start">
@@ -815,7 +864,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
               type="number"
               min="0"
               className="w-full p-2 border mt-2 focus:border-blue-500 rounded bg-gray-100 cursor-not-allowed"
-              value={pptcount}
+              value={plan === "free" ? pptcount : "Unlimited"}
               readOnly
             />
           </div>

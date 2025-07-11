@@ -7,6 +7,7 @@ import { DisplayMode } from '../../@types/presentationView'
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { useCredit } from '../../hooks/usecredit'
 
 interface PeopleProps {
   heading: string
@@ -19,6 +20,7 @@ interface PeopleProps {
   setIsSlideLoading: () => void
   setFailed: () => void
   onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+  userPlan:string
 
 }
 
@@ -32,6 +34,7 @@ export default function People({
   setIsSlideLoading,
   setFailed,
   onSlideGenerated, // ✅ Add this line
+  userPlan
 }: PeopleProps) {
   const [people, setPeople] = useState([
     {
@@ -63,6 +66,17 @@ export default function People({
   const [refineLoadingSlideTitle, setRefineLoadingSlideTitle] = useState(false) // State for slideTitle loader
   const [focusedInput, setFocusedInput] = useState<number | null>(null) // Define focusedInput
   const [isInitialDataLoad, setIsInitialDataLoad] = useState(true)
+
+  const orgID = sessionStorage.getItem("orgId") || "";
+   const { credits, updateCredit, increaseCredit,decreaseCredit } = useCredit()
+    
+      const handleAddCredit = () => {
+        increaseCredit(5)
+      }
+    
+      const handleDecreaseCredit = () => {
+        decreaseCredit(5)
+      }
 
   // Detect and handle user interaction (scrolling manually)
   useEffect(() => {
@@ -253,6 +267,23 @@ const handleGenerateSlide = async () => {
         position: 'top-right',
         autoClose: 3000,
       });
+        if(userPlan=="free"){
+                    try{
+                    const respose = await axios.patch( `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+                      {credits:credits-5},
+                      {
+                        headers: {
+                          Authorization: `Bearer ${authToken}`,
+                        },
+                      }
+                    )
+                    console.log("Credits Updated in OrgProfile")
+                  }
+                  catch(error){
+                     console.error("Failed to upgrade credits:", error);
+                  }
+                    decreaseCredit(5)
+                  }
       setDisplayMode('slides');
     } else {
       toast.error('Missing slideData_id in response.');

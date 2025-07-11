@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaLock } from 'react-icons/fa';
+import { useCredit } from '../../hooks/usecredit';
 
 interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void;
@@ -15,12 +16,24 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
   onTypeClick,
   setDisplayMode,
 }) => {
-  const [credits, setCredits] = useState(0);
+  // const [credits, setCredits] = useState(0);
   const [planName, setPlanName] = useState("free");
   const navigate = useNavigate();
 
   const orgID = sessionStorage.getItem("orgId") || "";
   const authToken = sessionStorage.getItem("authToken") || "";
+  const { credits, updateCredit, increaseCredit,decreaseCredit} = useCredit()
+  
+    const handleAddCredit = () => {
+      increaseCredit(5)
+    }
+  
+    const handleDecreaseCredit = () => {
+      decreaseCredit(5)
+    }  
+    const handleUpgradeCredit=(val:number)=>{
+      updateCredit(val)
+    }
 
   useEffect(() => {
     const fetchCredits = async () => {
@@ -33,11 +46,11 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
             },
           }
         );
-        setCredits(res.data?.credits || 0);
+        handleUpgradeCredit(res.data?.credits || 0);
         setPlanName(res.data?.plan?.plan_name || "free");
       } catch (err) {
         console.error("Failed to fetch credits:", err);
-        setCredits(0);
+        handleUpgradeCredit(0);
         setPlanName("free");
       }
     };
@@ -78,17 +91,17 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
     const hasCredits = credits >= 5;
     const isFreePlan = planName === 'free';
 
-    if (isLocked && isFreePlan && !hasCredits) {
-      toast.error("Not enough credits (5 required).");
-      return;
-    }
+    // if (isLocked && isFreePlan && !hasCredits) {
+    //   toast.error("Not enough credits (5 required).");
+    //   return;
+    // }
 
     onTypeClick(type);
 
     // Deduct 5 credits only if on free plan and it's a locked slide
-    if (isLocked && isFreePlan) {
-      setCredits(prev => prev - 5);
-    }
+    // if (isLocked && isFreePlan) {
+    //   decreaseCredit(5);
+    // }
   };
 
   const unlocked = slideTypes.filter(type => !lockedTypes.includes(type.name));
@@ -108,9 +121,19 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
       </div>
 
       {/* Credits and Notice */}
-      <div className="flex justify-between items-center text-sm mt-2 px-1">
+      { planName === 'free'&&
+       <div className="flex justify-end items-center text-sm mt-2 px-1 gap-10">
+        <div className="text-gray-800 font-medium">
+          <button title='refresh' className='flex min-w-[100px] items-center justify-center rounded-lg bg-gray-200 hover:bg-blue-600 hover:text-white text-md '>
+             Refresh
+          </button>
+         
+        </div>
+        <div className="text-gray-800 font-medium">
+          Credits Available: <span className="text-blue-600">{credits} 🪙</span>
+        </div>
         <div className="text-red-600">
-          Some slide types require <strong>5 credits</strong>.
+          {/* Some slide types require <strong>5 credits</strong>. */}
           <div>
             <button
               className="text-blue-600 font-medium flex items-center gap-1"
@@ -120,10 +143,9 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
             </button>
           </div>
         </div>
-        <div className="text-gray-800 font-medium">
-          Credits Available: <span className="text-blue-600">{credits} 🪙</span>
-        </div>
-      </div>
+        
+       </div>
+      }
 
       {/* Unlocked Slides */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
@@ -133,9 +155,9 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
             className="relative flex flex-col items-center border border-[#E1E3E5] rounded-lg shadow-md hover:shadow-lg cursor-pointer transition-shadow"
             onClick={() => handleClick(type.name)}
           >
-            <div className="absolute top-1 left-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+            {/* <div className="absolute top-1 left-1 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
               Free
-            </div>
+            </div> */}
             <div className="flex flex-col items-center py-4">
               <img src={type.icon} alt={type.name} className="object-none mt-5 mb-2" />
               <span className="text-xs font-medium sm:text-base">{type.name}</span>
@@ -152,25 +174,29 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
           return (
             <div
               key={type.name}
-              className={`relative flex flex-col items-center border border-[#E1E3E5] rounded-lg shadow-md transition-shadow ${
+                          className={`relative flex flex-col items-center border border-[#E1E3E5] rounded-lg shadow-md transition-shadow ${
                 isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'
               }`}
               onClick={() => !isDisabled && handleClick(type.name)}
+
+              //className={`relative flex flex-col items-center border border-[#E1E3E5] rounded-lg shadow-md transition-shadow hover:shadow-lg cursor-pointer`}
+             // onClick={() =>  handleClick(type.name)}
             >
               {/* Lock Icon */}
-              <div className="absolute top-1 right-1 bg-white p-1 rounded-full shadow">
+              {/* <div className="absolute top-1 right-1 bg-white p-1 rounded-full shadow">
                 <FaLock className="text-gray-500 text-xs" />
-              </div>
+              </div> */}
 
               {/* 5 Credits Tag */}
-              <div className="absolute top-1 left-1 text-[10px] bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
-                5 Credits 🪙
-              </div>
+              {/* <div className="absolute top-1 left-1 text-[10px] bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
+               
+              </div> */}
 
               {/* Premium Badge */}
-              <div className="absolute bottom-1 right-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shadow font-semibold uppercase tracking-wide">
-                Premium
-              </div>
+              {planName=="free"&& <div className="absolute top-1 right-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shadow font-semibold uppercase tracking-wide z-10">
+                5 Credits 🪙
+              </div>}
+             
 
               <div className="flex flex-col items-center py-4">
                 <img src={type.icon} alt={type.name} className="object-none mt-5 mb-2" />

@@ -6,6 +6,7 @@ import { DisplayMode } from '../../@types/presentationView'
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { useCredit } from '../../hooks/usecredit'
 // import '../viewpresentation.css'
 
 
@@ -27,6 +28,7 @@ interface TableProps {
   setIsSlideLoading: () => void
   setFailed: () => void
   onSlideGenerated: (slideDataId: string) => void; // ✅ FIXED
+  userPlan:string;
 }
 
 export default function Table({
@@ -40,6 +42,7 @@ export default function Table({
   setIsSlideLoading,
   setFailed,
     onSlideGenerated, // ✅ Destructure here
+    userPlan
 }: TableProps) {
   const [tableData, setTableData] = useState<TableData>({
     rows: Array(2)
@@ -64,6 +67,16 @@ const isAnyTableDataFilled = () => {
     tableData.rows.some((row) => row.some((cell) => cell.trim() !== ''))
   );
 };
+const orgID = sessionStorage.getItem("orgId") || "";
+ const { credits, updateCredit, increaseCredit,decreaseCredit } = useCredit()
+  
+    const handleAddCredit = () => {
+      increaseCredit(5)
+    }
+  
+    const handleDecreaseCredit = () => {
+      decreaseCredit(5)
+    }
 
 useEffect(() => {
   // Count fully completed rows
@@ -299,6 +312,23 @@ useEffect(() => {
         position: 'top-right',
         autoClose: 3000,
       });
+       if(userPlan=="free"){
+              try{
+              const respose = await axios.patch( `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+                {credits:credits-5},
+                {
+                  headers: {
+                    Authorization: `Bearer ${authToken}`,
+                  },
+                }
+              )
+              console.log("Credits Updated in OrgProfile")
+            }
+            catch(error){
+               console.error("Failed to upgrade credits:", error);
+            }
+              decreaseCredit(5)
+            }
       setIsLoading(false);
       setDisplayMode('slides');
     }
