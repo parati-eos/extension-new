@@ -13,6 +13,7 @@ import RewriteRefinePanel from "./RewriteRefinePanel";
 import ToneAudiencePanel from "./ToneAudiencePanel";
 import ImageGeneratorPanel from "./Imagegeneratorpanel";
 import ImageSearchPanel from "./imagesearchpanel";
+import { FaEdit } from "react-icons/fa";
 
 export default function RefinePresentation() {
   const [showModal, setShowModal] = useState(false);
@@ -352,9 +353,14 @@ return (
       </button>
     </div>
 <div className="w-full flex items-center px-1 mb-8 mt-12 relative">
+
   <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
     <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Edit Text on Slide</h3>
+  {/* <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
+    <FaEdit className="text-blue-700 text-sm" />
+    <span>Select the text you want to refine</span>
+  </div> */}
 
 {/* {(planName === "free" || credits < 2) && (
   <button
@@ -372,11 +378,8 @@ return (
         // disabled={planName === "free"}
           //  && pptCountMonthly >= 3
         onClick={() => setActiveRefineMode("rewrite")}
-        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-          planName === "free"
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-blue-50"
-        }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
       >
         <span className="text-base font-medium">Rewrite &</span>
         <span className="text-base font-medium">Refine</span>
@@ -385,11 +388,8 @@ return (
       <button
         // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("tone")}
-        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-          planName === "free"
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-blue-50"
-        }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
       >
         <span className="text-base font-medium">Tone &</span>
         <span className="text-base font-medium">Audience</span>
@@ -418,11 +418,8 @@ return (
           <button
             // disabled={planName === "free"}
             onClick={() => setActiveRefineMode("image-generate")}
-            className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-              planName === "free"
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                : "bg-white text-gray-700 hover:bg-blue-50"
-            }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
           >
             <span className="text-base font-medium">Generate</span>
             <span className="text-base font-medium">Images</span>
@@ -431,11 +428,8 @@ return (
           <button
             // disabled={planName === "free"}
             onClick={() => setActiveRefineMode("image-search")}
-            className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-              planName === "free"
-                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                : "bg-white text-gray-700 hover:bg-blue-50"
-            }`}
+    className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
           >
             <span className="text-base font-medium">Search</span>
             <span className="text-base font-medium">Images</span>
@@ -501,11 +495,15 @@ return (
         </div>
 
         {/* Refine text on slide */}
-<div className="w-full flex items-center px-1 mt-12 mb-8 relative">
+<div className="w-full flex items-center px-1 mt-6 mb-4 relative">
 
   <div className="w-full flex flex-col border-2 bg-gray-100 border-gray-300 rounded-md p-2 gap-4 min-h-40">
     <div className="flex justify-between items-center">
       <h3 className="text-start font-semibold">Edit Text on Slide</h3>
+  {/* <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
+    <FaEdit className="text-blue-700 text-sm" />
+    <span>Select the text you want to refine</span>
+  </div> */}
 
 {/* {(planName === "free" || credits < 5) && (
   <button
@@ -523,11 +521,8 @@ return (
         // disabled={planName === "free"}
           //  && pptCountMonthly >= 3
         onClick={() => setActiveRefineMode("rewrite")}
-        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-          planName === "free"
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-blue-50"
-        }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
       >
         <span className="text-base font-medium">Rewrite &</span>
         <span className="text-base font-medium">Refine</span>
@@ -536,11 +531,8 @@ return (
       <button
         // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("tone")}
-        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-          planName === "free"
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-blue-50"
-        }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
       >
         <span className="text-base font-medium">Tone &</span>
         <span className="text-base font-medium">Audience</span>
@@ -571,11 +563,8 @@ return (
       <button
         // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("image-generate")}
-        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-          planName === "free"
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-blue-50"
-        }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
       >
         <span className="text-base font-medium">Generate</span>
         <span className="text-base font-medium">Images</span>
@@ -584,11 +573,8 @@ return (
       <button
         // disabled={planName === "free"}
         onClick={() => setActiveRefineMode("image-search")}
-        className={`flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 ${
-          planName === "free"
-            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-blue-50"
-        }`}
+className="flex flex-col items-center justify-center border border-blue-500 rounded w-1/2 py-4 bg-white text-gray-700 hover:bg-blue-50"
+
       >
         <span className="text-base font-medium">Search</span>
         <span className="text-base font-medium">Images</span>

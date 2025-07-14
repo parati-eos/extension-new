@@ -1,5 +1,6 @@
+// 👇 Updated ImageSearchPanel with dynamic credit deduction based on count
 import React, { useEffect, useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaCoins } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -24,26 +25,32 @@ export default function ImageSearchPanel({ onBack }: Props) {
   const documentID = sessionStorage.getItem("presentationId") || "";
   const authToken = sessionStorage.getItem("authToken");
 
+  const fetchCredits = async () => {
+    if (!orgID || !authToken) return;
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+      setCredits(res.data?.credits || 0);
+      setPlanName(res.data?.plan?.plan_name || "free");
+    } catch (err) {
+      console.error("Failed to fetch credits:", err);
+      setCredits(0);
+      setPlanName("free");
+    }
+  };
+
   useEffect(() => {
-    const fetchCredits = async () => {
-      if (!orgID || !authToken) return;
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
-        setCredits(res.data?.credits || 0);
-        setPlanName(res.data?.plan?.plan_name || "free");
-      } catch (err) {
-        console.error("Failed to fetch credits:", err);
-        setCredits(0);
-        setPlanName("free");
-      }
-    };
     fetchCredits();
   }, [authToken, orgID]);
+
+  const refreshCredits = async () => {
+    await fetchCredits();
+    toast.success("Credits refreshed");
+  };
 
   const isAllowedToSearch = planName !== "free" || credits >= 2;
 
@@ -64,6 +71,12 @@ export default function ImageSearchPanel({ onBack }: Props) {
 
     if (!userID || !orgID || !documentID || !authToken) {
       toast.error("Missing session or authentication data.");
+      return;
+    }
+
+    const creditsToDeduct = count * 2;
+    if (planName === "free" && credits < creditsToDeduct) {
+      toast.error(`You need at least ${creditsToDeduct} credits to search ${count} image(s).`);
       return;
     }
 
@@ -91,7 +104,23 @@ export default function ImageSearchPanel({ onBack }: Props) {
       if (response.data?.images?.length) {
         setImages(response.data.images);
         toast.success("Images found!");
-        if (planName === "free") setCredits((prev) => prev - 2);
+
+        if (planName === "free") {
+          const newCredits = credits - creditsToDeduct;
+          setCredits(newCredits);
+
+          await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({ credits: newCredits }),
+            }
+          );
+        }
       } else {
         toast.error("No images found.");
       }
@@ -110,7 +139,6 @@ export default function ImageSearchPanel({ onBack }: Props) {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={onBack}
@@ -121,7 +149,6 @@ export default function ImageSearchPanel({ onBack }: Props) {
         <button className="text-gray-500 font-semibold">✕</button>
       </div>
 
-      {/* Controls */}
       <div className="space-y-4">
         <input
           placeholder="Search Terms"
@@ -162,60 +189,58 @@ export default function ImageSearchPanel({ onBack }: Props) {
             <button
               className="px-2 py-1 border rounded"
               onClick={() => setCount((c) => Math.max(1, c - 1))}
-            >
-              −
-            </button>
+            >−</button>
             <span>{count}</span>
             <button
               className="px-2 py-1 border rounded"
               onClick={() => setCount((c) => Math.min(10, c + 1))}
-            >
-              +
-            </button>
+            >+</button>
           </div>
         </div>
 
-        {/* Search Button with Credit Tag */}
         <div className="relative w-full mt-2">
           <button
             onClick={handleSearch}
             disabled={loading || !isAllowedToSearch}
-            className={`relative bg-blue-600 text-white font-semibold py-3 px-4 w-full rounded-lg text-center transition-all ${
+            className={`relative bg-blue-600 text-white font-semibold py-4 px-4 w-full rounded-lg text-center transition-all ${
               loading || !isAllowedToSearch
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-blue-700"
             }`}
           >
             {loading ? "Searching..." : "Search Images"}
-            <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                alt="coin"
-                className="w-3 h-3"
-              />
-              2 Credits
-            </div>
+            {planName === "free" && (
+              <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+                <FaCoins className="text-yellow-400 text-sm" />
+                {count * 2} Credits
+              </div>
+            )}
           </button>
 
-          <div className="flex justify-between items-center mt-2 text-sm text-gray-700">
-            <span className="flex items-center gap-1">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                alt="coin"
-                className="w-4 h-4"
-              />
-              Credits Available: {credits}
-            </span>
-            <button
-              className="text-blue-600 font-medium flex items-center gap-1"
-              onClick={handleUpgrade}
-            >
-              Get More Credits <span>→</span>
-            </button>
-          </div>
+          {planName === "free" && (
+            <div className="flex flex-col mt-2 text-sm text-gray-700 gap-1">
+              <div className="flex justify-between items-center">
+                <span className="flex items-center gap-1">
+                  <FaCoins className="text-yellow-400" />
+                  Credits Available: {credits}
+                </span>
+                <button
+                  className="text-blue-600 font-medium flex items-center gap-1"
+                  onClick={handleUpgrade}
+                >
+                  Get More Credits <span>→</span>
+                </button>
+              </div>
+              <button
+                onClick={refreshCredits}
+                className="text-xs text-blue-500 underline self-start"
+              >
+                ↻ Refresh Credits
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Results */}
         {images.length > 0 && (
           <div className="mt-6">
             <h4 className="font-semibold mb-2">Results (Click to Add)</h4>
