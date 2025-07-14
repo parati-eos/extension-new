@@ -97,7 +97,7 @@ const SelectPresentationType: React.FC = () => {
       icon: <FaEllipsisH className="text-[#3667B2]" />,
     },
   ];
-  const [isRefineModalOpen, setIsRefineModalOpen] = useState(true);
+  const [isRefineModalOpen, setIsRefineModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleColorChange = (
