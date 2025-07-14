@@ -16,6 +16,7 @@ import GraphIcon from '../../assets/graphs.svg'
 import { spawn } from 'child_process'
 import { useCredit } from '../../hooks/usecredit'
 import { Theme } from "../../lib/theme";
+import { FaCoins } from 'react-icons/fa'
 
 interface SlideNarrativeProps {
   heading: string
@@ -361,7 +362,10 @@ const handleGenerateSlide = async () => {
     />
     <span className='text-xs'>{data.label}</span>
   </div>
-  {locked && <span className='text-xs'>5 Credits 🪙</span>}
+  {locked && <span className=' flex items-center justify-end gap-2 text-xs w-[25%]'>
+    <FaCoins className="text-yellow-400 text-xs" /> 
+    5 Credits
+    </span>}
 </div>
 
     );
@@ -399,13 +403,14 @@ const handleGenerateSlide = async () => {
 
 
       {userPlan=="free" && <div className='flex w-[60%] lg:w-[50%] xl:w-[40%] items-center justify-between'>
-         <button
-  title='refresh'
-  onClick={refreshCredits}
-  className='flex min-w-[100px] items-center justify-center rounded-lg bg-gray-200 hover:bg-blue-600 hover:text-white text-md '
->
-  Refresh
-</button>
+        <div className="text-gray-800 font-medium ">
+            <button
+                onClick={refreshCredits}
+                className="text-md text-blue-500 underline self-start"
+              >
+                ↻ Refresh Credits
+              </button>
+          </div>
 
           <div className="text-gray-800 font-medium">
           Credits Available: <span className="text-blue-600">{credits} 🪙</span>

@@ -16,6 +16,7 @@ import {
   FaInfoCircle,
   FaEdit,
   FaTrash,
+  FaCoins
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IpInfoResponse } from "../../@types/authTypes";
@@ -32,6 +33,7 @@ import uploadFileToS3 from "../../utils/uploadFileToS3";
 import { Dialog } from "@headlessui/react";
 import WebsiteLinkForm from "../../components/pages/onboarding-sections/WebsiteLinkForm";
 import {Theme} from '../../lib/theme'
+import { useCredit } from "../..//hooks/usecredit";
 // Define an interface for colors
 interface Colors {
   P100: string;
@@ -133,7 +135,7 @@ const SelectPresentationType: React.FC = () => {
   const [eligibleForGeneration, setEligibleForGeneration] = useState(false);
   const [pptCount, setPptCount] = useState(0);
   const [pptCountMonthly, setPptCountMonthly] = useState(0);
-  const [credits, setCredits] = useState<number>(0);
+  // const [credits, setCredits] = useState<number>(0);
   const [outline, setOutline] = useState<SlideOutline[]>([]);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
@@ -174,6 +176,11 @@ const SelectPresentationType: React.FC = () => {
     keywords: string;
   }>({ title: "", keywords: "" });
 const [isOutlineLoading, setIsOutlineLoading] = useState<boolean>(false);
+const { credits, updateCredit, increaseCredit, decreaseCredit } = useCredit();
+
+  const handleUpgradeCredit = (val: number) => {
+    updateCredit(val);
+  };
   const generateOutlineID = () => {
     return `outlineID-${window.crypto.randomUUID()}`;
   };  
@@ -306,6 +313,50 @@ const [isOutlineLoading, setIsOutlineLoading] = useState<boolean>(false);
 
       return updatedOutlines;
     });
+  };
+    const fetchCredits = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      handleUpgradeCredit(res.data?.credits || 0);
+      setUserPlan(res.data?.plan?.plan_name || 'free');
+    } catch (err) {
+      console.error('Failed to fetch credits:', err);
+      handleUpgradeCredit(0);
+      setUserPlan('free');
+    }
+  };
+  const refreshCredits = async () => {
+      try {
+        await axios.patch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+        await fetchCredits();
+        toast.success('Credits refreshed');
+      } catch (err) {
+        console.error('Failed to refresh credits:', err);
+        toast.error('Credit refresh failed');
+      }
+    };
+      const handleUpgrade = () => {
+    const query = new URLSearchParams({
+      authToken: authToken || '',
+      userEmail: sessionStorage.getItem('userEmail') || '',
+      orgId: orgId ?? '',
+    });
+    window.open(`/pricing?${query.toString()}`, '_blank', 'noopener,noreferrer');
   };
   const handleCloseModal = () => {
     setGeneratedDocumentIDoutline(null); // Reset ID when closing
@@ -606,6 +657,7 @@ const [isOutlineLoading, setIsOutlineLoading] = useState<boolean>(false);
 
   const generateOutline = async () => {
     setLoading(true);
+    setIsOutlineLoading(true);
 
     let docID = generatedDocumentIDoutline || generateDocumentID();
     setGeneratedDocumentIDoutline(docID);
@@ -633,15 +685,19 @@ const [isOutlineLoading, setIsOutlineLoading] = useState<boolean>(false);
       setIsOutlineGenerated(true);
 
       console.log("Outline generated successfully:", response.data.outline);
+      setIsOutlineLoading(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("API Error:", error.response?.data || error.message);
       } else {
         console.error("Unexpected Error:", error);
       }
+      setIsOutlineLoading(false);
+      
     } finally {
       setLoading(false);
       console.log("Device Type:", userAgent);
+      setIsOutlineLoading(false);
     }
   };
 
@@ -773,7 +829,7 @@ const [isOutlineLoading, setIsOutlineLoading] = useState<boolean>(false);
 
         setWebsiteUrl(data.websiteLink || "");
 if (data?.credits !== undefined) {
-  setCredits(data.credits);
+  handleUpgradeCredit(data.credits);
 }
 
         // Ensure colors exist before processing
@@ -1005,18 +1061,21 @@ if (data?.credits !== undefined) {
             disabled={
               (!file && !generateInput) ||(!file && generateInput && generateInput.length<100)||
               pdfUploading ||
-              !eligibleForGeneration
+              !eligibleForGeneration || (userPlan=='free' && credits<10 && !eligibleForGeneration)
             }
             className={`h-[3.1rem] text-white px-16 py-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 flex items-center justify-center ${
               (!file && !generateInput) || (!file && generateInput && generateInput.length<100)||
               pdfUploading ||
-              !eligibleForGeneration
+                (userPlan=='free' && credits<10 && !eligibleForGeneration)
                 ? "bg-gray-500 cursor-not-allowed"
                 : "bg-[#3667B2] hover:bg-[#0A8568]"
             }`}
           >
-            Submit
+          Submit 
           </button>
+           {userPlan == 'free' && !eligibleForGeneration && <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-1  rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+                           <FaCoins className="text-yellow-400 text-sm" /> 10 Credits
+                         </div>}
 {isHovered && (
   <>
     {!file && generateInput.length < 100 ? (
@@ -1025,20 +1084,24 @@ if (data?.credits !== undefined) {
           Please provide minimum 100 characters in presentation context or Upload a document.
         </p>
       </div>
-    ) : !eligibleForGeneration ? (
-      <div className="absolute top-full mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center opacity-100 transition-opacity duration-300">
-        <p className="text-sm text-center text-gray-800">
-          Please{" "}
-          <span
-            onClick={() => setIsPricingModalOpen(true)}
-            className="text-blue-600 font-semibold hover:underline cursor-pointer"
-          >
-            upgrade
-          </span>{" "}
-          to generate more presentations.
-        </p>
-      </div>
-    ) : null}
+    ) 
+   // : 
+    // (!eligibleForGeneration && credits<10)? null
+    // (
+    //   <div className="absolute top-full mt-2 w-[14rem] bg-gray-200 text-black p-2 rounded-2xl shadow-lg flex items-center justify-center opacity-100 transition-opacity duration-300">
+    //     <p className="text-sm text-center text-gray-800">
+    //       Please{" "}
+    //       <span
+    //         onClick={() => setIsPricingModalOpen(true)}
+    //         className="text-blue-600 font-semibold hover:underline cursor-pointer"
+    //       >
+    //         upgrade
+    //       </span>{" "}
+    //       to generate more presentations or get more credits.
+    //     </p>
+    //   </div>
+    // ) 
+    : null}
   </>
 )}
 
@@ -1060,6 +1123,32 @@ if (data?.credits !== undefined) {
             </div>
           )} */}
         </div>
+         {userPlan =="free" && !eligibleForGeneration  && (
+                <div className="flex flex-col justify-end items-center text-sm mt-10 px-1 gap-10 ">
+                  <div className="text-gray-800 font-medium">
+                      <span className="flex items-center gap-1">
+                        <FaCoins className="text-yellow-400" /> Credits Available: {credits}
+                      </span>
+                  </div>
+                  <div className="text-gray-800 font-medium">
+                    <button
+                        onClick={refreshCredits}
+                        className="flex text-md text-blue-500 items-center  underline self-start"
+                      >
+                        ↻ Refresh Credits
+                      </button>
+                  </div>
+                  
+                  <div className="text-red-600">
+                    <button
+                      className="text-blue-600 font-medium flex items-center self-start gap-1"
+                      onClick={handleUpgrade}
+                    >
+                      Get More Credits or Upgrade <span>→</span>
+                    </button>
+                  </div>
+                </div>
+              )}
       </div>
 
       {/* Pricing Modal */}
