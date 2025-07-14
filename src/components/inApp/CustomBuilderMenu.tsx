@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useCredit } from '../../hooks/usecredit';
+import { FaCoins } from 'react-icons/fa';
 
 interface ClickProps {
   onTypeClick: (typeName: DisplayMode) => void;
@@ -134,15 +135,16 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
         <div className="flex justify-end items-center text-sm mt-2 px-1 gap-10">
           <div className="text-gray-800 font-medium">
             <button
-              title="refresh"
-              onClick={refreshCredits}
-              className="flex min-w-[100px] items-center justify-center rounded-lg bg-gray-200 hover:bg-blue-600 hover:text-white text-md px-3 py-1"
-            >
-              Refresh
-            </button>
+                onClick={refreshCredits}
+                className="text-md text-blue-500 underline self-start"
+              >
+                ↻ Refresh Credits
+              </button>
           </div>
           <div className="text-gray-800 font-medium">
-            Credits Available: <span className="text-blue-600">{credits} 🪙</span>
+              <span className="flex items-center gap-1">
+                <FaCoins className="text-yellow-400" /> Credits Available: {credits}
+              </span>
           </div>
           <div className="text-red-600">
             <button
@@ -185,8 +187,8 @@ const CustomBuilderMenu: React.FC<ClickProps> = ({
               onClick={() => !isDisabled && handleClick(type.name)}
             >
               {planName === 'free' && (
-                <div className="absolute top-1 right-1 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shadow font-semibold uppercase tracking-wide z-10">
-                  5 Credits 🪙
+                <div className="absolute  flex gap-2 top-1 right-1 text-[10px] bg-black text-white px-2 py-0.5 rounded-full shadow font-semibold  tracking-wide z-10">
+                  <FaCoins className="text-yellow-400 text-sm" /> 5 Credits
                 </div>
               )}
 
