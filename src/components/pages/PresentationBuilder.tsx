@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   FaBox,
@@ -14,6 +14,8 @@ import {
   FaUpload,
   FaCheck,
   FaInfoCircle,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IpInfoResponse } from "../../@types/authTypes";
@@ -29,6 +31,7 @@ import uploadFileToS3 from "../../utils/uploadFileToS3";
 // import GuidedTourMobile from '../onboarding/shared/GuidedTourMobile'
 import { Dialog } from "@headlessui/react";
 import WebsiteLinkForm from "../../components/pages/onboarding-sections/WebsiteLinkForm";
+import {Theme} from '../../lib/theme'
 // Define an interface for colors
 interface Colors {
   P100: string;
@@ -43,6 +46,14 @@ interface Colors {
   F_S100: string;
   SCL: string;
   SCD: string;
+}
+interface SlideOutline {
+  slideName?: any;
+  title: string;
+  type: string;
+  keywords?: string;
+  method?: string;
+  outlineID: string;
 }
 
 const supportedLanguages = ["English", "Chinese (Simplified)", "Chinese (Traditional)", "Spanish", "French", "German", "Portuguese (Brazilian)", "Portuguese (European)", "Italian", "Russian", "Japanese", "Korean", "Dutch", "Arabic (Modern Standard)", "Polish", "Turkish", "Vietnamese"]
@@ -86,7 +97,7 @@ const SelectPresentationType: React.FC = () => {
       icon: <FaEllipsisH className="text-[#3667B2]" />,
     },
   ];
-  const [isRefineModalOpen, setIsRefineModalOpen] = useState(false);
+  const [isRefineModalOpen, setIsRefineModalOpen] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleColorChange = (
@@ -123,6 +134,8 @@ const SelectPresentationType: React.FC = () => {
   const [pptCount, setPptCount] = useState(0);
   const [pptCountMonthly, setPptCountMonthly] = useState(0);
   const [credits, setCredits] = useState<number>(0);
+  const [outline, setOutline] = useState<SlideOutline[]>([]);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
   const [showTooltip, setShowTooltip] = useState(false);
   const [showTooltip1, setShowTooltip1] = useState(false);
@@ -136,7 +149,7 @@ const SelectPresentationType: React.FC = () => {
   const [secondaryColor, setSecondaryColor] = useState("#FFFFFF"); // Define the secondary color
   const [generateInput, setGenerateInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [outline, setOutline] = useState(null);
+
   const [generatedDocumentIDoutline, setGeneratedDocumentIDoutline] = useState<
     string | null
   >(null);
@@ -151,6 +164,149 @@ const SelectPresentationType: React.FC = () => {
   );
   const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
   const [language,setLanguage]=useState<string>("English");
+  const [inputIndex, setInputIndex] = useState<number | null>(null);
+  const [newOutline, setNewOutline] = useState<string>("");
+  const [newOutlineLoading, setNewOutlineLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"outline" | "options">("options");
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editedOutline, setEditedOutline] = useState<{
+    title: string;
+    keywords: string;
+  }>({ title: "", keywords: "" });
+const [isOutlineLoading, setIsOutlineLoading] = useState<boolean>(false);
+  const generateOutlineID = () => {
+    return `outlineID-${window.crypto.randomUUID()}`;
+  };  
+    const fetchOutlines = useCallback(async () => {
+    if (!generatedDocumentIDoutline) return;
+
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/${generatedDocumentIDoutline}/outline`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const { outline: fetchedOutlines } = response.data;
+
+      setOutline(fetchedOutlines);
+    } catch (error) {
+      console.error("Error fetching outlines:", error);
+    }
+  }, [generatedDocumentIDoutline, authToken]);
+
+  const handleAddOutline = async (index: number) => {
+    const newOutlineID = generateOutlineID();
+
+    setNewOutlineLoading(true);
+    if (!newOutline.trim()) {
+      console.log("New outline is empty");
+      setNewOutlineLoading(false);
+      return;
+    }
+    const updatedOutline = { title: newOutline };
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/blocklist/insert`,
+        {
+          documentId: generatedDocumentIDoutline,
+          title: updatedOutline.title,
+          position: index + 1,
+          outlineID: newOutlineID,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const result = response.data;
+      if (result.title && result.type) {
+        // Retrieve the existing outlineIDs array from sessionStorage
+        const storedOutlineIDs = sessionStorage.getItem("outlineIDs");
+        let outlineIDs = storedOutlineIDs ? JSON.parse(storedOutlineIDs) : [];
+
+        // Add the new outlineID to the array
+        outlineIDs.push(newOutlineID);
+
+        // Save the updated array back to sessionStorage
+        sessionStorage.setItem("outlineIDs", JSON.stringify(outlineIDs));
+        toast.success("Outline Successfully Added", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        fetchOutlines();
+        setNewOutlineLoading(false);
+      }
+      setInputIndex(null);
+      setNewOutline("");
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
+        toast.error("Upgrade to add more slides", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        toast.error("Error adding outline", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+      console.error("Error adding outline:", error);
+      setNewOutlineLoading(false);
+    }
+  };
+
+  const handleDeleteOutline = async (index: number) => {
+    if (!generatedDocumentIDoutline) return;
+
+    setOutline((prevOutlines) => {
+      const updatedOutlines = [...prevOutlines];
+      const deletedItem = updatedOutlines.splice(index, 1);
+
+      (async () => {
+        try {
+          await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/blocklist/delete`,
+            {
+              documentId: generatedDocumentIDoutline,
+              index,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+          toast.success("Outline deleted successfully", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        } catch (error) {
+          // Rollback on failure
+          setOutline((current) => {
+            const rollbackOutlines = [...current];
+            rollbackOutlines.splice(index, 0, deletedItem[0]);
+            return rollbackOutlines;
+          });
+
+          toast.error("Failed to delete outline. Please try again.", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+
+          console.error("Error deleting outline:", error);
+        }
+      })();
+
+      return updatedOutlines;
+    });
+  };
   const handleCloseModal = () => {
     setGeneratedDocumentIDoutline(null); // Reset ID when closing
     setIsRefineModalOpen(false);
@@ -928,387 +1084,782 @@ if (data?.credits !== undefined) {
 
       {/* Refine Modal */}
       {isRefineModalOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-30">
-          <div className="bg-white lg:p-6 p-3 rounded-2xl shadow-lg w-[90%] max-h-[95vh] overflow-y-auto max-w-3xl flex flex-col justify-between relative translate-y-2">
+        <div
+          className="fixed inset-0 z-30 flex justify-center items-center"
+          style={{ backgroundColor: "rgba(23, 25, 26, 0.3)" }}
+        >
+          <div
+            className="relative w-[80%] h-[90%] max-w-6xl bg-white rounded-2xl shadow-xl p-6 flex flex-col"
+            style={{ backgroundColor: Theme.colors.background }}
+          >
             {/* Close Button */}
             <button
+              title="CloseModal"
               onClick={handleCloseModal}
-              className="absolute top-4 right-4 p-2 bg-gray-200 rounded-full"
+              className="absolute top-4 right-4 p-2 bg-gray-200 rounded-full z-10"
             >
-              <FaTimes className="text-gray-600" />
+              <FaTimes style={{ color: Theme.colors.text.weak }} />
             </button>
 
-            {/* Title */}
-            <h2 className="text-xl font-bold text-[#091220] text-center">
-              Presentation Options
-            </h2>
-
-            {/* Content Wrapper - Space Out Sections Evenly */}
-            <div className="flex flex-col space-y-10">
-              {/* Reference Web URL */}
-              <div className="relative space-y-2">
-                <label className="font-semibold text-gray-700 flex items-center gap-2">
-                  Reference Web URL (optional)
-                  <span
-                    className="text-[#3667B2] cursor-pointer relative"
-                    onMouseEnter={() => setShowTooltip3(true)}
-                    onMouseLeave={() => setShowTooltip3(false)}
-                  >
-                    <FaInfoCircle className="text-base" />
-                    {showTooltip3 && (
-                      <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
-                        <p className="font-semibold">
-                          Why add a reference URL?
-                        </p>
-                        <p>
-                          Provide a web URL from which you would like us to
-                          include information for the presentation.
-                        </p>
-                      </div>
-                    )}
-                  </span>
-                </label>
-
-                <input
-                  type="text"
-                  value={websiteUrl}
-                  onChange={(e) => {
-                    const updatedValue = e.target.value;
-
-                    if (updatedValue === "") {
-                      setWebsiteUrl("");
-                      setIsValidLink(true); // Set to true when empty
-                      return;
-                    }
-
-                    setWebsiteUrl(updatedValue);
-                    const urlRegex =
-                      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
-
-                    setIsValidLink(urlRegex.test(updatedValue));
-                  }}
-                  onFocus={() => {
-                    if (!websiteUrl) {
-                      setWebsiteUrl("https://");
-                    }
-                  }}
-                  className={`w-full p-2 border rounded-lg text-start shadow-sm outline-none focus:ring-2 ${
-                    websiteUrl.length > 0 && !isValidLink
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-[#3667B2]"
+            {/* Header with Tabs and Generate Button */}
+            <div className="flex w-full items-center justify-between border-b border-gray-300 mb-4">
+              {/* Tabs Container */}
+              <div className="flex items-center">
+                <button
+                  onClick={() => setActiveTab("outline")}
+                  className={`py-2 px-4 font-semibold transition-all ${
+                    activeTab === "outline"
+                      ? "border-b-4 border-blue-600 text-blue-600"
+                      : "text-gray-500 hover:text-blue-600"
                   }`}
-                  placeholder="Enter website URL"
-                />
-
-                {websiteUrl.length > 0 && !isValidLink && (
-                  <p className="text-red-500 text-sm mt-2">
-                    Please enter a valid website link.
-                  </p>
-                )}
+                >
+                  Presentation Outline
+                </button>
+                <button
+                  onClick={() => setActiveTab("options")}
+                  className={`py-2 px-4 font-semibold transition-all ${
+                    activeTab === "options"
+                      ? "border-b-4 border-blue-600 text-blue-600"
+                      : "text-gray-500 hover:text-blue-600"
+                  }`}
+                >
+                  Presentation Options
+                </button>
               </div>
-
-              {/* Branding Colors */}
-              <div>
-                <div className="flex items-center relative">
-                  <label className="font-semibold text-gray-700">
-                    Branding Colors
-                  </label>
-                  <div
-                    className="relative flex items-center ml-2"
-                    onMouseEnter={() => setShowTooltip4(true)}
-                    onMouseLeave={() => setShowTooltip4(false)}
-                  >
-                    <FaInfoCircle className="text-[#3667B2] cursor-pointer" />
-                    {showTooltip4 && (
-                      <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg transform -translate-x-1/2 transition-opacity duration-300 opacity-100">
-                        <p className="font-semibold">Branding Colors</p>
-                        <p>
-                          These are the colors that will be used in your
-                          presentation. If you've uploaded a logo, the colors
-                          have been extracted from it.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
-                  <div className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 border-gray-300 shadow-md">
-                    {isLoading ? (
-                      <p className="text-gray-500 flex items-center justify-center w-full">
-                        Loading colors...
-                      </p>
-                    ) : (
-                      brandingColors?.map((color, index) => (
-                        <div
-                          key={index}
-                          className="h-full flex-1"
-                          style={{ backgroundColor: color }}
-                        />
-                      ))
-                    )}
-                  </div>
-                  <button
-                    className={`bg-white lg:h-[2.5rem] border-[#3667B2] border text-[#3667B2] 
-                hover:bg-[#3667B2] hover:text-white text-xs font-medium px-4 py-2 
-                rounded-md active:scale-95 transition transform duration-300 ${
-                  isLoading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                    disabled={isLoading}
-                    onClick={() => !isLoading && setIsModalOpen(true)}
-                  >
-                    Change branding colors
-                  </button>
-                </div>
-              </div>
-              {/* Theme Selection */}
-              <div className="flex flex-col space-y-3 p-4 rounded-lg bg-gray-100 shadow-sm">
-                {/* Label with Relaxed Hover Tooltip */}
-                <div className="relative w-max">
-                  <label className="font-semibold text-gray-700 flex items-center gap-2">
-                    Choose a Theme
-                    <span
-                      className="text-[#3667B2] cursor-pointer relative"
-                      onMouseEnter={() => setShowThemeTooltip(true)}
-                      onMouseLeave={() => setShowThemeTooltip(false)}
-                    >
-                      <FaInfoCircle className="text-base" />
-                      {showThemeTooltip && (
-                        <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
-                          <p className="font-semibold">How do themes work?</p>
-                          <p>
-                            Choose how your slides will appear. All themes
-                            incorporate your brand colors for text and accents.
-                          </p>
-                        </div>
-                      )}
-                    </span>
-                  </label>
-                </div>
-
-                <div className="flex justify-between mt-2 gap-3">
-                  {[
-                    {
-                      name: "Light",
-                      defaultBg: "bg-white",
-                      defaultText: "text-black",
-                      border: "border-gray-300",
-                      tooltip:
-                        "White background with brand colors for text & accents.",
-                    },
-                    {
-                      name: "Dark",
-                      defaultBg: "bg-black",
-                      defaultText: "text-white",
-                      border: "border-gray-600",
-                      tooltip:
-                        "Black background with brand colors for text & accents.",
-                    },
-                    {
-                      name: "Branded",
-                      defaultBg: primaryColor,
-                      defaultText: textColor,
-                      border: primaryColor,
-                      tooltip: "Background in your brand’s main color.",
-                    },
-                  ].map(({ name, defaultBg, defaultText, border, tooltip }) => (
-                    <div
-                      key={name}
-                      className="relative w-1/3"
-                      onMouseEnter={() => setHoveredTheme(name)}
-                      onMouseLeave={() => setHoveredTheme(null)}
-                    >
-                      <button
-                        className={`w-full py-2 rounded-lg border-2 font-semibold text-center transition-all 
-          ${
-            theme === name
-              ? `scale-105 shadow-md ${defaultBg} ${defaultText} border-[#3667B2]` // Selected state with blue border
-              : `${defaultBg} ${defaultText} ${border}`
-          } 
-          hover:scale-105 hover:shadow-lg`}
-                        onClick={() => setTheme(name)}
-                        style={
-                          name === "Branded"
-                            ? {
-                                backgroundColor: primaryColor,
-                                borderColor:
-                                  theme === name ? "#3667B2" : primaryColor,
-                              }
-                            : {}
-                        }
-                      >
-                        {name}
-                      </button>
-
-                      {/* Tooltip for Individual Themes */}
-                      {hoveredTheme === name && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 shadow-lg opacity-100 transition-opacity duration-200">
-                          {tooltip}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Creativity Slider */}
-              <div className="flex flex-col space-y-3 p-4 rounded-lg bg-gray-100 shadow-sm">
-                {/* Label, Info Icon, and Value Display */}
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2 relative">
-                    <label className="font-semibold text-gray-700">
-                      Adjust Creativity
-                    </label>
-
-                    {/* Info Icon with Tooltip */}
-                    <span
-                      className="text-[#3667B2] cursor-pointer relative"
-                      onMouseEnter={() => setShowCreativityTooltip(true)}
-                      onMouseLeave={() => setShowCreativityTooltip(false)}
-                    >
-                      <FaInfoCircle className="text-base" />
-                      {showCreativityTooltip && (
-                        <div className="absolute text-left left-1/2 bottom-8 w-72 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300">
-                          <p className="font-semibold">
-                            How does Creativity affect text?
-                          </p>
-                          <p>
-                            Adjust how creative or structured the generated text
-                            should be. A higher value results in more varied and
-                            expressive wording, while a lower value keeps it
-                            concise and predictable.
-                          </p>
-                        </div>
-                      )}
-                    </span>
-                  </div>
-
-                  <span className="text-gray-700 font-medium">
-                    Creativity: {creativity.toFixed(1)}
-                  </span>
-                </div>
-
-                {/* Styled Slider */}
-                <input
-                  type="range"
-                  min="0"
-                  max="10"
-                  step="0.1"
-                  value={creativity}
-                  onChange={(e) => {
-                    let newValue = Number(e.target.value);
-                    newValue = Math.max(0, Math.min(10, newValue)); // Keep within range
-                    setCreativity(newValue);
-                  }}
-                  className="w-full h-2 rounded-lg bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 accent-[#3667B2] transition-all"
-                />
-
-                {/* Indicator Bar with Tooltips */}
-                <div className="flex justify-between text-xs font-medium text-gray-500 mt-2">
-                  <div className="relative group">
-                    <span
-                      className={
-                        creativity === 0 ? "text-[#3667B2] font-bold" : ""
-                      }
-                    >
-                      Most Structured
-                    </span>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      Highly precise and factual text with minimal variation.
-                    </div>
-                  </div>
-
-                  <div className="relative group">
-                    <span
-                      className={
-                        creativity >= 4.5 && creativity <= 5.5
-                          ? "text-[#3667B2] font-bold"
-                          : ""
-                      }
-                    >
-                      Balanced
-                    </span>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      A mix of structured content with slight variations for
-                      engagement.
-                    </div>
-                  </div>
-
-                  <div className="relative group">
-                    <span
-                      className={
-                        creativity === 10 ? "text-[#3667B2] font-bold" : ""
-                      }
-                    >
-                      Most Creative
-                    </span>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-max bg-gray-800 text-white text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      Free-flowing, expressive text with maximum variation.
-                    </div>
-                  </div>
-                </div>
-              </div>
-               <div className="relative space-y-2">
-      <label className="font-semibold flex items-center gap-2">
-        Language (optional)
-        <span className="cursor-pointer text-primary"><FaInfoCircle /></span>
-      </label>
-
-      <select
-  title="Language"
-  value={language}
-  onChange={(e) =>{ 
-    setLanguage(e.target.value)
-  }}
-  className="w-full p-2 border rounded-lg shadow-sm focus:ring-2 focus:outline-none border-gray-300 focus:ring-[#3667B2]"
->
-  <option value="">Select a language</option>
-  {supportedLanguages.map((lang) => (
-    <option key={lang} value={lang}>
-      {lang}
-    </option>
-  ))}
-</select>
-
-      
-      {language && !supportedLanguages.includes(language) && (
-        <p className="text-red-500 text-sm mt-2">
-          Unsupported language selected.
-        </p>
-      )}
-    </div>
             </div>
 
-            {/* Generate Presentation Button */}
-            <div className="flex w-full justify-center">
-              <button
-                disabled={
-                  isgenerated ||
-                  isLoading ||
-                  (websiteUrl.length > 0 && !isValidLink)
-                }
-                className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 mt-4
-    ${
-      isgenerated || isLoading || (websiteUrl.length > 0 && !isValidLink)
-        ? "bg-gray-200 cursor-not-allowed"
-        : "bg-[#3667B2] hover:bg-[#0A8568] text-white"
-    }`}
-                onClick={handleButtonClick}
-              >
-                {isgenerated ? "Generating..." : "Generate Presentation"}
-              </button>
+            <div className="w-full h-full overflow-y-auto scrollbar-none mt-2">
+              {activeTab === "outline" ? (
+                <div className="space-y-4  pr-2 max-h-full">
+                  {isOutlineLoading ? (
+                    <div className="flex flex-col justify-center items-center py-10">
+                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-base">Outline Generating</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col h-[80vh]">
+                      <div className="flex-1 overflow-y-auto pr-1">
+                        <ul className="space-y-6">
+                          {outline?.map((slide: any, idx: number) => (
+                            <React.Fragment key={slide.outlineID}>
+                              <li className="relative group">
+                                <div className="relative border border-gray-200 p-4 rounded-md shadow-sm bg-white flex flex-col gap-2 transition-all duration-200 hover:shadow-md hover:border-gray-300">
+                                  {editingIndex !== idx && (
+                                    <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                      <button
+                                        onClick={() => {
+                                          setEditingIndex(idx);
+                                          setEditedOutline({
+                                            title: slide.title,
+                                            keywords: slide.keywords || "",
+                                          });
+                                        }}
+                                        title="Edit"
+                                        className="transition-all duration-200 hover:scale-110"
+                                      >
+                                        <FaEdit
+                                          className="text-gray-500 hover:text-blue-600 transition-colors duration-200"
+                                          style={{ fontSize: "1rem" }}
+                                        />
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteOutline(idx)}
+                                        title="Delete"
+                                        className="transition-all duration-200 hover:scale-110"
+                                      >
+                                        <FaTrash
+                                          className="text-gray-500 hover:text-red-500 transition-colors duration-200"
+                                          style={{ fontSize: "1rem" }}
+                                        />
+                                      </button>
+                                    </div>
+                                  )}
 
-              {isLoading && (
-                <div className="w-full mt-2 px-8">
-                  <div className="w-full bg-gray-200 rounded-full h-4">
-                    <div
-                      className="bg-[#3667B2] h-4 rounded-full transition-all duration-500 ease-in-out"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-center mt-1 text-sm text-gray-600">
-                    {progress}%
-                  </p>
+                                  {editingIndex === idx ? (
+                                    <div className="flex flex-col gap-3">
+                                      <input
+                                        value={editedOutline.title}
+                                        onChange={(e) =>
+                                          setEditedOutline({
+                                            ...editedOutline,
+                                            title: e.target.value,
+                                          })
+                                        }
+                                        placeholder="Title"
+                                        className="p-2 border border-gray-300 rounded-md transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                      />
+                                      <input
+                                        value={editedOutline.keywords}
+                                        onChange={(e) =>
+                                          setEditedOutline({
+                                            ...editedOutline,
+                                            keywords: e.target.value,
+                                          })
+                                        }
+                                        placeholder="Keywords"
+                                        className="p-2 border border-gray-300 rounded-md transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                      />
+                                      <div className="flex gap-3">
+                                        <button
+                                          className="text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition-all duration-200"
+                                          onClick={async () => {
+                                            if (
+                                              editedOutline.title ===
+                                                slide.title &&
+                                              editedOutline.keywords ===
+                                                (slide.keywords || "")
+                                            ) {
+                                              setEditingIndex(null);
+                                              return;
+                                            }
+
+                                            const updated = [...outline];
+                                            updated[idx] = {
+                                              ...slide,
+                                              title: editedOutline.title,
+                                              keywords: editedOutline.keywords,
+                                            };
+                                            setOutline(updated);
+                                            setEditingIndex(null);
+
+                                            try {
+                                              await axios.post(
+                                                `${process.env.REACT_APP_BACKEND_URL}/api/v1/outline/blocklist/update`,
+                                                {
+                                                  documentId:
+                                                    generatedDocumentIDoutline,
+                                                  blockItem: {
+                                                    outlineID: slide.outlineID,
+                                                    title: editedOutline.title,
+                                                    keywords:
+                                                      editedOutline.keywords,
+                                                  },
+                                                },
+                                                {
+                                                  headers: {
+                                                    Authorization: `Bearer ${authToken}`,
+                                                  },
+                                                }
+                                              );
+                                            } catch (error) {
+                                              console.error(
+                                                "Update failed",
+                                                error
+                                              );
+                                            }
+                                          }}
+                                        >
+                                          Save
+                                        </button>
+                                        <button
+                                          className="text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition-all duration-200"
+                                          onClick={() => setEditingIndex(null)}
+                                        >
+                                          Cancel
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <h3 className="text-lg font-semibold text-gray-800">
+                                        {slide.title}
+                                      </h3>
+                                      {slide.keywords && (
+                                        <p className="text-sm text-gray-600">
+                                          <span className="font-medium">
+                                            Keywords:
+                                          </span>{" "}
+                                          {slide.keywords}
+                                        </p>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+
+                                {idx > -1 && (
+                                  <div className="mt-4 flex items-center justify-center space-x-4 relative hidden group-hover:flex">
+                                    <div className="flex-grow h-px bg-gray-300"></div>
+
+                                    <div className="relative">
+                                      <button
+                                        className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-400 bg-white text-gray-500 hover:bg-gray-100 hover:border-gray-500 transition-all duration-200 hover:scale-110"
+                                        onClick={() => setInputIndex(idx)}
+                                        title="Add new section"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+
+                                    <div className="flex-grow h-px bg-gray-300"></div>
+                                  </div>
+                                )}
+                              </li>
+
+                              {inputIndex === idx && (
+                                <div className="border border-gray-200 p-4 rounded-md shadow-sm bg-white flex flex-col gap-3 -mt-2">
+                                  <input
+                                    type="text"
+                                    value={newOutline}
+                                    onChange={(e) =>
+                                      setNewOutline(e.target.value)
+                                    }
+                                    placeholder="Title"
+                                    className="p-2 border border-gray-300 rounded-md transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                    autoFocus
+                                  />
+
+                                  <div className="flex gap-3">
+                                    <button
+                                      className="text-white bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                      onClick={() => handleAddOutline(idx)}
+                                      disabled={!newOutline.trim()}
+                                    >
+                                      {newOutlineLoading ? (
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                      ) : (
+                                        "Add"
+                                      )}
+                                    </button>
+                                    <button
+                                      className="text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition-all duration-200"
+                                      onClick={() => {
+                                        setInputIndex(null);
+                                        setNewOutline("");
+                                      }}
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="sticky bottom-0 bg-white py-4 border-t border-gray-200 flex justify-center z-10">
+                        <button
+                          disabled={
+                            isLoading || (websiteUrl.length > 0 && !isValidLink)
+                          }
+                          onClick={handleButtonClick}
+                          className={`px-6 py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 ${
+                            isLoading || (websiteUrl.length > 0 && !isValidLink)
+                              ? "cursor-not-allowed"
+                              : "hover:opacity-90"
+                          }`}
+                          style={{
+                            backgroundColor:
+                              isLoading ||
+                              (websiteUrl.length > 0 && !isValidLink)
+                                ? Theme.colors.stroke.weak
+                                : Theme.colors.primary,
+                            color:
+                              isLoading ||
+                              (websiteUrl.length > 0 && !isValidLink)
+                                ? Theme.colors.text.weak
+                                : "#FFFFFF",
+                          }}
+                        >
+                          Generate Presentation
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              ) : (
+                <>
+                 <div className="flex flex-col overflow-y-auto pr-2 max-h-full">
+  {/* Scrollable Form Content */}
+  <div className="flex-1 overflow-y-auto space-y-6 px-1">
+    {/* Reference Web URL + Language Side-by-Side on lg */}
+    <div className="flex flex-col lg:flex-row gap-6">
+      {/* Reference Web URL */}
+      <div className="flex-1 space-y-2">
+        <label className="font-semibold flex items-center gap-2" style={{ color: Theme.colors.text.strong }}>
+          Reference Web URL (optional)
+          <span
+            className="cursor-pointer relative"
+            style={{ color: Theme.colors.primary }}
+            onMouseEnter={() => setShowTooltip3(true)}
+            onMouseLeave={() => setShowTooltip3(false)}
+          >
+            <FaInfoCircle className="text-base" />
+            {showTooltip3 && (
+              <div
+                className="hidden lg:absolute lg:block lg:text-left lg:left-1/2 lg:bottom-8 lg:w-72 lg:p-3 text-xs rounded-lg shadow-lg opacity-100 lg:transform lg:-translate-x-1/2 transition-opacity duration-300"
+                style={{
+                  backgroundColor: Theme.colors.grounding,
+                  color: Theme.colors.background,
+                }}
+              >
+                <p className="font-semibold">Why add a reference URL?</p>
+                <p>
+                  Provide a web URL from which you would like us to include information for the presentation.
+                </p>
+              </div>
+            )}
+          </span>
+        </label>
+
+        <input
+          type="text"
+          value={websiteUrl}
+          onChange={(e) => {
+            const updatedValue = e.target.value;
+            if (updatedValue === "") {
+              setWebsiteUrl("");
+              setIsValidLink(true);
+              return;
+            }
+            setWebsiteUrl(updatedValue);
+            const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/;
+            setIsValidLink(urlRegex.test(updatedValue));
+          }}
+          onFocus={() => {
+            if (!websiteUrl) setWebsiteUrl("https://");
+          }}
+          className={`w-full p-2 border rounded-lg shadow-sm outline-none focus:ring-2 ${
+            websiteUrl.length > 0 && !isValidLink
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:ring-[#3667B2]"
+          }`}
+          placeholder="Enter website URL"
+        />
+        {websiteUrl.length > 0 && !isValidLink && (
+          <p className="text-red-500 text-sm">Please enter a valid website link.</p>
+        )}
+      </div>
+
+      {/* Language */}
+      <div className="flex-1 space-y-2">
+        <label className="font-semibold flex items-center gap-2">
+          Language (optional)
+          <span className="cursor-pointer text-primary">
+            <FaInfoCircle />
+          </span>
+        </label>
+        <select
+          title="Language"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="w-full p-2 border rounded-lg shadow-sm focus:ring-2 focus:outline-none border-gray-300 focus:ring-[#3667B2]"
+        >
+          <option value="">Select a language</option>
+          {supportedLanguages.map((lang) => (
+            <option key={lang} value={lang}>
+              {lang}
+            </option>
+          ))}
+        </select>
+        {language && !supportedLanguages.includes(language) && (
+          <p className="text-red-500 text-sm">Unsupported language selected.</p>
+        )}
+      </div>
+    </div>
+     <div className="space-y-6">
+
+                          {/* Branding Colors */}
+                          <div>
+                            <div className="flex items-center relative">
+                              <label
+                                className="font-semibold"
+                                style={{ color: Theme.colors.text.strong }}
+                              >
+                                Branding Colors
+                              </label>
+                              <div
+                                className="relative flex items-center ml-2"
+                                onMouseEnter={() => setShowTooltip4(true)}
+                                onMouseLeave={() => setShowTooltip4(false)}
+                              >
+                                <FaInfoCircle
+                                  className="cursor-pointer"
+                                  style={{ color: Theme.colors.primary }}
+                                />
+                                {showTooltip4 && (
+                                  <div
+                                    className="hidden lg:absolute lg:block lg:text-left lg:left-1/2 lg:bottom-8 lg:w-72 lg:p-3 text-xs rounded-lg shadow-lg lg:transform lg:-translate-x-1/2 transition-opacity duration-300 lg:opacity-100"
+                                    style={{
+                                      backgroundColor: Theme.colors.grounding,
+                                      color: Theme.colors.background,
+                                    }}
+                                  >
+                                    <p className="font-semibold">
+                                      Branding Colors
+                                    </p>
+                                    <p>
+                                      These are the colors that will be used in
+                                      your presentation. If you've uploaded a
+                                      logo, the colors have been extracted from
+                                      it.
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex justify-between items-center gap-2 lg:gap-0 mt-4 w-full">
+                              <div
+                                className="flex w-2/3 h-10 rounded-lg overflow-hidden border-2 shadow-md"
+                                style={{
+                                  borderColor: Theme.colors.stroke.weak,
+                                }}
+                              >
+                                {isLoading ? (
+                                  <p
+                                    className="flex items-center justify-center w-full"
+                                    style={{ color: Theme.colors.text.weak }}
+                                  >
+                                    Loading colors...
+                                  </p>
+                                ) : (
+                                  brandingColors?.map((color, index) => (
+                                    <div
+                                      key={index}
+                                      className="h-full flex-1"
+                                      style={{ backgroundColor: color }}
+                                    />
+                                  ))
+                                )}
+                              </div>
+
+                              <button
+                                className={`lg:h-[2.5rem] text-xs font-medium px-4 py-2 rounded-md active:scale-95 transition transform duration-300 ${
+                                  isLoading
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }`}
+                                style={{
+                                  backgroundColor: Theme.colors.background,
+                                  color: Theme.colors.primary,
+                                  border: `1px solid ${Theme.colors.primary}`,
+                                }}
+                                disabled={isLoading}
+                                onClick={() =>
+                                  !isLoading && setIsModalOpen(true)
+                                }
+                              >
+                                Change branding colors
+                              </button>
+                            </div>
+                          </div>
+                          {/* Theme Selection */}
+                          <div
+                            className="flex flex-col space-y-3 p-4 rounded-lg shadow-sm"
+                            style={{
+                              backgroundColor: Theme.colors.stroke.weak,
+                            }}
+                          >
+                            {/* Label with Relaxed Hover Tooltip */}
+                            <div className="relative w-max">
+                              <label
+                                className="font-semibold flex items-center gap-2"
+                                style={{ color: Theme.colors.text.strong }}
+                              >
+                                Choose a Theme
+                                <span
+                                  className="cursor-pointer relative"
+                                  onMouseEnter={() => setShowThemeTooltip(true)}
+                                  onMouseLeave={() =>
+                                    setShowThemeTooltip(false)
+                                  }
+                                  style={{ color: Theme.colors.primary }}
+                                >
+                                  <FaInfoCircle className="text-base" />
+                                  {showThemeTooltip && (
+                                    <div
+                                      className="hidden lg:absolute lg:block text-left left-1/2 bottom-8 w-72 p-3 text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300"
+                                      style={{
+                                        backgroundColor: Theme.colors.grounding,
+                                        color: Theme.colors.background,
+                                      }}
+                                    >
+                                      <p className="font-semibold">
+                                        How do themes work?
+                                      </p>
+                                      <p>
+                                        Choose how your slides will appear. All
+                                        themes incorporate your brand colors for
+                                        text and accents.
+                                      </p>
+                                    </div>
+                                  )}
+                                </span>
+                              </label>
+                            </div>
+
+                            <div className="flex justify-between mt-2 gap-3">
+                              {[
+                                {
+                                  name: "Light",
+                                  backgroundColor: Theme.colors.background,
+                                  textColor: Theme.colors.text.default,
+                                  borderColor: Theme.colors.stroke.weak,
+                                  tooltip:
+                                    "White background with brand colors for text & accents.",
+                                },
+                                {
+                                  name: "Dark",
+                                  backgroundColor: Theme.colors.grounding,
+                                  textColor: Theme.colors.background,
+                                  borderColor: Theme.colors.stroke.strong,
+                                  tooltip:
+                                    "Black background with brand colors for text & accents.",
+                                },
+                                {
+                                  name: "Branded",
+                                  backgroundColor: primaryColor,
+                                  textColor: textColor,
+                                  borderColor: primaryColor,
+                                  tooltip:
+                                    "Background in your brand’s main color.",
+                                },
+                              ].map(
+                                ({
+                                  name,
+                                  backgroundColor,
+                                  textColor,
+                                  borderColor,
+                                  tooltip,
+                                }) => (
+                                  <div
+                                    key={name}
+                                    className="relative w-1/3"
+                                    onMouseEnter={() => setHoveredTheme(name)}
+                                    onMouseLeave={() => setHoveredTheme(null)}
+                                  >
+                                    <button
+                                      onClick={() => setTheme(name)}
+                                      className={`w-full py-2 rounded-lg border-2 font-semibold text-center transition-all ${
+                                        theme === name
+                                          ? "scale-105 shadow-md"
+                                          : ""
+                                      } hover:scale-105 hover:shadow-lg`}
+                                      style={{
+                                        backgroundColor,
+                                        color: textColor,
+                                        borderColor:
+                                          theme === name
+                                            ? Theme.colors.primary
+                                            : borderColor,
+                                      }}
+                                    >
+                                      {name}
+                                    </button>
+
+                                    {/* Tooltip for Individual Themes */}
+                                    {hoveredTheme === name && (
+                                      <div
+                                        className="hidden lg:absolute lg:bottom-full lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:mb-2 w-max rounded px-3 py-2 shadow-lg opacity-100 transition-opacity duration-200 text-xs"
+                                        style={{
+                                          backgroundColor:
+                                            Theme.colors.grounding,
+                                          color: Theme.colors.background,
+                                        }}
+                                      >
+                                        {tooltip}
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Creativity Slider */}
+                          <div
+                            className="flex flex-col space-y-3 p-4 rounded-lg shadow-sm"
+                            style={{
+                              backgroundColor: Theme.colors.stroke.weak,
+                            }}
+                          >
+                            {/* Label, Info Icon, and Value Display */}
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-2 relative">
+                                <label
+                                  className="font-semibold"
+                                  style={{ color: Theme.colors.text.strong }}
+                                >
+                                  Adjust Creativity
+                                </label>
+
+                                <span
+                                  className="cursor-pointer relative"
+                                  onMouseEnter={() =>
+                                    setShowCreativityTooltip(true)
+                                  }
+                                  onMouseLeave={() =>
+                                    setShowCreativityTooltip(false)
+                                  }
+                                  style={{ color: Theme.colors.primary }}
+                                >
+                                  <FaInfoCircle className="text-base" />
+                                  {showCreativityTooltip && (
+                                    <div
+                                      className="hidden lg:absolute lg:block text-left left-1/2 bottom-8 w-72 p-3 text-xs rounded-lg shadow-lg opacity-100 transform -translate-x-1/2 transition-opacity duration-300"
+                                      style={{
+                                        backgroundColor: Theme.colors.grounding,
+                                        color: Theme.colors.background,
+                                      }}
+                                    >
+                                      <p className="font-semibold">
+                                        How does Creativity affect text?
+                                      </p>
+                                      <p>
+                                        Adjust how creative or structured the
+                                        generated text should be. A higher value
+                                        results in more varied and expressive
+                                        wording, while a lower value keeps it
+                                        concise and predictable.
+                                      </p>
+                                    </div>
+                                  )}
+                                </span>
+                              </div>
+
+                              <span
+                                className="font-medium"
+                                style={{ color: Theme.colors.text.strong }}
+                              >
+                                Creativity: {creativity.toFixed(1)}
+                              </span>
+                            </div>
+
+                            {/* Styled Slider */}
+                            <input
+                              type="range"
+                              min="0"
+                              max="10"
+                              step="0.1"
+                              value={creativity}
+                              onChange={(e) => {
+                                let newValue = Number(e.target.value);
+                                newValue = Math.max(0, Math.min(10, newValue)); // Keep within range
+                                setCreativity(newValue);
+                              }}
+                              className="w-full h-2 rounded-lg transition-all accent-[#3667B2]"
+                              style={{
+                                background:
+                                  "linear-gradient(to right, #0A8568, #3667B2, #8bb5f2)", // Optional dynamic gradient
+                              }}
+                            />
+
+                            {/* Indicator Bar with Tooltips */}
+                            <div
+                              className="flex justify-between text-xs font-medium mt-2"
+                              style={{ color: Theme.colors.text.weak }}
+                            >
+                              <div className="relative group">
+                                <span
+                                  className={
+                                    creativity === 0 ? "font-bold" : ""
+                                  }
+                                  style={{
+                                    color:
+                                      creativity === 0
+                                        ? Theme.colors.primary
+                                        : undefined,
+                                  }}
+                                >
+                                  Most Structured
+                                </span>
+                                <div
+                                  className="hidden lg:absolute lg:top-full lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:mt-2 w-max text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg"
+                                  style={{
+                                    backgroundColor: Theme.colors.grounding,
+                                    color: Theme.colors.background,
+                                  }}
+                                >
+                                  Highly precise and factual text with minimal
+                                  variation.
+                                </div>
+                              </div>
+
+                              <div className="relative group">
+                                <span
+                                  className={
+                                    creativity >= 4.5 && creativity <= 5.5
+                                      ? "font-bold"
+                                      : ""
+                                  }
+                                  style={{
+                                    color:
+                                      creativity >= 4.5 && creativity <= 5.5
+                                        ? Theme.colors.primary
+                                        : undefined,
+                                  }}
+                                >
+                                  Balanced
+                                </span>
+                                <div
+                                  className="hidden lg:absolute lg:top-full lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:mt-2 w-max text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg"
+                                  style={{
+                                    backgroundColor: Theme.colors.grounding,
+                                    color: Theme.colors.background,
+                                  }}
+                                >
+                                  A mix of structured content with slight
+                                  variations for engagement.
+                                </div>
+                              </div>
+
+                              <div className="relative group">
+                                <span
+                                  className={
+                                    creativity === 10 ? "font-bold" : ""
+                                  }
+                                  style={{
+                                    color:
+                                      creativity === 10
+                                        ? Theme.colors.primary
+                                        : undefined,
+                                  }}
+                                >
+                                  Most Creative
+                                </span>
+                                <div
+                                  className="hidden lg:absolute lg:top-full lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:mt-2 w-max text-xs rounded px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg"
+                                  style={{
+                                    backgroundColor: Theme.colors.grounding,
+                                    color: Theme.colors.background,
+                                  }}
+                                >
+                                  Free-flowing, expressive text with maximum
+                                  variation.
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        
+                          </div>
+  </div>
+
+                          <div className="flex w-full justify-center mt-4">
+    <button
+      disabled={isLoading || (websiteUrl.length > 0 && !isValidLink)}
+      onClick={handleButtonClick}
+      className={`lg:w-1/2 w-[80%] py-2 rounded-lg font-semibold active:scale-95 transition transform duration-300 ${
+        isLoading || (websiteUrl.length > 0 && !isValidLink)
+          ? "cursor-not-allowed"
+          : "hover:opacity-90"
+      }`}
+      style={{
+        backgroundColor:
+          isLoading || (websiteUrl.length > 0 && !isValidLink)
+            ? Theme.colors.stroke.weak
+            : Theme.colors.primary,
+        color:
+          isLoading || (websiteUrl.length > 0 && !isValidLink)
+            ? Theme.colors.text.weak
+            : "#FFFFFF",
+      }}
+    >
+      Generate Presentation
+    </button>
+  </div>
+</div>
+                </>
               )}
             </div>
           </div>
