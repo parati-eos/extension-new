@@ -1,5 +1,6 @@
+// 👇 Your existing imports (unchanged)
 import React, { useEffect, useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaCoins } from "react-icons/fa";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -26,37 +27,38 @@ export default function ImageGeneratorPanel({ onBack }: Props) {
   const documentID = sessionStorage.getItem("presentationId") || "";
   const authToken = sessionStorage.getItem("authToken");
 
-  useEffect(() => {
-    const fetchCredits = async () => {
-      if (!orgID || !authToken) return;
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
-        setCredits(res.data?.credits || 0);
-        setPlanName(res.data?.plan?.plan_name || "free");
-      } catch (err) {
-        console.error("Failed to fetch credits:", err);
-        setCredits(0);
-        setPlanName("free");
-      }
-    };
+  const fetchCredits = async () => {
+    if (!orgID || !authToken) return;
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+      setCredits(res.data?.credits || 0);
+      setPlanName(res.data?.plan?.plan_name || "free");
+    } catch (err) {
+      console.error("Failed to fetch credits:", err);
+      setCredits(0);
+      setPlanName("free");
+    }
+  };
 
+  useEffect(() => {
     fetchCredits();
   }, [authToken, orgID]);
 
-  const handleUpgrade = () => {
-    const authToken = sessionStorage.getItem("authToken");
-    const userEmail = sessionStorage.getItem("userEmail");
-    const orgId = sessionStorage.getItem("orgId");
+  const refreshCredits = async () => {
+    await fetchCredits();
+    toast.success("Credits refreshed");
+  };
 
+  const handleUpgrade = () => {
     const query = new URLSearchParams({
       authToken: authToken || "",
-      userEmail: userEmail || "",
-      orgId: orgId || "",
+      userEmail: userID,
+      orgId: orgID,
     });
 
     window.open(`/pricing?${query.toString()}`, "_blank", "noopener,noreferrer");
@@ -70,6 +72,12 @@ export default function ImageGeneratorPanel({ onBack }: Props) {
 
     if (!userID || !orgID || !documentID || !authToken) {
       toast.error("Missing session or authentication data.");
+      return;
+    }
+
+    const creditsToDeduct = count * 2;
+    if (planName === "free" && credits < creditsToDeduct) {
+      toast.error(`You need at least ${creditsToDeduct} credits to generate ${count} image(s).`);
       return;
     }
 
@@ -98,7 +106,23 @@ export default function ImageGeneratorPanel({ onBack }: Props) {
       if (response.data?.images?.length) {
         setImages(response.data.images);
         toast.success("Images generated successfully!");
-        setCredits((prev) => prev - 2);
+
+        const newCredits = credits - creditsToDeduct;
+        setCredits(newCredits);
+
+        if (planName === "free") {
+          await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({ credits: newCredits }),
+            }
+          );
+        }
       } else {
         toast.error("No images returned.");
       }
@@ -220,29 +244,39 @@ export default function ImageGeneratorPanel({ onBack }: Props) {
           <button
             onClick={handleGenerate}
             disabled={loading || !isAllowedToGenerate}
-            className={`relative bg-blue-600 text-white font-semibold py-3 px-4 w-full rounded-lg text-center transition-all ${
+            className={`relative bg-blue-600 text-white font-semibold py-5 px-4 w-full rounded-lg text-center transition-all ${
               loading || !isAllowedToGenerate ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
             }`}
           >
             {loading ? "Generating..." : "Generate Image"}
-            <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                alt="coin"
-                className="w-3 h-3"
-              />
-              2 Credits
-            </div>
+
+            {planName === "free" && (
+              <div className="absolute top-1 right-2 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+                <FaCoins className="text-yellow-300 text-sm" />
+                {count * 2} Credits
+              </div>
+            )}
           </button>
-          <div className="flex justify-between items-center mt-2 text-sm text-gray-700">
-            <span>Credits Available: {credits}/10</span>
-            <button
-              className="text-blue-600 font-medium flex items-center gap-1"
-              onClick={handleUpgrade}
-            >
-              Get More Credits <span>→</span>
-            </button>
-          </div>
+
+          {planName === "free" && (
+            <div className="flex flex-col mt-2 text-sm text-gray-700 gap-1">
+              <div className="flex justify-between items-center">
+                <span>Available Credits: {credits}</span>
+                <button
+                  className="text-blue-600 font-medium flex items-center gap-1"
+                  onClick={handleUpgrade}
+                >
+                  Get More Credits <span>→</span>
+                </button>
+              </div>
+              <button
+                onClick={refreshCredits}
+                className="text-xs text-blue-500 underline self-start"
+              >
+                ↻ Refresh Credits
+              </button>
+            </div>
+          )}
         </div>
 
         {images.length > 0 && (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaEdit, FaCoins } from "react-icons/fa";
 import axios from "../../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -28,6 +28,25 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
 
   const isAllowedToRefine = planName !== "free" || credits >= 2;
 
+  const fetchCredits = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      setCredits(res.data?.credits || 0);
+      setPlanName(res.data?.plan?.plan_name || "free");
+    } catch (err) {
+      console.error("Failed to fetch credits:", err);
+      setCredits(0);
+      setPlanName("free");
+    }
+  };
+
   useEffect(() => {
     const fallbackText = sessionStorage.getItem("selectedSlideText") || "";
     setOriginalText(selectedText || fallbackText);
@@ -38,27 +57,13 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
   }, [authToken, navigate]);
 
   useEffect(() => {
-    const fetchCredits = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
-        setCredits(res.data?.credits || 0);
-        setPlanName(res.data?.plan?.plan_name || "free");
-      } catch (err) {
-        console.error("Failed to fetch credits:", err);
-        setCredits(0);
-        setPlanName("free");
-      }
-    };
-
     if (authToken && orgID) fetchCredits();
   }, [authToken, orgID]);
+
+  const refreshCredits = async () => {
+    await fetchCredits();
+    toast.success("Credits refreshed");
+  };
 
   const handleUpgrade = () => {
     const query = new URLSearchParams({
@@ -102,7 +107,22 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
       if (res.data?.refinedText) {
         setRefinedText(res.data.refinedText);
         toast.success("Text refined successfully!");
-        if (planName === "free") setCredits((prev) => prev - 2);
+
+        if (planName === "free") {
+          const newCredits = credits - 2;
+          setCredits(newCredits);
+          await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+              body: JSON.stringify({ credits: newCredits }),
+            }
+          );
+        }
       } else {
         toast.error("Refinement failed. No output.");
       }
@@ -141,6 +161,10 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto">
+      <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
+        <FaEdit className="text-blue-700 text-sm" />
+        <span>Select the text you want to refine</span>
+      </div>
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={onBack}
@@ -215,32 +239,39 @@ export default function ToneAudiencePanel({ selectedText, onBack }: Props) {
           <button
             onClick={handleRefine}
             disabled={loading || !isAllowedToRefine}
-            className={`relative bg-blue-600 text-white font-semibold py-3 px-4 w-full rounded-lg text-center transition-all ${
+            className={`relative bg-blue-600 text-white font-semibold py-4 px-4 w-full rounded-lg text-center transition-all ${
               loading || !isAllowedToRefine ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
             }`}
           >
             Refine Text
-            <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                alt="coin"
-                className="w-3 h-3"
-              />
-              2 Credits
-            </div>
+            {planName === "free" && (
+              <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+                <FaCoins className="text-yellow-400 text-sm" /> 2 Credits
+              </div>
+            )}
           </button>
 
-          <div className="flex justify-between items-center mt-2 text-sm text-gray-700">
-            <span>
-              Credits Available: {credits}
-            </span>
-            <button
-              className="text-blue-600 font-medium flex items-center gap-1"
-              onClick={handleUpgrade}
-            >
-              Get More Credits <span>→</span>
-            </button>
-          </div>
+          {planName === "free" && (
+            <div className="flex flex-col mt-2 text-sm text-gray-700 gap-1">
+              <div className="flex justify-between items-center">
+                <span className="flex items-center gap-1">
+                  <FaCoins className="text-yellow-400" /> Credits Available: {credits}
+                </span>
+                <button
+                  className="text-blue-600 font-medium flex items-center gap-1"
+                  onClick={handleUpgrade}
+                >
+                  Get More Credits <span>→</span>
+                </button>
+              </div>
+              <button
+                onClick={refreshCredits}
+                className="text-xs text-blue-500 underline self-start"
+              >
+                ↻ Refresh Credits
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mt-4">

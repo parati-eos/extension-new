@@ -78,7 +78,7 @@ export default function SlideNarrative({
    const lockedOptions = ["Graphs", "Images", "People", "Tables"];
   options = options.map((opt) => ({
   ...opt,
-  isDisabled: userPlan=="free" && credits<=0 && lockedOptions.includes(opt.value),
+  isDisabled: userPlan=="free" && credits< 5 && lockedOptions.includes(opt.value),
 }));
 
   const handleFileSelect = async (file: File | null) => {
@@ -299,7 +299,31 @@ const handleGenerateSlide = async () => {
   };
   
   
-  
+  const refreshCredits = async () => {
+  try {
+    await axios.patch(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgID}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    const res = await axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgID}`,
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    updateCredit(res.data?.credits || 0);
+    toast.success("Credits refreshed successfully");
+  } catch (err) {
+    toast.error("Failed to refresh credits");
+    console.error("Refresh error:", err);
+  }
+};
+
 
   return (
     <div className="flex flex-col p-1 lg:p-2 h-full w-full">
@@ -375,9 +399,14 @@ const handleGenerateSlide = async () => {
 
 
       {userPlan=="free" && <div className='flex w-[60%] lg:w-[50%] xl:w-[40%] items-center justify-between'>
-         <button title='refresh' className='flex min-w-[100px] items-center justify-center rounded-lg bg-gray-200 hover:bg-blue-600 hover:text-white text-md '>
-             Refresh
-          </button>
+         <button
+  title='refresh'
+  onClick={refreshCredits}
+  className='flex min-w-[100px] items-center justify-center rounded-lg bg-gray-200 hover:bg-blue-600 hover:text-white text-md '
+>
+  Refresh
+</button>
+
           <div className="text-gray-800 font-medium">
           Credits Available: <span className="text-blue-600">{credits} 🪙</span>
         </div>

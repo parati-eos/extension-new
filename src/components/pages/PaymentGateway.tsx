@@ -26,6 +26,12 @@ interface PaymentGatewayProps {
   discountedAmount: number;
 }
 
+const specialEmails = new Set([
+  "adarshahalder02@gmail.com",
+  "siddharth.gupta@parati.in",
+  "siddharthgupta92@gmail.com",
+]);
+
 const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
   (
     {
@@ -46,7 +52,6 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
       currency: "USD",
     });
 
-    const [countdown, setCountdown] = useState<number | null>(null);
     const [showModal, setShowModal] = useState(false);
     const orgId = sessionStorage.getItem("orgId");
 
@@ -64,23 +69,29 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
 
           const data = await response.json();
           const currency = data.country === "IN" ? "INR" : "USD";
-          const pricing = getStaticPricing(currency);
-          const amount = isDiscounted ? discountedAmount : pricing.current;
+
+          // If email matches special users, override amount
+          const email = localStorage.getItem("userEmail") || "";
+          let amount = isDiscounted ? discountedAmount : getStaticPricing(currency).current;
+
+          if (currency === "INR" && specialEmails.has(email)) {
+            amount = 5;
+          }
 
           setPaymentData((prevData) => ({
             ...prevData,
             currency,
             amount,
+            email,
           }));
         } catch (error) {
           console.error("Error detecting location:", error);
-          const fallbackPricing = getStaticPricing("USD");
+          const fallbackCurrency = "USD";
+          const amount = isDiscounted ? discountedAmount : getStaticPricing(fallbackCurrency).current;
           setPaymentData((prevData) => ({
             ...prevData,
-            currency: "USD",
-            amount: isDiscounted
-              ? discountedAmount
-              : fallbackPricing.current,
+            currency: fallbackCurrency,
+            amount,
           }));
         }
       };
@@ -90,43 +101,8 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
 
     const handlePayment = async () => {
       try {
-        const orgResponse = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
-          { headers: { Authorization: `Bearer ${authToken}` } }
-        );
-        if (!orgResponse.ok)
-          throw new Error(`Failed to fetch organization profile`);
-        const orgData = await orgResponse.json();
-        const { credits } = orgData;
-
-        const creditValue = paymentData.currency === "INR" ? 19.9 : 0.25; // 10 credits for 199 INR or $2.5
-        let neededCredits = Math.floor(paymentData.amount / creditValue);
-        let creditsToUse = Math.min(credits, neededCredits);
-        let creditDiscount = creditsToUse * creditValue;
-
-        let finalAmount = paymentData.amount - creditDiscount;
-        finalAmount = finalAmount < 0 ? 0 : Math.round(finalAmount);
-        let newCredits = credits - creditsToUse;
-
-        console.log("Credits Available:", credits);
-        console.log("Credits Used:", creditsToUse);
-        console.log("Final Amount:", finalAmount);
-        console.log("Remaining Credits:", newCredits);
-
-        if (finalAmount === 0) {
-          await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
-            {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-              },
-              body: JSON.stringify({ credits: newCredits }),
-            }
-          );
-          return onSuccess({ message: "Payment waived due to credits." });
-        }
+        const creditValue = paymentData.currency === "INR" ? 19.9 : 0.25;
+        const finalAmount = Math.round(paymentData.amount);
 
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
@@ -180,6 +156,8 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
 
               const verifyResult = await verifyResponse.json();
 
+              // Calculate and update credits
+              const creditsPurchased = Math.floor(finalAmount / creditValue);
               await fetch(
                 `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
                 {
@@ -188,12 +166,11 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${authToken}`,
                   },
-                  body: JSON.stringify({ credits: newCredits }),
+                  body: JSON.stringify({ credits: creditsPurchased }),
                 }
               );
 
               onSuccess(verifyResult);
-              setCountdown(8);
               setShowModal(true);
             } catch (error) {
               console.error("Error verifying payment:", error);
@@ -216,28 +193,14 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
       }
     };
 
-    useEffect(() => {
-      if (countdown === null || countdown === 0) return;
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : 0));
-      }, 1000);
-      return () => clearInterval(timer);
-    }, [countdown]);
-
-    useEffect(() => {
-      if (countdown === 0) {
-        setShowModal(false);
-        console.log("Download starting...");
-      }
-    }, [countdown]);
-
     return (
       <div>
         {showModal && (
           <div className="modal">
             <div className="modal-content">
               <p>
-                Payment successful! Your download will start in {countdown} seconds...
+                Payment successful! Please go back to Google Slides and refresh
+                your credits to reflect the updated amount.
               </p>
             </div>
           </div>
