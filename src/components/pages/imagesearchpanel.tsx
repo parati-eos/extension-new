@@ -52,7 +52,9 @@ export default function ImageSearchPanel({ onBack }: Props) {
     toast.success("Credits refreshed");
   };
 
-  const isAllowedToSearch = planName !== "free" || credits >= 2;
+  // const isAllowedToSearch = planName !== "free" || credits >= 2;
+const creditsToDeduct = count * 2;
+const isAllowedToSearch = planName !== "free" || credits >= creditsToDeduct;
 
   const handleUpgrade = () => {
     const query = new URLSearchParams({
@@ -139,7 +141,7 @@ export default function ImageSearchPanel({ onBack }: Props) {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-8">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-blue-600 font-medium"
@@ -199,23 +201,25 @@ export default function ImageSearchPanel({ onBack }: Props) {
         </div>
 
         <div className="relative w-full mt-2">
-          <button
-            onClick={handleSearch}
-            disabled={loading || !isAllowedToSearch}
-            className={`relative bg-blue-600 text-white font-semibold py-4 px-4 w-full rounded-lg text-center transition-all ${
-              loading || !isAllowedToSearch
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "Searching..." : "Search Images"}
-            {planName === "free" && (
-              <div className="absolute top-0 right-0 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
-                <FaCoins className="text-yellow-400 text-sm" />
-                {count * 2} Credits
-              </div>
-            )}
-          </button>
+<button
+  onClick={handleSearch}
+  disabled={loading || !isAllowedToSearch}
+  className={`relative bg-blue-600 text-white font-semibold py-6 px-4 w-full rounded-xl text-center text-base transition-all ${
+    loading || !isAllowedToSearch
+      ? "opacity-50 cursor-not-allowed"
+      : "hover:bg-blue-700"
+  }`}
+>
+  {loading ? "Searching..." : "Search Images"}
+
+  {planName === "free" && (
+    <div className="absolute -top-0 right-2 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+      <FaCoins className="text-yellow-400 text-sm" />
+      {count * 2} Credits
+    </div>
+  )}
+</button>
+
 
           {planName === "free" && (
             <div className="flex flex-col mt-2 text-sm text-gray-700 gap-1">
@@ -225,11 +229,12 @@ export default function ImageSearchPanel({ onBack }: Props) {
                   Credits Available: {credits}
                 </span>
                 <button
-                  className="text-blue-600 font-medium flex items-center gap-1"
-                  onClick={handleUpgrade}
-                >
-                  Get More Credits <span>→</span>
-                </button>
+  className="text-blue-600 font-medium flex flex-col items-end ml-auto"
+  onClick={handleUpgrade}
+>
+  <span>Get More</span>
+  <span>Credits →</span>
+</button>
               </div>
               <button
                 onClick={refreshCredits}
