@@ -138,10 +138,11 @@ export default function RewriteRefinePanel({ selectedText, onBack }: Props) {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto">
-      <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full shadow-sm">
-        <FaEdit className="text-blue-700 text-sm" />
-        <span>Select the text you want to refine</span>
-      </div>
+<div className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full shadow-sm mb-4">
+  <FaEdit className="text-blue-700 text-sm" />
+  <span>Select the text you want to refine</span>
+</div>
+
 
       <div className="flex justify-between items-center mb-6">
         <button
@@ -294,12 +295,14 @@ export default function RewriteRefinePanel({ selectedText, onBack }: Props) {
                 <span className="flex items-center gap-1">
                   <FaCoins className="text-yellow-400" /> Credits Available: {credits}
                 </span>
-                <button
-                  className="text-blue-600 font-medium flex items-center gap-1"
-                  onClick={handleUpgrade}
-                >
-                  Get More Credits <span>→</span>
-                </button>
+       <button
+  className="text-blue-600 font-medium flex flex-col items-end ml-auto"
+  onClick={handleUpgrade}
+>
+  <span>Get More</span>
+  <span>Credits →</span>
+</button>
+
               </div>
               <button
                 onClick={refreshCredits}
