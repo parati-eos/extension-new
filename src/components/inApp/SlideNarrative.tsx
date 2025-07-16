@@ -413,8 +413,10 @@ const handleGenerateSlide = async () => {
           </div>
 
           <div className="text-gray-800 font-medium">
-          Credits Available: <span className="text-blue-600">{credits} 🪙</span>
-        </div>
+              <span className="flex items-center gap-1">
+              <FaCoins className="text-yellow-400" /> Credits Available: {credits}
+            </span>
+          </div>
         <div>
             <button
               className="text-blue-600 font-medium flex items-center gap-1"

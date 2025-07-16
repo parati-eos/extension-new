@@ -795,6 +795,21 @@ const { credits, updateCredit, increaseCredit, decreaseCredit } = useCredit();
       } else {
         setTimeout(() => setProgress(100), 500);
       }
+       await axios.patch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
+        {
+          pptcount: pptCount + 1,
+          pptcount_monthly: pptCountMonthly + 1,
+          credits:credits-10
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+    
+
     } else {
       setLoading(false);
       setgenerated(false);
