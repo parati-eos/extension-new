@@ -800,7 +800,7 @@ const { credits, updateCredit, increaseCredit, decreaseCredit } = useCredit();
         {
           pptcount: pptCount + 1,
           pptcount_monthly: pptCountMonthly + 1,
-          credits:credits-10
+          credits: userPlan=='free'? credits-10:credits
         },
         {
           headers: {
@@ -1076,7 +1076,8 @@ if (data?.credits !== undefined) {
             disabled={
               (!file && !generateInput) ||(!file && generateInput && generateInput.length<100)||
               pdfUploading ||
-              !eligibleForGeneration || (userPlan=='free' && credits<10 && !eligibleForGeneration)
+             // !eligibleForGeneration || 
+              (userPlan=='free' && credits<10 && !eligibleForGeneration)
             }
             className={`h-[3.1rem] text-white px-16 py-4 rounded-lg font-semibold active:scale-95 transition transform duration-300 flex items-center justify-center ${
               (!file && !generateInput) || (!file && generateInput && generateInput.length<100)||
@@ -1139,13 +1140,13 @@ if (data?.credits !== undefined) {
           )} */}
         </div>
          {userPlan =="free" && !eligibleForGeneration  && (
-                <div className="flex flex-col justify-end items-center text-sm mt-10 px-1 gap-10 ">
-                  <div className="text-gray-800 font-medium">
+                <div className="flex flex-col justify-end items-center text-sm mt-5 px-1 gap-3 ">
+                  <div className="text-gray-800 font-medium min-w-[10vw]">
                       <span className="flex items-center gap-1">
                         <FaCoins className="text-yellow-400" /> Credits Available: {credits}
                       </span>
                   </div>
-                  <div className="text-gray-800 font-medium">
+                  <div className="text-gray-800 font-medium  min-w-[10vw]">
                     <button
                         onClick={refreshCredits}
                         className="flex text-md text-blue-500 items-center  underline self-start"
@@ -1154,9 +1155,9 @@ if (data?.credits !== undefined) {
                       </button>
                   </div>
                   
-                  <div className="text-red-600">
+                  <div className="text-red-600  min-w-[10vw]" >
                     <button
-                      className="text-blue-600 font-medium flex items-center self-start gap-1"
+                      className="text-blue-600 font-medium flex items-center justify-center gap-1"
                       onClick={handleUpgrade}
                     >
                       Get More Credits or Upgrade <span>→</span>
