@@ -1139,32 +1139,35 @@ if (data?.credits !== undefined) {
             </div>
           )} */}
         </div>
-         {userPlan =="free" && !eligibleForGeneration  && (
-                <div className="flex flex-col justify-end items-center text-sm mt-5 px-1 gap-3 ">
-                  <div className="text-gray-800 font-medium min-w-[10vw]">
-                      <span className="flex items-center gap-1">
-                        <FaCoins className="text-yellow-400" /> Credits Available: {credits}
-                      </span>
-                  </div>
-                  <div className="text-gray-800 font-medium  min-w-[10vw]">
-                    <button
-                        onClick={refreshCredits}
-                        className="flex text-md text-blue-500 items-center  underline self-start"
-                      >
-                        ↻ Refresh Credits
-                      </button>
-                  </div>
-                  
-                  <div className="text-red-600  min-w-[10vw]" >
-                    <button
-                      className="text-blue-600 font-medium flex items-center justify-center gap-1"
-                      onClick={handleUpgrade}
-                    >
-                      Get More Credits or Upgrade <span>→</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+        {userPlan === "free" && !eligibleForGeneration && (
+  <div className="flex flex-col justify-center items-center text-sm mt-5 px-1 gap-3">
+    
+    <div className="text-gray-800 font-medium flex items-center gap-1">
+      <FaCoins className="text-yellow-400" />
+      <span>Credits Available: {credits}</span>
+    </div>
+
+    <div className="text-gray-800 font-medium">
+      <button
+        onClick={refreshCredits}
+        className="text-md text-blue-500 underline flex items-center gap-1"
+      >
+        ↻ Refresh Credits
+      </button>
+    </div>
+
+    <div className="text-red-600 font-medium">
+      <button
+        className="text-blue-600 flex items-center gap-1"
+        onClick={handleUpgrade}
+      >
+        Get More Credits or Upgrade <span>→</span>
+      </button>
+    </div>
+    
+  </div>
+)}
+
       </div>
 
       {/* Pricing Modal */}
@@ -1190,7 +1193,7 @@ if (data?.credits !== undefined) {
       {/* Refine Modal */}
       {isRefineModalOpen && (
         <div
-          className="fixed inset-0 z-30 flex justify-center items-center"
+          className="fixed inset-0 z-10 flex justify-center items-center"
           style={{ backgroundColor: "rgba(23, 25, 26, 0.3)" }}
         >
           <div
@@ -1640,8 +1643,11 @@ if (data?.credits !== undefined) {
                                   border: `1px solid ${Theme.colors.primary}`,
                                 }}
                                 disabled={isLoading}
-                                onClick={() =>
-                                  !isLoading && setIsModalOpen(true)
+                                onClick={() =>{
+                                 
+                                  !isLoading && setIsModalOpen(true);
+                                   console.log(isLoading);
+                                }
                                 }
                               >
                                 Change branding colors
@@ -1972,7 +1978,7 @@ if (data?.credits !== undefined) {
       )}
       {/* Color Selection Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-[40]">
           <div className="bg-white p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
             <h2 className="text-xl font-bold text-[#091220] mb-4 text-center">
               Select Branding Colors

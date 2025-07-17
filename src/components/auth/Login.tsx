@@ -166,6 +166,8 @@ import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { sourceMapsEnabled } from "process";
+import { useDispatch } from 'react-redux';
+import { setOrgCreated } from '../../redux/slices/orgSlice';
 
 export interface DecodedToken {
   email: string;
@@ -181,6 +183,7 @@ const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<DecodedToken | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Auto-login from iframe query
@@ -256,12 +259,14 @@ const Login = () => {
       const responseData = await res.json();
       sessionStorage.setItem("authToken", responseData.token);
       sessionStorage.setItem("orgId", responseData.orgid || generatedOrgId);
-
+      
       // Reload sidebar after login
       setTimeout(() => {
         window.parent.postMessage({ type: "reloadIframe" }, "*");
       }, 1000);
-
+      if(res.status==200){
+        dispatch(setOrgCreated(true))
+      }
       if (responseData.orgid) navigate("/new-presentation");
       else navigate("/onboarding");
     } catch (error) {
