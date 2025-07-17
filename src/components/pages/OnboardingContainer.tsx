@@ -9,15 +9,21 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { FormData } from '../../@types/onboardingTypes.ts'
 import { toast } from 'react-toastify'
-import { useDispatch } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
 import { setUserPlan } from '../../redux/slices/userSlice.ts'
+import { setOrgCreated } from '../../redux/slices/orgSlice';
+import type { RootState } from '../../store'; 
 
 const OnboardingContainer: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(1)
   const [visitedSections, setVisitedSections] = useState<number[]>([1])
   const [isMediumOrLargerScreen, setIsMediumOrLargerScreen] = useState(false)
   const [isNextLoading, setIsNextLoading] = useState(false)
-  const [orgCreated, setOrgCreated] = useState(false) // ✅ Track if org was created
+  //const [orgCreated, setOrgCreated] = useState(false) // ✅ Track if org was created
+  const orgCreated = useSelector((state: RootState) => state.organization.orgCreated);
+  const handleSetOrgCreated = (val: boolean) => {
+  dispatch(setOrgCreated(val)); 
+  };
   const [formData, setFormData] = useState<FormData>({
     companyName: '',
     contactEmail: '',
@@ -65,7 +71,7 @@ const OnboardingContainer: React.FC = () => {
           { headers: { Authorization: `Bearer ${authToken}` } }
         )
         dispatch(setUserPlan(response.data.plan.plan_name))
-        setOrgCreated(true) // ✅ Mark organization as created
+        handleSetOrgCreated(true) // ✅ Mark organization as created
       } else {
         // ✅ If organization is already created, only update changed data
         await axios.patch(
