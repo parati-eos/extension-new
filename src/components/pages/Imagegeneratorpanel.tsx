@@ -242,7 +242,7 @@ onChange={(e) => setStyle(e.target.value)}
         </div>
 
         <div className="relative w-full mt-2">
-        <button
+<button
   onClick={handleGenerate}
   disabled={loading || !isAllowedToGenerate}
   className={`relative bg-blue-600 text-white font-semibold py-6 px-4 w-full rounded-xl text-center text-base transition-all ${
@@ -252,18 +252,20 @@ onChange={(e) => setStyle(e.target.value)}
   {loading ? "Generating..." : "Generate Image"}
 
   {planName === "free" && (
-    <div className="absolute -top-0 right-2 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+    <div className="absolute -top-0 right-[-1px] bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
       <FaCoins className="text-yellow-300 text-sm" />
       {count * 2} Credits
     </div>
   )}
 </button>
 
-
-          {planName === "free" && (
+        {planName === "free" && (
             <div className="flex flex-col mt-2 text-sm text-gray-700 gap-1">
               <div className="flex justify-between items-center">
-                <span>Available Credits: {credits}</span>
+                <span className="flex items-center gap-1">
+                  <FaCoins className="text-yellow-400" />
+                  Credits Available: {credits}
+                </span>
                 <button
   className="text-blue-600 font-medium flex flex-col items-end ml-auto"
   onClick={handleUpgrade}

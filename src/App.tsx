@@ -9,7 +9,7 @@ import Refinepresentations from "./components/pages/newpresentation";
 import PresentationSuccess from "./components/pages/PresentationSuccess";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { PricingModal } from './components/pages/Pricing'
+import PricingModal from './components/pages/Pricing';
 import { initGA, logPageView } from "./analytics"; // 👈 Import analytics
 import RewriteRefinePanel from "./components/pages/RewriteRefinePanel";
 import ToneAudiencePanel from "./components/pages/ToneAudiencePanel";

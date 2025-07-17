@@ -213,12 +213,13 @@ const isAllowedToSearch = planName !== "free" || credits >= creditsToDeduct;
   {loading ? "Searching..." : "Search Images"}
 
   {planName === "free" && (
-    <div className="absolute -top-0 right-2 bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
+    <div className="absolute -top-0 right-[-1px] bg-[#091220] text-white text-xs px-2 py-1 rounded-tr-lg rounded-bl-lg flex items-center gap-1">
       <FaCoins className="text-yellow-400 text-sm" />
       {count * 2} Credits
     </div>
   )}
 </button>
+
 
 
           {planName === "free" && (
