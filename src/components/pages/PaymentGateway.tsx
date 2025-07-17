@@ -14,7 +14,11 @@ declare global {
 }
 
 export interface PaymentGatewayRef {
-  triggerPayment: () => void;
+  triggerPayment: (paymentDetails: {
+    amount: string;
+    currency: "INR" | "USD";
+    credits: number;
+  }) => void;
 }
 
 interface PaymentGatewayProps {
@@ -52,12 +56,19 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
       currency: "USD",
     });
 
+    const [creditsToAdd, setCreditsToAdd] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const orgId = sessionStorage.getItem("orgId");
 
     useImperativeHandle(ref, () => ({
-      triggerPayment: () => {
-        handlePayment();
+      triggerPayment: ({ amount, currency, credits }) => {
+        setPaymentData((prev) => ({
+          ...prev,
+          amount: parseFloat(amount),
+          currency,
+        }));
+        setCreditsToAdd(credits);
+        handlePayment(parseFloat(amount), currency, credits);
       },
     }));
 
@@ -70,7 +81,6 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
           const data = await response.json();
           const currency = data.country === "IN" ? "INR" : "USD";
 
-          // If email matches special users, override amount
           const email = localStorage.getItem("userEmail") || "";
           let amount = isDiscounted ? discountedAmount : getStaticPricing(currency).current;
 
@@ -99,10 +109,9 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
       detectCurrency();
     }, [isDiscounted, discountedAmount]);
 
-    const handlePayment = async () => {
+    const handlePayment = async (amount: number, currency: string, credits: number) => {
       try {
-        const creditValue = paymentData.currency === "INR" ? 19.9 : 0.25;
-        const finalAmount = Math.round(paymentData.amount);
+        const finalAmount = Math.round(amount);
 
         const response = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
@@ -114,23 +123,22 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
             },
             body: JSON.stringify({
               amount: finalAmount,
-              currency: paymentData.currency,
+              currency,
             }),
           }
         );
 
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const result = await response.json();
-        const { id: order_id, amount, currency } = result;
+        const { id: order_id } = result;
 
         const options = {
           key: process.env.REACT_APP_RAZORPAY_KEY_ID,
-          amount,
+          amount: finalAmount * 100,
           currency,
           name: "Zynth",
-          description: "Purchase of presentation",
+          description: "Credit Purchase",
           order_id,
           handler: async function (response: any) {
             try {
@@ -151,13 +159,9 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
                 }
               );
 
-              if (!verifyResponse.ok)
-                throw new Error("Payment verification failed");
-
+              if (!verifyResponse.ok) throw new Error("Payment verification failed");
               const verifyResult = await verifyResponse.json();
 
-              // Calculate and update credits
-              const creditsPurchased = Math.floor(finalAmount / creditValue);
               await fetch(
                 `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
                 {
@@ -166,7 +170,7 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${authToken}`,
                   },
-                  body: JSON.stringify({ credits: creditsPurchased }),
+                  body: JSON.stringify({ credits }),
                 }
               );
 
