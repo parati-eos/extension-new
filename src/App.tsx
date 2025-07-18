@@ -13,6 +13,7 @@ import PricingModal from './components/pages/Pricing';
 import { initGA, logPageView } from "./analytics"; // 👈 Import analytics
 import RewriteRefinePanel from "./components/pages/RewriteRefinePanel";
 import ToneAudiencePanel from "./components/pages/ToneAudiencePanel";
+import ExtensionLandingPage from "./components/pages/ExtensionLandingPage";
 
 //import { Pricing } from "aws-sdk";
 
@@ -56,7 +57,8 @@ const App = () => {
     <ToastContainer />
       <Routes>
       {/* <Route path="/" element={<Home />} /> */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<ExtensionLandingPage />} />
+        <Route  path="/login" element={<Login />} />
         <Route path="/onboarding" element={<OnboardingContainer />} />
         <Route path="/new-presentation" element={<PresentationBuilder />} />
         <Route path="/refine-ppt" element={<Refineppt />} />
