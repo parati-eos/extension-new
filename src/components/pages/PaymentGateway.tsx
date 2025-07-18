@@ -15,14 +15,13 @@ declare global {
 
 export interface PaymentGatewayRef {
   triggerPayment: (paymentDetails: {
-    amount: string;
-    currency: "INR" | "USD";
-    credits: number;
+    amount: number;
+    creditCount: number;
   }) => void;
 }
 
 interface PaymentGatewayProps {
-  productinfo: any;
+  productinfo: string;
   onSuccess: (result: any) => void;
   onFailure?: () => void;
   authToken: string;
@@ -56,64 +55,63 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
       currency: "USD",
     });
 
-    const [creditsToAdd, setCreditsToAdd] = useState(0);
+    const [currentCredits, setCurrentCredits] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const orgId = sessionStorage.getItem("orgId");
 
     useImperativeHandle(ref, () => ({
-      triggerPayment: ({ amount, currency, credits }) => {
-        setPaymentData((prev) => ({
-          ...prev,
-          amount: parseFloat(amount),
-          currency,
-        }));
-        setCreditsToAdd(credits);
-        handlePayment(parseFloat(amount), currency, credits);
+      triggerPayment: ({ amount, creditCount }) => {
+        handlePayment(amount, creditCount);
       },
     }));
 
     useEffect(() => {
-      const detectCurrency = async () => {
+      const detectCurrencyAndFetchCredits = async () => {
         try {
-          const response = await fetch("https://zynth.ai/api/users/ip-info");
-          if (!response.ok) throw new Error("Failed to fetch location data");
-
-          const data = await response.json();
+          const res = await fetch("https://zynth.ai/api/users/ip-info");
+          const data = await res.json();
           const currency = data.country === "IN" ? "INR" : "USD";
-
           const email = localStorage.getItem("userEmail") || "";
-          let amount = isDiscounted ? discountedAmount : getStaticPricing(currency).current;
+          let amount = isDiscounted
+            ? discountedAmount
+            : getStaticPricing(currency).current;
+          if (currency === "INR" && specialEmails.has(email)) amount = 5;
 
-          if (currency === "INR" && specialEmails.has(email)) {
-            amount = 5;
-          }
+          setPaymentData((prev) => ({ ...prev, currency, amount, email }));
+        } catch {
+          const fallback = "USD";
+          const amount = isDiscounted
+            ? discountedAmount
+            : getStaticPricing(fallback).current;
+          setPaymentData((prev) => ({ ...prev, currency: fallback, amount }));
+        }
 
-          setPaymentData((prevData) => ({
-            ...prevData,
-            currency,
-            amount,
-            email,
-          }));
-        } catch (error) {
-          console.error("Error detecting location:", error);
-          const fallbackCurrency = "USD";
-          const amount = isDiscounted ? discountedAmount : getStaticPricing(fallbackCurrency).current;
-          setPaymentData((prevData) => ({
-            ...prevData,
-            currency: fallbackCurrency,
-            amount,
-          }));
+        try {
+          const orgRes = await fetch(
+            `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organization/${orgId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+          const orgData = await orgRes.json();
+          setCurrentCredits(orgData?.credits || 0);
+        } catch (err) {
+          console.error("Error fetching current credits:", err);
         }
       };
 
-      detectCurrency();
+      detectCurrencyAndFetchCredits();
     }, [isDiscounted, discountedAmount]);
 
-    const handlePayment = async (amount: number, currency: string, credits: number) => {
+    const handlePayment = async (amount: number, credits: number) => {
       try {
         const finalAmount = Math.round(amount);
+        const currency = paymentData.currency;
+        const creditValue = currency === "INR" ? 19.9 : 0.25;
 
-        const response = await fetch(
+        const res = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/create-order`,
           {
             method: "POST",
@@ -121,28 +119,23 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
               "Content-Type": "application/json",
               Authorization: `Bearer ${authToken}`,
             },
-            body: JSON.stringify({
-              amount: finalAmount,
-              currency,
-            }),
+            body: JSON.stringify({ amount: finalAmount, currency }),
           }
         );
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-        const result = await response.json();
-        const { id: order_id } = result;
+        if (!res.ok) throw new Error("Order creation failed");
+        const { id: order_id } = await res.json();
 
         const options = {
           key: process.env.REACT_APP_RAZORPAY_KEY_ID,
           amount: finalAmount * 100,
           currency,
           name: "Zynth",
-          description: "Credit Purchase",
+          description: productinfo,
           order_id,
           handler: async function (response: any) {
             try {
-              const verifyResponse = await fetch(
+              const verify = await fetch(
                 `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/payments/verify-payment`,
                 {
                   method: "POST",
@@ -159,8 +152,12 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
                 }
               );
 
-              if (!verifyResponse.ok) throw new Error("Payment verification failed");
-              const verifyResult = await verifyResponse.json();
+              if (!verify.ok) throw new Error("Verification failed");
+              const result = await verify.json();
+
+              // Update credits by adding to current
+              const creditsPurchased = Math.floor(finalAmount / creditValue);
+              const updatedCredits = currentCredits + creditsPurchased;
 
               await fetch(
                 `${process.env.REACT_APP_BACKEND_URL}/api/v1/data/organizationprofile/organizationedit/${orgId}`,
@@ -170,30 +167,29 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${authToken}`,
                   },
-                  body: JSON.stringify({ credits }),
+                  body: JSON.stringify({ credits: updatedCredits }),
                 }
               );
 
-              onSuccess(verifyResult);
+              setCurrentCredits(updatedCredits);
+              onSuccess(result);
               setShowModal(true);
-            } catch (error) {
-              console.error("Error verifying payment:", error);
+            } catch (err) {
+              console.error("Verification error:", err);
               alert("Payment verification failed. Please try again.");
-              if (onFailure) onFailure();
+              onFailure?.();
             }
           },
           theme: { color: "#3399cc" },
         };
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } catch (error) {
-        console.error("Error processing payment:", error);
+        new window.Razorpay(options).open();
+      } catch (err) {
+        console.error("Payment error:", err);
         alert(
-          "SORRY!\nWe were unable to process your payment\nError Reason: " +
-            (error as Error).message
+          "Payment processing failed. Reason: " + (err as Error).message
         );
-        if (onFailure) onFailure();
+        onFailure?.();
       }
     };
 
@@ -203,8 +199,8 @@ const PaymentGateway = forwardRef<PaymentGatewayRef, PaymentGatewayProps>(
           <div className="modal">
             <div className="modal-content">
               <p>
-                Payment successful! Please go back to Google Slides and refresh
-                your credits to reflect the updated amount.
+                Payment successful! Please return to Google Slides and refresh
+                your credits.
               </p>
             </div>
           </div>
