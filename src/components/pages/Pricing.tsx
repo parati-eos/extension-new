@@ -22,6 +22,10 @@ const PricingComparison = () => {
     queryParams.get("authToken") || sessionStorage.getItem("authToken");
   const userEmail =
     queryParams.get("userEmail") || sessionStorage.getItem("userEmail");
+
+  if (queryParams.get("userEmail")) {
+    sessionStorage.setItem("userEmail", queryParams.get("userEmail")!);
+  }
   let orgId = queryParams.get("orgId") || sessionStorage.getItem("orgId");
 
   if (queryParams.get("orgId")) {
@@ -122,11 +126,11 @@ const PricingComparison = () => {
               min={10}
               step={10}
             />
-              <p className="text-sm text-gray-600 mb-3">
-           Total: {totalAmount} {currency}
-          </p>
+       
           </div>
-
+       <p className="text-lg font-semibold text-black-600 mb-3">
+           {currency} {totalAmount} 
+          </p>
      
 
           <button
@@ -174,33 +178,62 @@ const PricingComparison = () => {
             Ideal for professionals and businesses.
           </p>
 
-          <div className="mb-4">
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={billingCycle === "annual"}
-                  onChange={() => setBillingCycle("annual")}
-                />
-                <span className="text-sm">
-                  {yearlyPlan?.item.amount / 100} {currency} Billed annually
-                </span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={billingCycle === "monthly"}
-                  onChange={() => setBillingCycle("monthly")}
-                />
-                <span className="text-sm">
-                  {monthlyPlan?.item.amount / 100} {currency} Billed monthly
-                </span>
-              </label>
-            </div>
-          </div>
+      <div className="flex flex-col gap-3">
+  <label
+    className={`border rounded-lg p-4 flex justify-between items-center cursor-pointer ${
+      billingCycle === "annual"
+        ? "border-blue-600 ring-2 ring-blue-500"
+        : "border-gray-300"
+    }`}
+    onClick={() => setBillingCycle("annual")}
+  >
+    <div>
+      <div className="text-lg font-semibold">
+       {currency} {(yearlyPlan?.item.amount / 1200)?.toFixed(2) || "--"} 
+      </div>
+      <div className="text-sm text-gray-500">Billed annually</div>
+    </div>
+    <div className="flex items-center gap-2">
+      <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">
+        Save 17%
+      </span>
+      <input
+        type="radio"
+        className="form-radio text-blue-600"
+        checked={billingCycle === "annual"}
+        readOnly
+      />
+    </div>
+  </label>
+
+  <label
+    className={`border rounded-lg p-4 flex justify-between items-center cursor-pointer ${
+      billingCycle === "monthly"
+        ? "border-blue-600 ring-2 ring-blue-500"
+        : "border-gray-300"
+    }`}
+    onClick={() => setBillingCycle("monthly")}
+  >
+    <div>
+      <div className="text-lg font-semibold">
+       {currency} {(monthlyPlan?.item.amount / 100)?.toFixed(2) || "--"} 
+      </div>
+      <div className="text-sm text-gray-500">Billed monthly</div>
+    </div>
+    <div className="flex items-center gap-2">
+      <input
+        type="radio"
+        className="form-radio text-blue-600"
+        checked={billingCycle === "monthly"}
+        readOnly
+      />
+    </div>
+  </label>
+</div>
+
 
           <button
-            className="bg-blue-600 text-white py-2 px-6 rounded mb-2"
+            className="bg-blue-600 text-white py-2 px-6 rounded mb-4 mt-2"
             onClick={handleUpgrade}
             disabled={isLoading}
           >
