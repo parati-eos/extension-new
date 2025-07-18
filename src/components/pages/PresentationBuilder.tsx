@@ -482,6 +482,20 @@ const { credits, updateCredit, increaseCredit, decreaseCredit } = useCredit();
         const colors = response.data.colors || organizationColors; // Use fetched colors if API doesn't return any
 
         // Convert object values into an array
+        const colorMap = {
+          P100: colors.P100 || "#17191A",
+          P75_S25: colors.P75_S25 || "#313B48",
+          P50_S50: colors.P50_S50 || "#4A5C75",
+          P25_S75: colors.P25_S75 || "#647EA3",
+          S100: colors.S100 || "#7D9FD0",
+          F_P100: colors.F_P100 || "#E8E8E8",
+          F_P75_S25: colors.F_P75_S25 || "#E4E8EC",
+          F_P50_S50: colors.F_P50_S50 || "#FFFFFF",
+          F_P25_S75: colors.F_P25_S75 || "#FFFFFF",
+          F_S100: colors.F_S100 || "#FFFFFF",
+          SCL: colors.SCL || "#FFFFFF",
+          SCD: colors.SCD || "#000000",
+        };
         const colorArray: string[] = [
           colors.P100,
           colors.P75_S25,
@@ -506,6 +520,9 @@ const { credits, updateCredit, increaseCredit, decreaseCredit } = useCredit();
 
         await setBrandingColors([...colorArray]); // Ensure React detects state change
         await setBrandingColorsSave([...colorArraySave]); // Ensure React detects state change
+        setPrimaryColor(colorMap.P100);
+        setTextColor(colorMap.F_P100);
+        setSecondaryColor(colorMap.S100);
       }
     } catch (error) {
       console.error("Error updating branding colors:", error);
@@ -893,12 +910,12 @@ if (data?.credits !== undefined) {
 
   const [showCreativityTooltip, setShowCreativityTooltip] = useState(false);
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-screen  bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa]">
-      <div className="relative  w-full  text-center flex flex-col items-center mt-[-5vh]">
-        <div className="absolute inset-0z-[-1] rounded-2xl"></div>
-        <h2 className="text-2xl font-semibold text-gray-700 mb-8 mt -8">
+ <div className="min-h-screen w-screen bg-gradient-to-br from-[#f1f1f3] via-[#aec2e6] to-[#fafafa] overflow-y-auto flex flex-col items-center justify-start p-4">
+  <div className="w-full text-center flex flex-col items-center">
+    <div className="absolute inset-0 -z-10 rounded-2xl"></div>
+        {/* <h2 className="text-2xl font-semibold text-gray-700 mb-8 mt -8">
           Tell us what you want to build
-        </h2>
+        </h2> */}
         <p className="text-gray-500  flex items-center gap-1 relative text-lg">
           Enter your presentation context.
           <span
